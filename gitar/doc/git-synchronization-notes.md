@@ -112,7 +112,30 @@ Cloning into 'server'...
 fatal: unable to access 'https://localhost:80/dump-git/server.git/': gnutls_handshake() failed: An unexpected TLS packet was received.
 ```
 
-#### Ubuntu package problem with `gnutls`?
+#### Ubuntu `git` package problem with `gnutls`?
+
+It is argued in [here](https://askubuntu.com/questions/186847/error-gnutls-handshake-failed-when-connecting-to-https-servers) that the problem is because the `gnutls` package does not work behind a proxy. So we should use `openssl` and recompile `git` with it.
+
+```bash
+$ sudo apt-get update
+$ sudo apt-get install build-essential fakeroot dpkg-dev libcurl4-openssl-dev
+$ sudo apt-get build-dep git
+$ mkdir ~/git-openssl
+$ cd ~/git-openssl
+$ apt-get source git # Then `ls` to see what is exactly in the folder
+$ dpkg-source -x git_1.9.1-1ubuntu0.4.dsc
+$ cd git-1.9.1
+$ sudo dpkg-buildpackage -rfakeroot -b
+$ sudo dpkg -i ../git_1.9.1-1ubuntu0.4_amd64.deb
+```
+
+I follow, but get this error for both servers:
+
+```bash
+~/git/client_3$ git clone https://localhost:80/dump-git/server.git
+Cloning into 'server'...
+fatal: unable to access 'https://localhost:80/dump-git/server.git/': error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol
+```
 
 #### Java 7 TLS/SSL stack bug?
 
