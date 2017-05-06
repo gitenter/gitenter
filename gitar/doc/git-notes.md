@@ -47,3 +47,38 @@ beta@landmark:~/git/client_2$ git remote -v
 origin	/home/beta/git/server.git (fetch)
 origin	/home/beta/git/server.git (push)
 ```
+
+Test:
+
+```bash
+beta@landmark:~/git/client_1$ touch test-add-a-file-from-client_1
+beta@landmark:~/git/client_1$ git add -A
+beta@landmark:~/git/client_1$ git commit -m "test add file"
+[master (root-commit) c347422] test add file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 test-add-a-file-from-client_1
+beta@landmark:~/git/client_1$ git push origin master
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 237 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To /home/beta/git/server.git
+ * [new branch]      master -> master
+```
+
+```bash
+beta@landmark:~/git/client_2$ git remote update
+Fetching origin
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From /home/beta/git/server
+ * [new branch]      master     -> origin/master
+beta@landmark:~/git/client_2$ git pull origin master
+From /home/beta/git/server
+ * branch            master     -> FETCH_HEAD
+beta@landmark:~/git/client_2$ ls
+test-add-a-file-from-client_1
+```
