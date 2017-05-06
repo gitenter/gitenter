@@ -119,7 +119,7 @@ Note:
 
 #### Multiple users case
 
-In real practice, you don't want to create all users (with different access level) on your server side. The alternative method is to create a single user `git`, let `git` to have write access to the target folder, and ask every user who is to have write access to generate SSH key, and provide the public part for you to add to the `~/.ssh/authorized_keys` file of the `git` user.
+In real practice, you don't want to create all users (with different access level) on your server side. The alternative method is to create a single user `git`, let `git` to have write access to the target folder, and ask every user (who doesn't know `git` password) who is to have write access to generate a SSH key, and provide the public part for you to add to the `~/.ssh/authorized_keys` file of the `git` user. In addition, you want to limit the privilege for the user `git` to do other shell commands, by using the `git-shell` tool.
 
 Or if different users are to have write access to different folders, you may want the user account (email address) to be associated to the SSH key. The client side setup is similar to [here](https://help.github.com/articles/connecting-to-github-with-ssh/). I need to think about what need to be done in the server's side to make it work.
 
