@@ -112,26 +112,26 @@ The `gnutls_handshake()` error is because [Java 7 that contains the a bug in the
 > As it is a Java version problem, and my Java 7 version is 7u80 for which the bug should already be solved, I try to change the Java version of Tomcat (as it does not go with the default system Java version), but it doesn't work.
 >
 > ```bash
-$ sudo update-java-alternatives -s java-7-oracle
-$ java -version
-java version "1.7.0_80"
-Java(TM) SE Runtime Environment (build 1.7.0_80-b15)
-Java HotSpot(TM) 64-Bit Server VM (build 24.80-b11, mixed mode)
-$ sh /usr/share/tomcat7/bin/version.sh
-Using CATALINA_BASE:   /usr/share/tomcat7
-Using CATALINA_HOME:   /usr/share/tomcat7
-Using CATALINA_TMPDIR: /usr/share/tomcat7/temp
-Using JRE_HOME:        /usr/lib/jvm/java-8-oracle
-Using CLASSPATH:       /usr/share/tomcat7/bin/bootstrap.jar:/usr/share/tomcat7/bin/tomcat-juli.jar
-Server version: Apache Tomcat/7.0.52 (Ubuntu)
-Server built:   Feb 17 2017 03:37:39
-Server number:  7.0.52.0
-OS Name:        Linux
-OS Version:     3.13.0-46-generic
-Architecture:   amd64
-JVM Version:    1.8.0_131-b11
-JVM Vendor:     Oracle Corporation
-$ sudo gedit /etc/default/tomcat7
+> $ sudo update-java-alternatives -s java-7-oracle
+> $ java -version
+> java version "1.7.0_80"
+> Java(TM) SE Runtime Environment (build 1.7.0_80-b15)
+> Java HotSpot(TM) 64-Bit Server VM (build 24.80-b11, mixed mode)
+> $ sh /usr/share/tomcat7/bin/version.sh
+> Using CATALINA_BASE:   /usr/share/tomcat7
+> Using CATALINA_HOME:   /usr/share/tomcat7
+> Using CATALINA_TMPDIR: /usr/share/tomcat7/temp
+> Using JRE_HOME:        /usr/lib/jvm/java-8-oracle
+> Using CLASSPATH:       /usr/share/tomcat7/bin/bootstrap.jar:/usr/share/tomcat7/bin/tomcat-juli.jar
+> Server version: Apache Tomcat/7.0.52 (Ubuntu)
+> Server built:   Feb 17 2017 03:37:39
+> Server number:  7.0.52.0
+> OS Name:        Linux
+> OS Version:     3.13.0-46-generic
+> Architecture:   amd64
+> JVM Version:    1.8.0_131-b11
+> JVM Vendor:     Oracle Corporation
+> $ sudo gedit /etc/default/tomcat7
 > ```
 > Then change `JAVA_HOME` to e.g. `/usr/lib/jvm/java-7-oracle` and `sudo service tomcat7 restart`, but it still gives me the Java 8 version.
 
