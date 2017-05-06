@@ -83,9 +83,11 @@ test-add-a-file-from-client_1
 
 ### Through SSH protocol
 
-First, make sure that SSH is properly installed in the corresponding computers. If not, run `sudo apt-get install openssh-server`.
+Make sure that SSH is properly installed in the corresponding computers. If not, run `sudo apt-get install openssh-server`.
 
-Then it should work trivially:
+#### Single user case
+
+It should work trivially:
 
 ```bash
 $ git clone ssh://beta@192.168.0.106:/home/beta/git/server.git
@@ -97,7 +99,29 @@ Or
 $ git clone beta@192.168.0.106:/home/beta/git/server.git
 ```
 
-Note: only absolute path works. `~/git/server.git` will give error "Please make sure you have the correct access rights and the repository exists".
+Then,
+
+```bash
+Cloning into 'server'...
+The authenticity of host '192.168.0.106' can't be established.
+ECDSA key fingerprint is #############################################
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.0.106' (ECDSA) to the list of known hosts.
+beta@192.168.0.106's password:
+```
+
+After provide available password, the clone will be established.
+
+Note:
+
+1. Only absolute path works. `~/git/server.git` will give error "Please make sure you have the correct access rights and the repository exists".
+2. For a user who has read access to `/home/beta/git/server.git` can `pull`, while if s/he has write access then s/he can also `push`. In my example here is the user `beta` is accessing her home folder, so she has giant permission for everything.
+
+#### Multiple users case
+
+In real practice, you don't want to create all users (with different access level) on your server side. The alternative method is to create a single user `git`, let `git` to have write access to the target folder, and ask every user (who doesn't know `git` password) who is to have write access to generate a SSH key, and provide the public part for you to add to the `~/.ssh/authorized_keys` file of the `git` user. In addition, you want to limit the privilege for the user `git` to do other shell commands, by using the `git-shell` tool.
+
+Or if different users are to have write access to different folders, you may want the user account (email address) to be associated to the SSH key. The client side setup is similar to [here](https://help.github.com/articles/connecting-to-github-with-ssh/). I need to think about what need to be done in the server's side to make it work.
 
 ### Through the "dump" HTTP protocol
 
