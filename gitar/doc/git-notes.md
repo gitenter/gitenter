@@ -87,6 +87,29 @@ test-add-a-file-from-client_1
 
 The "dump" HTTP protocol serves the bare Git repository as normal files from the web server.
 
+##### Apache 2 with Ubuntu 14.04
+
+Setup the bare repository:
+
+```bash
+beta@landmark:/var/www/html/dump-git$ git init --bare server.gitInitialized empty Git repository in /var/www/html/dump-git/server.git/
+beta@landmark:/var/www/html/dump-git$ cd server.git/beta@landmark:/var/www/html/dump-git/server.git$ mv hooks/post-update.sample hooks/post-update
+beta@landmark:/var/www/html/dump-git/server.git$ chmod a+x hooks/post-update
+```
+
+Clone the bare repository:
+
+```bash
+beta@landmark:~/git/client_3$ git clone http://localhost:80/dump-git/server.git
+Cloning into 'server'...
+fatal: repository 'http://localhost:80/dump-git/server.git/' not found
+beta@landmark:~/git/client_3$ git clone https://localhost:80/dump-git/server.git
+Cloning into 'server'...
+fatal: unable to access 'https://localhost:80/dump-git/server.git/': gnutls_handshake() failed: An unexpected TLS packet was received.
+```
+
+*(Apache also not working, although all the files are fully accessible through the browser. So it is maybe not Tomcat's problem described below.)*
+
 ##### Tomcat 7 with Ubuntu 14.04
 
 Setup the bare repository:
@@ -102,6 +125,9 @@ beta@landmark:/var/lib/tomcat7/webapps/dump-git/server.git$ chmod a+x hooks/post
 Clone the bare repository:
 
 ```bash
+beta@landmark:~/git/client_3$ git clone http://localhost:8080/dump-git/server.git
+Cloning into 'server'...
+fatal: repository 'http://localhost:8080/dump-git/server.git/' not found
 beta@landmark:~/git/client_3$ git clone https://localhost:8080/dump-git/server.git
 Cloning into 'server'...
 fatal: unable to access 'https://localhost:8080/dump-git/server.git/': gnutls_handshake() failed: An unexpected TLS packet was received.
