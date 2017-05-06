@@ -112,7 +112,11 @@ beta@192.168.0.106's password:
 
 After provide available password, the clone will be established.
 
-TODO: In real practice, you need to generate SSH key and provide the public part to the server. The procedure is similar to [here](https://help.github.com/articles/connecting-to-github-with-ssh/). Basically you use your account (email address) to generate the key so the server know your identity. Then the SSH connection is setup. I need to think about what need to be done in the server's side to make it worked.
+#### TODO
+
+In real practice, you need to generate SSH key and provide the public part to the server. The procedure is similar to [here](https://help.github.com/articles/connecting-to-github-with-ssh/). Basically you use your account (email address) to generate the key so the server know your identity. Then the SSH connection is setup.
+
+I need to think about what need to be done in the server's side to make it worked.
 
 ### Through the "dump" HTTP protocol
 
