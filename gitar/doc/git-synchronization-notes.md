@@ -143,6 +143,8 @@ Cloning into 'server'...
 fatal: unable to access 'https://localhost:80/dump-git/server.git/': error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol
 ```
 
+Postscript: `sudo apt-get remove git` and re-`install` will get back the `gnutls_handshake() failed` error.
+
 #### Java 7 TLS/SSL stack bug?
 
 It is argued in [here](https://confluence.atlassian.com/bitbucketserverkb/error-gnutls_handshake-failed-a-tls-warning-alert-has-been-received-779171747.html) that the problem is because [Java 7 that contains the a bug in the TLS/SSL stack](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8014618).
