@@ -114,7 +114,7 @@ fatal: unable to access 'https://localhost:80/dump-git/server.git/': gnutls_hand
 
 #### Ubuntu `git` package problem with `gnutls`?
 
-It is argued in [here](https://askubuntu.com/questions/186847/error-gnutls-handshake-failed-when-connecting-to-https-servers) that the problem is because the `gnutls` package does not work behind a proxy. So we should use `openssl` and recompile `git` with it.
+It is argued in [here](https://askubuntu.com/questions/186847/error-gnutls-handshake-failed-when-connecting-to-https-servers) and (maybe) [here](http://stackoverflow.com/questions/13524242/error-gnutls-handshake-failed-git-repository) that the problem is because the `gnutls` package does not work behind a proxy. So we should use `openssl` and recompile `git` with it.
 
 ```bash
 $ sudo apt-get update
@@ -125,6 +125,12 @@ $ cd ~/git-openssl
 $ apt-get source git # Then `ls` to see what is exactly in the folder
 $ dpkg-source -x git_1.9.1-1ubuntu0.4.dsc
 $ cd git-1.9.1
+$ sudo gedit debian/control
+```
+
+and replace all instances of `libcurl4-gnutls-dev` with `libcurl4-openssl-dev`
+
+```
 $ sudo dpkg-buildpackage -rfakeroot -b
 $ sudo dpkg -i ../git_1.9.1-1ubuntu0.4_amd64.deb
 ```
