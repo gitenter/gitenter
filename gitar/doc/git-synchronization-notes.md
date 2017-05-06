@@ -87,9 +87,11 @@ The "dump" HTTP protocol serves the bare Git repository as normal files from the
 
 #### `gnutls_handshake() failed` error
 
-Naive tryout (under Ubuntu 14.04, using both Apache 2 and Tomcat 7 servers) gives `gnutls_handshake() failed` error.
+Naive tryout (under Ubuntu 14.04, using Apache 2, Tomcat 7 servers, and local PHP server) gives `gnutls_handshake() failed` error.
 
-Apache 2 is setup under `/var/www/html/dump-git` using `localhost:80` for access, while Tomcat 7 is setup under `/var/lib/tomcat7/webapps/dump-git` using `localhost:8080` for access. They'll get the same result. A remote connection from another PC in the same intranet will also give the same result.
+Apache 2 is setup under `/var/www/html/dump-git` using `localhost:80` for access, while Tomcat 7 is setup under `/var/lib/tomcat7/webapps/dump-git` using `localhost:8080` for access. For local PHP server I simply navigate to the root of bare repository and do `php -S localhost:8123` and access using `localhost:8123`.
+
+They'll get the same result. A remote connection from another PC in the same intranet will also give the same result.
 
 Setup the bare repository:
 
