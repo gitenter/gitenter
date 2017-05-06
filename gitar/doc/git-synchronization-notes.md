@@ -81,6 +81,24 @@ From /home/beta/git/server
 test-add-a-file-from-client_1
 ```
 
+### Through SSH protocol
+
+First, make sure that SSH is properly installed in the corresponding computers. If not, run `sudo apt-get install openssh-server`.
+
+Then it should work trivially:
+
+```bash
+$ git clone ssh://beta@192.168.0.106:/home/beta/git/server.git
+```
+
+Or
+
+```bash
+$ git clone beta@192.168.0.106:/home/beta/git/server.git
+```
+
+Note: only absolute path works. `~/git/server.git` will give error "Please make sure you have the correct access rights and the repository exists".
+
 ### Through the "dump" HTTP protocol
 
 The "dump" HTTP protocol serves the bare Git repository as normal files from the web server.
