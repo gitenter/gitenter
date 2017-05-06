@@ -10,7 +10,7 @@ References: [here](https://git-scm.com/about/distributed) and [here](http://gitr
 
 A *remote repository* is a bare repository which has no working directory. It has the `.git` directory but nothing else. It is the ideal choice for the server-side repository.
 
-### Through local protocol
+### Through Local protocol
 
 Setup the bare repository:
 
@@ -172,6 +172,10 @@ It is argued in [here](https://confluence.atlassian.com/bitbucketserverkb/error-
 It is unlikely to be the case in here, because (1) their `error: gnutls_handshake() failed: A TLS warning alert has been received.` is not exactly the same as my error `gnutls_handshake() failed: An unexpected TLS packet was received.`, and (2) it happens not only on Tomcat 7, but also on Apache 2 which has nothing to do with Java.
 
 ### Through the "smarter" HTTP protocol
+
+### Through Git protocol
+
+Git protocol is read only, so even GitHub is not using it (the two choices GitHub provided are SSH and HTTPS). The setup may be referred to [here](https://git-scm.com/book/en/v2/Git-on-the-Server-Git-Daemon). Currently I am facing problem with the port 9418, so don't have a working solution yet.
 
 ## References
 
