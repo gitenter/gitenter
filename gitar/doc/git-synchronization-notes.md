@@ -1,6 +1,4 @@
-# Git Notes
-
-## Distribution/synchronization
+# Git Synchronization Notes
 
 Git provides synchronization between **a pair of** git repositories. `git remote`, `git fetch`, `git pull`, `git push` are the communication commands in between the two. The communication can be through (1) Local, (2) HTTP, (3) Secure Shell (SSH) and (4) Git protocols.
 
@@ -8,11 +6,11 @@ A git based service defines a workflow how multiple git mirrors works together. 
 
 References: [here](https://git-scm.com/about/distributed) and [here](http://gitref.org/remotes/).
 
-### Communication
+## Communication protocols
 
 A *remote repository* is a bare repository which has no working directory. It has the `.git` directory but nothing else. It is the ideal choice for the server-side repository.
 
-#### Through local protocol
+### Through local protocol
 
 Setup the bare repository:
 
@@ -83,11 +81,11 @@ beta@landmark:~/git/client_2$ ls
 test-add-a-file-from-client_1
 ```
 
-#### Through the "dump" HTTP protocol
+### Through the "dump" HTTP protocol
 
 The "dump" HTTP protocol serves the bare Git repository as normal files from the web server.
 
-##### Apache 2 with Ubuntu 14.04
+#### Apache 2 with Ubuntu 14.04
 
 Setup the bare repository:
 
@@ -110,7 +108,7 @@ fatal: unable to access 'https://localhost:80/dump-git/server.git/': gnutls_hand
 
 *(Apache also not working, although all the files are fully accessible through the browser. So it is maybe not Tomcat's problem described below.)*
 
-##### Tomcat 7 with Ubuntu 14.04
+#### Tomcat 7 with Ubuntu 14.04
 
 Setup the bare repository:
 
@@ -161,8 +159,8 @@ The `gnutls_handshake()` error is because [Java 7 that contains the a bug in the
 > ```
 > Then change `JAVA_HOME` to e.g. `/usr/lib/jvm/java-7-oracle` and `sudo service tomcat7 restart`, but it still gives me the Java 8 version.
 
-#### Through the "smarter" HTTP protocol
+### Through the "smarter" HTTP protocol
 
 ## References
 
-1. Scott Chacon and Ben Straub, [Pro Git](https://git-scm.com/book/en/v2).
+1. Scott Chacon and Ben Straub, [Pro Git](https://git-scm.com/book/en/v2), Chapter 4.
