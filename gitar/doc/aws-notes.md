@@ -35,3 +35,14 @@ Amazon Glacier
 Amazon Redshift
 
 - Data warehouse
+
+## Console and launch services
+
+Amazon provides a web-based console ([console.aws.amazon.com](console.aws.amazon.com)) you can used for various Amazon services. You log in to that page and choose the desired service (say, EC2).
+
+For EC2, then you can either "launch instance" by following their wizard (choose OS, storage, key pair, security port, ...), or choose an instance in the left panel "instances" list. Select a desired instance in the list, and use command lines (typically by SSH using the previous saved `.pem` file of the SSH key) to connect your instance.
+
+Notes:
+
+1. There are multiple virtual machines located in multiple places. You need to remember where your instances are, or they'll tell you no instance in that location (my current ones are in U.S. Oregon).
+1. After connection, the terminal exactly likes an normal virtual machine. (For Ubuntu case) then you can either use their pre-installed packages, or use `sudo apt-get install` to set up the environment as you desired.
