@@ -42,6 +42,8 @@ Then the following command will work:
 $ git clone ubuntu@ec2-54-68-62-64.us-west-2.compute.amazonaws.com:/home/ubuntu/server.git
 ```
 
+Postscript: actually when you open `.ssh/authorized_keys`, you'll find out that the public key of the EC2 provided `.pem` key-pair is already saved in there.
+
 ## Through the "dump" HTTP protocol
 
 It doesn't work in exactly the same way as the local case.
