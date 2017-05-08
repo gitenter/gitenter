@@ -30,7 +30,7 @@ Checking connectivity... done.
 
 ### Working method II
 
-The other possibility is to add the client computer's `.ssh/id_rsa.pub` to the server's `.ssh/authorized_keys`. The way to generate `.ssh/authorized_keys` can be referred roughly to [here](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/). To add it to the `.ssh/authorized_keys` in the server's side, you want to do something similar to
+The other possibility is to add the client computer's `.ssh/id_rsa.pub` to the EC2 server's `.ssh/authorized_keys`. The way to generate `.ssh/authorized_keys` can be referred roughly to [here](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/). To add it to the `.ssh/authorized_keys` in the EC2 server's side, you want to do something similar to
 
 ```bash
 $ echo -e "\n\n[materials in .ssh/id_rsa.pub]" >> ~/.ssh/authorized_keys
@@ -41,3 +41,22 @@ Then the following command will work:
 ```bash
 $ git clone ubuntu@ec2-54-68-62-64.us-west-2.compute.amazonaws.com:/home/ubuntu/server.git
 ```
+
+## Through the "dump" HTTP protocol
+
+It doesn't work in exactly the same way as the local case.
+
+In the EC2 server side, I installed `tomcat8`, navigate to `/var/lib/tomcat8/webapps/` and add a bare repository under `dump-git/server.git`.
+
+Then in the client side:
+
+```bash
+$ git clone http://ec2-54-68-62-64.us-west-2.compute.amazonaws.com:8080/dump-git/server.git
+Cloning into 'server'...
+fatal: repository 'http://ec2-54-68-62-64.us-west-2.compute.amazonaws.com:8080/dump-git/server.git/' not found
+$ git clone https://ec2-54-68-62-64.us-west-2.compute.amazonaws.com:8080/dump-git/server.git
+Cloning into 'server'...
+fatal: unable to access 'https://ec2-54-68-62-64.us-west-2.compute.amazonaws.com:8080/dump-git/server.git/': gnutls_handshake() failed: An unexpected TLS packet was received.
+```
+
+Basically you know it cannot work, because they'll then ask for the username and password of the EC2 server but I don't know the password (username is `ubuntu`). But as the same `gnutls_handshake()` appears (this time in Ubuntu 16.04 rather than my local 14.04), that means we at least need to solve this problem first.
