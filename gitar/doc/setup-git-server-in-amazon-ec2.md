@@ -1,4 +1,4 @@
-# Setup Tomcat in Amazon EC2
+# Setup Git Server in Amazon EC2
 
 ## Through SSH protocol
 
