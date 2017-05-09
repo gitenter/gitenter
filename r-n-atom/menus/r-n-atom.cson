@@ -1,22 +1,63 @@
 # See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
-'context-menu':
-  'atom-text-editor': [
+{
+  "context-menu": {
+    ".tree-view .selected": [
+      {
+        "label": "Create File from RNAtom Template",
+        "submenu": [
+          {
+            "label": "Stackholder Requirement Specification",
+            "command": "r-n-atom:toggle"
+          },
+          {
+            "label": "System Requirement Specification",
+            "command": "r-n-atom:toggle"
+          }
+        ]
+      }
+    ],
+    "atom-text-editor": [
+      {
+        "label": "Generate New RNAtom Item ID",
+        "command": "r-n-atom:toggle"
+      },
+      {
+        "label": "Traced to this RNAtom Item",
+        "command": "r-n-atom:toggle"
+      }
+    ]
+  },
+  "menu": [
     {
-      'label': 'Toggle r-n-atom'
-      'command': 'r-n-atom:toggle'
-    }
-  ]
-'menu': [
-  {
-    'label': 'Packages'
-    'submenu': [
-      'label': 'r-n-atom'
-      'submenu': [
+      "label": "Packages",
+      "submenu": [
         {
-          'label': 'Toggle'
-          'command': 'r-n-atom:toggle'
+          "label": "RNAtom",
+          "submenu": [
+            {
+              "label": "Fill in with Template",
+              "submenu": [
+                {
+                  "label": "Stackholder Requirement Specification",
+                  "command": "r-n-atom:toggle"
+                },
+                {
+                  "label": "System Requirement Specification",
+                  "command": "r-n-atom:toggle"
+                }
+              ]
+            },
+            {
+              "label": "Generate New Item ID",
+              "command": "r-n-atom:toggle"
+            },
+            {
+              "label": "Traced to this Item",
+              "command": "r-n-atom:toggle"
+            }
+          ]
         }
       ]
-    ]
-  }
-]
+    }
+  ]
+}

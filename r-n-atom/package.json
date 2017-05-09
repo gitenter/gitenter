@@ -1,14 +1,14 @@
 {
-  "name": "r-n-atom",
+  "name": "RNAtom",
   "main": "./lib/r-n-atom",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "An Atom plugin for Enterovirus",
   "keywords": [
   ],
   "activationCommands": {
     "atom-workspace": "r-n-atom:toggle"
   },
-  "repository": "https://github.com/atom/r-n-atom",
+  "repository": "https://github.com/zooo/enterovirus/tree/master/r-n-atom",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
