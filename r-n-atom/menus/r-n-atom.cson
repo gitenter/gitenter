@@ -6,11 +6,11 @@
         "label": "Create File from RNAtom Template",
         "submenu": [
           {
-            "label": "Stackholder Requirement Specification",
+            "label": "Stackholder...",
             "command": "r-n-atom:use-template-strs"
           },
           {
-            "label": "System Requirement Specification",
+            "label": "System...",
             "command": "r-n-atom:toggle"
           }
         ]
@@ -38,11 +38,11 @@
               "label": "Fill in with Template",
               "submenu": [
                 {
-                  "label": "Stackholder Requirement Specification",
+                  "label": "Stackholder...",
                   "command": "r-n-atom:toggle"
                 },
                 {
-                  "label": "System Requirement Specification",
+                  "label": "System...",
                   "command": "r-n-atom:toggle"
                 }
               ]
