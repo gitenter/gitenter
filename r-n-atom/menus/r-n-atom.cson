@@ -19,7 +19,7 @@
     "atom-text-editor": [
       {
         "label": "Generate a New Traceable Item",
-        "command": "r-n-atom:generate-item"
+        "command": "r-n-atom:generate-traceable-item"
       },
       {
         "label": "Traced to this Item",
@@ -49,7 +49,7 @@
             },
             {
               "label": "Generate a New Traceable Item",
-              "command": "r-n-atom:generate-item"
+              "command": "r-n-atom:generate-traceable-item"
             },
             {
               "label": "Traced to this Item",

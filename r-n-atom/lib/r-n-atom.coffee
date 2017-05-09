@@ -15,7 +15,7 @@ module.exports = RNAtom =
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:toggle': => @toggle()
-    @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:generate-item': => @generateItem()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:generate-traceable-item': => @generateTraceableItem()
     @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:use-template-strs': => @useTemplate('StRS')
 
   deactivate: ->
@@ -34,7 +34,7 @@ module.exports = RNAtom =
     else
       @modalPanel.show()
 
-  generateItem: ->
+  generateTraceableItem: ->
     console.log 'generate a new traceable item'
 
     if editor = atom.workspace.getActiveTextEditor()
