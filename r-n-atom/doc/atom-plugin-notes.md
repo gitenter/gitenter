@@ -15,9 +15,15 @@ User defined functionalities can either be (1) standing alone packages, or (2) j
 
 When defining new functionalities, you (1) `atom.commands.add` and define what need to be done as a JavaScript closure, (2) may keybinding it to a keyboard shortcut if desired.
 
-## Development environment
+## Development environment setup
 
-May use an Atom package called [package-generator](https://github.com/atom/package-generator). That helps (1) generate the folder structure, and (2) link this folder from `.atom/package/r-n-atom` which is this package's name.
+May use an Atom package called [package-generator](https://github.com/atom/package-generator). That helps (1) generate the packge folder structure, and (2) link this folder from `.atom/package/r-n-atom` which is this package's name.
+
+For doing that, you should
+
+1. Go do the package-generator setup page to change (1) the output from JavaScript to CoffeeScript (that matches the tutorial and nearly all other projects), and (2) choose "Create in Dev mode".
+1. Generate the project.
+1. Then the new package should be seen by `atom --dev`, and the source code is linked from not `.atom/package/r-n-atom` but `.atom/dev/package/r-n-atom`.
 
 ## References
 
