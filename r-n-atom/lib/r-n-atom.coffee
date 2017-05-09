@@ -15,6 +15,8 @@ module.exports = RNAtom =
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:toggle': => @toggle()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:generate-item': => @generateItem()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:use-template-strs': => @useTemplate('StRS')
 
   deactivate: ->
     @modalPanel.destroy()
@@ -31,3 +33,12 @@ module.exports = RNAtom =
       @modalPanel.hide()
     else
       @modalPanel.show()
+
+  generateItem: ->
+    console.log 'generate a new traceable item'
+
+    if editor = atom.workspace.getActiveTextEditor()
+      editor.insertText('- [fill-in-the-id-later]{}')
+
+  useTemplate: (template) ->
+    console.log 'Use template: ' + template

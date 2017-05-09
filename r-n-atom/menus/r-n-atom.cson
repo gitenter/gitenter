@@ -1,13 +1,13 @@
 # See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
 {
   "context-menu": {
-    ".tree-view .selected": [
+    ".tree-view.full-menu": [
       {
         "label": "Create File from RNAtom Template",
         "submenu": [
           {
             "label": "Stackholder Requirement Specification",
-            "command": "r-n-atom:toggle"
+            "command": "r-n-atom:use-template-strs"
           },
           {
             "label": "System Requirement Specification",
@@ -18,11 +18,11 @@
     ],
     "atom-text-editor": [
       {
-        "label": "Generate New RNAtom Item ID",
-        "command": "r-n-atom:toggle"
+        "label": "Generate a New Traceable Item",
+        "command": "r-n-atom:generate-item"
       },
       {
-        "label": "Traced to this RNAtom Item",
+        "label": "Traced to this Item",
         "command": "r-n-atom:toggle"
       }
     ]
@@ -32,7 +32,7 @@
       "label": "Packages",
       "submenu": [
         {
-          "label": "RNAtom",
+          "label": "RNAtom Editor",
           "submenu": [
             {
               "label": "Fill in with Template",
@@ -48,8 +48,8 @@
               ]
             },
             {
-              "label": "Generate New Item ID",
-              "command": "r-n-atom:toggle"
+              "label": "Generate a New Traceable Item",
+              "command": "r-n-atom:generate-item"
             },
             {
               "label": "Traced to this Item",
