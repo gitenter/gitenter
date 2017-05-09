@@ -15,6 +15,10 @@ User defined functionalities can either be (1) standing alone packages, or (2) j
 
 When defining new functionalities, you (1) `atom.commands.add` and define what need to be done as a JavaScript closure, (2) may keybinding it to a keyboard shortcut if desired.
 
+## Development environment
+
+May use an Atom package called [package-generator](https://github.com/atom/package-generator). That helps (1) generate the folder structure, and (2) link this folder from `.atom/package/r-n-atom` which is this package's name.
+
 ## References
 
 1. [Atom Flight Manual](http://flight-manual.atom.io/)
