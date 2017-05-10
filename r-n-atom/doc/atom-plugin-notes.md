@@ -25,6 +25,12 @@ For doing that, you should
 1. Generate the project.
 1. Then the new package should be seen by `atom --dev`, and the source code is linked from not `.atom/package/r-n-atom` but `.atom/dev/package/r-n-atom`.
 
+## Debugging tricks
+
+1. `Ctrl`+`Shift`+`i` for the console.
+1. `Ctrl`+`Shift`+`p` and type `Window: Reload`, or `Ctrl`+`Shift`+`F5` for reload the developed plugin for further tests.
+1. `console.log` for write to the console for debugging.
+
 ## References
 
 1. [Atom Flight Manual](http://flight-manual.atom.io/)
