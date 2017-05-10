@@ -13,11 +13,10 @@ module.exports = RNAtom =
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
-    # Register command that toggles this view
+    # Register commands
     @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:toggle': => @toggle()
     @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:generate-traceable-item': => @generateTraceableItem()
     @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:refer-to-upstream-items': => @referToUpstreamItems()
-    @subscriptions.add atom.commands.add 'atom-workspace', 'r-n-atom:use-template-strs': => @useTemplate('StRS')
 
   deactivate: ->
     @modalPanel.destroy()
@@ -71,8 +70,11 @@ module.exports = RNAtom =
       currentLine = lines[editor.getCursorBufferPosition().row]
 
       if match = /^\t*-\s\[(.*)\]\{(.*)\}/i.exec currentLine
-        references = match[2].split ','
-        
+        references = []
+        if match[2] != ''
+          references = match[2].split ','
+        console.log references
+
         for reference in references
           referenceTag = reference[0...-5]
           filepath = editor.buffer.file.path.replace filenameTag, referenceTag
@@ -84,6 +86,3 @@ module.exports = RNAtom =
           #TODO
           #Currently cannot on to the line where the refered item stays.
           atom.workspace.open(filepath, 0, 0, 'right', false, false, false, false)
-
-  useTemplate: (template) ->
-    console.log 'Use template: ' + template
