@@ -10,3 +10,4 @@
 'atom-workspace':
   'ctrl-alt-o': 'r-n-atom:toggle'
   'ctrl-alt-i': 'r-n-atom:generate-traceable-item'
+  'ctrl-alt-r': 'r-n-atom:refer-to-upstream-items'

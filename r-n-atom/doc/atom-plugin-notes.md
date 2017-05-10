@@ -31,6 +31,8 @@ For doing that, you should
 1. `Ctrl`+`Shift`+`p` and type `Window: Reload`, or `Ctrl`+`Shift`+`F5` for reload the developed plugin for further tests.
 1. `console.log` for write to the console for debugging.
 
+- [atom-plugin-notes-0001]{abc-0001,edf-ghi-0002}
+
 ## References
 
 1. [Atom Flight Manual](http://flight-manual.atom.io/)

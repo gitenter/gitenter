@@ -22,8 +22,8 @@
         "command": "r-n-atom:generate-traceable-item"
       },
       {
-        "label": "Traced to this Item",
-        "command": "r-n-atom:toggle"
+        "label": "Refer-to Upstream Items",
+        "command": "r-n-atom:refer-to-upstream-items"
       }
     ]
   },
@@ -52,8 +52,8 @@
               "command": "r-n-atom:generate-traceable-item"
             },
             {
-              "label": "Traced to this Item",
-              "command": "r-n-atom:toggle"
+              "label": "Refer to Upstream Items",
+              "command": "r-n-atom:refer-to-upstream-items"
             }
           ]
         }
