@@ -35,10 +35,26 @@ module.exports = RNAtom =
       @modalPanel.show()
 
   generateTraceableItem: ->
-    console.log 'generate a new traceable item'
+    console.log 'Generate a new traceable item'
 
     if editor = atom.workspace.getActiveTextEditor()
-      editor.insertText('- [fill-in-the-id-later]{}')
+      filenameTag = editor?.buffer.file?.getBaseName().split('.')[0]
+
+      lines = editor.getText().split '\n'
+      itemIds = []
+      for line,i in lines
+        if match = /^\t*-\s\[(.*)\]\{(.*)\}/i.exec line
+          item = match[1]
+          itemId = item.split(filenameTag + '-')[1]
+          if itemId?   #If itemId is not "undefined"
+            itemIds.push +itemId   #The plus sign convents string to int
+
+      newItemId = 0
+      if itemIds.length != 0
+        newItemId = itemIds.reduce (a,b) -> Math.max a, b   #ES5 reduce method to calculate the max of an array
+      ++newItemId
+
+      editor.insertText('- [' + filenameTag + '-' + '0000'.substr(0, 4-(''+newItemId).length) + newItemId + ']{}')
 
   useTemplate: (template) ->
     console.log 'Use template: ' + template
