@@ -1,29 +1,14 @@
 # See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
 {
   "context-menu": {
-    ".tree-view.full-menu": [
-      {
-        "label": "Create File from RNAtom Template",
-        "submenu": [
-          {
-            "label": "Stackholder...",
-            "command": "r-n-atom:use-template-strs"
-          },
-          {
-            "label": "System...",
-            "command": "r-n-atom:toggle"
-          }
-        ]
-      }
-    ],
     "atom-text-editor": [
       {
         "label": "Generate a New Traceable Item",
         "command": "r-n-atom:generate-traceable-item"
       },
       {
-        "label": "Traced to this Item",
-        "command": "r-n-atom:toggle"
+        "label": "Refer-to Upstream Items",
+        "command": "r-n-atom:refer-to-upstream-items"
       }
     ]
   },
@@ -35,25 +20,12 @@
           "label": "RNAtom Editor",
           "submenu": [
             {
-              "label": "Fill in with Template",
-              "submenu": [
-                {
-                  "label": "Stackholder...",
-                  "command": "r-n-atom:toggle"
-                },
-                {
-                  "label": "System...",
-                  "command": "r-n-atom:toggle"
-                }
-              ]
-            },
-            {
               "label": "Generate a New Traceable Item",
               "command": "r-n-atom:generate-traceable-item"
             },
             {
-              "label": "Traced to this Item",
-              "command": "r-n-atom:toggle"
+              "label": "Refer to Upstream Items",
+              "command": "r-n-atom:refer-to-upstream-items"
             }
           ]
         }

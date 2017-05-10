@@ -1,5 +1,6 @@
-# r-n-atom package
+# RNAtom
 
-A short description of your package.
+## Usage
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+1. `Ctrl`+`Alt`+`i` for inserting a new item with traceable ID.
+1. `Ctrl`+`Alt`+`r` for opening all the referred items of the current line (only partially implemented).

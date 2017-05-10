@@ -7,7 +7,7 @@
   ],
   "activationCommands": {
     "atom-workspace": "r-n-atom:toggle",
-    "atom-workspace": "r-n-atom:use-template-strs",
+    "atom-workspace": "r-n-atom:refer-to-upstream-items",
     "atom-workspace": "r-n-atom:generate-traceable-item"
   },
   "repository": "https://github.com/zooo/enterovirus/tree/master/r-n-atom",
