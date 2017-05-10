@@ -58,7 +58,7 @@ module.exports = RNAtom =
         editor.insertText('- [' + filenameTag + '-' + '0000'.substr(0, 4-(''+newItemId).length) + newItemId + ']{}')
 
   #TODO
-  #Currently this method can only find refered items in files
+  #Currently this method can only find referred items in files
   #in the same directory level. Should extend it to the entire project.
   referToUpstreamItems: ->
     console.log 'Refer to upstream items'
@@ -84,5 +84,5 @@ module.exports = RNAtom =
           #Currently it open no mattere whether the file indeed exist.
           #Should open only if it exists.
           #TODO
-          #Currently cannot on to the line where the refered item stays.
+          #Currently cannot on to the line where the referred item stays.
           atom.workspace.open(filepath, 0, 0, 'right', false, false, false, false)
