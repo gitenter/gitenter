@@ -14,10 +14,10 @@ Under the client-server model
 Authentication
 
 + Password: Less secure. Not recommended.
-+ SSH key: a matching pair of cryptographic keys contains 
++ SSH key: a matching pair of cryptographic keys contains
 	+ A public key: listed in server location `~/.ssh/authorized_keys`.
 	+ A private key: in client's place.
-	+ Authentication procedure: 
+	+ Authentication procedure:
 		+ Client tells server which public key to use.
 		+ Server generate a random string and encrypts it using the public key.
 		+ Client decrypt the string using primary key.
@@ -28,7 +28,7 @@ Authentication
 
 Generation method
 
-+ RSA 
++ RSA
 	+ User command `ssh-keygen`, or `ssh-keygen -t rsa`.
 	+ The default place to store the private key is `~/.ssh/id_rsa` (SSH client to find the keys automatically), and the default place for the public key is `~/.ssh/id_rsa.pub`.
 	+ May enter a **passphrase**, then it is needed every time you access the private key. Blank should be okay.
@@ -46,6 +46,8 @@ Copying public key to a server
 + With (1) SSH-Copy-ID utility and (2) password-based SSH access: `ssh-copy-id username@remote_host` then provide the server password. Then `~/.ssh/id_rsa.pub` will be automatically added to the server's `~/.ssh/authorized_keys`.
 + Without SSH-Copy-ID utility but has (1) password-based SSH access: `cat ~/.ssh/id_rsa.pub | ssh username@remote_host "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"` then provide the server password.
 + Manually without password-based SSH access: `cd` to the remote `~/.ssh` and `echo public_key_string >> ~/.ssh/authorized_keys`.
+
+There is no upper limit for the number of maximal authorized keys. But as SSH just do a [linear scanning](https://serverfault.com/questions/486598/which-is-the-maximum-number-of-keys-in-authorized-keys-file) on the `authorized_keys` folder, you face bottleneck after 5000 keys (1 second). Possible solutions may refer to [here](https://groups.google.com/forum/#!topic/gitolite/RuN2mGKeDo4) and [here](https://groups.google.com/forum/#!searchin/gitolite/jason$20donenfeld/gitolite/ya-YVHi_YYg/wQwKO1izBZwJ) (didn't read yet).
 
 ## (1) Build connection and (2) client-side configuration
 
@@ -93,7 +95,7 @@ Host testhost
 + Disabling host checking
 	+ Procedure: (1) `StrictHostKeyChecking no` to add new host automatically to the `~/.ssh/known_hosts` file, (2) `UserKnownHostsFile /dev/null` for not warning.
 	+ Default values are `StrictHostKeyChecking ask` and `UserKnownHostsFile /home/demo/.ssh/known_hosts`.
-+ Multiplexing: 
++ Multiplexing:
 	+ Why to use: reduce the time taking to establish a new TCP connection.
 	+ Why it works: Re-uses the same (client-side) TCP connection for multiple SSH sessions. Save time needed for establish new sessions.
 	+ Procedure: In `~/.ssh/config`, setup (1) `ControlMaster auto` to allow multiplexing. (2) `ControlPath ~/.ssh/multiplex/%r@%h:%p` to establish the path to control socket. (3) `ControlPersist 1` to allow the initial master connection to be backgrounded, and the TCP connection should automatically terminate one second. after the last SSH session is closed. (4) actually create the directory `mkdir ~/.ssh/multiplex`.
@@ -157,4 +159,3 @@ Withing the SSH shell from the client side
 ## References
 
 1. [SSH Essentials: Working with SSH Servers, Clients, and Keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys)
-1. [Understanding the SSH Encryption and Connection Process](https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process)
