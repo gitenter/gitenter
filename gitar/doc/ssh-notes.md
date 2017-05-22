@@ -131,7 +131,7 @@ local-pc$ ssh -L local-port:remote-pc-IP:remote-port remote-username@remote-pc-I
 local-pc$ ping localhost:local-port   # ----> redirect to remote-IP:remote-port
 ```
 
-Remote tunneling: Connect from the local side.
+Remote tunneling: Connect from the local side. (From the remote machine) access the remote port to touch the local port.
 
 ```
 local-pc$ ssh -R remote-port:remote-pc-IP:local-port remote-username@remote-pc-IP
