@@ -33,12 +33,15 @@ ADD gitar/resources/id_rsa.pub /home/git/.ssh/authorized_keys
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
-#USER git
-#WORKDIR /home/git
-
 #RUN mkdir -p .ssh
 
 ################## Setup GIT Connection ###################
+
+#USER git
+#WORKDIR /home/git
+
+#RUN git init --bare server.git
+RUN git init --bare /home/git/server.git
 
 EXPOSE 9418
 
