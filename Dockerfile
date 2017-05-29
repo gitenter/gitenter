@@ -1,11 +1,20 @@
 FROM ubuntu:16.04
 
+#################### Install Packages #####################
+
 RUN apt-get update
 RUN apt-get -y install openssh-server
 RUN apt-get -y install git
 
+###################### Setup Users ########################
+
+RUN useradd -ms /bin/bash git
+RUN echo 'git:password' | chpasswd
+
+################## Setup SSH Connection ###################
+
 RUN mkdir /var/run/sshd
-RUN echo 'root:screencast' | chpasswd
+RUN echo 'root:password' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
@@ -24,7 +33,6 @@ CMD ["/usr/sbin/sshd", "-D"]
 
 
 
-#RUN useradd -ms /bin/bash git
 
 #USER git
 #WORKDIR /home/git
