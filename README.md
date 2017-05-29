@@ -11,11 +11,11 @@ sudo docker stop gitar
 sudo docker rm $(sudo docker ps -a -q -f status=exited)
 sudo docker build -t ozooxo/enterovirus .
 sudo docker run -d -p 52022:22 --name gitar ozooxo/enterovirus
-sudo docker port gitar
+#sudo docker port gitar
 ```
 
-Log in
+Log in by user git
 
 ```
-ssh root@0.0.0.0 -p 52022
+ssh git@0.0.0.0 -p 52022
 ```
