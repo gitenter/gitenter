@@ -55,30 +55,6 @@ Business:
 
 These parties are equally important for the success of the product. But in this series of documents, we'll concentrate mostly for the customer and technical concerns.
 
-## Business management requirements
-
-### Business environment
-
-### Goal and objective
-
-### Business model
-
-### Information environment
-
-## Business operational requirements
-
-### Business processes
-
-### Business operational policies and rules
-
-### Business operational constrains
-
-### Business operational modes
-
-### Business operational quality
-
-### Business structure
-
 ## User requirements
 
 ### User needs
@@ -86,8 +62,13 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0001]{} The software shall be used as an aid of quality control procedure for R&D activities of a future product.
 - [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
+- [StRS-0013]{StRS-0001} The software may be used for software development.
+- [StRS-0014]{StRS-0001} The software may be used for development of quality sensitive products.
+- [StRS-0015]{StRS-0014} The software may be used for medical device development.
+- [StRS-0016]{StRS-0014} The software may be used in energy related industries.
+- [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
 - [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
-- [StRS-0007]{StRS-0001} The software shall provide tools to help collebrating various documents used in quality control procedure.
+- [StRS-0007]{StRS-0001} The software shall provide tools to help collaborating various documents used in quality control procedure.
 - [StRS-0002]{StRS-0007} The software shall provide tools for requirement engineering.
 - [StRS-0008]{StRS-0007} The software shall provide tools for design control.
 - [StRS-0004]{StRS-0007} The software shall help recording the versions of various documents.
@@ -112,6 +93,32 @@ These parties are equally important for the success of the product. But in this 
 ### Operational concept
 
 ### Operational scenario
+
+## Business management requirements
+
+### Business environment
+
+- [StRS-0012]{StRS-0013} The software shall not provide duplicated functions of version control/continuous integration tools of code.
+
+### Goal and objective
+
+### Business model
+
+### Information environment
+
+## Business operational requirements
+
+### Business processes
+
+### Business operational policies and rules
+
+### Business operational constrains
+
+### Business operational modes
+
+### Business operational quality
+
+### Business structure
 
 ## Project Constrains
 

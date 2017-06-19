@@ -57,7 +57,7 @@ in each group, and the nature of their use of the system.)*
 
 ### Functional requirements
 
-- [SyRS-0002]{StRS-0010} The software shall support standards of software development.
+- [SyRS-0002]{StRS-0013,StRS-0010} The software shall support standards of software development.
 - [SyRS-0004]{StRS-0003,SyRS-0002} The software shall support CMMI.
 - [SyRS-0005]{SyRS-0002} The software shall support various ISO/IEC/IEEE standards of software development.
 - [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support ISO/IEC/IEEE 12207: Systems and software engineering -- Software life cycle processes.
@@ -67,20 +67,23 @@ in each group, and the nature of their use of the system.)*
 - [SyRS-0009]{StRS-0002,SyRS-0005} The software shall support IEEE 1233: IEEE Guide for Developing System Requirements Specifications.
 - [SyRS-0012]{StRS-0008,SyRS-0005} The software shall support IEEE 1016: IEEE Recommended Practice for Software Design Descriptions.
 - [SyRS-0016]{SyRS-0005} The software shall support IEEE 1028: IEEE Standard for Software Reviews and Audits.
-- [SyRS-0003]{StRS-0010} The software shall support standards for medical device development.
+- [SyRS-0003]{StRS-0015,StRS-0010} The software shall support standards for medical device development.
 - [SyRS-0013]{SyRS-0003} The software shall support ISO 13485: Medical devices -- Quality management systems -- Requirements for regulatory purposes.
 - [SyRS-0014]{SyRS-0003} The software shall support FDA's Design Control Guidance for Medical Device Industry.
 - [SyRS-0015]{SyRS-0002,SyRS-0003} The software shall support FDA's General Principles of Software Validation; Final Guidance for Industry and FDA Staff.
-- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a version control software. *(A better name of this software to emphasis collaboration? Version control tools for code is not needed...)*
+- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a file version control software. *(A better name of this software to emphasis collaboration? Version control tools for code is not needed...)*
 - [SyRS-0019]{StRS-0007,SyRS-0001} The software shall be flexible to the case that only part of files under version control are quality control documents.
+- [SyRS-0028]{SyRS-0019} The software shall provide APIs with version control/continuous integration tools of code.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level: regular author backup, pending changes/different opinions, changes approved as a group decision, ...
 - [SyRS-0010]{SyRS-0006,SyRS-0007} The software shall provide tools related to the traceability of requirement/design items.
+- [SyRS-0029]{StRS-0002} The software shall provide tools to analyze the stakeholder priority, risk, rationale, and difficulty of each requirement.
+- [SyRS-0030]{StRS-0002,StRS-0008} The software shall provide tools to mark whether a requirement/design has been implemented and/or tested.
 - [SyRS-0024]{SyRS-0016} The software shall provide a flexible way of various review activities, which can be either a formal review meeting, or discussions on top of a web service.
 - [SyRS-0018]{StRS-0011,SyRS-0016} The software shall support authorized user to setup some frozen time stamp as a milestone of the development life cycle.
 - [SyRS-0025]{SyRS-0018,SyRS-0024} Formal review activities can only be based on the a frozen time stamp.
 - [SyRS-0023]{SyRS-0024} The software shall support recoding the meeting moments of the formal review meetings.
 - [SyRS-0017]{SyRS-0024,SyRS-0018} The software shall support various different users to submit comments, which will be gathered and later discussed in a review meeting.
-- [SyRS-0027]{SyRS-0024} The software shall support users to make discussions on documents.
+- [SyRS-0027]{SyRS-0024} The software shall support users to make discussions on documents and changes.
 - [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can edit/approval changes of the documents.
 
 ### Usability requirements
