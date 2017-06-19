@@ -86,6 +86,7 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0001]{} The software shall be used as an aid of quality control procedure for R&D activities of a future product.
 - [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
+- [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
 - [StRS-0007]{StRS-0001} The software shall provide tools to help editing various documents used in quality control procedure.
 - [StRS-0002]{StRS-0007} The software shall provide tools for requirement engineering.
 - [StRS-0008]{StRS-0007} The software shall provide tools for design control.
