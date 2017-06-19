@@ -87,7 +87,7 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
 - [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
-- [StRS-0007]{StRS-0001} The software shall provide tools to help editing various documents used in quality control procedure.
+- [StRS-0007]{StRS-0001} The software shall provide tools to help collebrating various documents used in quality control procedure.
 - [StRS-0002]{StRS-0007} The software shall provide tools for requirement engineering.
 - [StRS-0008]{StRS-0007} The software shall provide tools for design control.
 - [StRS-0004]{StRS-0007} The software shall help recording the versions of various documents.
@@ -95,6 +95,7 @@ These parties are equally important for the success of the product. But in this 
 ### Operational scenarios
 
 - [StRS-0009]{StRS-0001} The software shall support multiple users work together for the R&D activity of a single product.
+- [StRS-0011]{StRS-0009} The software shall support users of various different roles: project manager, technical manager, business analyzer, architect, developer, tester/QA engineer, ...
 
 ### Operational environment
 
