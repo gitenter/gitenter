@@ -32,6 +32,29 @@
 
 ## Stakeholders
 
+We'll divide our stakeholders into three different parties.
+
+Customer:
+
+- R&D engineers (users).
+- Companies which obey quality control procedure.
+- Regulatory departments.
+
+Technical:
+
+- Developers.
+- Operational engineers.
+- Infrastructure provider.
+
+Business:
+
+- Owners. *(profitability/market share/succession planning)*
+- Distributor/partner.
+- Shareholders/investors. *(return of investment/income)*
+- Employees. *(Job satisfaction)*
+
+These parties are equally important for the success of the product. But in this series of documents, we'll concentrate mostly for the customer and technical concerns.
+
 ## Business management requirements
 
 ### Business environment
@@ -60,9 +83,21 @@
 
 ### User needs
 
+- [StRS-0001]{} The software shall be used as an aid of quality control procedure for R&D activities of a future product.
+- [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
+- [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
+- [StRS-0007]{StRS-0001} The software shall provide tools to help editing various documents used in quality control procedure.
+- [StRS-0002]{StRS-0007} The software shall provide tools for requirement engineering.
+- [StRS-0008]{StRS-0007} The software shall provide tools for design control.
+- [StRS-0004]{StRS-0007} The software shall help recording the versions of various documents.
+
 ### Operational scenarios
 
+- [StRS-0009]{StRS-0001} The software shall support multiple users work together for the R&D activity of a single product.
+
 ### Operational environment
+
+- [StRS-0006]{} Both local files/applications and web services are needed while using this software.
 
 ### Performance
 
@@ -79,3 +114,7 @@
 ## Project Constrains
 
 ## Bibliography
+
+1. ISO/IEC/IEEE 29148:2011, System and software engineering -- Life cycle processes -- Requirement engineering.
+2. ISO/IEC/IEEE 15288:2008, System and software engineering -- System life cycle process.
+3. A guide to the Project Management Body of Knowledge (PMBOK Guide).
