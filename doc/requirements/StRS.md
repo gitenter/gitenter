@@ -28,6 +28,10 @@
 
 ### Definition
 
++ **Revision control system:** A standalone software application that tracks and provides control over changes to source code.
++ **Revision control platform:** A web-based revision control repository and Internet hosting service.
++ **Word processor:** A computer software application, that performs the task of composing, editing, formatting, and printing of documents.
+
 ### Acronyms and abbreviations
 
 ## Stakeholders
@@ -70,6 +74,7 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
 - [StRS-0002]{StRS-0001} The software shall be used for the documents of requirement engineering.
 - [StRS-0008]{StRS-0001} The software shall be used for the documents of design control.
+- [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processor to edit the documents.
 - [StRS-0004]{StRS-0001} The software shall help recording the evolution history and versions of official documents.
 - [StRS-0018]{StRS-0001} The software shall assist various activities to establish the documentation system.
 
@@ -98,7 +103,8 @@ These parties are equally important for the success of the product. But in this 
 
 ### Business environment
 
-- [StRS-0012]{StRS-0013} The software shall not provide duplicated functions of version control/continuous integration tools of code.
+- [StRS-0019]{StRS-0020} The software shall not provide duplicated functions of word processor.
+- [StRS-0012]{StRS-0004} The software shall not provide duplicated functions of code revision control platforms.
 
 ### Goal and objective
 
