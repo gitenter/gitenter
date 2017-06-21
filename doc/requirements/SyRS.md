@@ -71,14 +71,15 @@ in each group, and the nature of their use of the system.)*
 - [SyRS-0013]{SyRS-0003} The software shall support ISO 13485: Medical devices -- Quality management systems -- Requirements for regulatory purposes.
 - [SyRS-0014]{SyRS-0003} The software shall support FDA's Design Control Guidance for Medical Device Industry.
 - [SyRS-0015]{SyRS-0002,SyRS-0003} The software shall support FDA's General Principles of Software Validation; Final Guidance for Industry and FDA Staff.
-- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a file version control software. *(A better name of this software to emphasis collaboration? Version control tools for code is not needed...)*
-- [SyRS-0019]{StRS-0007,SyRS-0001} The software shall be flexible to the case that only part of files under version control are quality control documents.
-- [SyRS-0028]{SyRS-0019} The software shall provide APIs with version control/continuous integration tools of code.
-- [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level: regular author backup, pending changes/different opinions, changes approved as a group decision, ...
-- [SyRS-0010]{SyRS-0006,SyRS-0007} The software shall provide tools related to the traceability of requirement/design items.
-- [SyRS-0029]{StRS-0002} The software shall provide tools to analyze the stakeholder priority, risk, rationale, and difficulty of each requirement.
-- [SyRS-0030]{StRS-0002,StRS-0008} The software shall provide tools to mark whether a requirement/design has been implemented and/or tested.
-- [SyRS-0024]{SyRS-0016} The software shall provide a flexible way of various review activities, which can be either a formal review meeting, or discussions on top of a web service.
+- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a [revision control system](https://en.wikipedia.org/wiki/Version_control), to (1) monitor the evolution of the targeting documents, and (2) integrate the works of multiple users.
+- [SyRS-0019]{StRS-0001,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are quality control documents.
+- [SyRS-0031]{StRS-0001,StRS-0010} The software shall provide templates of the documents based on the regulatory requirements.
+- [SyRS-0028]{SyRS-0019} The software shall provide APIs with code revision control platforms.
+- [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level: regular backups by authors, pending changes/different opinions, changes approved as a group decision, ...
+- [SyRS-0010]{StRS-0018,SyRS-0006,SyRS-0007} The software shall provide tools related to the traceability of requirement/design items.
+- [SyRS-0029]{StRS-0002,StRS-0018} The software shall provide tools to analyze the (1) stakeholder priority, (2) risk, (3) rationale, and (4) difficulty of each requirement.
+- [SyRS-0030]{StRS-0002,StRS-0008,StRS-0018} The software shall provide tools to help tracking whether a requirement/design has been implemented and/or tested.
+- [SyRS-0024]{StRS-0018,SyRS-0016} The software shall provide a flexible way of various review activities, which can be either a formal review meeting, or discussions on top of a web service.
 - [SyRS-0018]{StRS-0011,SyRS-0016} The software shall support authorized user to setup some frozen time stamp as a milestone of the development life cycle.
 - [SyRS-0025]{SyRS-0018,SyRS-0024} Formal review activities can only be based on the a frozen time stamp.
 - [SyRS-0023]{SyRS-0024} The software shall support recoding the meeting moments of the formal review meetings.
@@ -88,7 +89,7 @@ in each group, and the nature of their use of the system.)*
 
 ### Usability requirements
 
-- [SyRS-0020]{StRS-0007,StRS-0006,SyRS-0017} Web services shall be sufficient for user to (1) view and (2) comment on documents.
+- [SyRS-0020]{StRS-0001,StRS-0006,SyRS-0017} Web services shall be sufficient for user to (1) view and (2) comment on documents.
 - [SyRS-0021]{StRS-0006} Local applications provide advanced tools for user to edit the documents.
 
 ### Performance requirements

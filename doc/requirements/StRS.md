@@ -59,7 +59,7 @@ These parties are equally important for the success of the product. But in this 
 
 ### User needs
 
-- [StRS-0001]{} The software shall be used as an aid of quality control procedure for R&D activities of a future product.
+- [StRS-0001]{} The software shall provide tools to help establishing various official documents used in quality control procedure for R&D activities of a future product.
 - [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
 - [StRS-0013]{StRS-0001} The software may be used for software development.
@@ -68,14 +68,14 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0016]{StRS-0014} The software may be used in energy related industries.
 - [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
 - [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
-- [StRS-0007]{StRS-0001} The software shall provide tools to help collaborating various documents used in quality control procedure.
-- [StRS-0002]{StRS-0007} The software shall provide tools for requirement engineering.
-- [StRS-0008]{StRS-0007} The software shall provide tools for design control.
-- [StRS-0004]{StRS-0007} The software shall help recording the versions of various documents.
+- [StRS-0002]{StRS-0001} The software shall be used for the documents of requirement engineering.
+- [StRS-0008]{StRS-0001} The software shall be used for the documents of design control.
+- [StRS-0004]{StRS-0001} The software shall help recording the evolution history and versions of official documents.
+- [StRS-0018]{StRS-0001} The software shall assist various activities to establish the documentation system.
 
 ### Operational scenarios
 
-- [StRS-0009]{StRS-0001} The software shall support multiple users work together for the R&D activity of a single product.
+- [StRS-0009]{StRS-0001} The software shall support multiple users working together for a single product.
 - [StRS-0011]{StRS-0009} The software shall support users of various different roles: project manager, technical manager, business analyzer, architect, developer, tester/QA engineer, ...
 
 ### Operational environment
