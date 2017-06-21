@@ -18,7 +18,28 @@
 
 ### Business purpose
 
+*(Describe the reason and background for pursuing new business or changing the current business.)*
+
+Revision control is needed for serious documentation system which includes multiple related documents and/or collaborate between multiple people. Examples includes: (1) enterprise rules/regulations and requirement/design documents, (2) enactment of legal system/laws *(Better word?)* *(It seems only Civil law fits. Common law fits better to a database/search engine?)*, (3) research/knowledge management notes and papers, ...
+
+However, while there are various different tools for source code revision control and collaboration, similar tool does not exist for documents. Alternative solutions includes:
+
++ Google Drive or similar services: multiple users can collaborate and edit **one single** document simultaneously.
++ Atlassian Confluence or similar services: mostly an on-line word processor of a project with multiple documents, without providing advanced tools for collaboration.
++ Wiki: can build relations between different items, but in a really less official and anarchical way.
++ Naive and simple version numbers.
+
+We are going to make a tool which provide the flexibility and complicity of a source code revision control system, but fits better to document collaboration.
+
 ### Business scope
+
+*(Identifying the business domain by name.)*
+
+*(Defining the range of business activities included in the business domain concerned.)*
+
+*(Describing the scope of the system being developed or changed.)*
+
+Currently, we only aim on serving enterprise requirement/design documents.
 
 ### Business overview
 
