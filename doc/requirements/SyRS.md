@@ -22,7 +22,7 @@
 
 ### System scope
 
-**System name:**
+**System name:** Enterovirus.
 
 **Results of finalized needs analysis:** *((1) A brief but clear expression of the user's problem(s). (2) The system will and will not do to satisfy those needs.)*
 
