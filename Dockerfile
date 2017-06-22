@@ -3,8 +3,13 @@ FROM ubuntu:16.04
 #################### Install Packages #####################
 
 RUN apt-get update
+
+# Various installations need to be done before other setups,
+# rather than to be done separately for the setup of indivitual
+# services.
 RUN apt-get -y install openssh-server
 RUN apt-get -y install git
+RUN apt-get -y install tomcat8
 
 ###################### Setup Users ########################
 
@@ -45,9 +50,8 @@ RUN git init --bare /home/git/server.git
 
 EXPOSE 9418
 
+###################### Setup Tomcat #######################
 
+ADD capsid/target/capsid-0.0.1-alpha.war /var/lib/tomcat8/webapps
 
-
-
-
-
+EXPOSE 8080
