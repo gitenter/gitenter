@@ -7,7 +7,7 @@ Enterovirus is not a computer virus!
 (Re-)build image
 
 ```
-#sudo docker stop gitar
+sudo docker stop gitar
 #sudo docker rm gitar
 sudo docker rm $(sudo docker ps -a -q -f status=exited)
 sudo docker rmi ozooxo/enterovirus
