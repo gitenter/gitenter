@@ -7,7 +7,7 @@ Key words:
 + Image: Linux OS w/ various associated dependencies/environment needed.
 + Container: Running instance of images.
 
-Compare to virtual machines (VMs): 
+Compare to virtual machines (VMs):
 
 + VM:
 	+ Running in a *guest* OS for which the hardwares are all virtual/powered by the host OS.
@@ -38,7 +38,7 @@ Parts:
 May add `sudo` or create a group for associated permissions.
 
 + Setup: `docker pull [image-name]`
-+ Show all: 
++ Show all:
 	+ Images/Repositories: `docker images`
 	+ Container: `docker ps` (the ones running)/`docker ps -a` (historic)
 + Delete:
@@ -78,7 +78,7 @@ Dockerfile syntax to define the associated image:
 	+ Create symbolic links: `RUN ln -s ...`
 + Copy our application into a new volume in the container: `ADD [current-directory] [target-directory-in-container]`
 	+ Then setup the working directory by `WORKDIR [some-container-directory]`
-	+ Create mount-point for a volume by `VOLUME [some-container-directory`. It is typically for data, and data is highly recommended to be kept out of the container.
+	+ Create mount-point for a volume by `VOLUME [some-container-directory]`. It is typically for data, and data is highly recommended to be kept out of the container.
 	+ May include a `.dockerignore` file in the root, so when `docker build` the unnecessary files will not be included.
 + Container executing command `CMD` (executes when launch the build image).
 	+ Syntax: `CMD ["command-string-1", "command-string-2", ...]`
