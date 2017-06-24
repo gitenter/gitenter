@@ -7,7 +7,8 @@ Enterovirus is not a computer virus!
 (Re-)build image
 
 ```
-sudo docker stop gitar
+#sudo docker stop gitar
+#sudo docker rm gitar
 sudo docker rm $(sudo docker ps -a -q -f status=exited)
 sudo docker rmi ozooxo/enterovirus
 sudo docker build -t ozooxo/enterovirus .
@@ -34,7 +35,7 @@ git clone ssh://git@0.0.0.0:52418/home/git/server.git
 git clone git@0.0.0.0:52418/home/git/server.git
 ```
 
-Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the browser / not working)
+Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the browser)
 
 ```
 http://0.0.0.0:58080/capsid-0.0.1-alpha
