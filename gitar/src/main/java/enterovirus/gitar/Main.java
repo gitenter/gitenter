@@ -3,6 +3,7 @@ package enterovirus.gitar;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -33,17 +34,16 @@ public class Main {
 		
 		System.out.println("Last commit info (tree ObjectId + parent commit ObjectId + message)==========");
 		ObjectLoader loader = repo.open(master.getObjectId());
-		loader.copyTo(System.out);
-		System.out.println("\n\n");
-		
-		System.out.println("Last commit byte=========");
 		byte[] data = loader.getBytes();
-		System.out.println(data);
+		System.out.println(new String(data));
 		System.out.println("\n\n");
 		
 		RevWalk revWalk = new RevWalk(repo);
 		RevCommit commit = revWalk.parseCommit(master.getObjectId());
-		System.out.println("Last commit ObjectId======"+commit);
+		System.out.println("Master ObjectId=========== "+master.getObjectId());
+		System.out.println("Master commit Id======"+commit);
+		System.out.println("Last commit ObjectId======="+repo.resolve(Constants.HEAD));
+		System.out.println("\n\n");
 		
 //		RevTree tree = walk.parseTree(commit.getTree().getId());
 		RevTree tree = commit.getTree();
@@ -59,12 +59,18 @@ public class Main {
 		TreeWalk treeWalk = new TreeWalk(repo);
 		treeWalk.addTree(tree);
 		treeWalk.setRecursive(true);
-		treeWalk.setFilter(PathFilter.create("test-add-a-file-from-client_1"));
+//		treeWalk.setFilter(PathFilter.create("test-add-a-file-from-client_1"));
+		treeWalk.setFilter(PathFilter.create("test-add-another-file"));
+//		treeWalk.setFilter(null);
+		if (!treeWalk.next()) {
+			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
+			throw new IllegalStateException("Did not find expected file");
+		}
 		loader = repo.open(treeWalk.getObjectId(0));
-		loader.copyTo(System.out);
+		System.out.println(new String(loader.getBytes()));
+//		loader.copyTo(System.out);
 		
-		revWalk.dispose();
-		
+		revWalk.dispose();	
 	}
 	
 	public static void main(String[] args) throws IOException {
