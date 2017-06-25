@@ -60,7 +60,9 @@ public class Main {
 		treeWalk.addTree(tree);
 		treeWalk.setRecursive(true);
 //		treeWalk.setFilter(PathFilter.create("test-add-a-file-from-client_1"));
-		treeWalk.setFilter(PathFilter.create("test-add-another-file"));
+//		treeWalk.setFilter(PathFilter.create("test-add-another-file"));
+//		treeWalk.setFilter(PathFilter.create("same-name-file"));
+		treeWalk.setFilter(PathFilter.create("folder_1/same-name-file"));
 //		treeWalk.setFilter(null);
 		if (!treeWalk.next()) {
 			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
