@@ -23,26 +23,26 @@ public class Main {
 	static void openGit (File file) throws IOException {
 
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repo = builder.setGitDir(file).readEnvironment().findGitDir().build();
-		System.out.println(repo.getDirectory().toString());
+		Repository repository = builder.setGitDir(file).readEnvironment().findGitDir().build();
+		System.out.println(repository.getDirectory().toString());
 
-		Ref master = repo.exactRef("refs/heads/master");
+		Ref master = repository.exactRef("refs/heads/master");
 		System.out.println("Ref master============ "+master);
 		System.out.println("Ref master ObjectId=========== "+master.getObjectId());
 		System.out.println("Ref master target========== "+master.getTarget());
 		System.out.println("\n\n");
 		
 		System.out.println("Last commit info (tree ObjectId + parent commit ObjectId + message)==========");
-		ObjectLoader loader = repo.open(master.getObjectId());
+		ObjectLoader loader = repository.open(master.getObjectId());
 		byte[] data = loader.getBytes();
 		System.out.println(new String(data));
 		System.out.println("\n\n");
 		
-		RevWalk revWalk = new RevWalk(repo);
+		RevWalk revWalk = new RevWalk(repository);
 		RevCommit commit = revWalk.parseCommit(master.getObjectId());
 		System.out.println("Master ObjectId=========== "+master.getObjectId());
 		System.out.println("Master commit Id======"+commit);
-		System.out.println("Last commit ObjectId======="+repo.resolve(Constants.HEAD));
+		System.out.println("Last commit ObjectId======="+repository.resolve(Constants.HEAD));
 		System.out.println("\n\n");
 		
 //		RevTree tree = walk.parseTree(commit.getTree().getId());
@@ -51,12 +51,12 @@ public class Main {
 		System.out.println("\n\n");
 		
 		System.out.println("Tree info (show only the name of the first file???)=========");
-		loader = repo.open(tree.getId());
+		loader = repository.open(tree.getId());
 		loader.copyTo(System.out);
 		System.out.println("\n\n");
 		
 		System.out.println("File content=========");
-		TreeWalk treeWalk = new TreeWalk(repo);
+		TreeWalk treeWalk = new TreeWalk(repository);
 		treeWalk.addTree(tree);
 		treeWalk.setRecursive(true);
 //		treeWalk.setFilter(PathFilter.create("test-add-a-file-from-client_1"));
@@ -68,7 +68,7 @@ public class Main {
 			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
 			throw new IllegalStateException("Did not find expected file");
 		}
-		loader = repo.open(treeWalk.getObjectId(0));
+		loader = repository.open(treeWalk.getObjectId(0));
 		System.out.println(new String(loader.getBytes()));
 //		loader.copyTo(System.out);
 		
