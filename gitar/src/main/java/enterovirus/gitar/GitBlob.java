@@ -78,4 +78,12 @@ public class GitBlob {
 	public byte[] getBlobContent() {
 		return blobContent;
 	}
+	
+	/*
+	 * TODO:
+	 * 
+	 * Using filename and upcasting to inheritance classes
+	 * (e.g. Document file, pictures ...). Or should that
+	 * be the job of capsid the web service??
+	 */
 }
