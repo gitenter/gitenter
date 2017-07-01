@@ -10,15 +10,15 @@ import enterovirus.capsid.domain.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BlobRepositoryTest {
+public class TextFileRepositoryTest {
 
 	@Autowired
-	private BlobRepository repository;
+	private TextFileRepository repository;
 	
 	@Test
 	public void test() throws Exception {
 
-		BlobBean blob = repository.findBlob();
-		System.out.println(new String(blob.getBlobContent()));
+		TextFileBean blob = repository.findTextFile();
+		System.out.println(new String(blob.getContent()));
 	}
 }

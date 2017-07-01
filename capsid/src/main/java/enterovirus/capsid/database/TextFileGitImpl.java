@@ -6,11 +6,13 @@ import enterovirus.capsid.domain.*;
 import enterovirus.gitar.GitSource;
 
 @Repository
-public class BlobGitImpl implements BlobRepository {
+public class TextFileGitImpl implements TextFileRepository {
 
 	private GitSource gitSource;
 	
-	public BlobBean findBlob () {
-		return new BlobBean ();
+	public TextFileBean findTextFile () {
+		TextFileBean textFile = new TextFileBean();
+		textFile.setContent("abcdefg");
+		return textFile;
 	}
 }

@@ -2,7 +2,7 @@ package enterovirus.capsid.database;
 
 import enterovirus.capsid.domain.*;
 
-public interface BlobRepository {
+public interface TextFileRepository {
 
-	public BlobBean findBlob ();
+	public TextFileBean findTextFile ();
 }
