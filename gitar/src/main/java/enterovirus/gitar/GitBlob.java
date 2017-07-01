@@ -16,7 +16,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 public class GitBlob {
 	
-	private byte[] blobContent;
+	byte[] blobContent;
 
 	/*
 	 * TODO: 
