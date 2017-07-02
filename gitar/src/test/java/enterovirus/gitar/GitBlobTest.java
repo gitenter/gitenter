@@ -22,6 +22,11 @@ public class GitBlobTest {
 		
 		gitBlob = new GitBlob("/home/beta/git/client_1/.git", "folder_1/same-name-file");
 		System.out.println(new String(gitBlob.getBlobContent()));
+		
+		GitTextFile gitTextFile;
+		
+		gitTextFile = new GitTextFile("/home/beta/workspace/enterovirus_data/user1/repo1/.git", "folder_1/same-name-file");
+		System.out.println(gitTextFile.getStringContent());
 	}
 
 }

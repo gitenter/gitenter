@@ -52,10 +52,10 @@ public class GitBlob {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(new File(repositoryPath)).readEnvironment().findGitDir().build();
 		
-		Ref master = repository.exactRef("refs/heads/"+branchName);
+		Ref branch = repository.exactRef("refs/heads/"+branchName);
 		
 		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(master.getObjectId());
+		RevCommit commit = revWalk.parseCommit(branch.getObjectId());
 		RevTree revTree = commit.getTree();
 		TreeWalk treeWalk = new TreeWalk(repository);
 		treeWalk.addTree(revTree);

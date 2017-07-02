@@ -18,7 +18,7 @@ public class TextFileRepositoryTest {
 	@Test
 	public void test() throws Exception {
 
-		TextFileBean blob = repository.findTextFile();
-		System.out.println(new String(blob.getContent()));
+		TextFileBean textFile = repository.findTextFile("user1", "repo1", "folder_1/same-name-file");
+		System.out.println(new String(textFile.getContent()));
 	}
 }
