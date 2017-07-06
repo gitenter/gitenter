@@ -6,5 +6,5 @@ import enterovirus.capsid.domain.*;
 
 public interface TextFileRepository {
 
-	public TextFileBean findTextFile (String username, String repositoryName, String filePath) throws IOException;
+	public TextFileBean findTextFile (String username, String repositoryName, String branchName, String filePath) throws IOException;
 }

@@ -20,12 +20,12 @@ public class TextFileGitImpl implements TextFileRepository {
 		this.gitSource = gitSource;	
 	}
 	
-	public TextFileBean findTextFile (String username, String repositoryName, String filePath) throws IOException {
+	public TextFileBean findTextFile (String username, String repositoryName, String branchName, String filePath) throws IOException {
 
 		TextFileBean textFile = new TextFileBean();
 
 		String repositoryPath = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git").getPath();
-		GitTextFile gitTextFile = new GitTextFile(repositoryPath, filePath);
+		GitTextFile gitTextFile = new GitTextFile(repositoryPath, branchName, filePath);
 		
 		textFile.setContent(gitTextFile.getStringContent());
 		return textFile;
