@@ -67,6 +67,46 @@ public class ApiController {
 			@PathVariable String repositoryName) {
 		return null;
 	}
+
+	/**
+	 * Get directory information (in branch)
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
+	public TextFileBean getDirectoryInformationInBranch(
+			@PathVariable String organization,
+			@PathVariable String repositoryName,
+			@PathVariable String branchName,
+			HttpServletRequest request) throws Exception {
+		
+		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+	    String directoryPath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
+		
+		return null;
+	}
+	
+	/**
+	 * Get directory information (in commit)
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
+	public TextFileBean getDirectoryInformationInCommit(
+			@PathVariable String organization,
+			@PathVariable String repositoryName,
+			@PathVariable String commitId,
+			HttpServletRequest request) throws Exception {
+		
+		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+	    String directoryPath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
+		
+		return null;
+	}
 	
 	/**
 	 * Get text file content (in branch)
@@ -74,7 +114,7 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
 	public TextFileBean getTextFileContentInBranch(
 			@PathVariable String organization,
 			@PathVariable String repositoryName,
@@ -83,8 +123,7 @@ public class ApiController {
 		
 		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-		AntPathMatcher apm = new AntPathMatcher();
-	    String filePath = apm.extractPathWithinPattern(bestMatchPattern, wholePath);
+	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
 		TextFileBean textFile = textFileRepository.findTextFile(organization, repositoryName, branchName, filePath);
 		return textFile;
@@ -96,7 +135,7 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
 	public TextFileBean getTextFileContentInCommit(
 			@PathVariable String organization,
 			@PathVariable String repositoryName,
@@ -105,8 +144,7 @@ public class ApiController {
 		
 		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-		AntPathMatcher apm = new AntPathMatcher();
-	    String filePath = apm.extractPathWithinPattern(bestMatchPattern, wholePath);
+	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
 		return null;
 	}
