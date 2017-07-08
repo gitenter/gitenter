@@ -27,7 +27,12 @@ public class TextFileGitImpl implements TextFileRepository {
 		String repositoryPath = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git").getPath();
 		GitTextFile gitTextFile = new GitTextFile(repositoryPath, branchName, filePath);
 		
-		textFile.setContent(gitTextFile.getStringContent());
+		int lineNumber = 1;
+		for (String content : gitTextFile.getLinewiseContent()) {
+			textFile.addLineContent(new LineContentBean(new Integer(lineNumber), content));
+			++lineNumber;
+		}
+
 		return textFile;
 	}
 }
