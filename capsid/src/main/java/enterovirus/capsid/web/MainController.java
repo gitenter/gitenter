@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 import enterovirus.gitar.*;
 
 @RestController
-public class MainController {
-
+public class MainController {	
+	
 	@RequestMapping("/")
-	public String hello() {
+	public String index() {
 		return Main.hello()+"\n"+"Hello enterovirus capsid!";
 	}
 }

@@ -24,25 +24,25 @@ public class GitBlob {
 	 * However, if directly using "String", it will conflict with
 	 * the other constructor using branch name.
 	 */
-	public GitBlob (String repositoryPath, ObjectId commitId, String filePath) throws IOException {
-		
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File(repositoryPath)).readEnvironment().findGitDir().build();
-		
-		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(commitId);
-		RevTree revTree = commit.getTree();
-		TreeWalk treeWalk = new TreeWalk(repository);
-		treeWalk.addTree(revTree);
-		treeWalk.setRecursive(true);
-		treeWalk.setFilter(PathFilter.create(filePath));
-		if (!treeWalk.next()) {
-			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
-			throw new IllegalStateException("Did not find expected file");
-		}
-		ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
-		blobContent = loader.getBytes();
-	}
+//	public GitBlob (String repositoryPath, ObjectId commitId, String filePath) throws IOException {
+//		
+//		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+//		Repository repository = builder.setGitDir(new File(repositoryPath)).readEnvironment().findGitDir().build();
+//		
+//		RevWalk revWalk = new RevWalk(repository);
+//		RevCommit commit = revWalk.parseCommit(commitId);
+//		RevTree revTree = commit.getTree();
+//		TreeWalk treeWalk = new TreeWalk(repository);
+//		treeWalk.addTree(revTree);
+//		treeWalk.setRecursive(true);
+//		treeWalk.setFilter(PathFilter.create(filePath));
+//		if (!treeWalk.next()) {
+//			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
+//			throw new IllegalStateException("Did not find expected file");
+//		}
+//		ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
+//		blobContent = loader.getBytes();
+//	}
 
 	/**
 	 * For the HEAD of a given branch. 
