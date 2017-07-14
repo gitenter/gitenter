@@ -1,5 +1,9 @@
 package enterovirus.capsid.domain;
 
+import lombok.*;
+
+@Getter
+@Setter
 public class TraceableItemBean extends LineContentBean {
 
 	private String traceableTag;

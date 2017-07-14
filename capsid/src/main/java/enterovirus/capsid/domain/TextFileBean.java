@@ -1,12 +1,12 @@
 package enterovirus.capsid.domain;
 
 import java.util.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
-public class TextFileBean {
+@Getter
+@Setter
+public class TextFileBean extends BlobBean {
 	
-	private String filePath;
 	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
 	
 //	private String content;

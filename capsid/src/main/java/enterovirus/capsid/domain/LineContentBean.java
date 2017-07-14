@@ -1,8 +1,9 @@
 package enterovirus.capsid.domain;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 public class LineContentBean {
 
 	private Integer lineNumber;
