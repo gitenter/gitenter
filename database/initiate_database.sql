@@ -15,7 +15,7 @@ CREATE TABLE config.person (
 CREATE TABLE config.organization (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE,
-	display_name text
+	display_name text NOT NULL
 );
 
 CREATE TABLE config.organization_manager_map (
@@ -29,7 +29,7 @@ CREATE TABLE config.repository (
 
 	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
 	name text NOT NULL,
-	display_name text,
+	display_name text NOT NULL,
 	UNIQUE (organization_id, name),
 
 	git_uri text NOT NULL
@@ -57,8 +57,75 @@ CREATE TABLE config.repository_person_map (
 
 CREATE SCHEMA git;
 
-CREATE TABLE git.commit (
+CREATE TABLE git.git_commit (
 	id serial PRIMARY KEY,
 	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
 	sha_checksum_hash text NOT NULL UNIQUE
+);
+
+CREATE TABLE git.text_file (
+	id serial PRIMARY KEY,
+	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE,
+	filepath text NOT NULL UNIQUE
+);
+
+CREATE FUNCTION git.commit_id_from_text_file (integer) 
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT txf.commit_id INTO return_id FROM git.text_file AS txf
+	WHERE txf.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
+CREATE TABLE git.traceable_item (
+	id serial PRIMARY KEY,
+
+	text_file_id serial REFERENCES git.text_file (id) ON DELETE CASCADE,
+	line_number integer NOT NULL,
+	UNIQUE (text_file_id, line_number),
+
+	item_tag text NOT NULL
+);
+
+CREATE UNIQUE INDEX ON git.traceable_item (git.commit_id_from_text_file(text_file_id), item_tag);
+
+CREATE FUNCTION git.commit_id_from_traceable_item (integer) 
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT txf.commit_id INTO return_id FROM 
+	(
+		git.text_file AS txf
+		JOIN
+		git.traceable_item AS tra
+		ON
+		txf.id = tra.text_file_id
+	)
+	WHERE tra.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
+CREATE TABLE git.traceability_map (
+	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
+	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
+	PRIMARY KEY (upstream_item_id, downstream_item_id),
+
+	CHECK (git.commit_id_from_traceable_item(upstream_item_id) = git.commit_id_from_traceable_item(downstream_item_id))
+);
+
+CREATE INDEX ON git.traceability_map (upstream_item_id);
+CREATE INDEX ON git.traceability_map (downstream_item_id);
+
+--------------------------------------------------------------------------------
+
+CREATE SCHEMA review;
+
+CREATE TABLE review.milestone (
+	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE RESTRICT,
+	description text NOT NULL 
 );
