@@ -80,42 +80,45 @@ END;
 $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
-CREATE TABLE git.traceable_item (
+CREATE TABLE git.line_content (
 	id serial PRIMARY KEY,
 
 	text_file_id serial REFERENCES git.text_file (id) ON DELETE CASCADE,
 	line_number integer NOT NULL,
-	UNIQUE (text_file_id, line_number),
-
-	item_tag text NOT NULL
+	UNIQUE (text_file_id, line_number)	
 );
 
-CREATE UNIQUE INDEX ON git.traceable_item (git.commit_id_from_text_file(text_file_id), item_tag);
-
-CREATE FUNCTION git.commit_id_from_traceable_item (integer) 
+CREATE FUNCTION git.commit_id_from_line_content (integer) 
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT txf.commit_id INTO return_id FROM 
+	SELECT lct.text_file_id INTO return_id FROM 
 	(
 		git.text_file AS txf
 		JOIN
-		git.traceable_item AS tra
+		git.line_content AS lct
 		ON
-		txf.id = tra.text_file_id
+		txf.id = lct.text_file_id
 	)
-	WHERE tra.id = $1;
+	WHERE lct.id = $1;
 	RETURN return_id;
 END;
 $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
+
+CREATE TABLE git.traceable_item (
+	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE RESTRICT,
+	item_tag text NOT NULL
+);
+
+CREATE UNIQUE INDEX ON git.traceable_item (git.commit_id_from_line_content(id), item_tag);
 
 CREATE TABLE git.traceability_map (
 	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	PRIMARY KEY (upstream_item_id, downstream_item_id),
 
-	CHECK (git.commit_id_from_traceable_item(upstream_item_id) = git.commit_id_from_traceable_item(downstream_item_id))
+	CHECK (git.commit_id_from_line_content(upstream_item_id) = git.commit_id_from_line_content(downstream_item_id))
 );
 
 CREATE INDEX ON git.traceability_map (upstream_item_id);
@@ -128,4 +131,10 @@ CREATE SCHEMA review;
 CREATE TABLE review.milestone (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE RESTRICT,
 	description text NOT NULL 
+);
+
+CREATE TABLE review.comment (
+	id serial PRIMARY KEY,
+
+	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
 );
