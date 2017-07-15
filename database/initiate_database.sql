@@ -130,11 +130,28 @@ CREATE SCHEMA review;
 
 CREATE TABLE review.milestone (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE RESTRICT,
-	description text NOT NULL 
+	name text NOT NULL,
+	description text
 );
 
-CREATE TABLE review.comment (
+CREATE TABLE review.issue (
 	id serial PRIMARY KEY,
 
 	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
+	line_content_id serial REFERENCES git.line_content (id) ON DELETE CASCADE,
+	
+	description text NOT NULL,
+	post_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+	solved_flag boolean DEFAULT FALSE
+);
+
+CREATE TABLE review.discussion (
+	id serial PRIMARY KEY,
+
+	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
+	issue_id serial REFERENCES review.issue (id) ON DELETE CASCADE,
+
+	description text NOT NULL,
+	post_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
