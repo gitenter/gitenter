@@ -47,10 +47,12 @@ INSERT INTO setting.repository_person_roll VALUES
 
 CREATE TABLE config.repository_person_map (
 	id serial PRIMARY KEY,
+
 	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
 	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
-	roll serial REFERENCES setting.repository_person_roll (id) ON DELETE RESTRICT,
-	UNIQUE (repository_id, person_id)
+	UNIQUE (repository_id, person_id),
+
+	roll serial REFERENCES setting.repository_person_roll (id) ON DELETE RESTRICT --DEFAULT 3
 );
 
 --------------------------------------------------------------------------------
@@ -63,17 +65,17 @@ CREATE TABLE git.git_commit (
 	sha_checksum_hash text NOT NULL UNIQUE
 );
 
-CREATE TABLE git.text_file (
+CREATE TABLE git.document (
 	id serial PRIMARY KEY,
 	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE,
 	filepath text NOT NULL UNIQUE
 );
 
-CREATE FUNCTION git.commit_id_from_text_file (integer) 
+CREATE FUNCTION git.commit_id_from_document (integer) 
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT txf.commit_id INTO return_id FROM git.text_file AS txf
+	SELECT txf.commit_id INTO return_id FROM git.document AS txf
 	WHERE txf.id = $1;
 	RETURN return_id;
 END;
@@ -83,22 +85,33 @@ IMMUTABLE;
 CREATE TABLE git.line_content (
 	id serial PRIMARY KEY,
 
-	text_file_id serial REFERENCES git.text_file (id) ON DELETE CASCADE,
+	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	line_number integer NOT NULL,
-	UNIQUE (text_file_id, line_number)	
+	UNIQUE (document_id, line_number)	
 );
+
+CREATE FUNCTION git.document_id_from_line_content (integer) 
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT lct.document_id INTO return_id FROM git.line_content AS lct
+	WHERE lct.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
 
 CREATE FUNCTION git.commit_id_from_line_content (integer) 
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT lct.text_file_id INTO return_id FROM 
+	SELECT lct.document_id INTO return_id FROM 
 	(
-		git.text_file AS txf
+		git.document AS txf
 		JOIN
 		git.line_content AS lct
 		ON
-		txf.id = lct.text_file_id
+		txf.id = lct.document_id
 	)
 	WHERE lct.id = $1;
 	RETURN return_id;
@@ -107,7 +120,7 @@ $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
 CREATE TABLE git.traceable_item (
-	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE RESTRICT,
+	id serial PRIMARY KEY REFERENCES git.line_content (id) ON DELETE RESTRICT,
 	item_tag text NOT NULL
 );
 
@@ -134,12 +147,33 @@ CREATE TABLE review.milestone (
 	description text
 );
 
+CREATE TABLE setting.review_status (
+	id serial PRIMARY KEY,
+	name text NOT NULL UNIQUE
+);
+
+INSERT INTO setting.review_status VALUES
+	(1, 'review'),
+	(2, 'approval'),
+	(3, 'denial');
+
+CREATE TABLE review.review_document (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE RESTRICT,
+
+	milestone_id serial REFERENCES review.milestone (id) ON DELETE CASCADE,
+	CHECK (milestone_id = git.commit_id_from_document(id)),
+
+	status serial REFERENCES setting.review_status (id) ON DELETE RESTRICT --DEFAULT 1
+);
+
 CREATE TABLE review.issue (
 	id serial PRIMARY KEY,
 
 	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
+	review_document_id serial REFERENCES review.review_document (id) ON DELETE CASCADE,
 	line_content_id serial REFERENCES git.line_content (id) ON DELETE CASCADE,
-	
+	CHECK (review_document_id = git.document_id_from_line_content(line_content_id)),
+
 	description text NOT NULL,
 	post_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -154,4 +188,27 @@ CREATE TABLE review.discussion (
 
 	description text NOT NULL,
 	post_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+--------------------------------------------------------------------------------
+
+CREATE SCHEMA verification;
+
+CREATE TABLE setting.verification_status (
+	id serial PRIMARY KEY,
+	name text NOT NULL UNIQUE
+);
+
+INSERT INTO setting.verification_status VALUES
+	(1, 'unverified'),
+	(2, 'pass'),
+	(3, 'fail');
+
+CREATE TABLE verification.verification_item (
+	id serial PRIMARY KEY REFERENCES git.traceable_item (id) ON DELETE RESTRICT,
+
+	review_document_id serial REFERENCES review.review_document (id) ON DELETE CASCADE,
+	CHECK (review_document_id =  git.document_id_from_line_content(id)),
+
+	status serial REFERENCES setting.verification_status (id) ON DELETE RESTRICT --DEFAULT 1
 );
