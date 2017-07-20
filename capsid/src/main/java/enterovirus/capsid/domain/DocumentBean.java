@@ -5,7 +5,7 @@ import lombok.*;
 
 @Getter
 @Setter
-public class TextFileBean extends BlobBean {
+public class DocumentBean extends BlobBean {
 	
 	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
 	

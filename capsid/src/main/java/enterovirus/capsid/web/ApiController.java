@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.util.AntPathMatcher;
 
-import enterovirus.capsid.database.TextFileRepository;
-import enterovirus.capsid.domain.TextFileBean;
+import enterovirus.capsid.database.DocumentRepository;
+import enterovirus.capsid.domain.DocumentBean;
 
 @RestController
 @RequestMapping("/api")
 public class ApiController {
 
-	private TextFileRepository textFileRepository;
+	private DocumentRepository documentRepository;
 	
 	@Autowired
-	public ApiController(TextFileRepository textFileRepository) {
-		this.textFileRepository = textFileRepository;
+	public ApiController(DocumentRepository documentRepository) {
+		this.documentRepository = documentRepository;
 	}	
 	
 	/**
@@ -32,7 +32,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/users/{username}/repositories", method=RequestMethod.GET)
-	public TextFileBean listUserRepositories(
+	public DocumentBean listUserRepositories(
 			@PathVariable String username) {
 		return null;
 	}
@@ -46,7 +46,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organization}/repositories", method=RequestMethod.GET)
-	public TextFileBean listOrganizationRepositories(
+	public DocumentBean listOrganizationRepositories(
 			@PathVariable String orginization) {
 		return null;
 	}
@@ -62,7 +62,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}", method=RequestMethod.GET)
-	public TextFileBean getRepositoryInformation(
+	public DocumentBean getRepositoryInformation(
 			@PathVariable String orginization,
 			@PathVariable String repositoryName) {
 		return null;
@@ -75,7 +75,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
-	public TextFileBean getDirectoryInformationInBranch(
+	public DocumentBean getDirectoryInformationInBranch(
 			@PathVariable String organization,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
@@ -95,7 +95,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
-	public TextFileBean getDirectoryInformationInCommit(
+	public DocumentBean getDirectoryInformationInCommit(
 			@PathVariable String organization,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
@@ -115,7 +115,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
-	public TextFileBean getTextFileContentInBranch(
+	public DocumentBean getDocumentContentInBranch(
 			@PathVariable String organization,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
@@ -125,8 +125,8 @@ public class ApiController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		TextFileBean textFile = textFileRepository.findTextFile(organization, repositoryName, branchName, filePath);
-		return textFile;
+		DocumentBean document = documentRepository.findDocument(organization, repositoryName, branchName, filePath);
+		return document;
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
-	public TextFileBean getTextFileContentInCommit(
+	public DocumentBean getDocumentContentInCommit(
 			@PathVariable String organization,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
