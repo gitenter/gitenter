@@ -10,40 +10,40 @@ import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Email;
 import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @Table(schema = "config", name = "organization")
-public class OrganizationBean {
+public class MemberBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id", updatable=false)
 	private Integer id;
+
+	@NotNull
+	@Size(min=2, max=16)
+	@Column(name="username")
+	private String username;
 	
 	@NotNull
 	@Size(min=2, max=16)
-	@Column(name="name")
-	private String name;
+	@Column(name="password")
+	private String password;
 
 	@Column(name="display_name")
 	private String displayName;
 	
-	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<RepositoryBean> repositories;
+	@Email
+	@Column(name="email")
+	private String email;
 	
-	@ManyToMany(targetEntity=MemberBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinTable(
-			schema = "config", name="organization_manager_map",		
-			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
-			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
-	private List<MemberBean> managers;
+	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	private List<OrganizationBean> organizations;
 }

@@ -4,7 +4,7 @@ CREATE SCHEMA setting;
 
 CREATE SCHEMA config;
 
-CREATE TABLE config.person (
+CREATE TABLE config.member (
 	id serial PRIMARY KEY,
 	username text NOT NULL UNIQUE,
 	password text NOT NULL,
@@ -20,8 +20,8 @@ CREATE TABLE config.organization (
 
 CREATE TABLE config.organization_manager_map (
 	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
-	person_id serial REFERENCES config.person (id) ON DELETE RESTRICT,
-	PRIMARY KEY (organization_id, person_id)
+	member_id serial REFERENCES config.member (id) ON DELETE RESTRICT,
+	PRIMARY KEY (organization_id, member_id)
 );
 
 CREATE TABLE config.repository (
@@ -35,24 +35,24 @@ CREATE TABLE config.repository (
 	git_uri text NOT NULL
 );
 
-CREATE TABLE setting.repository_person_roll (
+CREATE TABLE setting.repository_member_roll (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE
 );
 
-INSERT INTO setting.repository_person_roll VALUES
+INSERT INTO setting.repository_member_roll VALUES
 	(1, 'editor'),
 	(2, 'reviewer'),
 	(3, 'reader');
 
-CREATE TABLE config.repository_person_map (
+CREATE TABLE config.repository_member_map (
 	id serial PRIMARY KEY,
 
 	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
-	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
-	UNIQUE (repository_id, person_id),
+	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
+	UNIQUE (repository_id, member_id),
 
-	roll serial REFERENCES setting.repository_person_roll (id) ON DELETE RESTRICT --DEFAULT 3
+	roll serial REFERENCES setting.repository_member_roll (id) ON DELETE RESTRICT --DEFAULT 3
 );
 
 --------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ CREATE TABLE review.review_document (
 CREATE TABLE review.issue (
 	id serial PRIMARY KEY,
 
-	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
+	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
 	review_document_id serial REFERENCES review.review_document (id) ON DELETE CASCADE,
 	line_content_id serial REFERENCES git.line_content (id) ON DELETE CASCADE,
 	CHECK (review_document_id = git.document_id_from_line_content(line_content_id)),
@@ -183,7 +183,7 @@ CREATE TABLE review.issue (
 CREATE TABLE review.discussion (
 	id serial PRIMARY KEY,
 
-	person_id serial REFERENCES config.person (id) ON DELETE CASCADE,
+	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
 	issue_id serial REFERENCES review.issue (id) ON DELETE CASCADE,
 
 	description text NOT NULL,
