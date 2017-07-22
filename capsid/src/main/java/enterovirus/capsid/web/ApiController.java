@@ -13,7 +13,7 @@ import enterovirus.capsid.database.*;
 import enterovirus.capsid.domain.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/json")
 public class ApiController {
 
 	@Autowired private DocumentRepository documentRepository;
