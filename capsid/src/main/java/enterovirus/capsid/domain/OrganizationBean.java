@@ -16,6 +16,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.*;
 
 @Getter
@@ -37,6 +41,7 @@ public class OrganizationBean {
 	@Column(name="display_name")
 	private String displayName;
 	
+	@JsonManagedReference
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<RepositoryBean> repositories;
 	
@@ -45,5 +50,6 @@ public class OrganizationBean {
 			schema = "config", name="organization_manager_map",		
 			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
 			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
+	@JsonBackReference
 	private List<MemberBean> managers;
 }

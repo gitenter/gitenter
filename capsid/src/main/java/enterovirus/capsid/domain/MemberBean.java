@@ -14,6 +14,10 @@ import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.*;
 
 @Getter
@@ -35,6 +39,7 @@ public class MemberBean {
 	@NotNull
 	@Size(min=2, max=16)
 	@Column(name="password")
+	@JsonIgnore
 	private String password;
 
 	@Column(name="display_name")
@@ -45,5 +50,6 @@ public class MemberBean {
 	private String email;
 	
 	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JsonManagedReference
 	private List<OrganizationBean> organizations;
 }

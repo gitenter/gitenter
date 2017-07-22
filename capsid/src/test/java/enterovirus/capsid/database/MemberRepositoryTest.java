@@ -28,7 +28,7 @@ public class MemberRepositoryTest {
 		System.out.println(member.getPassword());
 		System.out.println(member.getDisplayName());
 		
-		Hibernate.initialize(member.getOrganizations());
+		//Hibernate.initialize(member.getOrganizations());
 		for (OrganizationBean organization : member.getOrganizations()) {
 			System.out.println(organization.getName());
 		}

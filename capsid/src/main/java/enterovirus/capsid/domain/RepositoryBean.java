@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.*;
 
 @Getter
@@ -25,6 +28,7 @@ public class RepositoryBean {
 	
 	@ManyToOne
 	@JoinColumn(name="organization_id")
+	@JsonBackReference
 	private OrganizationBean organization;
 
 	@NotNull

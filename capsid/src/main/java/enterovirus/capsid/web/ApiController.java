@@ -9,19 +9,30 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.util.AntPathMatcher;
 
-import enterovirus.capsid.database.DocumentRepository;
-import enterovirus.capsid.domain.DocumentBean;
+import enterovirus.capsid.database.*;
+import enterovirus.capsid.domain.*;
 
 @RestController
 @RequestMapping("/api")
 public class ApiController {
 
-	private DocumentRepository documentRepository;
-	
-	@Autowired
-	public ApiController(DocumentRepository documentRepository) {
-		this.documentRepository = documentRepository;
-	}	
+	@Autowired private DocumentRepository documentRepository;
+	@Autowired private OrganizationRepository organizationRepository;	
+	@Autowired private MemberRepository memberRepository;
+
+	/**
+	 * List user information
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/users/{username}", method=RequestMethod.GET)
+	public MemberBean getUserInformation(
+			@PathVariable String username) {
+		
+		MemberBean user = memberRepository.findByUsername(username).get(0);
+		return user;
+	}
 	
 	/**
 	 * List user repositories
@@ -36,6 +47,20 @@ public class ApiController {
 			@PathVariable String username) {
 		return null;
 	}
+
+	/**
+	 * List organization information
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/organizations/{organizationName}", method=RequestMethod.GET)
+	public OrganizationBean getOrganizationInformation(
+			@PathVariable String organizationName) {
+		
+		OrganizationBean organization = organizationRepository.findByName(organizationName).get(0);
+		return organization;
+	}
 	
 	/**
 	 * List organization repositories
@@ -45,9 +70,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationName}/repositories", method=RequestMethod.GET)
 	public DocumentBean listOrganizationRepositories(
-			@PathVariable String orginization) {
+			@PathVariable String orginizationName) {
 		return null;
 	}
 	
@@ -61,9 +86,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}", method=RequestMethod.GET)
 	public DocumentBean getRepositoryInformation(
-			@PathVariable String orginization,
+			@PathVariable String orginizationName,
 			@PathVariable String repositoryName) {
 		return null;
 	}
@@ -74,9 +99,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
 	public DocumentBean getDirectoryInformationInBranch(
-			@PathVariable String organization,
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
 			HttpServletRequest request) throws Exception {
@@ -94,9 +119,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
 	public DocumentBean getDirectoryInformationInCommit(
-			@PathVariable String organization,
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
 			HttpServletRequest request) throws Exception {
@@ -114,9 +139,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
 	public DocumentBean getDocumentContentInBranch(
-			@PathVariable String organization,
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
 			HttpServletRequest request) throws Exception {
@@ -125,7 +150,7 @@ public class ApiController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		DocumentBean document = documentRepository.findDocument(organization, repositoryName, branchName, filePath);
+		DocumentBean document = documentRepository.findDocument(organizationName, repositoryName, branchName, filePath);
 		return document;
 	}
 	
@@ -135,9 +160,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
 	public DocumentBean getDocumentContentInCommit(
-			@PathVariable String organization,
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
 			HttpServletRequest request) throws Exception {
