@@ -15,7 +15,7 @@ CREATE TABLE config.member (
 CREATE TABLE config.organization (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE,
-	display_name text NOT NULL
+	display_name text
 );
 
 CREATE TABLE config.organization_manager_map (
@@ -29,10 +29,10 @@ CREATE TABLE config.repository (
 
 	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
 	name text NOT NULL,
-	display_name text NOT NULL,
+	display_name text,
 	UNIQUE (organization_id, name),
 
-	git_uri text NOT NULL
+	git_uri text NOT NULL UNIQUE
 );
 
 CREATE TABLE setting.repository_member_roll (
