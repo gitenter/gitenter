@@ -11,28 +11,28 @@ import enterovirus.gitar.GitSource;
 import enterovirus.gitar.GitTextFile;
 
 @Repository
-public class TextFileGitImpl implements TextFileRepository {
+public class DocumentGitImpl implements DocumentRepository {
 
 	private GitSource gitSource;
 	
 	@Autowired
-	public TextFileGitImpl (GitSource gitSource) {
+	public DocumentGitImpl (GitSource gitSource) {
 		this.gitSource = gitSource;	
 	}
 	
-	public TextFileBean findTextFile (String username, String repositoryName, String branchName, String filePath) throws IOException {
+	public DocumentBean findDocument (String username, String repositoryName, String branchName, String filePath) throws IOException {
 
-		TextFileBean textFile = new TextFileBean();
+		DocumentBean document = new DocumentBean();
 
 		String repositoryPath = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git").getPath();
 		GitTextFile gitTextFile = new GitTextFile(repositoryPath, branchName, filePath);
 		
 		int lineNumber = 1;
 		for (String content : gitTextFile.getLinewiseContent()) {
-			textFile.addLineContent(new LineContentBean(new Integer(lineNumber), content));
+			document.addLineContent(new LineContentBean(new Integer(lineNumber), content));
 			++lineNumber;
 		}
 
-		return textFile;
+		return document;
 	}
 }

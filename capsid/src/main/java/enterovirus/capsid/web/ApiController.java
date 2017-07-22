@@ -9,19 +9,30 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.util.AntPathMatcher;
 
-import enterovirus.capsid.database.TextFileRepository;
-import enterovirus.capsid.domain.TextFileBean;
+import enterovirus.capsid.database.*;
+import enterovirus.capsid.domain.*;
 
 @RestController
 @RequestMapping("/api")
 public class ApiController {
 
-	private TextFileRepository textFileRepository;
-	
-	@Autowired
-	public ApiController(TextFileRepository textFileRepository) {
-		this.textFileRepository = textFileRepository;
-	}	
+	@Autowired private DocumentRepository documentRepository;
+	@Autowired private OrganizationRepository organizationRepository;	
+	@Autowired private MemberRepository memberRepository;
+
+	/**
+	 * List user information
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/users/{username}", method=RequestMethod.GET)
+	public MemberBean getUserInformation(
+			@PathVariable String username) {
+		
+		MemberBean user = memberRepository.findByUsername(username).get(0);
+		return user;
+	}
 	
 	/**
 	 * List user repositories
@@ -32,9 +43,23 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/users/{username}/repositories", method=RequestMethod.GET)
-	public TextFileBean listUserRepositories(
+	public DocumentBean listUserRepositories(
 			@PathVariable String username) {
 		return null;
+	}
+
+	/**
+	 * List organization information
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/organizations/{organizationName}", method=RequestMethod.GET)
+	public OrganizationBean getOrganizationInformation(
+			@PathVariable String organizationName) {
+		
+		OrganizationBean organization = organizationRepository.findByName(organizationName).get(0);
+		return organization;
 	}
 	
 	/**
@@ -45,9 +70,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories", method=RequestMethod.GET)
-	public TextFileBean listOrganizationRepositories(
-			@PathVariable String orginization) {
+	@RequestMapping(value="/organizations/{organizationName}/repositories", method=RequestMethod.GET)
+	public DocumentBean listOrganizationRepositories(
+			@PathVariable String orginizationName) {
 		return null;
 	}
 	
@@ -61,9 +86,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}", method=RequestMethod.GET)
-	public TextFileBean getRepositoryInformation(
-			@PathVariable String orginization,
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}", method=RequestMethod.GET)
+	public DocumentBean getRepositoryInformation(
+			@PathVariable String orginizationName,
 			@PathVariable String repositoryName) {
 		return null;
 	}
@@ -74,9 +99,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
-	public TextFileBean getDirectoryInformationInBranch(
-			@PathVariable String organization,
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
+	public DocumentBean getDirectoryInformationInBranch(
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
 			HttpServletRequest request) throws Exception {
@@ -94,9 +119,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
-	public TextFileBean getDirectoryInformationInCommit(
-			@PathVariable String organization,
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
+	public DocumentBean getDirectoryInformationInCommit(
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
 			HttpServletRequest request) throws Exception {
@@ -114,9 +139,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
-	public TextFileBean getTextFileContentInBranch(
-			@PathVariable String organization,
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
+	public DocumentBean getDocumentContentInBranch(
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
 			HttpServletRequest request) throws Exception {
@@ -125,8 +150,8 @@ public class ApiController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		TextFileBean textFile = textFileRepository.findTextFile(organization, repositoryName, branchName, filePath);
-		return textFile;
+		DocumentBean document = documentRepository.findDocument(organizationName, repositoryName, branchName, filePath);
+		return document;
 	}
 	
 	/**
@@ -135,9 +160,9 @@ public class ApiController {
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/organizations/{organization}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
-	public TextFileBean getTextFileContentInCommit(
-			@PathVariable String organization,
+	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
+	public DocumentBean getDocumentContentInCommit(
+			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
 			HttpServletRequest request) throws Exception {

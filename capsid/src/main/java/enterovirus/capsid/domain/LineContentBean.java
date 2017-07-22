@@ -12,7 +12,7 @@ public class LineContentBean {
 	/*
 	 * TODO:
 	 * 
-	 * LineContentBean should link back to TextFileBean.
+	 * LineContentBean should link back to DocumentBean.
 	 * But that will cause error of Jackson 2 to transfer to JSON
 	 * because loop exists. Should setup Jaskson (maybe by annotation?)
 	 * to specify that.
