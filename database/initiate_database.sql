@@ -9,7 +9,7 @@ CREATE TABLE config.member (
 	username text NOT NULL UNIQUE,
 	password text NOT NULL,
 	display_name text,
-	email text CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)')
+	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)')
 );
 
 CREATE TABLE config.organization (

@@ -1,7 +1,7 @@
 INSERT INTO config.member VALUES
 	(1, 'ann', 'aaa', 'Ann Author', 'ann@ann.com'),
-	(2, 'bell', 'bbb', 'Bell Author', NULL),
-	(3, 'cindy', 'ccc', NULL, NULL);
+	(2, 'bell', 'bbb', 'Bell Author', 'bell@bell.com'),
+	(3, 'cindy', 'ccc', NULL, 'cindy@cindy.com');
 
 INSERT INTO config.organization VALUES
 	(1, 'gov', 'Government'),
