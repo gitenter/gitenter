@@ -10,6 +10,6 @@
   </head>
   <body>
     <div id="react"></div>
-    <script src="<s:url value="/resources/javascript/built/bundle.js" />"></script>
+    <script src="<s:url value="/resources/js/built/bundle.js" />"></script>
   </body>
 </html>
