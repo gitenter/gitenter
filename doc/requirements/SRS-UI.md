@@ -60,6 +60,16 @@
 
 ### Functions
 
+Account management:
+
+- [SRS-UI-0001]{} Each repository shall belong to one organization. Each organization may have multiple repositories.
+- [SRS-UI-0002]{} Each organization shall have multiple (IT) managers who are in charge of add/delete/maintain the repositories.
+- [SRS-UI-0003]{} Each repository shall be able to give different level of authority to application users with different roles:
+  - Reader: read-only privilege.
+  - Reviewer: who can also comment on milestone document.
+  - Editor: who can also edit documents.
+  - Project lead: who also can setup milestones.
+
 ### Usability requirements
 
 ### Performance requirements
