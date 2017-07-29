@@ -65,12 +65,10 @@
 Account management:
 
 - [SRS-UI-0001]{} Each repository shall belong to one organization. Each organization may have multiple repositories.
-- [SRS-UI-0002]{} Each organization shall have multiple (IT) managers who are in charge of add/delete/maintain the repositories.
-- [SRS-UI-0003]{} Each repository shall be able to give different level of authority to application users with different roles:
-  - Reader: read-only privilege.
-  - Reviewer: who can also comment on milestone document.
-  - Editor: who can also edit documents.
-  - Project lead: who also can setup milestones.
+- [SRS-UI-0002]{} Each organization shall have multiple (IT) managers.
+- [SRS-UI-0015]{SRS-UI-0002} Organization managers are in charge of add/delete/maintain repositories.
+- [SRS-UI-0003]{} Each repository shall be able to switch on/off (1) reading, (2) reviewing, (3) authoring, and (4) management authorities for users of different roles, with the constrain (i) author can always review, (ii) reviewer can always read, and (iii) manager can always read.
+- [SRS-UI-0016]{SRS-UI-0002} Organization managers are in charge of assign users, as well as define authorities of users to some particular repository.
 
 Document viewing:
 
@@ -78,16 +76,19 @@ Document viewing:
 - [SRS-UI-0004]{} The software shall be able to distinguish targeting documents from normal files.
 - [SRS-UI-0006]{} The software shall identify the traceable items in the documents.
 - [SRS-UI-0007]{SRS-UI-0006} The upstream and downstream items of the traceable item shall be shown (and linked to) through the user interface.
+- [SRS-UI-0017]{SRS-UI-0005} Reading authorized users shall be able to access git-based informations.
+- [SRS-UI-0018]{SRS-UI-0004,SRS-UI-0006} Reading authorized users can view the documents.
 
-Review:
+Document reviewing:
 
-- [SRS-UI-0008]{} The project lead shall be able to setup milestones for some particular git commit.
-- [SRS-UI-0010]{} The project lead shall choose a set of documents which are to-be-reviewed for a milestone.
-- [SRS-UI-0009]{} The project lead shall be able to switch the milestone reviewing status in between (1) review, (2) approval, and (3) denial.
+- [SRS-UI-0008]{} Management authorized users shall be able to setup milestones for some particular git commit.
+- [SRS-UI-0010]{} Management authorized users shall choose a set of documents which are to-be-reviewed for a milestone.
+- [SRS-UI-0009]{} Management authorized users shall be able to switch the milestone reviewing status in between (1) review, (2) approval, and (3) denial.
 - [SRS-UI-0011]{} The software shall show well-defined line numbers for the to-be-reviewed documents.
-- [SRS-UI-0012]{SRS-UI-0007,SRS-UI-0011} The software shall export PDF files for the to-be-reviewed documents documents, include (1) milestone tag and time, (2) line numbers, (3) upstream and downstream items of the desired traceable item.
-- [SRS-UI-0013]{SRS-UI-0011} (1) Project lead, (2) editor, and (3) reviewer shall be able to open an issue of a to-be-reviewed document based on a particular line number *(not limited to traceable items)*.
-- [SRS-UI-0014]{SRS-UI-0013} (1) Project lead, (2) editor, and (3) reviewer can join a discussion by commenting on an opened issue.
+- [SRS-UI-0012]{SRS-UI-0007,SRS-UI-0011} The software shall export PDF files for the to-be-reviewed documents documents, include (1) milestone name, (2) date of issue, (2) line numbers, (3) upstream and downstream items of the desired traceable item.
+- [SRS-UI-0013]{SRS-UI-0011} Reviewing authorized users shall be able to open an issue of a to-be-reviewed document based on a particular line number *(not limited to traceable items)*.
+- [SRS-UI-0014]{SRS-UI-0013} Reviewing authorized users can join a discussion by commenting on an opened issue.
+- [SRS-UI-0019]{} Authoring authorized users shall be able to switch the issue status in between (1) open and (2) close.
 
 Verification:
 
