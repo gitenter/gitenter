@@ -72,7 +72,7 @@ Account management:
 
 Document viewing:
 
-- [SRS-UI-0005]{} The software shall show the git-based evolution of documents and other files.
+- [SRS-UI-0005]{} The software shall show the history of documents and other files.
 - [SRS-UI-0004]{} The software shall be able to distinguish targeting documents from normal files.
 - [SRS-UI-0006]{} The software shall identify the traceable items in the documents.
 - [SRS-UI-0007]{SRS-UI-0006} The upstream and downstream items of the traceable item shall be shown (and linked to) through the user interface.
@@ -81,13 +81,14 @@ Document viewing:
 
 Document reviewing:
 
-- [SRS-UI-0008]{} Management authorized users shall be able to setup milestones for some particular git commit.
-- [SRS-UI-0010]{} Management authorized users shall choose a set of documents which are to-be-reviewed for a milestone.
-- [SRS-UI-0009]{} Management authorized users shall be able to switch the milestone reviewing status in between (1) review, (2) approval, and (3) denial.
+- [SRS-UI-0008]{} Managers shall be able to setup milestones for some particular git commit.
+- [SRS-UI-0010]{} Managers shall choose a set of documents which are to-be-reviewed for a milestone.
+- [SRS-UI-0009]{} Managers shall be able to switch the milestone reviewing status in between (1) reviewing, (2) approval, and (3) denial.
+- [SRS-UI-0020]{} Managers shall be able to switch the to-be-reviewed document status in between (1) reviewing, (2) approval, and (3) denial when the milestone status is reviewing. When all documents are in status approval, the milestone review status turns to approval.
 - [SRS-UI-0011]{} The software shall show well-defined line numbers for the to-be-reviewed documents.
 - [SRS-UI-0012]{SRS-UI-0007,SRS-UI-0011} The software shall export PDF files for the to-be-reviewed documents documents, include (1) milestone name, (2) date of issue, (2) line numbers, (3) upstream and downstream items of the desired traceable item.
-- [SRS-UI-0013]{SRS-UI-0011} Reviewing authorized users shall be able to open an issue of a to-be-reviewed document based on a particular line number *(not limited to traceable items)*.
-- [SRS-UI-0014]{SRS-UI-0013} Reviewing authorized users can join a discussion by commenting on an opened issue.
+- [SRS-UI-0013]{SRS-UI-0011} Reviewers shall be able to open an issue of a to-be-reviewed document based on a particular line number *(not limited to traceable items)*.
+- [SRS-UI-0014]{SRS-UI-0013} Reviewers can join a discussion by commenting on an opened issue.
 - [SRS-UI-0019]{} Authoring authorized users shall be able to switch the issue status in between (1) open and (2) close.
 
 Verification:
