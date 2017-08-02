@@ -10,7 +10,7 @@
 
 **Approval signatures:**
 
-**Status/version:** Draft.
+**Status/version:**
 
 **Reviewers/pertinent managers:**
 
@@ -36,7 +36,7 @@ Unlike a general project which may be a one-person project, quality control acti
 - [SyUCA-0001]{} Each repository shall belong to one organization. Each organization may have multiple repositories.
 - [SyUCA-0002]{} Each organization shall have multiple (IT) managers.
 - [SyUCA-0015]{SyUCA-0002} Organization managers are in charge of add/delete/maintain repositories.
-- [SyUCA-0003]{} Each repository shall be able to switch on/off (1) reading, (2) reviewing, (3) authoring, and (4) management authorities for users of different roles, with the constrain (i) author can always review, (ii) reviewer can always read, and (iii) manager can always read.
+- [SyUCA-0003]{} Each repository shall be able to switch on/off (1) reading, (2) reviewing, (3) authoring, (4) testing, and (4) management authorities for users of different roles, with the constrain (i) author can always review, (ii) reviewer can always read, (iii) tester can always read, and (iv) manager can always read.
 - [SyUCA-0016]{SyUCA-0002} Organization managers are in charge of assign users, as well as define authorities of users to some particular repository.
 
 Document reviewing:
@@ -55,6 +55,11 @@ Document reviewing:
 
 Verification:
 
+- [SyUCA-0025]{} For document in milestone status "approval", its traceable items shall be able to switch the status in between (1) unverified, (2) pass, and (3) fail.
+- [SyUCA-0027]{SyUCA-0025} The timestamp shall be shown when the traceable item status changes.
+- [SyUCA-0026]{SyUCA-0025} The tester's identity shall be shown when the traceable item status changes.
+- [SyUCA-0028]{SyUCA-0025} The associated testing approach and detail results shall be attached.
+
 Document Browsing:
 
 - [SyUCA-0004]{} The software shall be able to distinguish targeting documents from normal files.
@@ -63,7 +68,7 @@ Document Browsing:
 - [SyUCA-0005]{} The software shall show the history of documents and other files.
 - [SyUCA-0017]{SyUCA-0005} While showing the document history, (1) the timestamp of the change, (2) the author, and (3) the relation to previous and follow up changes shall also been shown.
 - [SyUCA-0023]{SyUCA-0010,SyUCA-0020} When the document history is being shown, its previous status and associated milestones shall be shown together.
-- [SyUCA-0024]{SyUCA-0013,SyUCA-0014,SyUCA-0005} When the user does not have reviewing authority, the issues and comments associate to the document history are not viewable.
+- [SyUCA-0024]{SyUCA-0013,SyUCA-0014,SyUCA-0005} For users without reviewing authority, the issues and comments associate to the document history are viewable.
 - [SyUCA-0018]{SyUCA-0004,SyUCA-0006} Reading authorized users can view the documents.
 
 ## Verification
