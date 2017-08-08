@@ -12,11 +12,56 @@
 
 More general, in `.jsx` `<ComponentName/>` will render `class ComponentName extends React.Component`
 
--------------------
+#### `state`
 
 When need to use **mutable** `json` data, put them into JavaScript variable `this.state` (`state` is the place where the data comes from). If using multiple data component, put them all in the `this.state` variable with different key.
 
-When need to use **immutable** data, put them in (1) attribute `<ComponentName attributeProp="..." />`, or (2) use `ComponentName.defaultProps` in `class ComponentName`, or (3) use `state` in parent component and passing it down the component tree using `props`.
+`state` is initialized in constructor: `this.state = {...}`
+
+```
+constructor() {
+  super();
+  this.state = {...}
+}
+```
+
+`state` can be changed. You always want to bind `xxxHandler()` (`setStateHandler()`, `forceUpdateHandler()`, `findDomNodeHandler()` ...) to the constructor like
+
+```
+constructor() {
+  ...
+  this.xxxHandler = this.xxxHandler.bind(this);
+}
+```
+
+(1) `setState()` not replace the state but only add changes
+
+```
+setStateHandler() {
+  ...
+}
+```
+
+then call `setStateHandler` to make the change, e.g., `<button onClick = {this.setStateHandler}>`
+
+(2) `forceUpdate()` for manual update: define `forceUpdateHandler()` to do only `this.forceUpdate();`. Then when `forceUpdateHandler()` is executed, all variables are force updated.
+
+(3) `ReactDOM.findDOMNode()`
+
+`findDomNodeHandler()` parse HTML tags, and change its attribute, e.g.
+
+```
+findDomNodeHandler() {
+  var myDiv = document.getElementById('myDiv');
+  ReactDOM.findDOMNode(myDiv).style.color = 'green';
+}
+```
+
+for `<div id = "myDiv">NODE</div>`
+
+#### `props`
+
+When need to use **immutable** data, put them in (1) attribute `<ComponentName attributeProp="..." />`, or (2) use `ComponentName.defaultProps` variable in `class ComponentName`, or (3) use `state` in parent component and passing it down the component tree using `props`.
 
 For (3), there are multiple ways:
 
@@ -25,7 +70,7 @@ For (3), there are multiple ways:
 ```
 constructor(props) {
   super(props);
-  this.state = {...}
+  ...
 }
 ```
 
@@ -38,3 +83,5 @@ and render define attribute `<ComponentName attributeProp="..." />`. then in `cl
 ```
 
 Then define `class UserDefinedComponent extends React.Component` which uses `this.props` (`props` is immutable) to render the data.
+
+Since `props` are immutable, they can be validated. Define `ComponentName.propTypes` variable to set them up.
