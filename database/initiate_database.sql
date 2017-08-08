@@ -41,9 +41,10 @@ CREATE TABLE setting.repository_member_roll (
 );
 
 INSERT INTO setting.repository_member_roll VALUES
-	(1, 'editor'),
+	(1, 'reader')
 	(2, 'reviewer'),
-	(3, 'reader');
+	(3, 'editor'),
+	(4, 'project lead');
 
 CREATE TABLE config.repository_member_map (
 	id serial PRIMARY KEY,
