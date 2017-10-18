@@ -89,3 +89,7 @@ Then define `class UserDefinedComponent extends React.Component` which uses `thi
 ##### Validation
 
 Since `props` are immutable, they can be validated. Define `ComponentName.propTypes` variable to set them up.
+
+#### (Component) Lifecycle management
+
+Can overwrite `componentXxx()` methods in `class Xxx extends React.Component` so they'll be executed in desired time.
