@@ -61,6 +61,8 @@ for `<div id = "myDiv">NODE</div>`
 
 #### `props`
 
+##### Setup
+
 When need to use **immutable** data, put them in (1) attribute `<ComponentName attributeProp="..." />`, or (2) use `ComponentName.defaultProps` variable in `class ComponentName`, or (3) use `state` in parent component and passing it down the component tree using `props`.
 
 For (3), there are multiple ways:
@@ -74,7 +76,7 @@ constructor(props) {
 }
 ```
 
-and render define attribute `<ComponentName attributeProp="..." />`. then in `class ChildComponent` uses it by `this.props.attributeProp`.
+and render define attribute `<ParentComponent attributeProp="..." />`. then in `class ChildComponent` uses it by `this.props.attributeProp`.
 
 (b) Link a `this.state` array component (here `this.state.thisStateKeyName`) to a user defined class using EcmaScript 2015 `=>` notation
 
@@ -84,4 +86,10 @@ and render define attribute `<ComponentName attributeProp="..." />`. then in `cl
 
 Then define `class UserDefinedComponent extends React.Component` which uses `this.props` (`props` is immutable) to render the data.
 
+##### Validation
+
 Since `props` are immutable, they can be validated. Define `ComponentName.propTypes` variable to set them up.
+
+#### (Component) Lifecycle management
+
+Can overwrite `componentXxx()` methods in `class Xxx extends React.Component` so they'll be executed in desired time.
