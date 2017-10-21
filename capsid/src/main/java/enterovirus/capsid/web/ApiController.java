@@ -21,6 +21,19 @@ public class ApiController {
 	@Autowired private MemberRepository memberRepository;
 
 	/**
+	 * List users
+	 * 
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value="/users", method=RequestMethod.GET)
+	public Iterable<MemberBean> listUsers() {
+		
+		Iterable<MemberBean> users = memberRepository.findAll();
+		return users;
+	}
+	
+	/**
 	 * List user information
 	 * 
 	 * @param

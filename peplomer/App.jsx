@@ -1,53 +1,70 @@
 import React from 'react';
 
 class App extends React.Component {
-	constructor() {
-		super();
-
+	constructor(props) {
+		super(props);
 		this.state = {
-			data:
-			[
-				{
-					"id":1,
-					"name":"Foo",
-					"age":"20"
-				},
-
-				{
-					"id":2,
-					"name":"Bar",
-					"age":"30"
-				},
-
-				{
-					"id":3,
-					"name":"Baz",
-					"age":"40"
-				}
-			]
+            users: []
 		}
 	}
 
-	componentDidMount() {
-		client({method: 'GET', path: '/api/employees'}).done(response => {
-			this.setState({employees: response.entity._embedded.employees});
+    componentDidMount() {
+		client({method: 'GET', path: 'http://localhost:8888/api/users/'}).done(response => {
+			this.setState({users: response.entity._embedded.users});
 		});
 	}
 
 	render() {
+        console.log("~~~~~hello~~~~~~~~");
+        console.log(this.state.users);
+        console.log(this.props.users);
 		return (
-			<div>
-				<Header/>
-				<table>
-					<tbody>
-						{this.state.data.map((dummy, i) => <TableRow key = {i} data = {dummy} />)}
-					</tbody>
-				</table>
-			</div>
+            <UserList users={this.state.users}/>
+/*            <div>
+                <Header/>
+                <table>
+                    <tbody>
+                        {this.state.users.map((user, i) => <TableRow key = {i} users = {user} />)}
+                    </tbody>
+                </table>
+            </div>*/
 		);
 	}
 }
 
+class UserList extends React.Component{
+	render() {
+		var users = this.props.users.map(user =>
+			<User key={i} users={user}/>
+		);
+		return (
+			<table>
+				<tbody>
+					<tr>
+						<th>Firs Name</th>
+						<th>Last Name</th>
+						<th>Description</th>
+					</tr>
+					{users}
+				</tbody>
+			</table>
+		)
+	}
+}
+
+class User extends React.Component{
+	render() {
+		return (
+			<tr>
+				<td>{this.props.user.username}</td>
+				<td>{this.props.user.displayName}</td>
+				<td>{this.props.user.email}</td>
+			</tr>
+		)
+	}
+}
+
+/*
 class Header extends React.Component {
 	render() {
 		return (
@@ -62,12 +79,12 @@ class TableRow extends React.Component {
 	render() {
 		return (
 			<tr>
-				<td>{this.props.data.id}</td>
-				<td>{this.props.data.name}</td>
-				<td>{this.props.data.age}</td>
+				<td>{this.props.users.username}</td>
+				<td>{this.props.users.displayName}</td>
+				<td>{this.props.users.email}</td>
 			</tr>
 		);
 	}
 }
-
+*/
 export default App;
