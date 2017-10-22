@@ -31,6 +31,7 @@ $ npm install babel-core
 $ npm install babel-loader
 $ npm install babel-preset-react
 $ sudo npm install babel-preset-es2015 // Seems this one needs sudo. Not exactly sure about others.
+$ sudo npm install axios // Just do sudo. Unsure whether it is necessary.
 ```
 
 Current `npm start` can run HelloWorld, and the site is in `http://localhost:8765/`. But currently the backend is Node.js rather than Spring.

@@ -1,17 +1,33 @@
 import React from 'react';
+import Axios from 'axios';
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
             users: []
-		}
+		};
 	}
 
     componentDidMount() {
-		client({method: 'GET', path: 'http://localhost:8888/api/users/'}).done(response => {
-			this.setState({users: response.entity._embedded.users});
+/*		client({method: 'GET', path: 'http://localhost:8888/api/users/'}).done(response => {
+			this.setState({users: response.entity});
+		});*/
+
+		Axios.get('http://localhost:8888/api/users/').then(function (response) {
+			console.log(response);
+			console.log(response.data);
+			var responseData = JSON.parse(response.data);
+                this.setState({
+                    users: responseData
+			}).bind(this)).catch((err) => {
+                console.log(err);
+			});
 		});
+/*
+		Axios.get('http://localhost:8888/api/users/').then(res => {
+			this.setState({users});
+		});*/
 	}
 
 	render() {
