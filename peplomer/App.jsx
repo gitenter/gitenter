@@ -6,27 +6,27 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-            users: []
+            members: []
 		};
 	}
 
     componentDidMount() {
-		axios.get('http://localhost:8888/api/users/').then(response => {
-			this.setState({users: response.data});
+		axios.get('http://localhost:8888/api/members/').then(response => {
+			this.setState({members: response.data});
 		}).catch(error => console.log(error));
 	}
 
 	render() {
 		return (
-            <UserList users={this.state.users}/>
+            <MemberList members={this.state.members}/>
 		);
 	}
 }
 
-class UserList extends React.Component{
+class MemberList extends React.Component{
 	render() {
-		var users = this.props.users.map(user =>
-			<User key={user.id} user={user}/>
+		var members = this.props.members.map(member =>
+			<Member key={member.id} member={member}/>
 		);
 		return (
 			<table>
@@ -36,20 +36,20 @@ class UserList extends React.Component{
 						<th>Full Name</th>
 						<th>Email</th>
 					</tr>
-					{users}
+					{members}
 				</tbody>
 			</table>
 		)
 	}
 }
 
-class User extends React.Component{
+class Member extends React.Component{
 	render() {
 		return (
 			<tr>
-				<td>{this.props.user.username}</td>
-				<td>{this.props.user.displayName}</td>
-				<td>{this.props.user.email}</td>
+				<td>{this.props.member.username}</td>
+				<td>{this.props.member.displayName}</td>
+				<td>{this.props.member.email}</td>
 			</tr>
 		)
 	}

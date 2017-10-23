@@ -22,7 +22,7 @@ public class ApiController {
 	@Autowired private MemberRepository memberRepository;
 
 	/**
-	 * List users
+	 * List members
 	 * 
 	 * @param
 	 * @return
@@ -31,37 +31,37 @@ public class ApiController {
 	 * further setups of Cross Origin Requests (CORS).
 	 */
 	@CrossOrigin(origins = "http://localhost:8765")
-	@RequestMapping(value="/users", method=RequestMethod.GET)
-	public Iterable<MemberBean> listUsers() {
+	@RequestMapping(value="/members", method=RequestMethod.GET)
+	public Iterable<MemberBean> listMembers() {
 		
-		Iterable<MemberBean> users = memberRepository.findAll();
-		return users;
+		Iterable<MemberBean> members = memberRepository.findAll();
+		return members;
 	}
 	
 	/**
-	 * List user information
+	 * List member information
 	 * 
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/users/{username}", method=RequestMethod.GET)
-	public MemberBean getUserInformation(
+	@RequestMapping(value="/members/{username}", method=RequestMethod.GET)
+	public MemberBean getMemberInformation(
 			@PathVariable String username) {
 		
-		MemberBean user = memberRepository.findByUsername(username).get(0);
-		return user;
+		MemberBean member = memberRepository.findByUsername(username).get(0);
+		return member;
 	}
 	
 	/**
-	 * List user repositories
+	 * List member repositories
 	 * <p>
-	 * List public repositories the specified user is involved.
+	 * List public repositories the specified member is involved.
 	 * 
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/users/{username}/repositories", method=RequestMethod.GET)
-	public DocumentBean listUserRepositories(
+	@RequestMapping(value="/members/{username}/repositories", method=RequestMethod.GET)
+	public DocumentBean listMemberRepositories(
 			@PathVariable String username) {
 		return null;
 	}
