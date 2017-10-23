@@ -1,5 +1,8 @@
 package enterovirus.capsid.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,11 +35,18 @@ public class ApiController {
 	 */
 	@CrossOrigin(origins = "http://localhost:8765")
 	@RequestMapping(value="/users", method=RequestMethod.GET)
-	public Iterable<MemberBean> listUsers() {
+	public Map<String, Iterable<MemberBean>> listUsers() {
 		
 		Iterable<MemberBean> users = memberRepository.findAll();
-		return users;
+		Map<String, Iterable<MemberBean>> json = new HashMap<String, Iterable<MemberBean>>();
+		json.put("users", users);
+		return json;
 	}
+//	public Iterable<MemberBean> listUsers() {
+//		
+//		Iterable<MemberBean> users = memberRepository.findAll();
+//		return users;
+//	}
 	
 	/**
 	 * List user information

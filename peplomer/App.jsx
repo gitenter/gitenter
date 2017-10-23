@@ -2,6 +2,7 @@ import React from 'react';
 import Axios from 'axios';
 
 class App extends React.Component {
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -14,16 +15,26 @@ class App extends React.Component {
 			this.setState({users: response.entity});
 		});*/
 
-		Axios.get('http://localhost:8888/api/users/').then(function (response) {
+		Axios.get('http://localhost:8888/api/users/').then(response => {
+			console.log("~~~~~componentDidMount()~~~~~~~~");
 			console.log(response);
-			console.log(response.data);
-			var responseData = JSON.parse(response.data);
+			console.log("response.data = " + response.data);
+			console.log("response.data.users = " + response.data.users);
+			console.log("response.entity = " + response.entity);
+			console.log("response.data[0] = " + response.data[0]);
+			console.log("response.data.users[0] = " + response.data.users[0]);
+			console.log("username = " + response.data.users[0].username);
+			console.log(typeof response.data.users[0].username);
+			// console.log("xxx" +this.state.users);
+			this.setState({users: response.data.users});
+/*			var responseData = JSON.parse(response.data);
                 this.setState({
                     users: responseData
-			}).bind(this)).catch((err) => {
+			}).bind(this).catch((err) => {
                 console.log(err);
-			});
-		});
+			});*/
+			// console.log("users = " + this.state.users);
+		}).catch(error => console.log(error));
 /*
 		Axios.get('http://localhost:8888/api/users/').then(res => {
 			this.setState({users});
@@ -31,7 +42,7 @@ class App extends React.Component {
 	}
 
 	render() {
-        console.log("~~~~~hello~~~~~~~~");
+        console.log("~~~~~render()~~~~~~~~");
         console.log(this.state.users);
         console.log(this.props.users);
 		return (
