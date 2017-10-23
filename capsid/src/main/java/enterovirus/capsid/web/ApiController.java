@@ -35,18 +35,11 @@ public class ApiController {
 	 */
 	@CrossOrigin(origins = "http://localhost:8765")
 	@RequestMapping(value="/users", method=RequestMethod.GET)
-	public Map<String, Iterable<MemberBean>> listUsers() {
+	public Iterable<MemberBean> listUsers() {
 		
 		Iterable<MemberBean> users = memberRepository.findAll();
-		Map<String, Iterable<MemberBean>> json = new HashMap<String, Iterable<MemberBean>>();
-		json.put("users", users);
-		return json;
+		return users;
 	}
-//	public Iterable<MemberBean> listUsers() {
-//		
-//		Iterable<MemberBean> users = memberRepository.findAll();
-//		return users;
-//	}
 	
 	/**
 	 * List user information
