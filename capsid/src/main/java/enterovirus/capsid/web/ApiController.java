@@ -1,7 +1,11 @@
 package enterovirus.capsid.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +24,23 @@ public class ApiController {
 	@Autowired private OrganizationRepository organizationRepository;	
 	@Autowired private MemberRepository memberRepository;
 
+	/**
+	 * List users
+	 * 
+	 * @param
+	 * @return
+	 * 
+	 * TODO: refer to https://spring.io/guides/gs/rest-service-cors/ for
+	 * further setups of Cross Origin Requests (CORS).
+	 */
+	@CrossOrigin(origins = "http://localhost:8765")
+	@RequestMapping(value="/users", method=RequestMethod.GET)
+	public Iterable<MemberBean> listUsers() {
+		
+		Iterable<MemberBean> users = memberRepository.findAll();
+		return users;
+	}
+	
 	/**
 	 * List user information
 	 * 

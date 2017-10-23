@@ -1,72 +1,57 @@
 import React from 'react';
+import axios from 'axios';
 
 class App extends React.Component {
-	constructor() {
-		super();
 
+	constructor(props) {
+		super(props);
 		this.state = {
-			data:
-			[
-				{
-					"id":1,
-					"name":"Foo",
-					"age":"20"
-				},
-
-				{
-					"id":2,
-					"name":"Bar",
-					"age":"30"
-				},
-
-				{
-					"id":3,
-					"name":"Baz",
-					"age":"40"
-				}
-			]
-		}
+            users: []
+		};
 	}
 
-	componentDidMount() {
-		client({method: 'GET', path: '/api/employees'}).done(response => {
-			this.setState({employees: response.entity._embedded.employees});
-		});
+    componentDidMount() {
+		axios.get('http://localhost:8888/api/users/').then(response => {
+			this.setState({users: response.data});
+		}).catch(error => console.log(error));
 	}
 
 	render() {
 		return (
-			<div>
-				<Header/>
-				<table>
-					<tbody>
-						{this.state.data.map((dummy, i) => <TableRow key = {i} data = {dummy} />)}
-					</tbody>
-				</table>
-			</div>
+            <UserList users={this.state.users}/>
 		);
 	}
 }
 
-class Header extends React.Component {
+class UserList extends React.Component{
 	render() {
-		return (
-			<div>
-				<h1>Header</h1>
-			</div>
+		var users = this.props.users.map(user =>
+			<User key={user.id} user={user}/>
 		);
+		return (
+			<table>
+				<tbody>
+					<tr>
+						<th>Username</th>
+						<th>Full Name</th>
+						<th>Email</th>
+					</tr>
+					{users}
+				</tbody>
+			</table>
+		)
 	}
 }
 
-class TableRow extends React.Component {
+class User extends React.Component{
 	render() {
 		return (
 			<tr>
-				<td>{this.props.data.id}</td>
-				<td>{this.props.data.name}</td>
-				<td>{this.props.data.age}</td>
+				<td>{this.props.user.username}</td>
+				<td>{this.props.user.displayName}</td>
+				<td>{this.props.user.email}</td>
 			</tr>
-		);
+		)
 	}
 }
 
