@@ -48,31 +48,22 @@ public class ApiController {
 	}
 	
 	/*
-	 * test successful by feeding 
-	 * {"id":4, "username":"ddd", "password":"ddd","displayName":"Ann Author","email":"ann@ann.com"}
+	 * Test successful by feeding 
+	 * {"username":"ddd", "password":"ddd","displayName":"Ann Author","email":"ann@ann.com"}
+	 * The "id" of the new item will be generated successfully.
+	 *
+	 * For invalid username or password, @Valid will give corresponding
+	 * error messages.
 	 * 
 	 * Need a NewMemberBean rather than just using MemberBean because
 	 * (1) with explicit "password" (without @JsonIgnore)
-	 * and (2) without the organization array (Jackson has problem to handle that with
-	 * error code related to @JsonManageredReference and @JsonBackReference,
-	 * and we don't use it no matter what.
-	 * 
-	 * Currently cannot test if the "id" need to be setup explicitly, 
-	 * otherwise key conflict. Need to check more carefully,
-	 * because there were three members inserted using SQL "INSERT"
-	 * which doesn't not change PostgreSQL's SEQUENCE. Old notes:
-	 * 
-	 * @GeneratedValue for automatically generate primary keys.
-	 * PostgreSQL has some problem with Hibernate for automatic primary key generation. Basically only strategy=GenerationType.IDENTITY works, but it has performance issues (compare to SEQUENCE) -- not crucial for us.
-	 * If our dummy data is made by INSERT using specific primary key, then it doesn't change the PostgreSQL's SEQUENCE so if later we insert without primary key (or let Hibernate to insert) that will cause ID conflict issues.
-	 * 
+	 * and (2) without the organization array (Jackson has problem 
+	 * to handle that with error code related to @JsonManageredReference 
+	 * and @JsonBackReference, and we don't use it no matter what.
 	 */
 	@CrossOrigin
 	@RequestMapping(value="/members", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<NewMemberBean> addMember(@RequestBody NewMemberBean member) {
-		System.out.println(member);
-		System.out.println(member.getUsername());
-		System.out.println(member.getPassword());
+	public ResponseEntity<NewMemberBean> addMember(@Valid @RequestBody NewMemberBean member) {
 		newMemberRepository.saveAndFlush(member);
 		return new ResponseEntity<NewMemberBean>(member, HttpStatus.OK);
 	}

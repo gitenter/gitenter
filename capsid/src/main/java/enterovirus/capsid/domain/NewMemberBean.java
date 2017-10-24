@@ -18,6 +18,20 @@ import lombok.*;
 @Table(schema = "config", name = "member")
 public class NewMemberBean {
 
+	/*
+	 * @GeneratedValue for automatically generate primary keys.
+	 * 
+	 * PostgreSQL has some problem with Hibernate for automatic 
+	 * primary key generation. Basically only strategy=GenerationType.IDENTITY 
+	 * works, but it has performance issues (compare to SEQUENCE) -- 
+	 * not crucial for us.
+	 * 
+	 * If our dummy data is made by INSERT using specific primary key, 
+	 * then it doesn't change the PostgreSQL's SEQUENCE so if later 
+	 * we insert without primary key (or let Hibernate to insert) 
+	 * that will cause ID conflict issues. But if we ALTER SEQUENCE
+	 * in postgres then everything will goes fine.
+	 */
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id", updatable=false)
