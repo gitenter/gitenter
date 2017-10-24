@@ -53,6 +53,9 @@ public class NewMemberBean {
 	@Column(name="display_name")
 	private String displayName;
 	
+	/*
+	 * Will @Email annotation, this column is not nullable.
+	 */
 	@Email
 	@Column(name="email")
 	private String email;

@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import org.springframework.util.AntPathMatcher;
 
 import enterovirus.capsid.database.*;
