@@ -1,3 +1,7 @@
+# TODO:
+# Also update SEQUENCE so this dummy set can be compatible with
+# application's automatic generated keys.
+
 INSERT INTO config.member VALUES
 	(1, 'ann', 'aaa', 'Ann Author', 'ann@ann.com'),
 	(2, 'bell', 'bbb', 'Bell Author', 'bell@bell.com'),

@@ -18,12 +18,14 @@ class App extends React.Component {
 
 	render() {
 		return (
-            <MemberList members={this.state.members}/>
+			<div>
+            	<MemberList members={this.state.members}/>
+			</div>
 		);
 	}
 }
 
-class MemberList extends React.Component{
+class MemberList extends React.Component {
 	render() {
 		var members = this.props.members.map(member =>
 			<Member key={member.id} member={member}/>
@@ -43,7 +45,7 @@ class MemberList extends React.Component{
 	}
 }
 
-class Member extends React.Component{
+class Member extends React.Component {
 	render() {
 		return (
 			<tr>

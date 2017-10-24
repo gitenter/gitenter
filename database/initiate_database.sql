@@ -41,7 +41,7 @@ CREATE TABLE setting.repository_member_roll (
 );
 
 INSERT INTO setting.repository_member_roll VALUES
-	(1, 'reader')
+	(1, 'reader'),
 	(2, 'reviewer'),
 	(3, 'editor'),
 	(4, 'project lead');
