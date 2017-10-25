@@ -57,7 +57,7 @@ Parts:
 
 ## API Design
 
-### Patterns/rules
+### (Theoretical) Design principles
 
 Patterns/rules are always conflict to each other, as they are defined in different time. Rules to fit "tomorrow" is not possible.
 
@@ -80,9 +80,59 @@ Constrains:
 		- Resource (resource state): Constant. Hold by server.
 	- Pro(s): Scalability. Load balance goes to client.
 - Cacheable
-- Client-Server
-- Layered System
-- Code on Demand
+- Client-Server: clear interface in between so the development can be done separately.
+	- Client: User interface, user state.
+	- Server: Data storage.
+- Layered System: intermediary servers for (1) enable load-balancing, (2) provide shared caches, and (3) enforce security policies.
+- Code on Demand (optional):
+	- Definition: temporarily extension/customization of client functionality by executible codes.
+	- Examples: Java applets, JavaScript.
+
+Pro(s):
+
+- Performance
+- Scalability
+- Simplicity
+- Modifiability
+- Visibility
+- Portability
+- Reliability
+
+### Design rules
+
+- Use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`
+- Sensible resource names.
+	- Using path variables (`/para1/{__}/para2/{__}`) for *resource names*. Resource names should be nouns.
+		- Encode hierarchy: when the value will affect the entire subtree of your URI space.
+		- Mandatory arguments over GET request.
+		- When you want to return 404 error if the value does not correspond to an existing resource.
+			- Locators.
+			- Unique identifiers.
+	- Using query parameters/GET variables (`/?para1={__}&para2={__}`) only for *filtering*.
+		- Optional parameters.
+			- For RESTful APIs, the representations chosen shall be provided as query parameters.
+		- When you want to return an empty list if the value does not correspond to an existing resource.
+			- Filter parameters.
+- XML and JSON
+	- JSON as default.
+	- Offer both if possible. User switch it by changing the extension in between `.xml` and `.json` *(how this can be done if using path variables??)*
+		- JSON: Standard. Fewer requirements.
+		- XML:
+			- Should not ~~follow XML utilize syntactically correct tags and text. Should not follow XML namespaces. Otherwise providing a XML interface is too staggering.~~
+			- Few consumers uses the XML responses.
+	- Supporting AJAX-style user interfaces *(what does that exactly mean?)*
+	- Provide a wrapped response (`.wxml` or `.wjson`).
+- Create Fine-Grained Resources
+	- (First) may mimic the structure of the underlying (1) application domain, or (2) database architecture. Start with small, easily defined resources.
+	- (Later) aggregate services and create larger use-case-oriented resources to reduce chattiness.
+- Connectedness (via hypermedia links)
+	- Self-descriptive
+	- Links includes:
+		- Self reference: retrieve data.
+		- Location header *(in? about?)* via POST.
+		- For returned collections, at least include `first`, `last`, `next`, `prev` links.
+
+### Patterns
 
 One possibility is to use [HAL-formatted JSON document](http://stateless.co/hal_specification.html). It is (1) standard and will be consistent all over the site, (2) with front-end/back-end supported, but (3) kind of boilerplate.
 
