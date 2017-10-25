@@ -65,72 +65,96 @@ Patterns/rules are always conflict to each other, as they are defined in differe
 
 Constrains:
 
-- Uniform Interface: simplify, decouple.
-	- Resource-based: Using URIs as resource identifiers for **individual** resources. Separate from the representations.
-	- Manipulation of Resources Through Representations: Client (hold representation) has enough information to modify/delete resources.
-	- Self-descriptive Messages: Message describes how to process the message. Response indicates its cache-ability.
-	- Hypermedia as the Engine of Application State (HATEOAS)
-		- **hypermedia** (definition):
-			- Clients deliver state via body contents, query-string parameters, request headers and the requested URI (the resource name).
-			- Services deliver state to clients via body content, response codes, and response headers.
-		- Links are contained in the returned body (or headers) for (1) itself, and (2) related objects.
-- Stateless:
-	- State is contained within request itself so need to be transfered back and force (Contradict with the concept of "container" which maintain the state by itself). Server doesn't maintain/update/communicate session states.
-		- State (application state): Varies. Hold by client.
-		- Resource (resource state): Constant. Hold by server.
-	- Pro(s): Scalability. Load balance goes to client.
-- Cacheable
-- Client-Server: clear interface in between so the development can be done separately.
-	- Client: User interface, user state.
-	- Server: Data storage.
-- Layered System: intermediary servers for (1) enable load-balancing, (2) provide shared caches, and (3) enforce security policies.
-- Code on Demand (optional):
-	- Definition: temporarily extension/customization of client functionality by executible codes.
-	- Examples: Java applets, JavaScript.
++ Uniform Interface: simplify, decouple.
+	+ Resource-based: Using URIs as resource identifiers for **individual** resources. Separate from the representations.
+	+ Manipulation of Resources Through Representations: Client (hold representation) has enough information to modify/delete resources.
+	+ Self-descriptive Messages: Message describes how to process the message. Response indicates its cache-ability.
+	+ Hypermedia as the Engine of Application State (HATEOAS)
+		+ **hypermedia** (definition):
+			+ Clients deliver state via body contents, query-string parameters, request headers and the requested URI (the resource name).
+			+ Services deliver state to clients via body content, response codes, and response headers.
+		+ Links are contained in the returned body (or headers) for (1) itself, and (2) related objects.
++ Stateless:
+	+ State is contained within request itself so need to be transfered back and force (Contradict with the concept of "container" which maintain the state by itself). Server doesn't maintain/update/communicate session states.
+		+ State (application state): Varies. Hold by client.
+		+ Resource (resource state): Constant. Hold by server.
+	+ Pro(s): Scalability. Load balance goes to client.
++ Cacheable
++ Client-Server: clear interface in between so the development can be done separately.
+	+ Client: User interface, user state.
+	+ Server: Data storage.
++ Layered System: intermediary servers for (1) enable load-balancing, (2) provide shared caches, and (3) enforce security policies.
++ Code on Demand (optional):
+	+ Definition: temporarily extension/customization of client functionality by executible codes.
+	+ Examples: Java applets, JavaScript.
 
 Pro(s):
 
-- Performance
-- Scalability
-- Simplicity
-- Modifiability
-- Visibility
-- Portability
-- Reliability
++ Performance
++ Scalability
++ Simplicity
++ Modifiability
++ Visibility
++ Portability
++ Reliability
 
 ### Design rules
 
-- Use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`
-- Sensible resource names.
-	- Using path variables (`/para1/{__}/para2/{__}`) for *resource names*. Resource names should be nouns.
-		- Encode hierarchy: when the value will affect the entire subtree of your URI space.
-		- Mandatory arguments over GET request.
-		- When you want to return 404 error if the value does not correspond to an existing resource.
-			- Locators.
-			- Unique identifiers.
-	- Using query parameters/GET variables (`/?para1={__}&para2={__}`) only for *filtering*.
-		- Optional parameters.
-			- For RESTful APIs, the representations chosen shall be provided as query parameters.
-		- When you want to return an empty list if the value does not correspond to an existing resource.
-			- Filter parameters.
-- XML and JSON
-	- JSON as default.
-	- Offer both if possible. User switch it by changing the extension in between `.xml` and `.json` *(how this can be done if using path variables??)*
-		- JSON: Standard. Fewer requirements.
-		- XML:
-			- Should not ~~follow XML utilize syntactically correct tags and text. Should not follow XML namespaces. Otherwise providing a XML interface is too staggering.~~
-			- Few consumers uses the XML responses.
-	- Supporting AJAX-style user interfaces *(what does that exactly mean?)*
-	- Provide a wrapped response (`.wxml` or `.wjson`).
-- Create Fine-Grained Resources
-	- (First) may mimic the structure of the underlying (1) application domain, or (2) database architecture. Start with small, easily defined resources.
-	- (Later) aggregate services and create larger use-case-oriented resources to reduce chattiness.
-- Connectedness (via hypermedia links)
-	- Self-descriptive
-	- Links includes:
-		- Self reference: retrieve data.
-		- Location header *(in? about?)* via POST.
-		- For returned collections, at least include `first`, `last`, `next`, `prev` links.
++ Use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`
++ Sensible resource names.
+	+ Using path variables (`/para1/{__}/para2/{__}`) for *resource names*. Resource names should be nouns.
+		+ Encode hierarchy: when the value will affect the entire subtree of your URI space.
+		+ Mandatory arguments over GET request.
+		+ When you want to return 404 error if the value does not correspond to an existing resource.
+			+ Locators.
+			+ Unique identifiers.
+	+ Using query parameters/GET variables (`/?para1={__}&para2={__}`) only for *filtering*.
+		+ Optional parameters.
+			+ For RESTful APIs, the representations chosen shall be provided as query parameters.
+		+ When you want to return an empty list if the value does not correspond to an existing resource.
+			+ Filter parameters.
++ XML and JSON
+	+ JSON as default.
+	+ Offer both if possible. User switch it by changing the extension in between `.xml` and `.json` *(how this can be done if using path variables??)*
+		+ JSON: Standard. Fewer requirements.
+		+ XML:
+			+ Should not ~~follow XML utilize syntactically correct tags and text. Should not follow XML namespaces. Otherwise providing a XML interface is too staggering.~~
+			+ Few consumers uses the XML responses.
+	+ Supporting AJAX-style user interfaces *(what does that exactly mean?)*
+	+ Provide a wrapped response (`.wxml` or `.wjson`).
++ Create Fine-Grained Resources
+	+ (First) may mimic the structure of the underlying (1) application domain, or (2) database architecture. Start with small, easily defined resources.
+	+ (Later) aggregate services and create larger use-case-oriented resources to reduce chattiness.
++ Connectedness (via hypermedia links)
+	+ Self-descriptive
+	+ Links includes:
+		+ Self reference: retrieve data.
+		+ Location header *(in? about?)* via POST.
+		+ For returned collections, at least include `first`, `last`, `next`, `prev` links.
+
+### HTTP Verbs (detailed)
+
++ `GET`
+	+ Idempotent
+	+ Safe (services must adhere to)
++ `PUT`
+	+ Idempotent
++ `DELETE`
+	+ Idempotent
++ `POST`
++ `HEAD`
+	+ Idempotent
+	+ Safe
++ `OPTIONS`
+	+ Idempotent
+	+ Safe
++ `TRACE`
+	+ Idempotent
+	+ Safe
+
+(Idempotent: multiple identical requests has the same effect as making a single request.)
+
+(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The return does not need to be the same every time.)
 
 ### Patterns
 
