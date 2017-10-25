@@ -1,5 +1,7 @@
 # ReactJS Notes
 
+## Basics
+
 `package.json` said we should start the application from hot generated file `main` of `index.js`.
 
 `webpack.config.js` said `entry:` of `index.js` is hot generated from `output:` of `main.js`.
@@ -93,3 +95,24 @@ Since `props` are immutable, they can be validated. Define `ComponentName.propTy
 #### (Component) Lifecycle management
 
 Can overwrite `componentXxx()` methods in `class Xxx extends React.Component` so they'll be executed in desired time.
+
+## Associated JavaScript Modules for using
+
+`webpack`: associated with the definition of `webpack.config.js` which is used to setup the server, port, ...
+
+`babel`: for the transpiler to provide both JSX and ES6 support all at once.
+
+`axios`: For query data from other site any put it into JavaScript variable. [Tutorial](https://github.com/axios/axios)...
+
+## Working together with Spring (Boot)
+
+#### Setup
+
+One possible way is to use `frontend-maven-plugin`, then the JavaScript and Java parts are under the same IP/port.
+
+Or you can set them up as two completely different projects, with Spring runs in Tomcat to one URL/port and npm running to another URL/port. In that case, CORS need to be setup.
+
+## References
+
+1. [ReactJS Tutorial](https://www.tutorialspoint.com/reactjs/) in tutorialspoint.
+1. [React.js and Spring Data REST](https://spring.io/guides/tutorials/react-and-spring-data-rest/).

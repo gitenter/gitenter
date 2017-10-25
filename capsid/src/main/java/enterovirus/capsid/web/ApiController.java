@@ -1,13 +1,19 @@
 package enterovirus.capsid.web;
 
+import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
+
 import org.springframework.util.AntPathMatcher;
 
 import enterovirus.capsid.database.*;
@@ -20,9 +26,10 @@ public class ApiController {
 	@Autowired private DocumentRepository documentRepository;
 	@Autowired private OrganizationRepository organizationRepository;	
 	@Autowired private MemberRepository memberRepository;
+	@Autowired private NewMemberRepository newMemberRepository;
 
 	/**
-	 * List users
+	 * List members
 	 * 
 	 * @param
 	 * @return
@@ -30,38 +37,59 @@ public class ApiController {
 	 * TODO: refer to https://spring.io/guides/gs/rest-service-cors/ for
 	 * further setups of Cross Origin Requests (CORS).
 	 */
-	@CrossOrigin(origins = "http://localhost:8765")
-	@RequestMapping(value="/users", method=RequestMethod.GET)
-	public Iterable<MemberBean> listUsers() {
+	@CrossOrigin
+	@RequestMapping(value="/members", method=RequestMethod.GET)
+	public Iterable<MemberBean> listMembers() {
 		
-		Iterable<MemberBean> users = memberRepository.findAll();
-		return users;
+		Iterable<MemberBean> members = memberRepository.findAll();
+		return members;
+	}
+	
+	/*
+	 * Test successful by feeding 
+	 * {"username":"ddd", "password":"ddd","displayName":"Ann Author","email":"ann@ann.com"}
+	 * The "id" of the new item will be generated successfully.
+	 *
+	 * For invalid username or password, @Valid will give corresponding
+	 * error messages.
+	 * 
+	 * Need a NewMemberBean rather than just using MemberBean because
+	 * (1) with explicit "password" (without @JsonIgnore)
+	 * and (2) without the organization array (Jackson has problem 
+	 * to handle that with error code related to @JsonManageredReference 
+	 * and @JsonBackReference, and we don't use it no matter what.
+	 */
+	@CrossOrigin
+	@RequestMapping(value="/members", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<NewMemberBean> addMember(@Valid @RequestBody NewMemberBean member) {
+		newMemberRepository.saveAndFlush(member);
+		return new ResponseEntity<NewMemberBean>(member, HttpStatus.OK);
 	}
 	
 	/**
-	 * List user information
+	 * List member information
 	 * 
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/users/{username}", method=RequestMethod.GET)
-	public MemberBean getUserInformation(
+	@RequestMapping(value="/members/{username}", method=RequestMethod.GET)
+	public MemberBean getMemberInformation(
 			@PathVariable String username) {
 		
-		MemberBean user = memberRepository.findByUsername(username).get(0);
-		return user;
+		MemberBean member = memberRepository.findByUsername(username).get(0);
+		return member;
 	}
 	
 	/**
-	 * List user repositories
+	 * List member repositories
 	 * <p>
-	 * List public repositories the specified user is involved.
+	 * List public repositories the specified member is involved.
 	 * 
 	 * @param
 	 * @return
 	 */
-	@RequestMapping(value="/users/{username}/repositories", method=RequestMethod.GET)
-	public DocumentBean listUserRepositories(
+	@RequestMapping(value="/members/{username}/repositories", method=RequestMethod.GET)
+	public DocumentBean listMemberRepositories(
 			@PathVariable String username) {
 		return null;
 	}
