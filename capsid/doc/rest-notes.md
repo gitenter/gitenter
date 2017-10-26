@@ -98,41 +98,9 @@ Pro(s):
 + Portability
 + Reliability
 
-### Design rules
-
-+ Use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`
-+ Sensible resource names.
-	+ Using path variables (`/para1/{__}/para2/{__}`) for *resource names*. Resource names should be nouns.
-		+ Encode hierarchy: when the value will affect the entire subtree of your URI space.
-		+ Mandatory arguments over GET request.
-		+ When you want to return 404 error if the value does not correspond to an existing resource.
-			+ Locators.
-			+ Unique identifiers.
-	+ Using query parameters/GET variables (`/?para1={__}&para2={__}`) only for *filtering*.
-		+ Optional parameters.
-			+ For RESTful APIs, the representations chosen shall be provided as query parameters.
-		+ When you want to return an empty list if the value does not correspond to an existing resource.
-			+ Filter parameters.
-+ XML and JSON
-	+ JSON as default.
-	+ Offer both if possible. User switch it by changing the extension in between `.xml` and `.json` *(how this can be done if using path variables??)*
-		+ JSON: Standard. Fewer requirements.
-		+ XML:
-			+ Should not ~~follow XML utilize syntactically correct tags and text. Should not follow XML namespaces. Otherwise providing a XML interface is too staggering.~~
-			+ Few consumers uses the XML responses.
-	+ Supporting AJAX-style user interfaces *(what does that exactly mean?)*
-	+ Provide a wrapped response (`.wxml` or `.wjson`).
-+ Create Fine-Grained Resources
-	+ (First) may mimic the structure of the underlying (1) application domain, or (2) database architecture. Start with small, easily defined resources.
-	+ (Later) aggregate services and create larger use-case-oriented resources to reduce chattiness.
-+ Connectedness (via hypermedia links)
-	+ Self-descriptive
-	+ Links includes:
-		+ Self reference: retrieve data.
-		+ Location header *(in? about?)* via POST.
-		+ For returned collections, at least include `first`, `last`, `next`, `prev` links.
-
 ### HTTP Verbs (detailed)
+
+The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 
 + `GET`: read
 	+ Idempotent
@@ -163,7 +131,7 @@ Pro(s):
 	+ URI:
 		+ `/para1/{__}/para2/`: Add to collection
 	+ Return code:
-		+ 201: created. Location header with link to `/para1/{__}` containing new ID.
+		+ 201: created. Location header with link to `/para1/{__}` containing new ID. Empty body. (refer to HATEOAS minimal setting)
 		+ 404: NOT FOUND
 + `DELETE`: delete
 	+ Idempotent
@@ -193,10 +161,11 @@ Pro(s):
 + Uniform interface
 + Not change over time
 	+ May include API version in the URI
-+ Path variables (`/para1/{__}/para2/{__}`)
++ Use path variables (`/para1/{__}/para2/{__}`)
 	+ Pros:
 		+ Encode hierarchy: when the value will affect the entire subtree of your URI space.
 		+ Mandatory arguments over `GET` request.
+		+ You can return 404 error if the value does not correspond to an existing resource for (1) locators and (2) unique identifiers.
 	+ Exceptions of using query parameters/GET variables (`/?para1={__}&para2={__}`)
 		+ Filtering (then return an empty list if the value does not correspond to an existing resource)
 		+ Sorting priority. E.g., `/tasks?sort=-priority` or `tasks?sort=+date&skip={__}`
@@ -217,19 +186,39 @@ Pro(s):
 + Predictable structure of URI for consistency/understandability/usability.
 + Hierarchical structure of URI for structure/relationship.
 	+ Default to no nesting unless there is a strong relation. Use nesting only on strong relations (the nested resource cannot exist outside the parent). For nested paths which are under not so strong relations, use them but treat them as aliases.
-+ Provide (1) JSON, (2) XML, (3) wrapped JSON, and (4) wrapped XML. Set one as default.
- 	+ *(Should be out of date. Only provide JSON should be okay.)*
-	+ If really want to return XML, it should be JSON like -- simple and easy o read, without the schema and namespace constrains.
-+ HTTP Accept header format:
-	+ Use Accepts Header for [content negotiation](https://en.wikipedia.org/wiki/Content_negotiation).
++ Use HTTP Accepts Header for [content negotiation](https://en.wikipedia.org/wiki/Content_negotiation) for return format in between (1) JSON, (2) XML, (3) wrapped JSON, and (4) wrapped XML.
 	+ Use file-extension-style format specifier (e.g. `http://www.example.com/customers/12345.json`)
 		+ An counter argument is don't use suffixes, since user is in the resource rather than the implementation detail.
 	+ Don't use ~~Query-string parameter~~
 	+ *(I think this is out-of-date. Don't do it. Just return JSON.)*
 
-### Return content
+### Return content design rules
 
 + Data boundaries: Normally not clear but use common sense.
++ Provide (1) JSON, (2) XML, (3) wrapped JSON `.wjson`, and (4) wrapped XML `.wxml`.
+ 	+ *(Should be out of date. Only provide JSON should be okay.)*
+	+ Set JSON as default. It is standard with fewer requirements.
+	+ If really want to return XML, it should be JSON like -- simple and easy o read. Should not ~~follow XML utilize syntactically correct tags and text. Should not follow XML namespaces. Otherwise providing a XML interface is too staggering.~~ Currently really few consumers uses the XML responses.
+	+ Supporting AJAX-style user interfaces *(what does that exactly mean?)*
++ Create Fine-Grained Resources
+	+ (First) may mimic the structure of the underlying (1) application domain, or (2) database architecture. Start with small, easily defined resources.
+	+ (Later) aggregate services and create larger use-case-oriented resources to reduce chattiness.
++ Use Hypermedia as the Engine of Application State (HATEOAS) for connectedness/navigability.
+	+ Self-descriptive: API should be usable and understandable given an initial URI without prior knowledge or out-of-band information.
+	+ Con(s):
+		+ A major cause of network chattiness.
+		+ increase implementation complexity
+		+ Impose a significant burden on service clients
+		+ Decreasing developer productivity on both client and server ends
+	+ Not often followed by current industry leaders :-( but at least **a minimal set** of hyperlinking practices should be provided.
+		+ Minimal links includes:
+			+ Self reference: retrieve data.
+			+ Newly-created using `POST`:
+			 	+ URI of the new resource should be return in  Location response header (and body is empty).
+			+ For collection returned by `GET`:
+				+ Self link for each representation.
+				+ At least also include `first`, `last`, `next`, `prev` links.
+
 
 ### Patterns
 
