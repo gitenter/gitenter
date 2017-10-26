@@ -193,24 +193,42 @@ Pro(s):
 + Uniform interface
 + Not change over time
 	+ May include API version in the URI
-+ Path variables vs query parameters
-	+ Use path variables (`/para1/{__}/para2/{__}`) for most cases
-		+ Pros:
-			+ Encode hierarchy: when the value will affect the entire subtree of your URI space.
-			+ Mandatory arguments over GET request.
-	+ Use query parameters/GET variables (`/?para1={__}&para2={__}`) only for
++ Path variables (`/para1/{__}/para2/{__}`)
+	+ Pros:
+		+ Encode hierarchy: when the value will affect the entire subtree of your URI space.
+		+ Mandatory arguments over `GET` request.
+	+ Exceptions of using query parameters/GET variables (`/?para1={__}&para2={__}`)
 		+ Filtering (then return an empty list if the value does not correspond to an existing resource)
+		+ Sorting priority. E.g., `/tasks?sort=-priority` or `tasks?sort=+date&skip={__}`
+		+ Full text search: Use query parameter `q` to match with the setup of general search engine such as [ElasticSearch](http://www.elasticsearch.org/) or [Lucene](http://lucene.apache.org/).
 		+ Optional parameters
 + Strict low case names.
     + Avoid camel caps, since URLs are not case sensitive.
     + Use underscores rather than dashes.
         + The RESTful API for Dropbox, Twitter, Google Web Services and Facebook all uses underscores.
 + Using nouns (*things* rather than *actions*)
-+ Using plurals
++ Using plurals (as the concept is a collection)
+	+ Exception(s):
+		+ Singleton resource such as `/configuration` (no ID and no `POST` verb usage)
+		+ `PUT /parameters/{__}/star` for star and `DELETE /parameters/{__}/star` for unstar.
 + Each resource have at least one URI to identify it.
-+ Predictable, hierarchical structure of URI
-	+ Predictable for consistency
-	+ Hierarchical for structure/relationship
++ Resources should maps to domain object, and be consistent within the same application.
+	+ Hence the noun in use should be user rather than user_id.
++ Predictable structure of URI for consistency/understandability/usability.
++ Hierarchical structure of URI for structure/relationship.
+	+ Default to no nesting unless there is a strong relation. Use nesting only on strong relations (the nested resource cannot exist outside the parent). For nested paths which are under not so strong relations, use them but treat them as aliases.
++ Provide (1) JSON, (2) XML, (3) wrapped JSON, and (4) wrapped XML. Set one as default.
+ 	+ *(Should be out of date. Only provide JSON should be okay.)*
+	+ If really want to return XML, it should be JSON like -- simple and easy o read, without the schema and namespace constrains.
++ HTTP Accept header format:
+	+ Use Accepts Header for [content negotiation](https://en.wikipedia.org/wiki/Content_negotiation).
+	+ Use file-extension-style format specifier (e.g. `http://www.example.com/customers/12345.json`)
+		+ An counter argument is don't use suffixes, since user is in the resource rather than the implementation detail.
+	+ Don't use ~~Query-string parameter~~
+	+ *(I think this is out-of-date. Don't do it. Just return JSON.)*
+
+### Return content
+
 + Data boundaries: Normally not clear but use common sense.
 
 ### Patterns
