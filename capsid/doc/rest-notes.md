@@ -134,14 +134,46 @@ Pro(s):
 
 ### HTTP Verbs (detailed)
 
-+ `GET`
++ `GET`: read
 	+ Idempotent
-	+ Safe (services must adhere to)
-+ `PUT`
+	+ Safe
+	+ URI:
+		+ `/para1/{__}/para2/`: Collection
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return code:
+		+ 200: OK
+		+ 404: NOT FOUND
+		+ 400: BAD REQUEST
+	+ Along with `HEAD`
++ `PUT`: update ~~(also create if the resource ID is chosen by the client, but that's not recommended)~~
 	+ Idempotent
-+ `DELETE`
+	+ URI:
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return:
+		+ Optional to return a body in the response (may waste bandwidth)
+		+ Optional to return a link via Location header (since ID is known)
+	+ Return code:
+		+ 200: OK
+		+ 204: OK but not returning any content in the body
+		+ 201: OK for creation
+		+ 404: NOT FOUND
+			+ The ID is not found/invalid.
+			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to update/replace every resource in the entire collection.
++ `POST`: create (*subordinate* resources, server assign ID)
+	+ URI:
+		+ `/para1/{__}/para2/`: Add to collection
+	+ Return code:
+		+ 201: created. Location header with link to `/para1/{__}` containing new ID.
+		+ 404: NOT FOUND
++ `DELETE`: delete
 	+ Idempotent
-+ `POST`
+	+ URI:
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return code:
+		+ 200: OK along with response body (maybe JSEND-style with (1) representation of the delete item, (2) wrapped response)
+		+ 204: OK but no content/no response body is returned
+		+ 404: NOT FOUND (the resource does not exist/cannot be removed)
+			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to delete every resource in the entire collection -- not often desirable.
 + `HEAD`
 	+ Idempotent
 	+ Safe
@@ -154,7 +186,7 @@ Pro(s):
 
 (Idempotent: multiple identical requests has the same effect as making a single request.)
 
-(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The return does not need to be the same every time.)
+(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
 
 ### Patterns
 
