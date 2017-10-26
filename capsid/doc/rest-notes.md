@@ -188,6 +188,31 @@ Pro(s):
 
 (Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
 
+### Resource Naming Rule
+
++ Uniform interface
++ Not change over time
+	+ May include API version in the URI
++ Path variables vs query parameters
+	+ Use path variables (`/para1/{__}/para2/{__}`) for most cases
+		+ Pros:
+			+ Encode hierarchy: when the value will affect the entire subtree of your URI space.
+			+ Mandatory arguments over GET request.
+	+ Use query parameters/GET variables (`/?para1={__}&para2={__}`) only for
+		+ Filtering (then return an empty list if the value does not correspond to an existing resource)
+		+ Optional parameters
++ Strict low case names.
+    + Avoid camel caps, since URLs are not case sensitive.
+    + Use underscores rather than dashes.
+        + The RESTful API for Dropbox, Twitter, Google Web Services and Facebook all uses underscores.
++ Using nouns (*things* rather than *actions*)
++ Using plurals
++ Each resource have at least one URI to identify it.
++ Predictable, hierarchical structure of URI
+	+ Predictable for consistency
+	+ Hierarchical for structure/relationship
++ Data boundaries: Normally not clear but use common sense.
+
 ### Patterns
 
 One possibility is to use [HAL-formatted JSON document](http://stateless.co/hal_specification.html). It is (1) standard and will be consistent all over the site, (2) with front-end/back-end supported, but (3) kind of boilerplate.
