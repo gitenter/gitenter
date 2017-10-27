@@ -192,9 +192,16 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 	+ Don't use ~~Query-string parameter~~
 	+ *(I think this is out-of-date. Don't do it. Just return JSON.)*
 
-### Return content design rules
+### Return body design rules
 
 + Data boundaries: Normally not clear but use common sense.
++ HTTP Accepts Header
+	+ E.g. for `POST`
+		+ `HTTP/1.1 201 CREATED`
+		+ `Status`
+		+ `Connection`
+		+ `Content-Type`
+		+ `Location` (so that's for self reference)
 + Provide (1) JSON, (2) XML, (3) wrapped JSON `.wjson`, and (4) wrapped XML `.wxml`.
  	+ *(Should be out of date. Only provide JSON should be okay.)*
 	+ Set JSON as default. It is standard with fewer requirements.
@@ -218,11 +225,30 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 			+ For collection returned by `GET`:
 				+ Self link for each representation.
 				+ At least also include `first`, `last`, `next`, `prev` links.
-
-
-### Patterns
-
-One possibility is to use [HAL-formatted JSON document](http://stateless.co/hal_specification.html). It is (1) standard and will be consistent all over the site, (2) with front-end/back-end supported, but (3) kind of boilerplate.
+	+ Link pattern(s):
+		+ Standard styles:
+			+ Atom (most popular)
+				+ Top level `data`
+					+ for every data element, with a nested `links` sub-element and the pair-wised `rel` and `href` sub-sub-element:
+						+ `rel` element with standard values `alternate`, `related`, `self`, `enclosure`, `via`.
+				+ Top level `links` with pair-wised `rel` and `href` sub-element:
+					+ `rel` for navigating links `first`, `last`, `previous`, `next`.
+				+ Its XML format has more (REST irrelevant) concepts then JSON.
+					+ `METHOD` property
+			+ AtomPub
+			+ Xlink
+			+ JSON-LD
+			+ [HAL-formatted JSON document](http://stateless.co/hal_specification.html). It is (1) standard and will be consistent all over the site, (2) with front-end/back-end supported, but (3) kind of boilerplate.
++ Wrapped Responses
+	+ Reason: end-developer doesn't really care about the details of (1) status code, or (2) response body.
+	+ Patterns (none of them can cover all cases):
+		+ [OmniTI Labs JSEND](http://labs.omniti.com/labs/jsend)
+		+ [Douglas Crockford](http://www.json.org/JSONRequest.html)
+		+ Just wrap regular (non-JSONP) responses, with the following properties
+			+ `code`
+			+ `status`: `success`/`fail`/`error`
+			+ `message` for fail or error
+			+ `data` with response body/error cause and exception name
 
 ## Technical Setups
 
