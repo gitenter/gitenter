@@ -249,6 +249,50 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 			+ `status`: `success`/`fail`/`error`
 			+ `message` for fail or error
 			+ `data` with response body/error cause and exception name
++ Limiting the amount of data returned
+	+ For large data set
+		+ Querying
+		+ Filtering
+		+ Pagination
+			+ Page-oriented
+			+ Item-oriented
+	+ When to use
+		+ Not recommended for all services
+		+ Resource specific
+		+ Should not be supported on all resources by default
+	+ Pros:
+		+ Important from a band-width standpoint
+		+ Make UI processing easier
+	+ Standard:
+		+ HTTP Range header
+			+ Used by UI tools such as [Dojo JSON Database objects](https://www.npmjs.com/package/jodo)
+			+ Keywords: `Range:`, `content-Range:`
+		+ query-string parameter `offset` and `limit` (overwrite Range header)
+			+ Clear
+			+ Easily-understood
+			+ Human readable
+			+ Easy to construct and parse
+
+### Cross-Origin Resource Sharing (CORS)
+
+Browser have same origin policy/common-source requirement: the site displayed cannot perform a request against another site.
+
+Methods o support cross-domain requests:
+	+ ~~JSON with padding (JSONP): the service returning arbitrary JavaScript code instead of JSON. Evaluated by JavaScript interpreter rather than JSON parser.~~ -- NOT RECOMMENDED
+	+ Cross-Origin Resource Sharing (CORS): A web browser technology specification to define ways for a web server to allow its resources to be accessed by a web page from a different domain.
+
+Support CORS: sending an additional HTTP header in the response
+
+```
+Access-Control-Allow-Origin: [which domains should be able to initiate a CORS request]
+Access-Control-Allow-Credentials: true // this one has side effect of sending the cookies/sessions if the user is logged into the application, so only use it if necessary...
+```
+
+Configuration via:
+
++ Web server
++ Proxy
++ Sent from the service itself
 
 ## Technical Setups
 
