@@ -293,11 +293,25 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 		+ Verisioning indicates a poor API design
 		+ Big con of versioning: Adds a lot of complexity to an API and to the clients.
 		+ But if decide to do will cause consumers to break later when the change is unavoidable.
-	+ Clients can be tolerant to new properties, as the advent of JSON usage for representations.
-		+ But do not:
-			+ Change the meaning of existing property
-				+ Content
-				+ Validation rules
+	+ Should use version if:
+		+ Uncertain the consequence of the design.
+	+ Change version number when
+		+ change a property name
+		+ Remove a property
+		+ Change a property data type
+		+ Change validation rule
+		+ Modify the `rel` value in Atom
+		+ Add a request resource in an existing work flow
+		+ Resource's state has a different meaning
+		+ ...
+	+ Non-breaking changes:
+		+ Add new properties in JSON
+		+ Add `link` to other resources
+		+ New content-type supported formats.
+		+ New content-language supported formats.
+	+ Version rules:
+		+ At individual resource level
+		+ Support no more than 2 versions (otherwise time cumbersome/complex/error prone/costly)
 	+ Technical methods:
 		+ ~~Indicate in URL itself~~
 			+ Used by Twitter/Facebook/Google
@@ -309,6 +323,7 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 			+ In GET request: `Accept: [format]; version=[____]`
 			+ In response: `Content-Type: [format]; version=[____]`
 			+ Use "best match" when no version is specified -- oldest supported version.
+			+ For unsupported/no longer supported versions, return 406 (Not acceptable).
 
 ### Cross-Origin Resource Sharing (CORS)
 
