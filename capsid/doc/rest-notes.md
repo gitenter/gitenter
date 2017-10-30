@@ -252,26 +252,41 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 + Limiting the amount of data returned
 	+ For large data set
 		+ Querying
-		+ Filtering
 		+ Pagination
-			+ Page-oriented
-			+ Item-oriented
+			+ Methods
+				+ Page-oriented
+				+ Item-oriented
+			+ Pros:
+				+ Important from a band-width standpoint
+				+ Make UI processing easier
+			+ Standards:
+				+ HTTP Range header
+					+ Used by UI tools such as [Dojo JSON Database objects](https://www.npmjs.com/package/jodo)
+					+ Keywords: `Range:`, `content-Range:`
+				+ Query-string parameter `offset` and `limit` (overwrite Range header)
+					+ Clear
+					+ Easily-understood
+					+ Human readable
+					+ Easy to construct and parse
+		+ Filtering
+			+ Operations:
+				+ Equality
+				+ Starts-with
+				+ Contain comparison
+				+ ...
+			+ Should use a single (rather than multiple) parameter to minimize name clashes/overlap.
+				+ Query-string parameters: `jsonp`, `format`, `after`, `before`...
+				+ Use `::` and separator `|` for a list of name/value pairs search. *(That should be really specific for SOME author. check what is common right now...)*. Use `*` for wild-card.
+				+ Server-side to determine if filtering functionality is requested by checking that single filtering parameter.
+				+ May need to use operators (as part of the value rather than property name).
+		+ Sorting
+			+ To utilize a single `sort` query-string parameter with `+` `-` and separator `|`.
 	+ When to use
 		+ Not recommended for all services
 		+ Resource specific
 		+ Should not be supported on all resources by default
-	+ Pros:
-		+ Important from a band-width standpoint
-		+ Make UI processing easier
-	+ Standard:
-		+ HTTP Range header
-			+ Used by UI tools such as [Dojo JSON Database objects](https://www.npmjs.com/package/jodo)
-			+ Keywords: `Range:`, `content-Range:`
-		+ query-string parameter `offset` and `limit` (overwrite Range header)
-			+ Clear
-			+ Easily-understood
-			+ Human readable
-			+ Easy to construct and parse
+	+ Standard(s):
+		+ [Open Data Protocol (OData) URL Conventions](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html)
 
 ### Cross-Origin Resource Sharing (CORS)
 
