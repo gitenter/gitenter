@@ -187,8 +187,9 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 + Hierarchical structure of URI for structure/relationship.
 	+ Default to no nesting unless there is a strong relation. Use nesting only on strong relations (the nested resource cannot exist outside the parent). For nested paths which are under not so strong relations, use them but treat them as aliases.
 + Use HTTP Accepts Header for [content negotiation](https://en.wikipedia.org/wiki/Content_negotiation) for return format in between (1) JSON, (2) XML, (3) wrapped JSON, and (4) wrapped XML.
-	+ Use file-extension-style format specifier (e.g. `http://www.example.com/customers/12345.json`)
-		+ An counter argument is don't use suffixes, since user is in the resource rather than the implementation detail.
+	+ E.g. `Accept: application/json; version=2`, `Content-Type: application/xml; version=2`
+	+ Don't use ~~file-extension-style format specifier (e.g. `http://www.example.com/customers/12345.json`)~~
+			+ An counter argument is don't use suffixes, since user is in the resource rather than the implementation detail.
 	+ Don't use ~~Query-string parameter~~
 	+ *(I think this is out-of-date. Don't do it. Just return JSON.)*
 
@@ -287,6 +288,27 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 		+ Should not be supported on all resources by default
 	+ Standard(s):
 		+ [Open Data Protocol (OData) URL Conventions](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html)
++ Versioning
+	+ Make efforts to not need versioned representations
+		+ Verisioning indicates a poor API design
+		+ Big con of versioning: Adds a lot of complexity to an API and to the clients.
+		+ But if decide to do will cause consumers to break later when the change is unavoidable.
+	+ Clients can be tolerant to new properties, as the advent of JSON usage for representations.
+		+ But do not:
+			+ Change the meaning of existing property
+				+ Content
+				+ Validation rules
+	+ Technical methods:
+		+ ~~Indicate in URL itself~~
+			+ Used by Twitter/Facebook/Google
+			+ API management tools like WSO2 require this form.
+			+ Why not use it:
+				+ REST constraints should embrace the built-in header system of the HTTP specification
+				+ Break the rule that a new URI should be added only when a new resource or concept is introduced--not representation changes
+		+ Write in HTTP header, and resolve via content negotiation
+			+ In GET request: `Accept: [format]; version=[____]`
+			+ In response: `Content-Type: [format]; version=[____]`
+			+ Use "best match" when no version is specified -- oldest supported version.
 
 ### Cross-Origin Resource Sharing (CORS)
 
