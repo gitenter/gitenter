@@ -340,6 +340,42 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 		+ Use its timestamp format `Sun, 06 Nov 1994 08:49:37 GMT`
 			+ Parsing ith Java `SimpleDateFormat` with `EEE, dd MMM yyyy HH:mm:ss 'GMT'`
 			+ Not consist with JSON but nothing we can do about it.
++ Authorization
+	+ Protocol/work flow
+		+ Client=>server (or):
+			+ Authentication token in `X-Authorization` header
+			+ `token` query-string parameter
+		+ Server (1) verify (2) validate (3) parse/load authorization principle
+		+ Authentication principle (server=>authentication service)
+		+ Resource and required permission for operation (authentication service=>server)
+		+ Service continues if authorized
+	+ Standard:
+		+ [OAuth2](https://oauth.net/2/): highly recommended but still in draft state
+		+ OAuth1: acceptable alternative
+		+ 3-Legged OAuth: may use in certain cases
+		+ [OpenID](http://openid.net/developers/specs/): should use an additional and set OAuth as primary
+	+ Transport through
+		+ ~~SSL (Secure Sockets Layer)~~: minimal requirement, predecessor of TSL.
+		+ TLS (Transport Layer Security): required by OAuth2
+		+ ~~Switching between HTTP and HTTPS~~: has security weakness
+
+### Security
+
+Loophole protection (exclude authorization):
+
++ Used verbs for allowable methods only
++ Validate input
+	+ Accept known good input
+	+ Reject bad input
+		+ Validate JSON and XML for malformed data.
++ Protect SQL/NoSQL injection
++ Be aware of race conditions *(example in RESTful service)*
++ Output encode data using known libraries
+	+ Microsoft’s Anti-XSS
+	+ OWASP’s AntiSammy
++ Restrict the message size to the exact length of the field.
++ Services should only display generic error messages.
++ Log suspicious activity.
 
 ### Cross-Origin Resource Sharing (CORS)
 
