@@ -20,41 +20,6 @@ RESTful service pros:
 
 Usage: create APIs for web-based applications.
 
-HTTP Methods of a REST architecture (act as the "verb" in HTTP request):
-
-+ `GET`
-+ `PUT`
-+ `DELETE`
-+ `POST`
-+ `OPTIONS`
-
-Good representations of resource should be:
-
-+ Understandability
-+ Completeness: contain other resources if necessary.
-+ Link-ability (to another resource)
-
-Safeguard a RESTful web service should be setup:
-
-+ Validation: protect against SQL/NoSQL injection.
-+ Session based authentication.
-+ Sensitive data in `POST` method (rather than in URL).
-+ Set restrictions on methods. E.g., `GET` cannot modify data.
-+ (On the server side) check the JSON/XML is well-formed.
-+ Throw generic error messages in HTTP response.
-
-Parts:
-
-+ Rest server: Provide access to resources.
-	+ Java based:
-		+ JAX-RS: JAVA API for RESTful Web Services
-		+ Spring
-+ Rest client: Access and present resources.
-
-## Useful tools
-
-+ [Postman](https://www.getpostman.com): RESTful API testing tool. Mac, Windows, Linux, and Chrome Apps.
-
 ## API Design
 
 ### (Theoretical) Design principles
@@ -228,7 +193,8 @@ May devided to HTTP Header and content rules separately...
 + Create Fine-Grained Resources
 	+ (First) may mimic the structure of the underlying (1) application domain, or (2) database architecture. Start with small, easily defined resources.
 	+ (Later) aggregate services and create larger use-case-oriented resources to reduce chattiness.
-+ Use Hypermedia as the Engine of Application State (HATEOAS) for connectedness/navigability.
++ Completeness: contain other resources if necessary.
++ Link-ability: Use Hypermedia as the Engine of Application State (HATEOAS) for connectedness/navigability.
 	+ Self-descriptive: API should be usable and understandable given an initial URI without prior knowledge or out-of-band information.
 	+ Con(s):
 		+ A major cause of network chattiness.
@@ -358,6 +324,7 @@ May devided to HTTP Header and content rules separately...
 			+ Parsing ith Java `SimpleDateFormat` with `EEE, dd MMM yyyy HH:mm:ss 'GMT'`
 			+ Not consist with JSON but nothing we can do about it.
 + Authorization
+	+ Session based authentication.
 	+ Protocol/work flow
 		+ Client=>server (or):
 			+ Authentication token in `X-Authorization` header
@@ -383,9 +350,11 @@ May devided to HTTP Header and content rules separately...
 Loophole protection (exclude authorization):
 
 + Used verbs for allowable methods only
+	+ `GET` cannot modify data.
+	+ Sensitive data in `POST` method (rather than in URL).
 + Validate input
 	+ Accept known good input
-	+ Reject bad input
+	+ Check the JSON/XML is well-formed, and reject bad input *(Should validation be default for all input, or only do it if doubt? Will the first choice cause too many bundle on the server side?)*
 		+ Validate JSON and XML for malformed data.
 + Protect SQL/NoSQL injection
 + Be aware of race conditions *(example in RESTful service)*
@@ -393,7 +362,7 @@ Loophole protection (exclude authorization):
 	+ Microsoft’s Anti-XSS
 	+ OWASP’s AntiSammy
 + Restrict the message size to the exact length of the field.
-+ Services should only display generic error messages.
++ Services should only display generic error messages in HTTP response.
 + Log suspicious activity.
 + Monitor usage of the API
 	+ Identify activities that fall out of the normal usage pattern.
@@ -425,7 +394,17 @@ Configuration via:
 
 ## Technical Setups
 
-### CORS setup
+### REST server
+
+Provide access to resources.
+
++ Java based:
+	+ JAX-RS: JAVA API for RESTful Web Services
+	+ Spring
+
+#### Various Spring setups
+
+##### CORS setup
 
 To turn on cross origin from one specific request (or without `origins` should be all possible URLs)
 
@@ -437,6 +416,14 @@ To turn on cross origin from one specific request (or without `origins` should b
 Or globally
 
 ?
+
+### REST client
+
+Access and present resources.
+
+### Other tools
+
++ [Postman](https://www.getpostman.com): RESTful API testing tool. Mac, Windows, Linux, and Chrome Apps.
 
 ## Remain questions
 
