@@ -156,6 +156,21 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 
 (Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
 
+### HTTP Status Codes
+
+Only the popular ones.
+
++ 200: OK
++ 201: CREATED
++ 204: NO CONTENT
++ 304: NOT MODIFIED
++ 400: BAD REQUEST
++ 401: UNAUTHORIZED
++ 403: FORBIDDEN
++ 404: NOT FOUND
++ 409: CONFLICT
++ 500: INTERNAL SERVER ERROR
+
 ### Resource Naming Rule
 
 + Uniform interface
@@ -194,6 +209,8 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 	+ *(I think this is out-of-date. Don't do it. Just return JSON.)*
 
 ### Return body design rules
+
+May devided to HTTP Header and content rules separately...
 
 + Data boundaries: Normally not clear but use common sense.
 + HTTP Accepts Header
@@ -358,6 +375,8 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 		+ ~~SSL (Secure Sockets Layer)~~: minimal requirement, predecessor of TSL.
 		+ TLS (Transport Layer Security): required by OAuth2
 		+ ~~Switching between HTTP and HTTPS~~: has security weakness
++ Caching
+	+ May use HTTP Header `Cache-Control: [how many seconds]` to set it up.
 
 ### Security
 
@@ -376,6 +395,12 @@ Loophole protection (exclude authorization):
 + Restrict the message size to the exact length of the field.
 + Services should only display generic error messages.
 + Log suspicious activity.
++ Monitor usage of the API
+	+ Identify activities that fall out of the normal usage pattern.
++ Throttle API usage
+	+ Malicious user cannot take down the API endpoint (DOS attack).
+	+ Block malicious IP address if needed.
++ Store API keys in a cryptographically secure keystore.
 
 ### Cross-Origin Resource Sharing (CORS)
 
