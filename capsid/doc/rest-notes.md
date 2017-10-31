@@ -324,6 +324,22 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 			+ In response: `Content-Type: [format]; version=[____]`
 			+ Use "best match" when no version is specified -- oldest supported version.
 			+ For unsupported/no longer supported versions, return 406 (Not acceptable).
+			+ May `Deprecated: true` for nearly out-of-data version.
++ Date/Time
+	+ Just `string` in JSON (and XML)
+		+ From `timestamps` in database. Either UTC or GMT.
+		+ Rules:
+			+ Same format
+			+ include time portion (time zone)
+		+ Use standard:
+			+ ISO 8601 (e.g. `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'`)
+				+ Parsing library
+					+ DateAdapterJ (Java)
+					+ ECMAScript 5, (out-of-date) momentjs, (out-of-date) datejs (JavaScript)
+	+ HTTP Header force using RFC 822/RFC 1123.
+		+ Use its timestamp format `Sun, 06 Nov 1994 08:49:37 GMT`
+			+ Parsing ith Java `SimpleDateFormat` with `EEE, dd MMM yyyy HH:mm:ss 'GMT'`
+			+ Not consist with JSON but nothing we can do about it.
 
 ### Cross-Origin Resource Sharing (CORS)
 
