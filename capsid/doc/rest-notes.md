@@ -22,7 +22,39 @@ Usage: create APIs for web-based applications.
 
 ## API Design
 
-### (Theoretical) Design principles
+### Fine-grained/Microservice architecture
+
+Concepts along with microservice:
+
++ Continuous delivery (Domain-Driven Design, Eric Evans)
++ Hexagonal architecture (Alistair Cockburn): opposite to layered architecture, pro: business logic cannot hide
++ On-demand Visualization: provision and resize the machine
++ Infrastructure automation
++ Small automation team
++ System at scale
++ Microservice
++ Single Responsibility Principle: Gather together those things that change for the same reason, and separate those things that change for different reasons.
++ A platform as a service (PAAS)
++ Application programming interface (API)
+
+Microservice (definition): small, autonomous services that work together.
+
++ Service boundary: business boundary
++ Goal: avoid a service to grow too large
++ Small (definition):
+	+ Could be rewritten in two weeks
+	+ Small enough and no smaller
+	+ Manageable by a small team
++ Communication via network calls
+	+ Enforce separation between services
+	+ Avoid the perils to tight coupling
++ Golden rule: make change of a service and deploy it by itself without changing anything else.
++ Pros:
+	+ Benefits around interdependency
++ Cons:
+	+ Complexity of more moving parts
+
+### (Theoretical) Design principles of a RESTful Service
 
 Patterns/rules are always conflict to each other, as they are defined in different time. Rules to fit "tomorrow" is not possible.
 
@@ -62,6 +94,8 @@ Pro(s):
 + Visibility
 + Portability
 + Reliability
+
+## API Interface Rules
 
 ### HTTP Verbs (detailed)
 
