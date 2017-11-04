@@ -40,6 +40,11 @@ Concepts along with microservice:
 	+ Try new technology in limited scope. So if fails, that will not impact a lot.
 + Resilience (recover quickly from difficulties) engineering
 + Service oriented architecture (SOA): multiple services collaborate to provide some end set of capability.
+	+ Need to have proper
+		+ Communication protocol: SOAP, ...
+		+ Vendor middleware
+		+ Service granularity
+		+ Splitting methodology
 
 Microservice (definition): small, autonomous services that work together.
 
@@ -53,6 +58,8 @@ Microservice (definition): small, autonomous services that work together.
 	+ Enforce separation between services
 	+ Avoid the perils to tight coupling
 + Golden rule: make change of a service and deploy it by itself without changing anything else.
++ May understand microservice as a specific approach of SOA
+	+ Same pattern for the following: microservice=>SOA / XP=>SOA / scrum=>Agile
 + Pros:
 	+ Mostly benefits around interdependency
 	+ (Share with any distributed system)
@@ -66,9 +73,33 @@ Microservice (definition): small, autonomous services that work together.
 		+ Optimizing for replaceability
 	+ (Share with any service-oriented architecture)
 + Cons:
-	+ Complexity of more moving parts
+	+ Complexity of a distributed system
+		+ Hard to manage
+	+ Technically harder to handling deployment
+	+ Technically harder to handling testing
+	+ Technically harder for monitoring
+	+ distributed transaction
+	+ CAP theorem
++ (The communication in between is under network rather than function calls of the same machine. As network (WORLD wide web) is already build all abound the world, it technically makes the difference.)
++ (Doing that forces people to define clearer interfaces which (solidly) cannot be changed -- that is an sociology/human natural thing.)
++ (It indeed can give us better flexibility to work on each part, the cutting (and interface design) become crucial, and doesn't share any flexibility at all.)
 
-So it seems that microservice is no more than functionalization/modulization, but the communication in between is under HTTP protocol rather than cache of the same machine. The difference is doing that forces people to define clearer interfaces which (solidly) cannot be changed. It indeed can give us better flexibility to work on each part, the cutting (and interface design) become crucial, and doesn't share any flexibility at all.
+Decompositions similar to microservice (w/ comparison):
+
++ Shared libraries
+	+ Cons compare to microservice:
+		+ Same language/platform, so lost true technology heterogeneity.
+		+ Hard to scale part.
+		+ Always need to deploy the entire system (unless do dynamical link).
+		+ Obvious seams/division of the system are not built into library boundary.
+	+ Shared pros:
+		+ Reusability
++ Modules
+	+ (Definition:) modular decomposition techniques provided by specific programming languages.
+		+ Java - Open Source Gateway Initiative (OSGI): A framework under Eclipse which can retrofit modules in Java.
+		+ Erlang
+	+ Cons:
+		+ Enforce module lifecycle management without enough support in the language itself. So extra works need to be done for module isolation.
 
 ### (Theoretical) Design principles of a RESTful Service
 
