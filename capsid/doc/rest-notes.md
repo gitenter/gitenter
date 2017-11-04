@@ -36,6 +36,10 @@ Concepts along with microservice:
 + Single Responsibility Principle: Gather together those things that change for the same reason, and separate those things that change for different reasons.
 + A platform as a service (PAAS)
 + Application programming interface (API)
++ Technology Heterogeneity:  Use different technologies (programming languages, databases, ...) inside of each job.
+	+ Try new technology in limited scope. So if fails, that will not impact a lot.
++ Resilience (recover quickly from difficulties) engineering
++ Service oriented architecture (SOA): multiple services collaborate to provide some end set of capability.
 
 Microservice (definition): small, autonomous services that work together.
 
@@ -50,9 +54,21 @@ Microservice (definition): small, autonomous services that work together.
 	+ Avoid the perils to tight coupling
 + Golden rule: make change of a service and deploy it by itself without changing anything else.
 + Pros:
-	+ Benefits around interdependency
+	+ Mostly benefits around interdependency
+	+ (Share with any distributed system)
+		+ Technology Heterogeneity
+		+ Resilience
+		+ Scale every part separately. Run each part in small/less powerful hardware.
+			+ As a comparison, in monolithic service everything need to be scaled together.
+		+ Easy to deploy: only need to deploy the tiny microservice which is under change, rather than the entire application.
+		+ Organizational alignment of otherwise large team/codebases, especially if the team itself is distributed.
+		+ Composability/reuse of functionality in different ways/purposes
+		+ Optimizing for replaceability
+	+ (Share with any service-oriented architecture)
 + Cons:
 	+ Complexity of more moving parts
+
+So it seems that microservice is no more than functionalization/modulization, but the communication in between is under HTTP protocol rather than cache of the same machine. The difference is doing that forces people to define clearer interfaces which (solidly) cannot be changed. It indeed can give us better flexibility to work on each part, the cutting (and interface design) become crucial, and doesn't share any flexibility at all.
 
 ### (Theoretical) Design principles of a RESTful Service
 
