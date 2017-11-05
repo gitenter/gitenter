@@ -142,6 +142,34 @@ Pro(s):
 + Portability
 + Reliability
 
+### RESTful API
+
+APIs are distributed system under the World Wide Web.
+
++ Public API
++ Internal API
++ API accessible by trusted partners only
+
+API has a big con: once deployed, they cannot be changed. REST is a way to adapting the changes.
+
+Alternative choice of REST:
+
++ Atom Publishing Protocol (2005): which nobody is using right now.
++ SOAP: Lost a standoff with REST in 2007. Only used in big company (and not for public-facing API) now.
+
+Key components need to know about REST
+
++ Resources
++ Representations
++ Name resources with URLs
++ Properly use HTTP methods
++ Hypermedia/link: The single most important aspect of REST. Otherwise it is just a functional API.
+
+Concept related to RESTful API:
+
++ Antipattern: *?*
++ Breadth-first search: *?*
+
 ## API Interface Rules
 
 ### HTTP Verbs (detailed)
@@ -425,6 +453,15 @@ May devided to HTTP Header and content rules separately...
 		+ ~~Switching between HTTP and HTTPS~~: has security weakness
 + Caching
 	+ May use HTTP Header `Cache-Control: [how many seconds]` to set it up.
+
+### Misc
+
+How to break down to interlinked resources:
+
++ Starting from your business requirement (*RESTful Web Services* 2007).
++ Starting from resource design without thinking about hypermedia (*RESTful Web APIs* 2013, *RESTful Web Services Cookbook* 2010).
+
+No matter what the target client is, it should at least support the XMLHttpRequest library (JavaScript).
 
 ### Security
 
