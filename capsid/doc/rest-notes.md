@@ -101,47 +101,6 @@ Decompositions similar to microservice (w/ comparison):
 	+ Cons:
 		+ Enforce module lifecycle management without enough support in the language itself. So extra works need to be done for module isolation.
 
-### (Theoretical) Design principles of a RESTful Service
-
-Patterns/rules are always conflict to each other, as they are defined in different time. Rules to fit "tomorrow" is not possible.
-
-*(Different approach: SOAP (Simple Object Access Protocol), more straightforward, not a lot of design.)*
-
-Constrains:
-
-+ Uniform Interface: simplify, decouple.
-	+ Resource-based: Using URIs as resource identifiers for **individual** resources. Separate from the representations.
-	+ Manipulation of Resources Through Representations: Client (hold representation) has enough information to modify/delete resources.
-	+ Self-descriptive Messages: Message describes how to process the message. Response indicates its cache-ability.
-	+ Hypermedia as the Engine of Application State (HATEOAS)
-		+ **hypermedia** (definition):
-			+ Clients deliver state via body contents, query-string parameters, request headers and the requested URI (the resource name).
-			+ Services deliver state to clients via body content, response codes, and response headers.
-		+ Links are contained in the returned body (or headers) for (1) itself, and (2) related objects.
-+ Stateless:
-	+ State is contained within request itself so need to be transfered back and force (Contradict with the concept of "container" which maintain the state by itself). Server doesn't maintain/update/communicate session states.
-		+ State (application state): Varies. Hold by client.
-		+ Resource (resource state): Constant. Hold by server.
-	+ Pro(s): Scalability. Load balance goes to client.
-+ Cacheable
-+ Client-Server: clear interface in between so the development can be done separately.
-	+ Client: User interface, user state.
-	+ Server: Data storage.
-+ Layered System: intermediary servers for (1) enable load-balancing, (2) provide shared caches, and (3) enforce security policies.
-+ Code on Demand (optional):
-	+ Definition: temporarily extension/customization of client functionality by executible codes.
-	+ Examples: Java applets, JavaScript.
-
-Pro(s):
-
-+ Performance
-+ Scalability
-+ Simplicity
-+ Modifiability
-+ Visibility
-+ Portability
-+ Reliability
-
 ### (A General) API
 
 APIs are distributed system under the World Wide Web (Using HTTP).
@@ -185,11 +144,55 @@ Key components about RESTful API (mostly share with a general web service/API):
 	+ Self-descriptive message: User can make educated guesses of what is behind the link.
 	+ Hypermedia/link *(The single most important aspect of REST. Otherwise it is just a functional API)*:
 		+ Hypermedia as the engine of application state (HATEOAS)
+		+ (May in the future) have API client which not fit to a single particular API.
+		+ (May in the future) redesign of API server should not break the site.
+	+ Shouldn't have a separate human-readable document describe how to construct the URL.
 
 Concept related to RESTful API:
 
 + Antipattern: *?*
 + Breadth-first search: *?*
+
+### (Theoretical) Design principles of a RESTful Service
+
+Patterns/rules are always conflict to each other, as they are defined in different time. Rules to fit "tomorrow" is not possible.
+
+*(Different approach: SOAP (Simple Object Access Protocol), more straightforward, not a lot of design.)*
+
+Constrains:
+
++ Uniform Interface: simplify, decouple.
+	+ Resource-based: Using URIs as resource identifiers for **individual** resources. Separate from the representations.
+	+ Manipulation of Resources Through Representations: Client (hold representation) has enough information to modify/delete resources.
+	+ Self-descriptive Messages: Message describes how to process the message. Response indicates its cache-ability.
+	+ Hypermedia as the Engine of Application State (HATEOAS)
+		+ **hypermedia** (definition):
+			+ Clients deliver state via body contents, query-string parameters, request headers and the requested URI (the resource name).
+			+ Services deliver state to clients via body content, response codes, and response headers.
+		+ Links are contained in the returned body (or headers) for (1) itself, and (2) related objects.
++ Stateless:
+	+ State is contained within request itself so need to be transfered back and force (Contradict with the concept of "container" which maintain the state by itself). Server doesn't maintain/update/communicate session states.
+		+ State (application state): Varies. Hold by client.
+		+ Resource (resource state): Constant. Hold by server.
+	+ Pro(s): Scalability. Load balance goes to client.
++ Cacheable
++ Client-Server: clear interface in between so the development can be done separately.
+	+ Client: User interface, user state.
+	+ Server: Data storage.
++ Layered System: intermediary servers for (1) enable load-balancing, (2) provide shared caches, and (3) enforce security policies.
++ Code on Demand (optional):
+	+ Definition: temporarily extension/customization of client functionality by executible codes.
+	+ Examples: Java applets, JavaScript.
+
+Pro(s):
+
++ Performance
++ Scalability
++ Simplicity
++ Modifiability
++ Visibility
++ Portability
++ Reliability
 
 ## API Interface Rules
 
