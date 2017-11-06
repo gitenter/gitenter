@@ -142,9 +142,9 @@ Pro(s):
 + Portability
 + Reliability
 
-### RESTful API
+### (A General) API
 
-APIs are distributed system under the World Wide Web.
+APIs are distributed system under the World Wide Web (Using HTTP).
 
 + Public API
 + Internal API
@@ -152,18 +152,39 @@ APIs are distributed system under the World Wide Web.
 
 API has a big con: once deployed, they cannot be changed. REST is a way to adapting the changes.
 
-Alternative choice of REST:
+Alternative choices of HTTP:
+
++ Gopher protocol (RFC 1436): Similar to HTTP but without addressability.
++ FTP (RFC 959): File transfer.
+	+ No machine-readable way to point a file.
+	+ Long-live sessions.
++ BitTorrent: peer-to-peer protocol.
++ SSH: real-time protocol.
+
+Alternative choices of REST:
 
 + Atom Publishing Protocol (2005): which nobody is using right now.
 + SOAP: Lost a standoff with REST in 2007. Only used in big company (and not for public-facing API) now.
 
-Key components need to know about REST
+### RESTful API
 
-+ Resources
-+ Representations
-+ Name resources with URLs
+Key components about RESTful API (mostly share with a general web service/API):
+
++ Resources: The thing behind a URL.
++ Representations: The document the server sends.
 + Properly use HTTP methods
-+ Hypermedia/link: The single most important aspect of REST. Otherwise it is just a functional API.
++ Addressability: Name resources with URLs. Every resource should have its own URL.
++ Short sessions/Statelessness:
+	+ HTTP sessions last for one request.
+	+ Server and client both keep state, but different kind of state. Server doesn't care what state the client is in.
+		+ Application state (definition): which URL are you on.
+		+ Resource state
+			+ Sending a GET doesn't change the state.
+			+ Receive a POST will create a new state. No way to back to the old state.
++ Connectedness
+	+ Self-descriptive message: User can make educated guesses of what is behind the link.
+	+ Hypermedia/link *(The single most important aspect of REST. Otherwise it is just a functional API)*:
+		+ Hypermedia as the engine of application state (HATEOAS)
 
 Concept related to RESTful API:
 
@@ -237,6 +258,7 @@ Only the popular ones.
 + 200: OK
 + 201: CREATED
 + 204: NO CONTENT
++ 303: See Other (for redirect)
 + 304: NOT MODIFIED
 + 400: BAD REQUEST
 + 401: UNAUTHORIZED
