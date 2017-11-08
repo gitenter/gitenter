@@ -64,6 +64,24 @@ Alternative choices of HTTP:
 + BitTorrent: peer-to-peer protocol.
 + SSH: real-time protocol.
 
+#### Responses format
+
++ The status code
++ The response header
+	+ `Content-Type`: Body's media type=MIME type=content type
+		+ `application/json`: JSON. Looks like JavaScript or Python code.
+		+ `application/vnd.collection+json`: Collection+JSON document.
+			+ A standard for publishing a searchable list of resources over the web.
+			+ JSON plus constrains.
+				+ Object need to have a property called `collection`
+				+ `template` for creating a new item through HTTP POST.
+				+ `data`
+				+ `link`
+		+ `applidation/x-www-form-urlencoded`: Used for POST
++ The entire body
+
+*(So it is like for hypermedia type, you can choose from HAL, Collection+JSON, and others. That's really about taste.)*
+
 #### HTTP Verbs
 
 HTTP verbs define the *protocol semantics* (for server to understand approximately what the client wants) of HTTP. HTTP verbs don't define *application semantics* (content related to the application what really need to be done).
@@ -151,25 +169,7 @@ Choose HTTP methods to use in an API == choose a community of clients and other 
 + Filesystem GUI: HTTP plus WebDAV.
 + Various HTTP caches and proxies: stay away anything not in RFC 2616 include PATCH.
 
-### Responses
-
-+ The status code
-+ The response header
-	+ `Content-Type`: Body's media type=MIME type=content type
-		+ `application/json`: JSON. Looks like JavaScript or Python code.
-		+ `application/vnd.collection+json`: Collection+JSON document.
-			+ A standard for publishing a searchable list of resources over the web.
-			+ JSON plus constrains.
-				+ Object need to have a property called `collection`
-				+ `template` for creating a new item through HTTP POST.
-				+ `data`
-				+ `link`
-		+ `applidation/x-www-form-urlencoded`: Used for POST
-+ The entire body
-
-*(So it is like for hypermedia type, you can choose from HAL, Collection+JSON, and others. That's really about taste.)*
-
-### HTTP Status Codes
+#### HTTP Status Codes
 
 Only the popular ones.
 
@@ -184,6 +184,55 @@ Only the popular ones.
 + 404: NOT FOUND
 + 409: CONFLICT
 + 500: INTERNAL SERVER ERROR
+
+### Hypermedia
+
+Hypermedia describe the capability of a resource in a machine-readable way.  
+
++ Tell which subset of HTTP semantics does *this* web server support on *this* URL right now.
+	+ How to construct an HTTP request.
+		+ What HTTP method to use.
+		+ What URL to use.
+		+ What HTTP headers and/or entity-body to send.
+	+ Make promises about the HTTP response.
+		+ Suggesting status code
+		+ Suggest HTTP header
+		+ Suggest data format in response.
++ Connect resources to each other.
+	+ Suggest how the client should integrate the response into its workflow.
++ Solve the (1) usability and (2) stability problems of the web API.
+
+HTML hypermedia control tags:
+
++ `<a>`
++ `<img>`
++ `<form method="POST">`
++ `<form method="GET">`
+
+Where hypermedia stays:
+
++ Abstract:
+	+ Embedded within the presentation of information.
+	+ A layer above the presentation of information.
++ Concrete:
+	+ HTTP header
+		+`Link` (RFC 5988): add simple hypermedia controls to entity-bodies that don't normally support hypermedia at all.
+		+ Useful if HTML `<a>` is not available.
+	+ HTTP entity-body
+
+URI Templates (RFC 6570): A way to define how to construct an URL.
+
+URI vs URL:
+
++ Both a short string to identify a resource.
++ Both defined by standard RFC 3986.
++ URI
+	+ Just an identifier.
+	+ No guarantee that it has a representation.
++ URL
+	+ URLs are URIs. URIs may not be URLs.
+	+ Can be dereferenced: a computer can take a URL and get a representation of the underlying resource.
++ When API refer to a resource, it should use URL with `http` or `https` schema.
 
 ## API Design
 
@@ -676,3 +725,4 @@ Access and present resources.
 1. [RESTful Web Services Tutorial](https://www.tutorialspoint.com/restful/index.htm) in tutorialspoint *(Basic concepts included. But a big part of it is a hello world example with tedious setup wizards which is not quite useful...)*
 1. [REST API tutorial](http://www.restapitutorial.com/)
 1. RESTful Service Best Practices, Todd Fredrich.
+1. RESTful Web APIs: Services for a Changing World, O'Reilly 2013.
