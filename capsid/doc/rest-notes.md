@@ -20,6 +20,151 @@ RESTful service pros:
 
 Usage: create APIs for web-based applications.
 
+## Concepts
+
+### Resource and representations
+
++ Resource:
+	+ (Definition:) anything that's important enough to be referenced as a thing in itself.
+	+ May be used for:
+		+ Create a hypertext link on it
+		+ Make or refute assertions about it
+		+ Retrieve or cache a representation of it
+			+ Reference into another representation
+			+ Annotate it
+			+ Perform other operations on it
+	+ Can be stored on a computer (a.k.a, information resources)
+		+ An electronic document
+		+ A row in a database
+		+ Result of a running algorithm
+	+ Client doesn't care about resource. It only cares about URLs and representations.
++ Representation:
+	+ (Definition:) A machine-readable explanation of the current state of a resource.
+	+ Can be transfered back and forth
+	+ A resource may have many representations
+		+ Content negotiation
+		+ Multiple URLs
+	+ Examples:
+		+ XML document
+		+ JSON object
+		+ A set of comma-separated values
+		+ A SQL INSERT statement
++ Representational state transfer (definition): The server sends a representation describing the state of a resource. The client sends a representation describing the state it would like the resource to have.
+
+### HTTP Protocol
+
+The predefined protocol sending in between clients and servers in a RESTful system.
+
+Alternative choices of HTTP:
+
++ Gopher protocol (RFC 1436): Similar to HTTP but without addressability.
++ FTP (RFC 959): File transfer.
+	+ No machine-readable way to point a file.
+	+ Long-live sessions.
++ BitTorrent: peer-to-peer protocol.
++ SSH: real-time protocol.
+
+#### HTTP Verbs
+
+HTTP verbs define the *protocol semantics* (for server to understand approximately what the client wants) of HTTP. HTTP verbs don't define *application semantics* (content related to the application what really need to be done).
+
+The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
+
++ `GET`: read
+	+ Idempotent
+	+ Safe (as a liberating promise)
+	+ URI:
+		+ `/para1/{__}/para2/`: Collection
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return code:
+		+ 200: OK
+		+ 404: NOT FOUND
+		+ 400: BAD REQUEST
+	+ Along with `HEAD`
++ `PUT`: update ~~(also create if the resource ID is chosen by the client, but that's not recommended)~~
+	+ Idempotent
+	+ URI:
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return:
+		+ Optional to return a body in the response (may waste bandwidth)
+		+ Optional to return a link via Location header (since ID is known)
+	+ Return code:
+		+ 200: OK
+		+ 204: OK but not returning any content in the body
+		+ 201: OK for creation
+		+ 404: NOT FOUND
+			+ The ID is not found/invalid.
+			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to update/replace every resource in the entire collection.
++ `POST`: create (*subordinate* resources, server assign ID)
+	+ URI:
+		+ `/para1/{__}/para2/`: Add to collection
+	+ Return code:
+		+ 201: created. Location header with link to `/para1/{__}` containing new ID. Empty body. (refer to HATEOAS minimal setting)
+		+ 404: NOT FOUND
++ `DELETE`: delete
+	+ Idempotent
+	+ URI:
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return code:
+		+ 200: OK along with response body (maybe JSEND-style with (1) representation of the delete item, (2) wrapped response)
+		+ 204: OK but no content/no response body is returned
+		+ 404: NOT FOUND (the resource does not exist/cannot be removed)
+			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to delete every resource in the entire collection -- not often desirable.
++ `HEAD`: Get the headers that would be sent along with a representation of this resource, but not the representation itself.
+	+ Idempotent
+	+ Safe
++ `OPTIONS`: Discover which HTTP methods this resource responds to.
+	+ Idempotent
+	+ Safe
++ ~~`CONNECT` (Used with HTTP proxies only)~~
++ ~~`TRACE` (Used with HTTP proxies only)~~
+	+ Idempotent
+	+ Safe
++ `PATCH` (Defined not in HTTP standard, but RFC 5789)
+	+ Like `PUT` but for fine-grained changes.
++ `LINK` (Defined not in HTTP standard, but in the Internet-Draft "snell-link-
+method")
++ `UNLINK` (Defined not in HTTP standard, but in the Internet-Draft "snell-link-
+method")
+
+(Idempotent: multiple identical requests has the same effect as making a single request.)
+
+(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
+
+### Responses
+
++ The status code
++ The response header
+	+ `Content-Type`: Body's media type=MIME type=content type
+		+ `application/json`: JSON. Looks like JavaScript or Python code.
+		+ `application/vnd.collection+json`: Collection+JSON document.
+			+ A standard for publishing a searchable list of resources over the web.
+			+ JSON plus constrains.
+				+ Object need to have a property called `collection`
+				+ `template` for creating a new item through HTTP POST.
+				+ `data`
+				+ `link`
+		+ `applidation/x-www-form-urlencoded`: Used for POST
++ The entire body
+
+*(So it is like for hypermedia type, you can choose from HAL, Collection+JSON, and others. That's really about taste.)*
+
+### HTTP Status Codes
+
+Only the popular ones.
+
++ 200: OK
++ 201: CREATED
++ 204: NO CONTENT
++ 303: See Other (for redirect)
++ 304: NOT MODIFIED
++ 400: BAD REQUEST
++ 401: UNAUTHORIZED
++ 403: FORBIDDEN
++ 404: NOT FOUND
++ 409: CONFLICT
++ 500: INTERNAL SERVER ERROR
+
 ## API Design
 
 ### Fine-grained/Microservice architecture
@@ -114,15 +259,6 @@ Cons:
 + Once deployed, they cannot be changed. REST is a way to adapting the changes.
 + Semantic challenge: bridging the semantic gap between understanding a document's structure and understand what it means.
 
-Alternative choices of HTTP:
-
-+ Gopher protocol (RFC 1436): Similar to HTTP but without addressability.
-+ FTP (RFC 959): File transfer.
-	+ No machine-readable way to point a file.
-	+ Long-live sessions.
-+ BitTorrent: peer-to-peer protocol.
-+ SSH: real-time protocol.
-
 Alternative choices of REST:
 
 + Atom Publishing Protocol (2005): which nobody is using right now.
@@ -158,11 +294,13 @@ Concept related to RESTful API:
 
 ### (Theoretical) Design principles of a RESTful Service
 
+REST is a set of **design constraints**. REST is neither a protool, nor a file format, nor a development framework.
+
 Patterns/rules are always conflict to each other, as they are defined in different time. Rules to fit "tomorrow" is not possible.
 
 *(Different approach: SOAP (Simple Object Access Protocol), more straightforward, not a lot of design.)*
 
-Constrains:
+Fielding constrains (by Roy T. Fielding):
 
 + Uniform Interface: simplify, decouple.
 	+ Resource-based: Using URIs as resource identifiers for **individual** resources. Separate from the representations.
@@ -196,99 +334,6 @@ Pro(s):
 + Visibility
 + Portability
 + Reliability
-
-## HTTP Concepts
-
-Response includes:
-
-+ The status code
-+ The response header
-	+ `Content-Type`: Body's media type=MIME type=content type
-		+ `application/json`: JSON. Looks like JavaScript or Python code.
-		+ `application/vnd.collection+json`: Collection+JSON document.
-			+ A standard for publishing a searchable list of resources over the web.
-			+ JSON plus constrains.
-				+ Object need to have a property called `collection`
-				+ `template` for creating a new item through HTTP POST.
-				+ `data`
-				+ `link`
-+ The entire body
-
-*(So it is like for hypermedia type, you can choose from HAL/HATEOAS, Collection+JSON, and others. That's really about taste.)*
-
-### HTTP Verbs (detailed)
-
-The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
-
-+ `GET`: read
-	+ Idempotent
-	+ Safe (as a liberating promise)
-	+ URI:
-		+ `/para1/{__}/para2/`: Collection
-		+ `/para1/{__}/para2/{__}`: Individual item
-	+ Return code:
-		+ 200: OK
-		+ 404: NOT FOUND
-		+ 400: BAD REQUEST
-	+ Along with `HEAD`
-+ `PUT`: update ~~(also create if the resource ID is chosen by the client, but that's not recommended)~~
-	+ Idempotent
-	+ URI:
-		+ `/para1/{__}/para2/{__}`: Individual item
-	+ Return:
-		+ Optional to return a body in the response (may waste bandwidth)
-		+ Optional to return a link via Location header (since ID is known)
-	+ Return code:
-		+ 200: OK
-		+ 204: OK but not returning any content in the body
-		+ 201: OK for creation
-		+ 404: NOT FOUND
-			+ The ID is not found/invalid.
-			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to update/replace every resource in the entire collection.
-+ `POST`: create (*subordinate* resources, server assign ID)
-	+ URI:
-		+ `/para1/{__}/para2/`: Add to collection
-	+ Return code:
-		+ 201: created. Location header with link to `/para1/{__}` containing new ID. Empty body. (refer to HATEOAS minimal setting)
-		+ 404: NOT FOUND
-+ `DELETE`: delete
-	+ Idempotent
-	+ URI:
-		+ `/para1/{__}/para2/{__}`: Individual item
-	+ Return code:
-		+ 200: OK along with response body (maybe JSEND-style with (1) representation of the delete item, (2) wrapped response)
-		+ 204: OK but no content/no response body is returned
-		+ 404: NOT FOUND (the resource does not exist/cannot be removed)
-			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to delete every resource in the entire collection -- not often desirable.
-+ `HEAD`
-	+ Idempotent
-	+ Safe
-+ `OPTIONS`
-	+ Idempotent
-	+ Safe
-+ `TRACE`
-	+ Idempotent
-	+ Safe
-
-(Idempotent: multiple identical requests has the same effect as making a single request.)
-
-(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
-
-### HTTP Status Codes
-
-Only the popular ones.
-
-+ 200: OK
-+ 201: CREATED
-+ 204: NO CONTENT
-+ 303: See Other (for redirect)
-+ 304: NOT MODIFIED
-+ 400: BAD REQUEST
-+ 401: UNAUTHORIZED
-+ 403: FORBIDDEN
-+ 404: NOT FOUND
-+ 409: CONFLICT
-+ 500: INTERNAL SERVER ERROR
 
 ## API Interface Rules
 
