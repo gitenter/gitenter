@@ -68,8 +68,6 @@ Alternative choices of HTTP:
 
 HTTP verbs define the *protocol semantics* (for server to understand approximately what the client wants) of HTTP. HTTP verbs don't define *application semantics* (content related to the application what really need to be done).
 
-The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
-
 + `GET`: read
 	+ Idempotent
 	+ Safe (as a liberating promise)
@@ -82,7 +80,7 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 		+ 400: BAD REQUEST
 	+ Along with `HEAD`
 + `PUT`: update ~~(also create if the resource ID is chosen by the client, but that's not recommended)~~
-	+ Idempotent
+	+ Idempotent but not safe.
 	+ URI:
 		+ `/para1/{__}/para2/{__}`: Individual item
 	+ Return:
@@ -96,13 +94,15 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 			+ The ID is not found/invalid.
 			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to update/replace every resource in the entire collection.
 + `POST`: create (*subordinate* resources, server assign ID)
+	+ Neither idempotent nor safe.
 	+ URI:
 		+ `/para1/{__}/para2/`: Add to collection
 	+ Return code:
 		+ 201: created. Location header with link to `/para1/{__}` containing new ID. Empty body. (refer to HATEOAS minimal setting)
 		+ 404: NOT FOUND
+	+ In HTML (which only has GET and POST), POST is for every unsafe activity.
 + `DELETE`: delete
-	+ Idempotent
+	+ Idempotent but not safe.
 	+ URI:
 		+ `/para1/{__}/para2/{__}`: Individual item
 	+ Return code:
@@ -113,23 +113,43 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 + `HEAD`: Get the headers that would be sent along with a representation of this resource, but not the representation itself.
 	+ Idempotent
 	+ Safe
+	+ A lightweight version of GET: May not save time, but definitely save bandwidth.
 + `OPTIONS`: Discover which HTTP methods this resource responds to.
 	+ Idempotent
 	+ Safe
+	+ A good idea but nobody is using it. Function overlapped by hypermedia documents (good API) and human-readable documentation (poor API).
 + ~~`CONNECT` (Used with HTTP proxies only)~~
 + ~~`TRACE` (Used with HTTP proxies only)~~
 	+ Idempotent
 	+ Safe
 + `PATCH` (Defined not in HTTP standard, but RFC 5789)
 	+ Like `PUT` but for fine-grained changes.
-+ `LINK` (Defined not in HTTP standard, but in the Internet-Draft "snell-link-
-method")
-+ `UNLINK` (Defined not in HTTP standard, but in the Internet-Draft "snell-link-
-method")
+	+ Using a "diff" representation. May define an `op` with values such as `test`, `remove`, `add`, `replace`, `move`, `copy`, ...
+	+ Reasons to use:
+		+ For really large resource
+		+ Avoid unintentional conflicts
+	+ Neither idempotent nor safe.
++ `LINK` and `UNLINK` (Defined not in HTTP standard, but in the Internet-Draft "snell-link-
+method". Used to be in RFC 2068 but later removed. Not approved by RFC yet.)
+	+ Idempotent but not safe.
++ The WebDAV standard `COPY`, `MOVE`, and `LOCK` (defined by RFC 4918.)
 
 (Idempotent: multiple identical requests has the same effect as making a single request.)
 
 (Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
+
+HTTP verbs are redundant:
+
++ PUT can substitute for PATCH.
++ GET can do the job of HEAD.
++ POST can substitute for anything.
+
+Choose HTTP methods to use in an API == choose a community of clients and other components that understand this methods.
+
++ HTML: only uses GET and POST.
++ APIs before 2008: GET, PUT, DELETE and POST.
++ Filesystem GUI: HTTP plus WebDAV.
++ Various HTTP caches and proxies: stay away anything not in RFC 2616 include PATCH.
 
 ### Responses
 
@@ -265,6 +285,15 @@ Alternative choices of REST:
 + SOAP: Lost a standoff with REST in 2007. Only used in big company (and not for public-facing API) now.
 
 ### RESTful API
+
+REST system components (created/developed by different people):
+
++ Servers
++ Clients
++ Caches
++ Proxies
++ Caching proxies
++ ...
 
 Key components about RESTful API (mostly share with a general web service/API):
 
