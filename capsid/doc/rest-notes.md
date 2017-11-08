@@ -109,7 +109,10 @@ APIs are distributed system under the World Wide Web (Using HTTP).
 + Internal API
 + API accessible by trusted partners only
 
-API has a big con: once deployed, they cannot be changed. REST is a way to adapting the changes.
+Cons:
+
++ Once deployed, they cannot be changed. REST is a way to adapting the changes.
++ Semantic challenge: bridging the semantic gap between understanding a document's structure and understand what it means.
 
 Alternative choices of HTTP:
 
@@ -194,7 +197,24 @@ Pro(s):
 + Portability
 + Reliability
 
-## API Interface Rules
+## HTTP Concepts
+
+Response includes:
+
++ The status code
++ The response header
+	+ `Content-Type`: Body's media type=MIME type=content type
+		+ `application/json`: JSON. Looks like JavaScript or Python code.
+		+ `application/vnd.collection+json`: Collection+JSON document.
+			+ A standard for publishing a searchable list of resources over the web.
+			+ JSON plus constrains.
+				+ Object need to have a property called `collection`
+				+ `template` for creating a new item through HTTP POST.
+				+ `data`
+				+ `link`
++ The entire body
+
+*(So it is like for hypermedia type, you can choose from HAL/HATEOAS, Collection+JSON, and others. That's really about taste.)*
 
 ### HTTP Verbs (detailed)
 
@@ -202,7 +222,7 @@ The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
 
 + `GET`: read
 	+ Idempotent
-	+ Safe
+	+ Safe (as a liberating promise)
 	+ URI:
 		+ `/para1/{__}/para2/`: Collection
 		+ `/para1/{__}/para2/{__}`: Individual item
@@ -269,6 +289,8 @@ Only the popular ones.
 + 404: NOT FOUND
 + 409: CONFLICT
 + 500: INTERNAL SERVER ERROR
+
+## API Interface Rules
 
 ### Resource Naming Rule
 
