@@ -64,10 +64,21 @@ Alternative choices of HTTP:
 + BitTorrent: peer-to-peer protocol.
 + SSH: real-time protocol.
 
+#### Request format
+
++ The method
++ The target URL
++ The HTTP header
++ The HTTP entity-body
+
+In HTML, `<a>` only gives target URL. `<form>` can also indicate the methods (by `method="get"`), the entity-body encrypt method (the default `application/x-www-form-urlencoded`. By `enctype="type/plain"` replace it with `text/plain`), and change the HTTP header and body at the same time.
+
+Hypermedia control allow you to change HTTP header and body in whatever way the user wants, and describe an HTTP request in great detail.
+
 #### Responses format
 
 + The status code
-+ The response header
++ The HTTP header
 	+ `Content-Type`: Body's media type=MIME type=content type
 		+ `application/json`: JSON. Looks like JavaScript or Python code.
 		+ `application/vnd.collection+json`: Collection+JSON document.
@@ -78,7 +89,7 @@ Alternative choices of HTTP:
 				+ `data`
 				+ `link`
 		+ `applidation/x-www-form-urlencoded`: Used for POST
-+ The entire body
++ The HTTP entire-body
 
 *(So it is like for hypermedia type, you can choose from HAL, Collection+JSON, and others. That's really about taste.)*
 
@@ -190,7 +201,7 @@ Only the popular ones.
 Hypermedia describe the capability of a resource in a machine-readable way.  
 
 + Tell which subset of HTTP semantics does *this* web server support on *this* URL right now.
-	+ How to construct an HTTP request.
+	+ Guiding the request/How to construct an HTTP request.
 		+ What HTTP method to use.
 		+ What URL to use.
 		+ What HTTP headers and/or entity-body to send.
@@ -200,6 +211,9 @@ Hypermedia describe the capability of a resource in a machine-readable way.
 		+ Suggest data format in response.
 + Connect resources to each other.
 	+ Suggest how the client should integrate the response into its workflow.
+		+ Outbound link: Replace the client's application status. E.g. HTML `<a>`.
+		+ Embedded link: don't replace the application states. E.g. HTML `<img>`, `<script>`, `<link>`.
+			+ Transclusion: the process of embedding one document in another.
 + Solve the (1) usability and (2) stability problems of the web API.
 
 HTML hypermedia control tags:
@@ -414,6 +428,8 @@ Pro(s):
 + Reliability
 
 ## API Interface Rules
+
+Disclaimer: Some design rules are for **general** clients which can handle all APIs follow the rule (rather than a particular API clients for a particular server). They are not just aesthetic rules which aims to make a better/makes-more-sense design.
 
 ### Resource Naming Rule
 
