@@ -347,6 +347,24 @@ Alternative choices of REST:
 + Atom Publishing Protocol (2005): which nobody is using right now.
 + SOAP: Lost a standoff with REST in 2007. Only used in big company (and not for public-facing API) now.
 
+#### Server & Client
+
++ Server describe the resource/problem space in a way the client can engage with. Client do whatever job they want to do. Server should NOT dictate goals to the client.
+
+Client classification:
+
++ Human-driven clients
++ Automated clients
+	+ The crawler: aggressively and recursively seeking for new representations.
+	+ The monitor: constantly check (back) one URL and to see what happened/changed.
+		+ RSS aggregator
+	+ The script: simulates a human with a set routine that never changes.
+		+ Hypermedia-aware script is less likely to (trivially) break compare to the ones with domain-specific assumptions.
+	+ The agent: simulates a human being who is actively engaged with a problem.
+		+ The automated client best positioned to take advantage of the flexibility of a hypermedia API. W/ assumptions:
+			+ The goal doesn't change, so the algorithm keeps work.
+			+ May need human-driven decisions.
+
 ### RESTful API
 
 REST system components (created/developed by different people):
@@ -430,6 +448,45 @@ Pro(s):
 ## API Interface Rules
 
 Disclaimer: Some design rules are for **general** clients which can handle all APIs follow the rule (rather than a particular API clients for a particular server). They are not just aesthetic rules which aims to make a better/makes-more-sense design.
+
+### Design Method classification
+
++ Create a new domain-specific media type (not recommended)
+	+ Flat design/no advantage of the work done by predecessors
+		+ Flat standard (definition): backed by a particular company and only existing at one hostname.
+	+ More work (although won't have flexibility problem of most of today's APIs)
++ Add application semantics to a generic hypermedia format
+	+ May extend a domain-specific design standard by adding new link relations
+	+ (Fact:) Most existing domain-specific data formats doesn't include hypermedia controls.
+
+### What (not) to Design
+
+What to design:
+
++ Collection & Item(s)
++ Link relation
+	+ The media type standard defines what's the values of `<link rel="__" />` mean.
+	+ The `rel` key word may
+		+ Use *extension relations* (?)
+		+ Use [IANA registration of link relations](http://www.iana.org/assignments/link-relations/link-relations.xhtml)
+			+ `next`
+			+ `previous`
+			+ ...
+		+ Use the ones the document's media type defined.
+		+ Include in the document a *profile* which define link relations.
+		+ (Solve conflicts)
++ API call
+	+ Make the client a "silent partner" of implementing the server.
+		+ API changes are hard/rarely happened.
+		+ A client written against a specific server implementation can be optimized for that server’s quirks, but it will fall down if you try to run it against another implementation of the same standard.
+
+Do not design (from the knowledge in the client's side):
+
++ Server
+	+ URL format
+		+ It is fully covered in the hypermedia
++ Client
+	+ Assumptions based on a specific server implementation, rather than just the media type standard
 
 ### Resource Naming Rule
 
