@@ -488,6 +488,23 @@ Do not design (from the knowledge in the client's side):
 + Client
 	+ Assumptions based on a specific server implementation, rather than just the media type standard
 
+#### Existing Design Standards
+
+Benifits of using them:
+
++ Save time
++ Use the preexisting base of client programs and server-side tools
+
+List of existing design standards:
+
++ Collection+JSON
+    + Use case:
+        + Problem is collection based
+        + No existing domain-specific standard for the problem domain
++ AtomPub: Atom Publishing Protocol (RFC 5023)
+    + Out of date  
++ OData
+
 ### Resource Naming Rule
 
 + Uniform interface
