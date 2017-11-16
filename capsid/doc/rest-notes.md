@@ -497,13 +497,22 @@ Benifits of using them:
 
 List of existing design standards:
 
-+ Collection+JSON
++ Collection+JSON `application/vnd.collection+json`
     + Use case:
         + Problem is collection based
         + No existing domain-specific standard for the problem domain
-+ AtomPub: Atom Publishing Protocol (RFC 5023)
-    + Out of date  
++ JSON-LD
++ Atom
++ ~~AtomPub~~ `application/atom+xml`: Atom Publishing Protocol (RFC 5023)
+	+ Editing and publishing new articles (so have `<author>`, `<updated>`, ... which doesn't fit to general proposes).
+    + Out of date. Used to be an alternative to RSS feeding. The first standard to describe collection pattern (2005).
 + OData
++ Hydra
++ Xlink
++ [HAL-formatted JSON document](http://stateless.co/hal_specification.html)
++ SIREN
+
+Here refers [some syntax comparison](https://sookocheff.com/post/api/on-choosing-a-hypermedia-format/) of different standards.
 
 ### Resource Naming Rule
 
@@ -580,6 +589,13 @@ May devided to HTTP Header and content rules separately...
 				+ At least also include `first`, `last`, `next`, `prev` links.
 	+ Link pattern(s):
 		+ Standard styles:
+			+ Collection+JSON
+				+ For a collection: `collection`,`href`, `items`, `links`, `queries`, `template`
+					+ `template` works as the hint in HTML form
+					+ `queries` for search templates
+				+ For an item: `href`, `links`, `data`
+					+ Query an item still get a collection. Just there's only one item in `items`.
+					+ `href` is relative. It works as relative links in HTML.
 			+ Atom (most popular)
 				+ Top level `data`
 					+ for every data element, with a nested `links` sub-element and the pair-wised `rel` and `href` sub-sub-element:
