@@ -20,15 +20,397 @@ RESTful service pros:
 
 Usage: create APIs for web-based applications.
 
+## Concepts
+
+### Resource and representations
+
++ Resource:
+	+ (Definition:) anything that's important enough to be referenced as a thing in itself.
+	+ May be used for:
+		+ Create a hypertext link on it
+		+ Make or refute assertions about it
+		+ Retrieve or cache a representation of it
+			+ Reference into another representation
+			+ Annotate it
+			+ Perform other operations on it
+	+ Can be stored on a computer (a.k.a, information resources)
+		+ An electronic document
+		+ A row in a database
+		+ Result of a running algorithm
+	+ Client doesn't care about resource. It only cares about URLs and representations.
++ Representation:
+	+ (Definition:) A machine-readable explanation of the current state of a resource.
+	+ Can be transfered back and forth
+	+ A resource may have many representations
+		+ Content negotiation
+		+ Multiple URLs
+	+ Examples:
+		+ XML document
+		+ JSON object
+		+ A set of comma-separated values
+		+ A SQL INSERT statement
++ Representational state transfer (definition): The server sends a representation describing the state of a resource. The client sends a representation describing the state it would like the resource to have.
+
+### HTTP Protocol
+
+The predefined protocol sending in between clients and servers in a RESTful system.
+
+Alternative choices of HTTP:
+
++ Gopher protocol (RFC 1436): Similar to HTTP but without addressability.
++ FTP (RFC 959): File transfer.
+	+ No machine-readable way to point a file.
+	+ Long-live sessions.
++ BitTorrent: peer-to-peer protocol.
++ SSH: real-time protocol.
+
+#### Request format
+
++ The method
++ The target URL
++ The HTTP header
++ The HTTP entity-body
+
+In HTML, `<a>` only gives target URL. `<form>` can also indicate the methods (by `method="get"`), the entity-body encrypt method (the default `application/x-www-form-urlencoded`. By `enctype="type/plain"` replace it with `text/plain`), and change the HTTP header and body at the same time.
+
+Hypermedia control allow you to change HTTP header and body in whatever way the user wants, and describe an HTTP request in great detail.
+
+#### Responses format
+
++ The status code
++ The HTTP header
+	+ `Content-Type`: Body's media type=MIME type=content type
+		+ `application/json`: JSON. Looks like JavaScript or Python code.
+		+ `application/vnd.collection+json`: Collection+JSON document.
+			+ A standard for publishing a searchable list of resources over the web.
+			+ JSON plus constrains.
+				+ Object need to have a property called `collection`
+				+ `template` for creating a new item through HTTP POST.
+				+ `data`
+				+ `link`
+		+ `applidation/x-www-form-urlencoded`: Used for POST
++ The HTTP entire-body
+
+*(So it is like for hypermedia type, you can choose from HAL, Collection+JSON, and others. That's really about taste.)*
+
+#### HTTP Verbs
+
+HTTP verbs define the *protocol semantics* (for server to understand approximately what the client wants) of HTTP. HTTP verbs don't define *application semantics* (content related to the application what really need to be done).
+
++ `GET`: read
+	+ Idempotent
+	+ Safe (as a liberating promise)
+	+ URI:
+		+ `/para1/{__}/para2/`: Collection
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return code:
+		+ 200: OK
+		+ 404: NOT FOUND
+		+ 400: BAD REQUEST
+	+ Along with `HEAD`
++ `PUT`: update ~~(also create if the resource ID is chosen by the client, but that's not recommended)~~
+	+ Idempotent but not safe.
+	+ URI:
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return:
+		+ Optional to return a body in the response (may waste bandwidth)
+		+ Optional to return a link via Location header (since ID is known)
+	+ Return code:
+		+ 200: OK
+		+ 204: OK but not returning any content in the body
+		+ 201: OK for creation
+		+ 404: NOT FOUND
+			+ The ID is not found/invalid.
+			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to update/replace every resource in the entire collection.
++ `POST`: create (*subordinate* resources, server assign ID)
+	+ Neither idempotent nor safe.
+	+ URI:
+		+ `/para1/{__}/para2/`: Add to collection
+	+ Return code:
+		+ 201: created. Location header with link to `/para1/{__}` containing new ID. Empty body. (refer to HATEOAS minimal setting)
+		+ 404: NOT FOUND
+	+ In HTML (which only has GET and POST), POST is for every unsafe activity.
++ `DELETE`: delete
+	+ Idempotent but not safe.
+	+ URI:
+		+ `/para1/{__}/para2/{__}`: Individual item
+	+ Return code:
+		+ 200: OK along with response body (maybe JSEND-style with (1) representation of the delete item, (2) wrapped response)
+		+ 204: OK but no content/no response body is returned
+		+ 404: NOT FOUND (the resource does not exist/cannot be removed)
+			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to delete every resource in the entire collection -- not often desirable.
++ `HEAD`: Get the headers that would be sent along with a representation of this resource, but not the representation itself.
+	+ Idempotent
+	+ Safe
+	+ A lightweight version of GET: May not save time, but definitely save bandwidth.
++ `OPTIONS`: Discover which HTTP methods this resource responds to.
+	+ Idempotent
+	+ Safe
+	+ A good idea but nobody is using it. Function overlapped by hypermedia documents (good API) and human-readable documentation (poor API).
++ ~~`CONNECT` (Used with HTTP proxies only)~~
++ ~~`TRACE` (Used with HTTP proxies only)~~
+	+ Idempotent
+	+ Safe
++ `PATCH` (Defined not in HTTP standard, but RFC 5789)
+	+ Like `PUT` but for fine-grained changes.
+	+ Using a "diff" representation. May define an `op` with values such as `test`, `remove`, `add`, `replace`, `move`, `copy`, ...
+	+ Reasons to use:
+		+ For really large resource
+		+ Avoid unintentional conflicts
+	+ Neither idempotent nor safe.
++ `LINK` and `UNLINK` (Defined not in HTTP standard, but in the Internet-Draft "snell-link-
+method". Used to be in RFC 2068 but later removed. Not approved by RFC yet.)
+	+ Idempotent but not safe.
++ The WebDAV standard `COPY`, `MOVE`, and `LOCK` (defined by RFC 4918.)
+
+(Idempotent: multiple identical requests has the same effect as making a single request.)
+
+(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
+
+HTTP verbs are redundant:
+
++ PUT can substitute for PATCH.
++ GET can do the job of HEAD.
++ POST can substitute for anything.
+
+Choose HTTP methods to use in an API == choose a community of clients and other components that understand this methods.
+
++ HTML: only uses GET and POST.
++ APIs before 2008: GET, PUT, DELETE and POST.
++ Filesystem GUI: HTTP plus WebDAV.
++ Various HTTP caches and proxies: stay away anything not in RFC 2616 include PATCH.
+
+#### HTTP Status Codes
+
+Only the popular ones.
+
++ 200: OK
++ 201: CREATED
++ 204: NO CONTENT
++ 303: See Other (for redirect)
++ 304: NOT MODIFIED
++ 400: BAD REQUEST
++ 401: UNAUTHORIZED
++ 403: FORBIDDEN
++ 404: NOT FOUND
++ 409: CONFLICT
++ 500: INTERNAL SERVER ERROR
+
+### Hypermedia
+
+Hypermedia describe the capability of a resource in a machine-readable way.  
+
++ Tell which subset of HTTP semantics does *this* web server support on *this* URL right now.
+	+ Guiding the request/How to construct an HTTP request.
+		+ What HTTP method to use.
+		+ What URL to use.
+		+ What HTTP headers and/or entity-body to send.
+	+ Make promises about the HTTP response.
+		+ Suggesting status code
+		+ Suggest HTTP header
+		+ Suggest data format in response.
++ Connect resources to each other.
+	+ Suggest how the client should integrate the response into its workflow.
+		+ Outbound link: Replace the client's application status. E.g. HTML `<a>`.
+		+ Embedded link: don't replace the application states. E.g. HTML `<img>`, `<script>`, `<link>`.
+			+ Transclusion: the process of embedding one document in another.
++ Solve the (1) usability and (2) stability problems of the web API.
+
+HTML hypermedia control tags:
+
++ `<a>`
++ `<img>`
++ `<form method="POST">`
++ `<form method="GET">`
+
+Where hypermedia stays:
+
++ Abstract:
+	+ Embedded within the presentation of information.
+	+ A layer above the presentation of information.
++ Concrete:
+	+ HTTP header
+		+`Link` (RFC 5988): add simple hypermedia controls to entity-bodies that don't normally support hypermedia at all.
+		+ Useful if HTML `<a>` is not available.
+	+ HTTP entity-body
+
+URI Templates (RFC 6570): A way to define how to construct an URL.
+
+URI vs URL:
+
++ Both a short string to identify a resource.
++ Both defined by standard RFC 3986.
++ URI
+	+ Just an identifier.
+	+ No guarantee that it has a representation.
++ URL
+	+ URLs are URIs. URIs may not be URLs.
+	+ Can be dereferenced: a computer can take a URL and get a representation of the underlying resource.
++ When API refer to a resource, it should use URL with `http` or `https` schema.
+
 ## API Design
 
-### (Theoretical) Design principles
+### Fine-grained/Microservice architecture
+
+Concepts along with microservice:
+
++ Continuous delivery (Domain-Driven Design, Eric Evans)
++ Hexagonal architecture (Alistair Cockburn): opposite to layered architecture, pro: business logic cannot hide
++ On-demand Visualization: provision and resize the machine
++ Infrastructure automation
++ Small automation team
++ System at scale
++ Microservice
++ Single Responsibility Principle: Gather together those things that change for the same reason, and separate those things that change for different reasons.
++ A platform as a service (PAAS)
++ Application programming interface (API)
++ Technology Heterogeneity:  Use different technologies (programming languages, databases, ...) inside of each job.
+	+ Try new technology in limited scope. So if fails, that will not impact a lot.
++ Resilience (recover quickly from difficulties) engineering
++ Service oriented architecture (SOA): multiple services collaborate to provide some end set of capability.
+	+ Need to have proper
+		+ Communication protocol: SOAP, ...
+		+ Vendor middleware
+		+ Service granularity
+		+ Splitting methodology
+
+Microservice (definition): small, autonomous services that work together.
+
++ Service boundary: business boundary
++ Goal: avoid a service to grow too large
++ Small (definition):
+	+ Could be rewritten in two weeks
+	+ Small enough and no smaller
+	+ Manageable by a small team
++ Communication via network calls
+	+ Enforce separation between services
+	+ Avoid the perils to tight coupling
++ Golden rule: make change of a service and deploy it by itself without changing anything else.
++ May understand microservice as a specific approach of SOA
+	+ Same pattern for the following: microservice=>SOA / XP=>SOA / scrum=>Agile
++ Pros:
+	+ Mostly benefits around interdependency
+	+ (Share with any distributed system)
+		+ Technology Heterogeneity
+		+ Resilience
+		+ Scale every part separately. Run each part in small/less powerful hardware.
+			+ As a comparison, in monolithic service everything need to be scaled together.
+		+ Easy to deploy: only need to deploy the tiny microservice which is under change, rather than the entire application.
+		+ Organizational alignment of otherwise large team/codebases, especially if the team itself is distributed.
+		+ Composability/reuse of functionality in different ways/purposes
+		+ Optimizing for replaceability
+	+ (Share with any service-oriented architecture)
++ Cons:
+	+ Complexity of a distributed system
+		+ Hard to manage
+	+ Technically harder to handling deployment
+	+ Technically harder to handling testing
+	+ Technically harder for monitoring
+	+ distributed transaction
+	+ CAP theorem
++ (The communication in between is under network rather than function calls of the same machine. As network (WORLD wide web) is already build all abound the world, it technically makes the difference.)
++ (Doing that forces people to define clearer interfaces which (solidly) cannot be changed -- that is an sociology/human natural thing.)
++ (It indeed can give us better flexibility to work on each part, the cutting (and interface design) become crucial, and doesn't share any flexibility at all.)
+
+Decompositions similar to microservice (w/ comparison):
+
++ Shared libraries
+	+ Cons compare to microservice:
+		+ Same language/platform, so lost true technology heterogeneity.
+		+ Hard to scale part.
+		+ Always need to deploy the entire system (unless do dynamical link).
+		+ Obvious seams/division of the system are not built into library boundary.
+	+ Shared pros:
+		+ Reusability
++ Modules
+	+ (Definition:) modular decomposition techniques provided by specific programming languages.
+		+ Java - Open Source Gateway Initiative (OSGI): A framework under Eclipse which can retrofit modules in Java.
+		+ Erlang
+	+ Cons:
+		+ Enforce module lifecycle management without enough support in the language itself. So extra works need to be done for module isolation.
+
+### (A General) API
+
+APIs are distributed system under the World Wide Web (Using HTTP).
+
++ Public API
++ Internal API
++ API accessible by trusted partners only
+
+Cons:
+
++ Once deployed, they cannot be changed. REST is a way to adapting the changes.
++ Semantic challenge: bridging the semantic gap between understanding a document's structure and understand what it means.
+
+Alternative choices of REST:
+
++ Atom Publishing Protocol (2005): which nobody is using right now.
++ SOAP: Lost a standoff with REST in 2007. Only used in big company (and not for public-facing API) now.
+
+#### Server & Client
+
++ Server describe the resource/problem space in a way the client can engage with. Client do whatever job they want to do. Server should NOT dictate goals to the client.
+
+Client classification:
+
++ Human-driven clients
++ Automated clients
+	+ The crawler: aggressively and recursively seeking for new representations.
+	+ The monitor: constantly check (back) one URL and to see what happened/changed.
+		+ RSS aggregator
+	+ The script: simulates a human with a set routine that never changes.
+		+ Hypermedia-aware script is less likely to (trivially) break compare to the ones with domain-specific assumptions.
+	+ The agent: simulates a human being who is actively engaged with a problem.
+		+ The automated client best positioned to take advantage of the flexibility of a hypermedia API. W/ assumptions:
+			+ The goal doesn't change, so the algorithm keeps work.
+			+ May need human-driven decisions.
+
+### RESTful API
+
+REST system components (created/developed by different people):
+
++ Servers
++ Clients
++ Caches
++ Proxies
++ Caching proxies
++ ...
+
+Key components about RESTful API (mostly share with a general web service/API):
+
++ Resources: The thing behind a URL.
++ Representations: The document the server sends.
++ Properly use HTTP methods
++ Addressability: Name resources with URLs. Every resource should have its own URL.
++ Short sessions/Statelessness:
+	+ HTTP sessions last for one request.
+	+ Server and client both keep state, but different kind of state. Server doesn't care what state the client is in.
+		+ Application state (definition): which URL are you on.
+		+ Resource state
+			+ Sending a GET doesn't change the state.
+			+ Receive a POST will create a new state. No way to back to the old state.
++ Connectedness
+	+ Self-descriptive message: User can make educated guesses of what is behind the link.
+	+ Hypermedia/link *(The single most important aspect of REST. Otherwise it is just a functional API)*:
+		+ Hypermedia as the engine of application state (HATEOAS)
+		+ (May in the future) have API client which not fit to a single particular API.
+		+ (May in the future) redesign of API server should not break the site.
+	+ Shouldn't have a separate human-readable document describe how to construct the URL.
+
+Concept related to RESTful API:
+
++ Antipattern: *?*
++ Breadth-first search: *?*
+
+### (Theoretical) Design principles of a RESTful Service
+
+REST is a set of **design constraints**. REST is neither a protool, nor a file format, nor a development framework.
 
 Patterns/rules are always conflict to each other, as they are defined in different time. Rules to fit "tomorrow" is not possible.
 
 *(Different approach: SOAP (Simple Object Access Protocol), more straightforward, not a lot of design.)*
 
-Constrains:
+Fielding constrains (by Roy T. Fielding):
 
 + Uniform Interface: simplify, decouple.
 	+ Resource-based: Using URIs as resource identifiers for **individual** resources. Separate from the representations.
@@ -63,78 +445,74 @@ Pro(s):
 + Portability
 + Reliability
 
-### HTTP Verbs (detailed)
+## API Interface Rules
 
-The API should always use HTTP verbs `GET`, `POST`, `PUT`, `DELETE`.
+Disclaimer: Some design rules are for **general** clients which can handle all APIs follow the rule (rather than a particular API clients for a particular server). They are not just aesthetic rules which aims to make a better/makes-more-sense design.
 
-+ `GET`: read
-	+ Idempotent
-	+ Safe
-	+ URI:
-		+ `/para1/{__}/para2/`: Collection
-		+ `/para1/{__}/para2/{__}`: Individual item
-	+ Return code:
-		+ 200: OK
-		+ 404: NOT FOUND
-		+ 400: BAD REQUEST
-	+ Along with `HEAD`
-+ `PUT`: update ~~(also create if the resource ID is chosen by the client, but that's not recommended)~~
-	+ Idempotent
-	+ URI:
-		+ `/para1/{__}/para2/{__}`: Individual item
-	+ Return:
-		+ Optional to return a body in the response (may waste bandwidth)
-		+ Optional to return a link via Location header (since ID is known)
-	+ Return code:
-		+ 200: OK
-		+ 204: OK but not returning any content in the body
-		+ 201: OK for creation
-		+ 404: NOT FOUND
-			+ The ID is not found/invalid.
-			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to update/replace every resource in the entire collection.
-+ `POST`: create (*subordinate* resources, server assign ID)
-	+ URI:
-		+ `/para1/{__}/para2/`: Add to collection
-	+ Return code:
-		+ 201: created. Location header with link to `/para1/{__}` containing new ID. Empty body. (refer to HATEOAS minimal setting)
-		+ 404: NOT FOUND
-+ `DELETE`: delete
-	+ Idempotent
-	+ URI:
-		+ `/para1/{__}/para2/{__}`: Individual item
-	+ Return code:
-		+ 200: OK along with response body (maybe JSEND-style with (1) representation of the delete item, (2) wrapped response)
-		+ 204: OK but no content/no response body is returned
-		+ 404: NOT FOUND (the resource does not exist/cannot be removed)
-			+ If no ID is provided (`/para1/{__}/para2/`), should return 404 unless you want to delete every resource in the entire collection -- not often desirable.
-+ `HEAD`
-	+ Idempotent
-	+ Safe
-+ `OPTIONS`
-	+ Idempotent
-	+ Safe
-+ `TRACE`
-	+ Idempotent
-	+ Safe
+### Design Method classification
 
-(Idempotent: multiple identical requests has the same effect as making a single request.)
++ Create a new domain-specific media type (not recommended)
+	+ Flat design/no advantage of the work done by predecessors
+		+ Flat standard (definition): backed by a particular company and only existing at one hostname.
+	+ More work (although won't have flexibility problem of most of today's APIs)
++ Add application semantics to a generic hypermedia format
+	+ May extend a domain-specific design standard by adding new link relations
+	+ (Fact:) Most existing domain-specific data formats doesn't include hypermedia controls.
 
-(Safe: intended only for information retrieval and should not change the state of the server. No side effects beyond logging/caching/web counter++. Safe=>idempotent. Safe=>read-only. The services must adhere to this rule. The return does not need to be the same every time.)
+### What (not) to Design
 
-### HTTP Status Codes
+What to design:
 
-Only the popular ones.
++ Collection & Item(s)
++ Link relation
+	+ The media type standard defines what's the values of `<link rel="__" />` mean.
+	+ The `rel` key word may
+		+ Use *extension relations* (?)
+		+ Use [IANA registration of link relations](http://www.iana.org/assignments/link-relations/link-relations.xhtml)
+			+ `next`
+			+ `previous`
+			+ ...
+		+ Use the ones the document's media type defined.
+		+ Include in the document a *profile* which define link relations.
+		+ (Solve conflicts)
++ API call
+	+ Make the client a "silent partner" of implementing the server.
+		+ API changes are hard/rarely happened.
+		+ A client written against a specific server implementation can be optimized for that server’s quirks, but it will fall down if you try to run it against another implementation of the same standard.
 
-+ 200: OK
-+ 201: CREATED
-+ 204: NO CONTENT
-+ 304: NOT MODIFIED
-+ 400: BAD REQUEST
-+ 401: UNAUTHORIZED
-+ 403: FORBIDDEN
-+ 404: NOT FOUND
-+ 409: CONFLICT
-+ 500: INTERNAL SERVER ERROR
+Do not design (from the knowledge in the client's side):
+
++ Server
+	+ URL format
+		+ It is fully covered in the hypermedia
++ Client
+	+ Assumptions based on a specific server implementation, rather than just the media type standard
+
+#### Existing Design Standards
+
+Benifits of using them:
+
++ Save time
++ Use the preexisting base of client programs and server-side tools
+
+List of existing design standards:
+
++ Collection+JSON `application/vnd.collection+json`
+    + Use case:
+        + Problem is collection based
+        + No existing domain-specific standard for the problem domain
++ JSON-LD
++ Atom
++ ~~AtomPub~~ `application/atom+xml`: Atom Publishing Protocol (RFC 5023)
+	+ Editing and publishing new articles (so have `<author>`, `<updated>`, ... which doesn't fit to general proposes).
+    + Out of date. Used to be an alternative to RSS feeding. The first standard to describe collection pattern (2005).
++ OData
++ Hydra
++ Xlink
++ [HAL-formatted JSON document](http://stateless.co/hal_specification.html)
++ SIREN
+
+Here refers [some syntax comparison](https://sookocheff.com/post/api/on-choosing-a-hypermedia-format/) of different standards.
 
 ### Resource Naming Rule
 
@@ -211,6 +589,13 @@ May devided to HTTP Header and content rules separately...
 				+ At least also include `first`, `last`, `next`, `prev` links.
 	+ Link pattern(s):
 		+ Standard styles:
+			+ Collection+JSON
+				+ For a collection: `collection`,`href`, `items`, `links`, `queries`, `template`
+					+ `template` works as the hint in HTML form
+					+ `queries` for search templates
+				+ For an item: `href`, `links`, `data`
+					+ Query an item still get a collection. Just there's only one item in `items`.
+					+ `href` is relative. It works as relative links in HTML.
 			+ Atom (most popular)
 				+ Top level `data`
 					+ for every data element, with a nested `links` sub-element and the pair-wised `rel` and `href` sub-sub-element:
@@ -345,6 +730,15 @@ May devided to HTTP Header and content rules separately...
 + Caching
 	+ May use HTTP Header `Cache-Control: [how many seconds]` to set it up.
 
+### Misc
+
+How to break down to interlinked resources:
+
++ Starting from your business requirement (*RESTful Web Services* 2007).
++ Starting from resource design without thinking about hypermedia (*RESTful Web APIs* 2013, *RESTful Web Services Cookbook* 2010).
+
+No matter what the target client is, it should at least support the XMLHttpRequest library (JavaScript).
+
 ### Security
 
 Loophole protection (exclude authorization):
@@ -437,3 +831,4 @@ Access and present resources.
 1. [RESTful Web Services Tutorial](https://www.tutorialspoint.com/restful/index.htm) in tutorialspoint *(Basic concepts included. But a big part of it is a hello world example with tedious setup wizards which is not quite useful...)*
 1. [REST API tutorial](http://www.restapitutorial.com/)
 1. RESTful Service Best Practices, Todd Fredrich.
+1. RESTful Web APIs: Services for a Changing World, O'Reilly 2013.
