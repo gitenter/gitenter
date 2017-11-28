@@ -1,4 +1,4 @@
-package enterovirus.capsid.web;
+package enterovirus.capsid.rest;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +25,8 @@ public class ApiController {
 
 	@Autowired private DocumentRepository documentRepository;
 	@Autowired private OrganizationRepository organizationRepository;	
-	@Autowired private MemberRepository memberRepository;
-	@Autowired private NewMemberRepository newMemberRepository;
+	@Autowired private MemberInfoRepository memberRepository;
+	@Autowired private MemberRepository newMemberRepository;
 
 	/**
 	 * List members
@@ -39,9 +39,9 @@ public class ApiController {
 	 */
 	@CrossOrigin
 	@RequestMapping(value="/members", method=RequestMethod.GET)
-	public Iterable<MemberBean> listMembers() {
+	public Iterable<MemberInfoBean> listMembers() {
 		
-		Iterable<MemberBean> members = memberRepository.findAll();
+		Iterable<MemberInfoBean> members = memberRepository.findAll();
 		return members;
 	}
 	
@@ -61,9 +61,9 @@ public class ApiController {
 	 */
 	@CrossOrigin
 	@RequestMapping(value="/members", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<NewMemberBean> addMember(@Valid @RequestBody NewMemberBean member) {
+	public ResponseEntity<MemberBean> addMember(@Valid @RequestBody MemberBean member) {
 		newMemberRepository.saveAndFlush(member);
-		return new ResponseEntity<NewMemberBean>(member, HttpStatus.OK);
+		return new ResponseEntity<MemberBean>(member, HttpStatus.OK);
 	}
 	
 	/**
@@ -73,10 +73,10 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/members/{username}", method=RequestMethod.GET)
-	public MemberBean getMemberInformation(
+	public MemberInfoBean getMemberInformation(
 			@PathVariable String username) {
 		
-		MemberBean member = memberRepository.findByUsername(username).get(0);
+		MemberInfoBean member = memberRepository.findByUsername(username).get(0);
 		return member;
 	}
 	

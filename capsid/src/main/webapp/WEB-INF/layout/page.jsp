@@ -9,7 +9,8 @@
     <link rel="stylesheet" type="text/css" href="<s:url value="/resources/css/style.css" />" >
   </head>
   <body>
-    <div id="react"></div>
-    <script src="<s:url value="/resources/js/built/bundle.js" />"></script>
+    <t:insertAttribute name="header" />
+    <t:insertAttribute name="body" />
+    <t:insertAttribute name="footer" />
   </body>
 </html>

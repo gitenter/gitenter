@@ -45,11 +45,11 @@ public class OrganizationBean {
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<RepositoryBean> repositories;
 	
-	@ManyToMany(targetEntity=MemberBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(targetEntity=MemberInfoBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(
 			schema = "config", name="organization_manager_map",		
 			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
 			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
 	@JsonBackReference
-	private List<MemberBean> managers;
+	private List<MemberInfoBean> managers;
 }

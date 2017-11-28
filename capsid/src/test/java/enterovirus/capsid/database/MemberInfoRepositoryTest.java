@@ -16,15 +16,15 @@ import enterovirus.capsid.domain.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MemberRepositoryTest {
+public class MemberInfoRepositoryTest {
 
 	@Autowired
-	private MemberRepository repository;
+	private MemberInfoRepository repository;
 	
 	@Test
 	@Transactional
 	public void findByUsername() throws Exception {
-		MemberBean member = repository.findByUsername("bell").get(0);
+		MemberInfoBean member = repository.findByUsername("bell").get(0);
 		System.out.println(member.getPassword());
 		System.out.println(member.getDisplayName());
 		
