@@ -19,9 +19,9 @@ CREATE TABLE config.organization (
 );
 
 CREATE TABLE config.organization_manager_map (
-	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
 	member_id serial REFERENCES config.member (id) ON DELETE RESTRICT,
-	PRIMARY KEY (organization_id, member_id)
+	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
+	PRIMARY KEY (member_id, organization_id)
 );
 
 CREATE TABLE config.repository (
