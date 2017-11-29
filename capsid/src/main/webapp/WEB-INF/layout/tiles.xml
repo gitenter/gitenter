@@ -24,5 +24,15 @@
   <definition name="main" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/main.jsp" />
   </definition>
+
+  <definition name="settings/main" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/settings/main.jsp" />
+  </definition>
+  <definition name="settings/profile" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/settings/profile.jsp" />
+  </definition>
+  <definition name="settings/account" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/settings/account.jsp" />
+  </definition>
   
 </tiles-definitions>

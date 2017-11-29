@@ -33,7 +33,7 @@ public class AuthorizationController {
 	public String processRegistration (@Valid MemberBean member, Errors errors, Model model) {
 		
 		if (errors.hasErrors()) {
-			/* So <sf:> will render the values in object "researcher" to the form. */
+			/* So <sf:> will render the values in object "member" to the form. */
 			model.addAttribute("memberBean", member); 
 			return "authorization/register";
 		}
