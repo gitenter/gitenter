@@ -88,7 +88,7 @@ public class SettingsController {
 	public String showUpdateAccountForm (Model model, Authentication authentication) {
 		
 		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
-		model.addAttribute("MemberBean", member);
+		model.addAttribute("memberBean", member);
 		
 		return "settings/account";
 	}
