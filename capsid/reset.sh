@@ -1,5 +1,5 @@
-cd /home/beta/workspace/enterovirus/database
+cd /home/beta/Workspace/enterovirus/database
 sh setup.sh
 
-cd /home/beta/workspace/enterovirus/capsid/src/test/resources/dummy_data
+cd /home/beta/Workspace/enterovirus/capsid/src/test/resources/dummy_data
 sh setup.sh
