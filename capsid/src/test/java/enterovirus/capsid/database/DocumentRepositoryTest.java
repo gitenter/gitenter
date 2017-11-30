@@ -20,5 +20,6 @@ public class DocumentRepositoryTest {
 
 		DocumentBean document = repository.findDocument("user1", "repo1", "master", "folder_1/same-name-file");
 		System.out.println(document.getLineContents());
+		System.out.println(document.getLineContents().get(0).getContent());
 	}
 }
