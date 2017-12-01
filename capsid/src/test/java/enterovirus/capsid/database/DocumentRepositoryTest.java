@@ -1,6 +1,9 @@
 package enterovirus.capsid.database;
 
 import org.junit.runner.RunWith;
+
+import java.io.File;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,14 +22,17 @@ public class DocumentRepositoryTest {
 	@Test
 	public void test1() throws Exception {
 		
-		String repositoryPath = "/home/beta/user1/repo1/.git";
-		String commitSha = "c3474227d51ed985a4bf12c3099a68d6dbc11a77";
+		System.out.println("======================================");
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+		GitCommit commit = new GitCommit("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
 		String folderPath = "folder_1/same-name-file";
-		System.out.println("Repository Path: "+repositoryPath);
-		System.out.println("Commit SHA: "+commitSha);
+		
+		System.out.println("Repository Path: "+repositoryDirectory.getPath());
+		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
 		System.out.println("folderPath: "+folderPath);
 
-		DocumentBean document = repository.findDocument(repositoryPath, new GitCommit(commitSha), folderPath);
+		DocumentBean document = repository.findDocument(repositoryDirectory, commit, folderPath);
 		
 		System.out.println(document.getLineContents());
 		for (LineContentBean content : document.getLineContents()) {
@@ -36,11 +42,14 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	public void test2() throws Exception {
+		
+		System.out.println("======================================");
 
 		String username = "user1";
 		String repositoryName = "repo1";
 		String branchName = "master";
 		String folderPath = "folder_1/same-name-file";
+		
 		System.out.println("Username: "+username);
 		System.out.println("Repository Name: "+repositoryName);
 		System.out.println("Branch Name: "+branchName);

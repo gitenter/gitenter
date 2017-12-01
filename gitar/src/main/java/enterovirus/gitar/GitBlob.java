@@ -18,10 +18,10 @@ public class GitBlob {
 	
 	byte[] blobContent;
 
-	public GitBlob (String repositoryPath, GitCommit gitCommit, String filePath) throws IOException {
+	public GitBlob (File repositoryDirectory, GitCommit gitCommit, String filePath) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File(repositoryPath)).readEnvironment().findGitDir().build();
+		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
 		RevWalk revWalk = new RevWalk(repository);
 		RevCommit commit = revWalk.parseCommit(ObjectId.fromString(gitCommit.getShaChecksumHash()));
@@ -41,10 +41,10 @@ public class GitBlob {
 	/**
 	 * For the HEAD of a given branch. 
 	 */
-	public GitBlob (String repositoryPath, GitBranch gitBranch, String filePath) throws IOException {
+	public GitBlob (File repositoryDirectory, GitBranch gitBranch, String filePath) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File(repositoryPath)).readEnvironment().findGitDir().build();
+		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
 		Ref branch = repository.exactRef("refs/heads/"+gitBranch.getName());
 		
@@ -66,8 +66,8 @@ public class GitBlob {
 	/**
 	 * For the HEAD of the master branch. 
 	 */
-	public GitBlob (String repositoryPath, String filePath) throws IOException {
-		this(repositoryPath, new GitBranch("master"), filePath);
+	public GitBlob (File repositoryDirectory, String filePath) throws IOException {
+		this(repositoryDirectory, new GitBranch("master"), filePath);
 	}
 	public byte[] getBlobContent() {
 		return blobContent;

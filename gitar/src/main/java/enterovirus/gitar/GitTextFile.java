@@ -1,21 +1,20 @@
 package enterovirus.gitar;
 
+import java.io.File;
 import java.io.IOException;
-
-import org.eclipse.jgit.lib.ObjectId;
 
 public class GitTextFile extends GitBlob {
 	
-	public GitTextFile (String repositoryPath, GitCommit commit, String filePath) throws IOException {
-		super(repositoryPath, commit, filePath);
+	public GitTextFile (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
+		super(repositoryDirectory, commit, filePath);
 	}
 	
-	public GitTextFile (String repositoryPath, GitBranch gitBranch, String filePath) throws IOException {
-		super(repositoryPath, gitBranch, filePath);
+	public GitTextFile (File repositoryDirectory, GitBranch gitBranch, String filePath) throws IOException {
+		super(repositoryDirectory, gitBranch, filePath);
 	}
 	
-	public GitTextFile (String repositoryPath, String filePath) throws IOException {
-		super(repositoryPath, filePath);
+	public GitTextFile (File repositoryDirectory, String filePath) throws IOException {
+		super(repositoryDirectory, filePath);
 	}
 	
 	/**

@@ -19,11 +19,11 @@ public class DocumentGitImpl implements DocumentRepository {
 		this.gitSource = gitSource;	
 	}
 
-	public DocumentBean findDocument (String repositoryPath, GitCommit commit, String filePath) throws IOException {
+	public DocumentBean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
 
 		DocumentBean document = new DocumentBean();
 
-		GitTextFile gitTextFile = new GitTextFile(repositoryPath, commit, filePath);
+		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commit, filePath);
 		
 		int lineNumber = 1;
 		for (String content : gitTextFile.getLinewiseContent()) {
@@ -38,8 +38,8 @@ public class DocumentGitImpl implements DocumentRepository {
 
 		DocumentBean document = new DocumentBean();
 
-		String repositoryPath = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git").getPath();
-		GitTextFile gitTextFile = new GitTextFile(repositoryPath, branch, filePath);
+		File repositoryDirectory = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git");
+		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branch, filePath);
 		
 		int lineNumber = 1;
 		for (String content : gitTextFile.getLinewiseContent()) {

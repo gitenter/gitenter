@@ -8,7 +8,7 @@ public class GitCommit {
 		this.shaChecksumHash = shaChecksumHash;
 	}
 	
-	String getShaChecksumHash () {
+	public String getShaChecksumHash () {
 		return shaChecksumHash;
 	}
 }

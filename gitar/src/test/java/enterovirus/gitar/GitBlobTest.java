@@ -1,5 +1,6 @@
 package enterovirus.gitar;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -14,7 +15,10 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-		gitBlob = new GitBlob("/home/beta/user1/repo1/.git", new GitCommit("c3474227d51ed985a4bf12c3099a68d6dbc11a77"), "folder_1/same-name-file");
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+		GitCommit commit = new GitCommit("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
+		
+		gitBlob = new GitBlob(repositoryDirectory, commit, "folder_1/same-name-file");
 		System.out.println(new String(gitBlob.getBlobContent()));
 //		
 //		gitBlob = new GitBlob("/home/beta/git/client_1/.git", "master", "folder_1/same-name-file");
@@ -25,7 +29,7 @@ public class GitBlobTest {
 		
 		GitTextFile gitTextFile;
 		
-		gitTextFile = new GitTextFile("/home/beta/Workspace/enterovirus_data/user1/repo1/.git", "folder_1/same-name-file");
+		gitTextFile = new GitTextFile(repositoryDirectory, "folder_1/same-name-file");
 		System.out.println(gitTextFile.getStringContent());
 	}
 
