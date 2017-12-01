@@ -14,8 +14,8 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-//		gitBlob = new GitBlob("/home/beta/git/client_1/.git", ObjectId.fromString("ff728f5674201025b9fc4ea76a0adde3323fb9fb"), "folder_1/same-name-file");
-//		System.out.println(new String(gitBlob.getBlobContent()));
+		gitBlob = new GitBlob("/home/beta/user1/repo1/.git", new GitCommit("c3474227d51ed985a4bf12c3099a68d6dbc11a77"), "folder_1/same-name-file");
+		System.out.println(new String(gitBlob.getBlobContent()));
 //		
 //		gitBlob = new GitBlob("/home/beta/git/client_1/.git", "master", "folder_1/same-name-file");
 //		System.out.println(new String(gitBlob.getBlobContent()));

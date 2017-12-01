@@ -6,12 +6,12 @@ import org.eclipse.jgit.lib.ObjectId;
 
 public class GitTextFile extends GitBlob {
 	
-//	public GitTextFile (String repositoryPath, ObjectId commitId, String filePath) throws IOException {
-//		super(repositoryPath, commitId, filePath);
-//	}
+	public GitTextFile (String repositoryPath, GitCommit commit, String filePath) throws IOException {
+		super(repositoryPath, commit, filePath);
+	}
 	
-	public GitTextFile (String repositoryPath, String branchName, String filePath) throws IOException {
-		super(repositoryPath, branchName, filePath);
+	public GitTextFile (String repositoryPath, GitBranch gitBranch, String filePath) throws IOException {
+		super(repositoryPath, gitBranch, filePath);
 	}
 	
 	public GitTextFile (String repositoryPath, String filePath) throws IOException {
