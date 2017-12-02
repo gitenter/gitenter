@@ -5,7 +5,7 @@ INSERT INTO config.member VALUES
 ALTER SEQUENCE config.member_id_seq RESTART WITH 4;
 
 INSERT INTO config.organization VALUES
-	(1, 'gov', 'Government'),
+	(1, 'user1', 'Government'),
 	(2, 'ngo', 'Non-governmental organization'),
 	(3, 'individual', NULL);
 ALTER SEQUENCE config.organization_id_seq RESTART WITH 4;
@@ -36,5 +36,5 @@ INSERT INTO git.document VALUES
 	(2, 6);
 
 INSERT INTO git.modified_document VALUES
-	(1, 'same-name-file'),
+	(1, 'folder_1/same-name-file'),
 	(2, 'test-add-a-file-from-client_1');
