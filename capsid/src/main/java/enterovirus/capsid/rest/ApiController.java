@@ -24,7 +24,7 @@ import enterovirus.gitar.*;
 @RequestMapping("/api")
 public class ApiController {
 
-	@Autowired private Document2Repository documentRepository;
+	@Autowired private _Document2Repository documentRepository;
 	@Autowired private OrganizationRepository organizationRepository;	
 	@Autowired private MemberInfoRepository memberRepository;
 	@Autowired private MemberRepository newMemberRepository;

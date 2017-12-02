@@ -14,10 +14,10 @@ import enterovirus.gitar.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Document2RepositoryTest {
+public class _Document2RepositoryTest {
 
 	@Autowired
-	private Document2Repository repository;
+	private _Document2Repository repository;
 
 	@Test
 	public void test1() throws Exception {

@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
 
 @Repository
-public class DocumentImpl implements DocumentRepository {
+public class DocumentGitImpl implements DocumentRepository {
 
 	@Autowired
 	private DocumentDatabaseRepository repository;
