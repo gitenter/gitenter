@@ -24,7 +24,7 @@ import enterovirus.gitar.*;
 @RequestMapping("/api")
 public class ApiController {
 
-	@Autowired private DocumentRepository documentRepository;
+	@Autowired private Document2Repository documentRepository;
 	@Autowired private OrganizationRepository organizationRepository;	
 	@Autowired private MemberInfoRepository memberRepository;
 	@Autowired private MemberRepository newMemberRepository;
@@ -90,7 +90,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/members/{username}/repositories", method=RequestMethod.GET)
-	public DocumentBean listMemberRepositories(
+	public Document2Bean listMemberRepositories(
 			@PathVariable String username) {
 		return null;
 	}
@@ -118,7 +118,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories", method=RequestMethod.GET)
-	public DocumentBean listOrganizationRepositories(
+	public Document2Bean listOrganizationRepositories(
 			@PathVariable String orginizationName) {
 		return null;
 	}
@@ -134,7 +134,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}", method=RequestMethod.GET)
-	public DocumentBean getRepositoryInformation(
+	public Document2Bean getRepositoryInformation(
 			@PathVariable String orginizationName,
 			@PathVariable String repositoryName) {
 		return null;
@@ -147,7 +147,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
-	public DocumentBean getDirectoryInformationInBranch(
+	public Document2Bean getDirectoryInformationInBranch(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
@@ -167,7 +167,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
-	public DocumentBean getDirectoryInformationInCommit(
+	public Document2Bean getDirectoryInformationInCommit(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
@@ -187,7 +187,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
-	public DocumentBean getDocumentContentInBranch(
+	public Document2Bean getDocumentContentInBranch(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
@@ -197,7 +197,7 @@ public class ApiController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		DocumentBean document = documentRepository.findDocument(organizationName, repositoryName, new GitBranch(branchName), filePath);
+		Document2Bean document = documentRepository.findDocument(organizationName, repositoryName, new GitBranch(branchName), filePath);
 		return document;
 	}
 	
@@ -208,7 +208,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
-	public DocumentBean getDocumentContentInCommit(
+	public Document2Bean getDocumentContentInCommit(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,

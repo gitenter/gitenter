@@ -1,13 +1,11 @@
 package enterovirus.capsid.database;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import enterovirus.capsid.domain.*;
-import enterovirus.gitar.*;
 
-public interface DocumentRepository {
+public interface DocumentRepository extends PagingAndSortingRepository<DocumentBean, Integer> {
 
-	public DocumentBean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException;
-	public DocumentBean findDocument (String username, String repositoryName, GitBranch branch, String filePath) throws IOException;
+	List<DocumentBean> findById(Integer id);
 }

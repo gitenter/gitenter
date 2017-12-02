@@ -10,18 +10,18 @@ import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
 
 @Repository
-public class DocumentGitImpl implements DocumentRepository {
+public class Document2GitImpl implements Document2Repository {
 
 	private GitSource gitSource;
 	
 	@Autowired
-	public DocumentGitImpl (GitSource gitSource) {
+	public Document2GitImpl (GitSource gitSource) {
 		this.gitSource = gitSource;	
 	}
 
-	public DocumentBean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
+	public Document2Bean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
 
-		DocumentBean document = new DocumentBean();
+		Document2Bean document = new Document2Bean();
 
 		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commit, filePath);
 		
@@ -34,9 +34,9 @@ public class DocumentGitImpl implements DocumentRepository {
 		return document;
 	}
 	
-	public DocumentBean findDocument (String username, String repositoryName, GitBranch branch, String filePath) throws IOException {
+	public Document2Bean findDocument (String username, String repositoryName, GitBranch branch, String filePath) throws IOException {
 
-		DocumentBean document = new DocumentBean();
+		Document2Bean document = new Document2Bean();
 
 		File repositoryDirectory = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git");
 		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branch, filePath);

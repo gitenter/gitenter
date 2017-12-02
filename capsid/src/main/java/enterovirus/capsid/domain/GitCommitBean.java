@@ -1,10 +1,15 @@
 package enterovirus.capsid.domain;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -26,4 +31,7 @@ public class GitCommitBean {
 	
 	@Column(name="sha_checksum_hash", updatable=false)
 	private String shaChecksumHash;
+	
+	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
+	private List<DocumentBean> documents;
 }

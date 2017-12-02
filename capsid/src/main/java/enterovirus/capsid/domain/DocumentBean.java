@@ -1,17 +1,29 @@
 package enterovirus.capsid.domain;
 
-import java.util.*;
-import lombok.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-public class DocumentBean extends BlobBean {
+@Entity
+@Table(schema = "git", name = "current_document")
+public class DocumentBean {
+
+	@Id
+	@Column(name="id", updatable=false)
+	private Integer id;
 	
-	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
+	@ManyToOne
+	@JoinColumn(name="commit_id")
+	private GitCommitBean commit;
 	
-//	private String content;
-	
-	public void addLineContent(LineContentBean lineContent) {
-		lineContents.add(lineContent);
-	}
+	@Column(name="filepath", updatable=false)
+	private String filepath;
 }
