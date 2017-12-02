@@ -68,8 +68,17 @@ CREATE TABLE git.git_commit (
 
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
-	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE,
+	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE
+);
+
+CREATE TABLE git.modified_document (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
 	filepath text NOT NULL UNIQUE
+);
+
+CREATE TABLE git.unmodified_document (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
+	original_document_id serial REFERENCES git.document (id) ON DELETE RESTRICT
 );
 
 CREATE FUNCTION git.commit_id_from_document (integer) 
@@ -128,9 +137,11 @@ CREATE TABLE git.traceable_item (
 CREATE UNIQUE INDEX ON git.traceable_item (git.commit_id_from_line_content(id), item_tag);
 
 CREATE TABLE git.traceability_map (
+	id serial PRIMARY KEY,
+	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE,
 	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
-	PRIMARY KEY (upstream_item_id, downstream_item_id),
+	UNIQUE (upstream_item_id, downstream_item_id),
 
 	CHECK (git.commit_id_from_line_content(upstream_item_id) = git.commit_id_from_line_content(downstream_item_id))
 );

@@ -32,5 +32,9 @@ INSERT INTO git.git_commit VALUES
 	(6, 1, 'ff728f5674201025b9fc4ea76a0adde3323fb9fb');
 
 INSERT INTO git.document VALUES
-	(1, 6, 'same-name-file'),
-	(2, 6, 'test-add-a-file-from-client_1');
+	(1, 6),
+	(2, 6);
+
+INSERT INTO git.modified_document VALUES
+	(1, 'same-name-file'),
+	(2, 'test-add-a-file-from-client_1');
