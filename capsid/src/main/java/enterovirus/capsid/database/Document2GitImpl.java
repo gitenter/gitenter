@@ -12,13 +12,9 @@ import enterovirus.gitar.*;
 @Repository
 public class Document2GitImpl implements Document2Repository {
 
+	@Autowired
 	private GitSource gitSource;
 	
-	@Autowired
-	public Document2GitImpl (GitSource gitSource) {
-		this.gitSource = gitSource;	
-	}
-
 	public Document2Bean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
 
 		Document2Bean document = new Document2Bean();
