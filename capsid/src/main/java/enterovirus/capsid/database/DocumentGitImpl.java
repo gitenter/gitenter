@@ -24,12 +24,8 @@ public class DocumentGitImpl implements DocumentRepository {
 			
 			String organizationName = document.getCommit().getRepository().getOrganization().getName();
 			String repositoryName = document.getCommit().getRepository().getName();
-			/*
-			 * TODO:
-			 * This includes the defined folder structure. Move this definition 
-			 * to a general function.
-			 */
-			File repositoryDirectory = new File(new File(new File(gitSource.getRootFolderPath(), organizationName), repositoryName), ".git");
+
+			File repositoryDirectory = gitSource.getRepositoryDirectory(organizationName, repositoryName);
 			
 			GitCommit commit = new GitCommit(document.getCommit().getShaChecksumHash());
 			String filepath = document.getFilepath();

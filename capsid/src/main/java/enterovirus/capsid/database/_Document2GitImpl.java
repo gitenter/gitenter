@@ -32,11 +32,11 @@ public class _Document2GitImpl implements _Document2Repository {
 		return document;
 	}
 	
-	public _Document2Bean findDocument (String username, String repositoryName, GitBranch branch, String filePath) throws IOException {
+	public _Document2Bean findDocument (String ownerName, String repositoryName, GitBranch branch, String filePath) throws IOException {
 
 		_Document2Bean document = new _Document2Bean();
 
-		File repositoryDirectory = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git");
+		File repositoryDirectory = gitSource.getRepositoryDirectory(ownerName, repositoryName);
 		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branch, filePath);
 		
 		int lineNumber = 1;
