@@ -40,9 +40,9 @@ public class ApiController {
 	 */
 	@CrossOrigin
 	@RequestMapping(value="/members", method=RequestMethod.GET)
-	public Iterable<MemberInfoBean> listMembers() {
+	public Iterable<_MemberInfoBean> listMembers() {
 		
-		Iterable<MemberInfoBean> members = memberRepository.findAll();
+		Iterable<_MemberInfoBean> members = memberRepository.findAll();
 		return members;
 	}
 	
@@ -74,10 +74,10 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/members/{username}", method=RequestMethod.GET)
-	public MemberInfoBean getMemberInformation(
+	public _MemberInfoBean getMemberInformation(
 			@PathVariable String username) {
 		
-		MemberInfoBean member = memberRepository.findByUsername(username).get(0);
+		_MemberInfoBean member = memberRepository.findByUsername(username).get(0);
 		return member;
 	}
 	
@@ -90,7 +90,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/members/{username}/repositories", method=RequestMethod.GET)
-	public Document2Bean listMemberRepositories(
+	public _Document2Bean listMemberRepositories(
 			@PathVariable String username) {
 		return null;
 	}
@@ -118,7 +118,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories", method=RequestMethod.GET)
-	public Document2Bean listOrganizationRepositories(
+	public _Document2Bean listOrganizationRepositories(
 			@PathVariable String orginizationName) {
 		return null;
 	}
@@ -134,7 +134,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}", method=RequestMethod.GET)
-	public Document2Bean getRepositoryInformation(
+	public _Document2Bean getRepositoryInformation(
 			@PathVariable String orginizationName,
 			@PathVariable String repositoryName) {
 		return null;
@@ -147,7 +147,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/directories/**", method=RequestMethod.GET)
-	public Document2Bean getDirectoryInformationInBranch(
+	public _Document2Bean getDirectoryInformationInBranch(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
@@ -167,7 +167,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/directories/**", method=RequestMethod.GET)
-	public Document2Bean getDirectoryInformationInCommit(
+	public _Document2Bean getDirectoryInformationInCommit(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,
@@ -187,7 +187,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/branches/{branchName}/files/**", method=RequestMethod.GET)
-	public Document2Bean getDocumentContentInBranch(
+	public _Document2Bean getDocumentContentInBranch(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String branchName,
@@ -197,7 +197,7 @@ public class ApiController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		Document2Bean document = documentRepository.findDocument(organizationName, repositoryName, new GitBranch(branchName), filePath);
+		_Document2Bean document = documentRepository.findDocument(organizationName, repositoryName, new GitBranch(branchName), filePath);
 		return document;
 	}
 	
@@ -208,7 +208,7 @@ public class ApiController {
 	 * @return
 	 */
 	@RequestMapping(value="/organizations/{organizationName}/repositories/{repositoryName}/commits/{commitId}/files/**", method=RequestMethod.GET)
-	public Document2Bean getDocumentContentInCommit(
+	public _Document2Bean getDocumentContentInCommit(
 			@PathVariable String organizationName,
 			@PathVariable String repositoryName,
 			@PathVariable String commitId,

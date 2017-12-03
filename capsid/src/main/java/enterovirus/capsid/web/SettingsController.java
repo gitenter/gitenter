@@ -20,7 +20,6 @@ import enterovirus.capsid.domain.*;
 public class SettingsController {
 
 	@Autowired private MemberRepository memberRepository;
-	
 
 	@RequestMapping(method=RequestMethod.GET)
 	public String showSettings (Model model) {

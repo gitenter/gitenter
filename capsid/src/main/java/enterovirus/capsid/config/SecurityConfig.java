@@ -31,8 +31,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/").authenticated()
 				.antMatchers("/preference/**").authenticated()
 				.antMatchers("/settings/**").authenticated()
+				/*
+				 * TODO:
+				 * Need authorization that only people in that organization
+				 * can access the related materials.
+				 */
+				.antMatchers("/organizations/**").authenticated()
 				.anyRequest().permitAll()
-			/* TODO: 
+			/* 
+			 * TODO: 
 			 * Do we need pages to require HTTPS for encrypt data transfer? 
 			 * BTW, currently the setup below doesn't work.
 			 */

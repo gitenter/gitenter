@@ -59,6 +59,10 @@ public class AuthorizationController {
 		return "authorization/login";
 	}
 	
+	/*
+	 * This inner class is used for validation only. Persistent is
+	 * irrelevant.
+	 */
 	@Getter
 	@Setter
 	class MemberLoginBean {

@@ -32,7 +32,7 @@ public class _Document2RepositoryTest {
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
 		System.out.println("folderPath: "+folderPath);
 
-		Document2Bean document = repository.findDocument(repositoryDirectory, commit, folderPath);
+		_Document2Bean document = repository.findDocument(repositoryDirectory, commit, folderPath);
 		
 		System.out.println(document.getLineContents());
 		for (LineContentBean content : document.getLineContents()) {
@@ -55,7 +55,7 @@ public class _Document2RepositoryTest {
 		System.out.println("Branch Name: "+branchName);
 		System.out.println("folderPath: "+folderPath);
 		
-		Document2Bean document = repository.findDocument(username, repositoryName, new GitBranch(branchName), folderPath);
+		_Document2Bean document = repository.findDocument(username, repositoryName, new GitBranch(branchName), folderPath);
 		System.out.println(document.getLineContents());
 		for (LineContentBean content : document.getLineContents()) {
 			System.out.println(content.getContent());

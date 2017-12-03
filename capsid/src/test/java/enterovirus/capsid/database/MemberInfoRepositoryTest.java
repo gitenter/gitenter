@@ -24,7 +24,7 @@ public class MemberInfoRepositoryTest {
 	@Test
 	@Transactional
 	public void findByUsername() throws Exception {
-		MemberInfoBean member = repository.findByUsername("bell").get(0);
+		_MemberInfoBean member = repository.findByUsername("bell").get(0);
 		System.out.println(member.getPassword());
 		System.out.println(member.getDisplayName());
 		

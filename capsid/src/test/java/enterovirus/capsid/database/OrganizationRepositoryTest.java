@@ -27,7 +27,7 @@ public class OrganizationRepositoryTest {
 		System.out.println("Display Name: "+organization.getDisplayName());
 		
 		System.out.println("Managers: ");
-		for (MemberInfoBean manager : organization.getManagers()) {
+		for (MemberBean manager : organization.getManagers()) {
 			System.out.println("  --Username: "+manager.getUsername());
 			System.out.println("    Display Name: "+manager.getDisplayName());
 		}

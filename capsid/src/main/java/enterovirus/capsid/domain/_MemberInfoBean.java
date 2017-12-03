@@ -24,7 +24,7 @@ import lombok.*;
 @Setter
 @Entity
 @Table(schema = "config", name = "member")
-public class MemberInfoBean {
+public class _MemberInfoBean {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -17,9 +17,9 @@ public class _Document2GitImpl implements _Document2Repository {
 	@Autowired
 	private GitSource gitSource;
 	
-	public Document2Bean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
+	public _Document2Bean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
 
-		Document2Bean document = new Document2Bean();
+		_Document2Bean document = new _Document2Bean();
 
 		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commit, filePath);
 		
@@ -32,9 +32,9 @@ public class _Document2GitImpl implements _Document2Repository {
 		return document;
 	}
 	
-	public Document2Bean findDocument (String username, String repositoryName, GitBranch branch, String filePath) throws IOException {
+	public _Document2Bean findDocument (String username, String repositoryName, GitBranch branch, String filePath) throws IOException {
 
-		Document2Bean document = new Document2Bean();
+		_Document2Bean document = new _Document2Bean();
 
 		File repositoryDirectory = new File(new File(new File(gitSource.getRootFolderPath(), username), repositoryName), ".git");
 		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branch, filePath);

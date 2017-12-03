@@ -35,4 +35,8 @@
     <put-attribute name="body" value="/WEB-INF/views/settings/account.jsp" />
   </definition>
   
+  <definition name="git-navigation/repository" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/git-navigation/repository.jsp" />
+  </definition>
+
 </tiles-definitions>
