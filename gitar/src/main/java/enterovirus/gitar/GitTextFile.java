@@ -5,16 +5,16 @@ import java.io.IOException;
 
 public class GitTextFile extends GitBlob {
 	
-	public GitTextFile (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
-		super(repositoryDirectory, commit, filePath);
+	public GitTextFile (File repositoryDirectory, GitCommitSha commitSha, String relativeFilepath) throws IOException {
+		super(repositoryDirectory, commitSha, relativeFilepath);
 	}
 	
-	public GitTextFile (File repositoryDirectory, GitBranch gitBranch, String filePath) throws IOException {
-		super(repositoryDirectory, gitBranch, filePath);
+	public GitTextFile (File repositoryDirectory, GitBranchName branchName, String relativeFilepath) throws IOException {
+		super(repositoryDirectory, branchName, relativeFilepath);
 	}
 	
-	public GitTextFile (File repositoryDirectory, String filePath) throws IOException {
-		super(repositoryDirectory, filePath);
+	public GitTextFile (File repositoryDirectory, String relativeFilepath) throws IOException {
+		super(repositoryDirectory, relativeFilepath);
 	}
 	
 	/**

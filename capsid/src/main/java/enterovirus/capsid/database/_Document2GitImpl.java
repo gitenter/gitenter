@@ -17,11 +17,11 @@ public class _Document2GitImpl implements _Document2Repository {
 	@Autowired
 	private GitSource gitSource;
 	
-	public _Document2Bean findDocument (File repositoryDirectory, GitCommit commit, String filePath) throws IOException {
+	public _Document2Bean findDocument (File repositoryDirectory, GitCommitSha commitSha, String filePath) throws IOException {
 
 		_Document2Bean document = new _Document2Bean();
 
-		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commit, filePath);
+		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commitSha, filePath);
 		
 		int lineNumber = 1;
 		for (String content : gitTextFile.getLinewiseContent()) {
@@ -32,12 +32,12 @@ public class _Document2GitImpl implements _Document2Repository {
 		return document;
 	}
 	
-	public _Document2Bean findDocument (String ownerName, String repositoryName, GitBranch branch, String filePath) throws IOException {
+	public _Document2Bean findDocument (String ownerName, String repositoryName, GitBranchName branchName, String filePath) throws IOException {
 
 		_Document2Bean document = new _Document2Bean();
 
 		File repositoryDirectory = gitSource.getRepositoryDirectory(ownerName, repositoryName);
-		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branch, filePath);
+		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branchName, filePath);
 		
 		int lineNumber = 1;
 		for (String content : gitTextFile.getLinewiseContent()) {

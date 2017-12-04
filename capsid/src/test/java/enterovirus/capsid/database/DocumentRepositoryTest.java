@@ -28,7 +28,7 @@ public class DocumentRepositoryTest {
 		System.out.println("Organization: "+document.getCommit().getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+document.getCommit().getRepository().getName());
 		System.out.println("Commit SHA: "+document.getCommit().getShaChecksumHash());
-		System.out.println("Filepath: "+document.getFilepath());
+		System.out.println("Relative Filepath: "+document.getRelativeFilepath());
 		System.out.println("Content: ");
 		System.out.println(document.getLineContents());
 		for (LineContentBean content : document.getLineContents()) {

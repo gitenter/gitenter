@@ -16,9 +16,9 @@ public class GitBlobTest {
 		GitBlob gitBlob;
 		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		GitCommit commit = new GitCommit("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
+		GitCommitSha commitSha = new GitCommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
 		
-		gitBlob = new GitBlob(repositoryDirectory, commit, "folder_1/same-name-file");
+		gitBlob = new GitBlob(repositoryDirectory, commitSha, "folder_1/same-name-file");
 		System.out.println(new String(gitBlob.getBlobContent()));
 //		
 //		gitBlob = new GitBlob("/home/beta/git/client_1/.git", "master", "folder_1/same-name-file");

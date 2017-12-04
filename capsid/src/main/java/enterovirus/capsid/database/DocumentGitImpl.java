@@ -27,10 +27,10 @@ public class DocumentGitImpl implements DocumentRepository {
 
 			File repositoryDirectory = gitSource.getRepositoryDirectory(organizationName, repositoryName);
 			
-			GitCommit commit = new GitCommit(document.getCommit().getShaChecksumHash());
-			String filepath = document.getFilepath();
+			GitCommitSha commitSha = new GitCommitSha(document.getCommit().getShaChecksumHash());
+			String filepath = document.getRelativeFilepath();
 			
-			GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commit, filepath);
+			GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commitSha, filepath);
 			
 			int lineNumber = 1;
 			for (String content : gitTextFile.getLinewiseContent()) {

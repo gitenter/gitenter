@@ -1,10 +1,10 @@
 package enterovirus.gitar;
 
-public class GitBranch {
+public class GitBranchName {
 	
 	private String name;
 	
-	public GitBranch (String name) {
+	public GitBranchName (String name) {
 		this.name = name;
 	}
 	

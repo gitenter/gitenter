@@ -73,7 +73,7 @@ CREATE TABLE git.document (
 
 CREATE TABLE git.modified_document (
 	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
-	filepath text NOT NULL UNIQUE
+	relative_filepath text NOT NULL UNIQUE
 );
 
 CREATE TABLE git.unmodified_document (

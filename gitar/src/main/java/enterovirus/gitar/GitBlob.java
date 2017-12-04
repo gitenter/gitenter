@@ -18,18 +18,19 @@ public class GitBlob {
 	
 	byte[] blobContent;
 
-	public GitBlob (File repositoryDirectory, GitCommit gitCommit, String filePath) throws IOException {
+	public GitBlob (File repositoryDirectory, GitCommitSha commitSha, String relativeFilepath) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
 		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(ObjectId.fromString(gitCommit.getShaChecksumHash()));
+		RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitSha.getShaChecksumHash()));
 		RevTree revTree = commit.getTree();
 		TreeWalk treeWalk = new TreeWalk(repository);
 		treeWalk.addTree(revTree);
 		treeWalk.setRecursive(true);
-		treeWalk.setFilter(PathFilter.create(filePath));
+		System.out.println(treeWalk.getDepth());
+		treeWalk.setFilter(PathFilter.create(relativeFilepath));
 		if (!treeWalk.next()) {
 			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
 			throw new IllegalStateException("Did not find expected file");
@@ -41,12 +42,12 @@ public class GitBlob {
 	/**
 	 * For the HEAD of a given branch. 
 	 */
-	public GitBlob (File repositoryDirectory, GitBranch gitBranch, String filePath) throws IOException {
+	public GitBlob (File repositoryDirectory, GitBranchName branchName, String relativeFilepath) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
-		Ref branch = repository.exactRef("refs/heads/"+gitBranch.getName());
+		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
 		
 		RevWalk revWalk = new RevWalk(repository);
 		RevCommit commit = revWalk.parseCommit(branch.getObjectId());
@@ -54,7 +55,7 @@ public class GitBlob {
 		TreeWalk treeWalk = new TreeWalk(repository);
 		treeWalk.addTree(revTree);
 		treeWalk.setRecursive(true);
-		treeWalk.setFilter(PathFilter.create(filePath));
+		treeWalk.setFilter(PathFilter.create(relativeFilepath));
 		if (!treeWalk.next()) {
 			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
 			throw new IllegalStateException("Did not find expected file");
@@ -67,7 +68,7 @@ public class GitBlob {
 	 * For the HEAD of the master branch. 
 	 */
 	public GitBlob (File repositoryDirectory, String filePath) throws IOException {
-		this(repositoryDirectory, new GitBranch("master"), filePath);
+		this(repositoryDirectory, new GitBranchName("master"), filePath);
 	}
 	public byte[] getBlobContent() {
 		return blobContent;

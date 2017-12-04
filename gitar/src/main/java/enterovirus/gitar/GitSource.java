@@ -13,10 +13,6 @@ public class GitSource {
 	
 	private String rootFolderPath;
 
-//	public String getRootFolderPath() {
-//		return rootFolderPath;
-//	}
-
 	public void setRootFolderPath(String rootFolderPath) {
 		this.rootFolderPath = rootFolderPath;
 	}

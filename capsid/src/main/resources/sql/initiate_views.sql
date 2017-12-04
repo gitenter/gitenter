@@ -2,7 +2,7 @@ CREATE VIEW git.current_document AS
 	SELECT 
 		git.document.id AS id,
 		git.document.commit_id AS commit_id,
-		git.modified_document.filepath AS filepath
+		git.modified_document.relative_filepath AS relative_filepath
 	FROM
 	(
 		git.document

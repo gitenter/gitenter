@@ -28,8 +28,8 @@ public class DocumentBean {
 	@JoinColumn(name="commit_id")
 	private GitCommitBean commit;
 	
-	@Column(name="filepath", updatable=false)
-	private String filepath;
+	@Column(name="relative_filepath", updatable=false)
+	private String relativeFilepath;
 	
 	/*
 	 * @Transient is to specify that the property or field is not persistent.

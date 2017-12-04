@@ -25,7 +25,7 @@ public class _Document2RepositoryTest {
 		System.out.println("======================================");
 		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		GitCommit commit = new GitCommit("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
+		GitCommitSha commit = new GitCommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
 		String folderPath = "folder_1/same-name-file";
 		
 		System.out.println("Repository Path: "+repositoryDirectory.getPath());
@@ -55,7 +55,7 @@ public class _Document2RepositoryTest {
 		System.out.println("Branch Name: "+branchName);
 		System.out.println("folderPath: "+folderPath);
 		
-		_Document2Bean document = repository.findDocument(username, repositoryName, new GitBranch(branchName), folderPath);
+		_Document2Bean document = repository.findDocument(username, repositoryName, new GitBranchName(branchName), folderPath);
 		System.out.println(document.getLineContents());
 		for (LineContentBean content : document.getLineContents()) {
 			System.out.println(content.getContent());
