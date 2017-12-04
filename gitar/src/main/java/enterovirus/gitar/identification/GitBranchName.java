@@ -1,4 +1,4 @@
-package enterovirus.gitar;
+package enterovirus.gitar.identification;
 
 public class GitBranchName {
 	
@@ -8,7 +8,7 @@ public class GitBranchName {
 		this.name = name;
 	}
 	
-	String getName () {
+	public String getName () {
 		return name;
 	}
 }

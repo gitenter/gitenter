@@ -19,6 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import enterovirus.capsid.database.*;
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
+import enterovirus.gitar.identification.GitBranchName;
 
 @RestController
 @RequestMapping("/api")

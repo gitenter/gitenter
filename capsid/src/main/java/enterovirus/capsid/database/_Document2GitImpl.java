@@ -10,6 +10,8 @@ import java.util.List;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
+import enterovirus.gitar.identification.GitBranchName;
+import enterovirus.gitar.identification.GitCommitSha;
 
 @Repository
 public class _Document2GitImpl implements _Document2Repository {

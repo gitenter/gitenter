@@ -14,6 +14,9 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
+import enterovirus.gitar.identification.GitBranchName;
+import enterovirus.gitar.identification.GitCommitSha;
+
 public class GitBlob {
 	
 	byte[] blobContent;

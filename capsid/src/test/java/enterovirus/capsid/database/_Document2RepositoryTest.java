@@ -11,6 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
+import enterovirus.gitar.identification.GitBranchName;
+import enterovirus.gitar.identification.GitCommitSha;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
