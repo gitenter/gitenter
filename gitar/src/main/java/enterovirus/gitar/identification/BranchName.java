@@ -1,10 +1,10 @@
 package enterovirus.gitar.identification;
 
-public class GitBranchName {
+public class BranchName {
 	
 	private String name;
 	
-	public GitBranchName (String name) {
+	public BranchName (String name) {
 		this.name = name;
 	}
 	

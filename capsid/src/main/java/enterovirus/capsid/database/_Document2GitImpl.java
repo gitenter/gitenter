@@ -10,8 +10,8 @@ import java.util.List;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
-import enterovirus.gitar.identification.GitBranchName;
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.BranchName;
+import enterovirus.gitar.identification.CommitSha;
 
 @Repository
 public class _Document2GitImpl implements _Document2Repository {
@@ -19,7 +19,7 @@ public class _Document2GitImpl implements _Document2Repository {
 	@Autowired
 	private GitSource gitSource;
 	
-	public _Document2Bean findDocument (File repositoryDirectory, GitCommitSha commitSha, String filePath) throws IOException {
+	public _Document2Bean findDocument (File repositoryDirectory, CommitSha commitSha, String filePath) throws IOException {
 
 		_Document2Bean document = new _Document2Bean();
 
@@ -34,7 +34,7 @@ public class _Document2GitImpl implements _Document2Repository {
 		return document;
 	}
 	
-	public _Document2Bean findDocument (String ownerName, String repositoryName, GitBranchName branchName, String filePath) throws IOException {
+	public _Document2Bean findDocument (String ownerName, String repositoryName, BranchName branchName, String filePath) throws IOException {
 
 		_Document2Bean document = new _Document2Bean();
 

@@ -3,16 +3,16 @@ package enterovirus.gitar;
 import java.io.File;
 import java.io.IOException;
 
-import enterovirus.gitar.identification.GitBranchName;
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.BranchName;
+import enterovirus.gitar.identification.CommitSha;
 
 public class GitTextFile extends GitBlob {
 	
-	public GitTextFile (File repositoryDirectory, GitCommitSha commitSha, String relativeFilepath) throws IOException {
+	public GitTextFile (File repositoryDirectory, CommitSha commitSha, String relativeFilepath) throws IOException {
 		super(repositoryDirectory, commitSha, relativeFilepath);
 	}
 	
-	public GitTextFile (File repositoryDirectory, GitBranchName branchName, String relativeFilepath) throws IOException {
+	public GitTextFile (File repositoryDirectory, BranchName branchName, String relativeFilepath) throws IOException {
 		super(repositoryDirectory, branchName, relativeFilepath);
 	}
 	

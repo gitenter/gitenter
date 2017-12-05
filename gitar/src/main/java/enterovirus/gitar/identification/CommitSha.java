@@ -1,10 +1,10 @@
 package enterovirus.gitar.identification;
 
-public class GitCommitSha {
+public class CommitSha {
 	
 	private String shaChecksumHash;
 	
-	public GitCommitSha (String shaChecksumHash) {
+	public CommitSha (String shaChecksumHash) {
 		this.shaChecksumHash = shaChecksumHash;
 	}
 	

@@ -14,14 +14,14 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
-import enterovirus.gitar.identification.GitBranchName;
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.BranchName;
+import enterovirus.gitar.identification.CommitSha;
 
 public class GitBlob {
 	
 	byte[] blobContent;
 
-	public GitBlob (File repositoryDirectory, GitCommitSha commitSha, String relativeFilepath) throws IOException {
+	public GitBlob (File repositoryDirectory, CommitSha commitSha, String relativeFilepath) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
@@ -45,7 +45,7 @@ public class GitBlob {
 	/**
 	 * For the HEAD of a given branch. 
 	 */
-	public GitBlob (File repositoryDirectory, GitBranchName branchName, String relativeFilepath) throws IOException {
+	public GitBlob (File repositoryDirectory, BranchName branchName, String relativeFilepath) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
@@ -71,7 +71,7 @@ public class GitBlob {
 	 * For the HEAD of the master branch. 
 	 */
 	public GitBlob (File repositoryDirectory, String filePath) throws IOException {
-		this(repositoryDirectory, new GitBranchName("master"), filePath);
+		this(repositoryDirectory, new BranchName("master"), filePath);
 	}
 	public byte[] getBlobContent() {
 		return blobContent;

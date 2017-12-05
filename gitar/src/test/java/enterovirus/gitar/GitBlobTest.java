@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Test;
 
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.CommitSha;
 
 public class GitBlobTest {
 
@@ -18,7 +18,7 @@ public class GitBlobTest {
 		GitBlob gitBlob;
 		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		GitCommitSha commitSha = new GitCommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
+		CommitSha commitSha = new CommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
 		
 		gitBlob = new GitBlob(repositoryDirectory, commitSha, "folder_1/same-name-file");
 		System.out.println(new String(gitBlob.getBlobContent()));

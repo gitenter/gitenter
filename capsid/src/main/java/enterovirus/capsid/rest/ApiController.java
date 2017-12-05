@@ -19,7 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import enterovirus.capsid.database.*;
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
-import enterovirus.gitar.identification.GitBranchName;
+import enterovirus.gitar.identification.BranchName;
 
 @RestController
 @RequestMapping("/api")
@@ -198,7 +198,7 @@ public class ApiController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 	    String filePath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		_Document2Bean document = documentRepository.findDocument(organizationName, repositoryName, new GitBranchName(branchName), filePath);
+		_Document2Bean document = documentRepository.findDocument(organizationName, repositoryName, new BranchName(branchName), filePath);
 		return document;
 	}
 	

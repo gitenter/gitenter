@@ -11,8 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
-import enterovirus.gitar.identification.GitBranchName;
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.BranchName;
+import enterovirus.gitar.identification.CommitSha;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -27,7 +27,7 @@ public class _Document2RepositoryTest {
 		System.out.println("======================================");
 		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		GitCommitSha commit = new GitCommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
+		CommitSha commit = new CommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
 		String folderPath = "folder_1/same-name-file";
 		
 		System.out.println("Repository Path: "+repositoryDirectory.getPath());
@@ -57,7 +57,7 @@ public class _Document2RepositoryTest {
 		System.out.println("Branch Name: "+branchName);
 		System.out.println("folderPath: "+folderPath);
 		
-		_Document2Bean document = repository.findDocument(username, repositoryName, new GitBranchName(branchName), folderPath);
+		_Document2Bean document = repository.findDocument(username, repositoryName, new BranchName(branchName), folderPath);
 		System.out.println(document.getLineContents());
 		for (LineContentBean content : document.getLineContents()) {
 			System.out.println(content.getContent());

@@ -11,11 +11,11 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.CommitSha;
 
 public class GitCommit {
 
-	public GitCommit (File repositoryDirectory, GitCommitSha commitSha) throws IOException {
+	public GitCommit (File repositoryDirectory, CommitSha commitSha) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();

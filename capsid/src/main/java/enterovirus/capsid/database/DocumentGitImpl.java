@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
-import enterovirus.gitar.identification.GitCommitSha;
+import enterovirus.gitar.identification.CommitSha;
 
 @Repository
 public class DocumentGitImpl implements DocumentRepository {
@@ -28,7 +28,7 @@ public class DocumentGitImpl implements DocumentRepository {
 
 			File repositoryDirectory = gitSource.getRepositoryDirectory(organizationName, repositoryName);
 			
-			GitCommitSha commitSha = new GitCommitSha(document.getCommit().getShaChecksumHash());
+			CommitSha commitSha = new CommitSha(document.getCommit().getShaChecksumHash());
 			String filepath = document.getRelativeFilepath();
 			
 			GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, commitSha, filepath);
