@@ -1,7 +1,6 @@
 package enterovirus.capsid.database;
 
 import org.junit.runner.RunWith;
-import org.hibernate.Hibernate;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,7 @@ public class DocumentRepositoryTest {
 	@Test
 	@Transactional
 	public void find() throws Exception {
-		DocumentBean document = repository.findById(1).get(0);
+		DocumentBean document = repository.findById(1);
 		System.out.println("Organization: "+document.getCommit().getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+document.getCommit().getRepository().getName());
 		System.out.println("Commit SHA: "+document.getCommit().getShaChecksumHash());

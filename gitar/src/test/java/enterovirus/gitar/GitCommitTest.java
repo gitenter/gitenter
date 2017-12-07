@@ -40,7 +40,7 @@ public class GitCommitTest {
 //		}
 	}
 	
-	public void showFolderStructure (GitCommit gitCommit) {
+	private void showFolderStructure (GitCommit gitCommit) {
 		showHierarchy(gitCommit.getFolderStructure());
 	}
 	

@@ -26,7 +26,7 @@ public class DocumentBean {
 	
 	@ManyToOne
 	@JoinColumn(name="commit_id")
-	private GitCommitBean commit;
+	private CommitBean commit;
 	
 	@Column(name="relative_filepath", updatable=false)
 	private String relativeFilepath;

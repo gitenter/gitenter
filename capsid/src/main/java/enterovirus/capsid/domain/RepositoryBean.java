@@ -51,6 +51,6 @@ public class RepositoryBean {
 	@Column(name="git_uri")
 	private String gitUri;
 	
-	@OneToMany(targetEntity=GitCommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<GitCommitBean> gitCommits;
+	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	private List<CommitBean> commits;
 }

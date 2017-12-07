@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.swing.tree.TreeNode;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +21,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "git", name = "git_commit")
-public class GitCommitBean {
+public class CommitBean {
 
 	@Id
 	@Column(name="id", updatable=false)
@@ -31,6 +33,9 @@ public class GitCommitBean {
 	
 	@Column(name="sha_checksum_hash", updatable=false)
 	private String shaChecksumHash;
+	
+	@Transient
+	private TreeNode folderStructure;
 	
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents;
