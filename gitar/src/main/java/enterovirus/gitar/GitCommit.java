@@ -2,16 +2,9 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
@@ -22,12 +15,27 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 import enterovirus.gitar.wrap.CommitSha;
-import enterovirus.gitar.wrap.FileTreeModel;
 
-public class GitCommit {
-	
-//	private List<FolderAndFilepath> folderAndFilepaths = new ArrayList<FolderAndFilepath>();
+public class GitCommit {	
 
+	/*
+	 * JGit's "TreeWalk" class provides some simply functions
+	 * to iterate some multi-child tree structure. However, that
+	 * interface is really bad:
+	 * 
+	 * (1) It seems can only iterate once. There's no way to 
+	 * re-navigate the tree structure or navigate it in a user
+	 * defined way.
+	 * 
+	 * (2) Its "next()" walk to the next relevant entry but also
+	 * return whether there's a next entry. There's no "hasNext()".
+	 * 
+	 * Therefore, we copy the tree structure out to another class
+	 * (we use Swing's TreeModel and TreeNode -- although initially
+	 * proposed to Swing's GUI to display, there's no reason to not
+	 * just use the structure) and generate the folder structure
+	 * navigating functions based on it. 
+	 */
 	private MutableTreeNode folderStructure;
 	
 	public GitCommit (File repositoryDirectory, CommitSha commitSha) throws IOException {
@@ -52,13 +60,12 @@ public class GitCommit {
 //				System.out.println("file: " + treeWalk.getPathString()+"----"+"Depth:"+treeWalk.getDepth());
 //			}
 //		}
-//		
-//		System.out.println(treeWalk.next());
-//		System.out.println(treeWalk.next());
-//		System.out.println(treeWalk.getPathString());
-//		System.out.println(treeWalk.next());
-//		System.out.println(treeWalk.getPathString());
 		
+		/*
+		 * Currently "treeWalk == null" unless we do one time
+		 * "treeWalk.next()". There's an "if" for the case if
+		 * the repository has no file at all.
+		 */
 		if (treeWalk.next()) {
 			
 			int position = 0;
@@ -70,38 +77,7 @@ public class GitCommit {
 				}
 			}
 		}
-		
-//		treeWalk.next();
-//		while (treeWalk != null) {
-//			System.out.println(treeWalk.getPathString());
-////			if (treeWalk.getDepth() == 0) {
-//				folderStructure.insert(generateTree(treeWalk), 0);
-////			}
-//		}
 	}
-	
-//	private MutableTreeNode generateTree (TreeWalk treeWalk) throws IOException {
-//		
-//		MutableTreeNode parentNode = new DefaultMutableTreeNode(treeWalk.getPathString());
-//		
-//		if (treeWalk.isSubtree()) {
-//			
-//			treeWalk.enterSubtree();
-//			
-//			int depth = treeWalk.getDepth();
-//			while (treeWalk.next()) {
-//				if (treeWalk.getDepth() <= depth) {
-//					break;
-//				}
-//				parentNode.insert(generateTree(treeWalk), 0);
-//			}
-//		}
-//		else {
-//			treeWalk.next();
-//		}
-//		
-//		return parentNode;
-//	}
 
 	private GenerateTreeReturnValue generateTree (TreeWalk treeWalk) throws IOException {
 		
@@ -130,6 +106,13 @@ public class GitCommit {
 		return new GenerateTreeReturnValue(parentNode, hasNext);
 	}
 	
+	/*
+	 * This method "generateTree" need to have two return values,
+	 * one for whether there's a next element (due to the fact that
+	 * JGit's "TreeWalk" only has a "next()" walk to the next 
+	 * relevant entry but also return whether there's a next entry 
+	 * but no "hasNext()".
+	 */
 	private class GenerateTreeReturnValue {
 
 		private MutableTreeNode node;
@@ -141,24 +124,19 @@ public class GitCommit {
 		}
 	}
 	
-	private void showHierarchy (MutableTreeNode parentNode) {
-		
-		System.out.println(parentNode);
-		
-		Enumeration e = parentNode.children();
-		while(e.hasMoreElements()) {
-			MutableTreeNode node = (MutableTreeNode)e.nextElement();
-			showHierarchy(node);
-		}
+	public TreeNode getFolderStructure () {
+		return folderStructure;
 	}
 	
-	public void showFolderStructure () {
-		showHierarchy(folderStructure);
-	}
-	
-//	public List<String> getFolderpaths () throws IOException {
+//	public List<String> getFolders () throws IOException {
 //		
 //		List<String> paths = new ArrayList<String>();
+//		
+//		Enumeration e = folderStructure.children();
+//		while(e.hasMoreElements()) {
+//			MutableTreeNode node = (MutableTreeNode)e.nextElement();
+//			showHierarchy(node);
+//		}
 //		
 ////		treeWalk.reset();
 //		while (treeWalk.next()) {
@@ -170,7 +148,7 @@ public class GitCommit {
 //		return paths;	
 //	}
 //	
-//	public List<String> getFilepaths () throws IOException {
+//	public List<String> getFiles () throws IOException {
 //		
 //		List<String> paths = new ArrayList<String>();
 //		

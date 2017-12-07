@@ -2,10 +2,12 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+
+import javax.swing.tree.TreeNode;
 
 import static org.junit.Assert.*;
 
-import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Test;
 
 import enterovirus.gitar.wrap.CommitSha;
@@ -22,8 +24,8 @@ public class GitCommitTest {
 		
 		gitCommit = new GitCommit(repositoryDirectory, commitSha);
 		
-		gitCommit.showFolderStructure();
-		gitCommit.showFolderStructure();
+		showFolderStructure(gitCommit);
+		showFolderStructure(gitCommit);
 		
 //		for (String path : gitCommit.getFolderpaths()) {
 //			System.out.println(path);
@@ -36,6 +38,21 @@ public class GitCommitTest {
 //		for (String path : gitCommit.getFilepaths()) {
 //			System.out.println(path);
 //		}
+	}
+	
+	public void showFolderStructure (GitCommit gitCommit) {
+		showHierarchy(gitCommit.getFolderStructure());
+	}
+	
+	private void showHierarchy (TreeNode parentNode) {
+		
+		System.out.println(parentNode);
+		
+		Enumeration e = parentNode.children();
+		while(e.hasMoreElements()) {
+			TreeNode node = (TreeNode)e.nextElement();
+			showHierarchy(node);
+		}
 	}
 
 }
