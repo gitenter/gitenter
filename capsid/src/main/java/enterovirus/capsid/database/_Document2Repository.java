@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
-import enterovirus.gitar.identification.BranchName;
-import enterovirus.gitar.identification.CommitSha;
+import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.CommitSha;
 
 public interface _Document2Repository {
 

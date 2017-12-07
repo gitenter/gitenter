@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import enterovirus.capsid.domain.*;
 import enterovirus.gitar.*;
-import enterovirus.gitar.identification.CommitSha;
+import enterovirus.gitar.wrap.CommitSha;
 
 @Repository
 public class DocumentGitImpl implements DocumentRepository {

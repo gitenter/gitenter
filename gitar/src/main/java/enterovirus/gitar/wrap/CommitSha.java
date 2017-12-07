@@ -1,4 +1,4 @@
-package enterovirus.gitar.identification;
+package enterovirus.gitar.wrap;
 
 public class CommitSha {
 	

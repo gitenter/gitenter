@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Test;
 
-import enterovirus.gitar.identification.CommitSha;
+import enterovirus.gitar.wrap.CommitSha;
 
 public class GitCommitTest {
 
@@ -21,6 +21,21 @@ public class GitCommitTest {
 		CommitSha commitSha = new CommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
 		
 		gitCommit = new GitCommit(repositoryDirectory, commitSha);
+		
+		gitCommit.showFolderStructure();
+		gitCommit.showFolderStructure();
+		
+//		for (String path : gitCommit.getFolderpaths()) {
+//			System.out.println(path);
+//		}
+		
+//		for (String path : gitCommit.getFolderpaths()) {
+//			System.out.println(path);
+//		}		
+//		
+//		for (String path : gitCommit.getFilepaths()) {
+//			System.out.println(path);
+//		}
 	}
 
 }

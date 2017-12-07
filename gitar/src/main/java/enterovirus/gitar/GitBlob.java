@@ -14,12 +14,12 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
-import enterovirus.gitar.identification.BranchName;
-import enterovirus.gitar.identification.CommitSha;
+import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.CommitSha;
 
 public class GitBlob {
 	
-	byte[] blobContent;
+	private byte[] blobContent;
 
 	public GitBlob (File repositoryDirectory, CommitSha commitSha, String relativeFilepath) throws IOException {
 		

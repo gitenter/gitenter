@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Test;
 
-import enterovirus.gitar.identification.CommitSha;
+import enterovirus.gitar.wrap.CommitSha;
 
 public class GitBlobTest {
 

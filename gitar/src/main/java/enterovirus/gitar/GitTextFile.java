@@ -3,8 +3,8 @@ package enterovirus.gitar;
 import java.io.File;
 import java.io.IOException;
 
-import enterovirus.gitar.identification.BranchName;
-import enterovirus.gitar.identification.CommitSha;
+import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.CommitSha;
 
 public class GitTextFile extends GitBlob {
 	
@@ -28,7 +28,7 @@ public class GitTextFile extends GitBlob {
 //	}
 	
 	public String getStringContent () {
-		return new String(blobContent);
+		return new String(getBlobContent());
 	}
 	
 	/*
@@ -38,7 +38,7 @@ public class GitTextFile extends GitBlob {
 	 * or Linux formats.
 	 */
 	public String[] getLinewiseContent () {
-		return new String(blobContent).split("\n");
+		return new String(getBlobContent()).split("\n");
 	}
 
 }
