@@ -10,12 +10,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
 public class GitCommitTest {
 
 	@Test
-	public void test() throws IOException {
+	public void test1() throws IOException {
 		
 		GitCommit gitCommit;
 		
@@ -38,6 +39,31 @@ public class GitCommitTest {
 //		for (String path : gitCommit.getFilepaths()) {
 //			System.out.println(path);
 //		}
+	}
+
+	@Test
+	public void test2() throws IOException {
+		
+		GitCommit gitCommit;
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+		BranchName branchName = new BranchName("master"); 
+		
+		gitCommit = new GitCommit(repositoryDirectory, branchName);
+		
+		showFolderStructure(gitCommit);
+	}
+
+	@Test
+	public void test3() throws IOException {
+		
+		GitCommit gitCommit;
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+		
+		gitCommit = new GitCommit(repositoryDirectory);
+		
+		showFolderStructure(gitCommit);
 	}
 	
 	private void showFolderStructure (GitCommit gitCommit) {

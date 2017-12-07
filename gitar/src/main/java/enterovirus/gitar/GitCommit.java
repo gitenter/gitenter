@@ -7,6 +7,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -14,6 +15,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
 public class GitCommit {	
@@ -50,7 +52,33 @@ public class GitCommit {
 		treeWalk.addTree(revTree);
 		treeWalk.setRecursive(false);
 		
-		folderStructure = new DefaultMutableTreeNode(repositoryDirectory.getPath());
+		folderStructure = generateFolderStructureFromTreeWalk(treeWalk);
+	}
+
+	public GitCommit (File repositoryDirectory, BranchName branchName) throws IOException {
+		
+		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
+		
+		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
+		
+		RevWalk revWalk = new RevWalk(repository);
+		RevCommit commit = revWalk.parseCommit(branch.getObjectId());
+		RevTree revTree = commit.getTree();
+		TreeWalk treeWalk = new TreeWalk(repository);
+		treeWalk.addTree(revTree);
+		treeWalk.setRecursive(false);
+		
+		folderStructure = generateFolderStructureFromTreeWalk(treeWalk);
+	}
+	
+	public GitCommit (File repositoryDirectory) throws IOException {
+		this(repositoryDirectory, new BranchName("master"));
+	}
+	
+	private MutableTreeNode generateFolderStructureFromTreeWalk (TreeWalk treeWalk) throws IOException {
+		
+		MutableTreeNode folderStructure = new DefaultMutableTreeNode(".");
 		
 //		while (treeWalk.next()) {
 //			if (treeWalk.isSubtree()) {
@@ -77,6 +105,8 @@ public class GitCommit {
 				}
 			}
 		}
+		
+		return folderStructure;
 	}
 
 	private GenerateTreeReturnValue generateTree (TreeWalk treeWalk) throws IOException {
