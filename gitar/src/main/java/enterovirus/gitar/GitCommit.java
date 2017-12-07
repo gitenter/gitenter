@@ -18,7 +18,9 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
-public class GitCommit {	
+public class GitCommit {
+	
+	private CommitSha commitSha;
 
 	/*
 	 * JGit's "TreeWalk" class provides some simply functions
@@ -42,6 +44,8 @@ public class GitCommit {
 	
 	public GitCommit (File repositoryDirectory, CommitSha commitSha) throws IOException {
 		
+		this.commitSha = commitSha;
+		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
@@ -61,6 +65,7 @@ public class GitCommit {
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
 		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
+		commitSha = new CommitSha(branch.getObjectId().getName());
 		
 		RevWalk revWalk = new RevWalk(repository);
 		RevCommit commit = revWalk.parseCommit(branch.getObjectId());
@@ -152,6 +157,10 @@ public class GitCommit {
 			this.node = node;
 			this.hasNext = hasNext;
 		}
+	}
+	
+	public CommitSha getCommitSha () {
+		return commitSha;
 	}
 	
 	public TreeNode getFolderStructure () {

@@ -25,6 +25,7 @@ public class GitCommitTest {
 		
 		gitCommit = new GitCommit(repositoryDirectory, commitSha);
 		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
 		showFolderStructure(gitCommit);
 		
@@ -51,6 +52,7 @@ public class GitCommitTest {
 		
 		gitCommit = new GitCommit(repositoryDirectory, branchName);
 		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
 	}
 
@@ -63,6 +65,7 @@ public class GitCommitTest {
 		
 		gitCommit = new GitCommit(repositoryDirectory);
 		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
 	}
 	
