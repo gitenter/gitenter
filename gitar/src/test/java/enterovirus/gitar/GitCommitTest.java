@@ -2,6 +2,7 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.tree.TreeNode;
@@ -42,32 +43,32 @@ public class GitCommitTest {
 //		}
 	}
 
-	@Test
-	public void test2() throws IOException {
-		
-		GitCommit gitCommit;
-		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		BranchName branchName = new BranchName("master"); 
-		
-		gitCommit = new GitCommit(repositoryDirectory, branchName);
-		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
-	}
-
-	@Test
-	public void test3() throws IOException {
-		
-		GitCommit gitCommit;
-		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		
-		gitCommit = new GitCommit(repositoryDirectory);
-		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
-	}
+//	@Test
+//	public void test2() throws IOException {
+//		
+//		GitCommit gitCommit;
+//		
+//		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+//		BranchName branchName = new BranchName("master"); 
+//		
+//		gitCommit = new GitCommit(repositoryDirectory, branchName);
+//		
+//		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
+//		showFolderStructure(gitCommit);
+//	}
+//
+//	@Test
+//	public void test3() throws IOException {
+//		
+//		GitCommit gitCommit;
+//		
+//		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+//		
+//		gitCommit = new GitCommit(repositoryDirectory);
+//		
+//		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
+//		showFolderStructure(gitCommit);
+//	}
 	
 	private void showFolderStructure (GitCommit gitCommit) {
 		showHierarchy(gitCommit.getFolderStructure());
@@ -77,10 +78,15 @@ public class GitCommitTest {
 		
 		System.out.println(parentNode);
 		
-		Enumeration e = parentNode.children();
-		while(e.hasMoreElements()) {
-			TreeNode node = (TreeNode)e.nextElement();
+		Enumeration<TreeNode> e = parentNode.children();
+//		while(e.hasMoreElements()) {
+//			TreeNode node = e.nextElement();
+//			showHierarchy(node);
+//		}		
+		for(TreeNode node : Collections.list(e)) {
+			System.out.println("One level in---->");
 			showHierarchy(node);
+			System.out.println("<----One level out");
 		}
 	}
 

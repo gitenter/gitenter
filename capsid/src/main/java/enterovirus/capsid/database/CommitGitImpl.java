@@ -51,7 +51,7 @@ public class CommitGitImpl implements CommitRepository {
 		return commit;
 	}
 	
-	public CommitBean findByRepositoryAndBranch(Integer repositoryId, String branch) throws IOException {
+	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, String branch) throws IOException {
 
 		/*
 		 * TODO:
@@ -79,6 +79,10 @@ public class CommitGitImpl implements CommitRepository {
 		CommitBean commit = commits.get(0);
 		commit.setFolderStructure(gitCommit.getFolderStructure());
 		return commit;
+	}
+	
+	public CommitBean findByRepositoryId(Integer repositoryId) throws IOException {
+		return findByRepositoryIdAndBranch(repositoryId, "master");
 	}
 	
 	private CommitBean updateGitMaterial (CommitBean commit) throws IOException {

@@ -1,5 +1,8 @@
 package enterovirus.capsid.web;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,18 +15,21 @@ import enterovirus.capsid.domain.*;
 
 @Controller
 public class GitNavigationController {	
-	
-	@Autowired private RepositoryRepository repositoryRepository;
+
+	@Autowired private CommitRepository commitRepository;
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/", method=RequestMethod.GET)
 	public String showRepository (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			Model model) {
+			Model model) throws IOException {
 		
-		RepositoryBean repository = repositoryRepository.findById(repositoryId).get(0);
+		CommitBean commit = commitRepository.findByRepositoryId(repositoryId);
+		RepositoryBean repository = commit.getRepository();
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
+		model.addAttribute("folderStructure", commit.getFolderStructure());
+		model.addAttribute("ls", Collections.list(commit.getFolderStructure().children()));
 		
 		return "git-navigation/repository";
 	}

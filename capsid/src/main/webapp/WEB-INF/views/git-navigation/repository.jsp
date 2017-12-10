@@ -8,4 +8,9 @@
       <span class="nav-current">${repository.displayName}</span>
     </nav>
     <article>
+
+      <c:forEach var="folderOrFile" items="${ls}">
+        <!-- TODO: print the node here -->
+        ${folderOrFile}
+      </c:forEach>
     </article>
