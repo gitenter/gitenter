@@ -28,8 +28,17 @@ public class GitNavigationController {
 		RepositoryBean repository = commit.getRepository();
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
-		model.addAttribute("folderStructure", commit.getFolderStructure());
-		model.addAttribute("ls", Collections.list(commit.getFolderStructure().children()));
+		
+		/*
+		 * JSTL has now way to iterate "Enumeration" type, as it can
+		 * (and should) only do immediate evaluation. See 
+		 * https://stackoverflow.com/questions/256910/jstl-foreach-tag-problems-with-enumeration-and-with-understanding-how-it-shoul
+		 * 
+		 * Therefore, we can only do "List" type, and it only goes to the
+		 * root level.
+		 */
+//		model.addAttribute("folderStructure", commit.getFolderStructure());
+		model.addAttribute("rootStructure", Collections.list(commit.getFolderStructure().children()));
 		
 		return "git-navigation/repository";
 	}

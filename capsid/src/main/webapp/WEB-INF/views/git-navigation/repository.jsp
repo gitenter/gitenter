@@ -9,7 +9,7 @@
     </nav>
     <article>
 
-      <c:forEach var="folderOrFile" items="${ls}">
+      <c:forEach var="folderOrFile" items="${rootStructure}">
         <!-- TODO: print the node here -->
         ${folderOrFile}
       </c:forEach>

@@ -43,40 +43,43 @@ public class GitCommitTest {
 //		}
 	}
 
-//	@Test
-//	public void test2() throws IOException {
-//		
-//		GitCommit gitCommit;
-//		
-//		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-//		BranchName branchName = new BranchName("master"); 
-//		
-//		gitCommit = new GitCommit(repositoryDirectory, branchName);
-//		
-//		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-//		showFolderStructure(gitCommit);
-//	}
-//
-//	@Test
-//	public void test3() throws IOException {
-//		
-//		GitCommit gitCommit;
-//		
-//		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-//		
-//		gitCommit = new GitCommit(repositoryDirectory);
-//		
-//		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-//		showFolderStructure(gitCommit);
-//	}
-	
-	private void showFolderStructure (GitCommit gitCommit) {
-		showHierarchy(gitCommit.getFolderStructure());
+	@Test
+	public void test2() throws IOException {
+		
+		GitCommit gitCommit;
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+		BranchName branchName = new BranchName("master"); 
+		
+		gitCommit = new GitCommit(repositoryDirectory, branchName);
+		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
+		showFolderStructure(gitCommit);
+	}
+
+	@Test
+	public void test3() throws IOException {
+		
+		GitCommit gitCommit;
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
+		
+		gitCommit = new GitCommit(repositoryDirectory);
+		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
+		showFolderStructure(gitCommit);
 	}
 	
-	private void showHierarchy (TreeNode parentNode) {
+	private void showFolderStructure (GitCommit gitCommit) {
+		showHierarchy(gitCommit.getFolderStructure(), 0);
+	}
+	
+	private void showHierarchy (TreeNode parentNode, int level) {
 		
-		System.out.println("              "+parentNode);
+		for (int i = 0; i < level; ++i) {
+			System.out.print("\t");
+		}
+		System.out.println(parentNode);
 		
 		Enumeration<TreeNode> e = parentNode.children();
 //		while(e.hasMoreElements()) {
@@ -84,9 +87,7 @@ public class GitCommitTest {
 //			showHierarchy(node);
 //		}		
 		for(TreeNode node : Collections.list(e)) {
-			System.out.println("One level in---->");
-			showHierarchy(node);
-			System.out.println("<----One level out");
+			showHierarchy(node, level+1);
 		}
 	}
 
