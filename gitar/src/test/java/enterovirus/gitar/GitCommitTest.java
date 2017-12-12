@@ -22,13 +22,13 @@ public class GitCommitTest {
 		GitCommit gitCommit;
 		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/user1/repo1/.git");
-		CommitSha commitSha = new CommitSha("ff728f5674201025b9fc4ea76a0adde3323fb9fb"); 
+		CommitSha commitSha = new CommitSha("841d9d8cb6c560f1efc4ff677b8c71362d71203c"); 
 		
 		gitCommit = new GitCommit(repositoryDirectory, commitSha);
 		
 		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
-		showFolderStructure(gitCommit);
+//		showFolderStructure(gitCommit);
 		
 //		for (String path : gitCommit.getFolderpaths()) {
 //			System.out.println(path);
@@ -76,7 +76,7 @@ public class GitCommitTest {
 	
 	private void showHierarchy (TreeNode parentNode) {
 		
-		System.out.println(parentNode);
+		System.out.println("              "+parentNode);
 		
 		Enumeration<TreeNode> e = parentNode.children();
 //		while(e.hasMoreElements()) {
