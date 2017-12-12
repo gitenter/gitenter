@@ -104,11 +104,8 @@ public class GitCommit {
 			
 			int position = 0;
 			while (true) {
-				System.out.println(treeWalk.getPathString()+"  before insert~~~~"+treeWalk.getPathString()+treeWalk.getDepth());
 				GenerateTreeReturnValue returnValue = generateTree(treeWalk);
-				System.out.println(treeWalk.getPathString()+"  after return before insert~~~~"+treeWalk.getPathString()+treeWalk.getDepth());
 				folderStructure.insert(returnValue.node, position++);
-				System.out.println(treeWalk.getPathString()+"  after insert~~~~"+treeWalk.getPathString()+treeWalk.getDepth());
 				if (returnValue.hasNext == false) {
 					break;
 				}
@@ -120,55 +117,31 @@ public class GitCommit {
 
 	private GenerateTreeReturnValue generateTree (TreeWalk treeWalk) throws IOException {
 		
-//		System.out.println("---------parentNode treewalk  "+treeWalk.getPathString());
 		MutableTreeNode parentNode = new DefaultMutableTreeNode(treeWalk.getPathString());
 		boolean hasNext;
 		
 		if (treeWalk.isSubtree()) {
-//			System.out.println("subtree path:"+treeWalk.getPathString());
 			int depth = treeWalk.getDepth();
 			
-//			System.out.println("Go into the subtree---->"+treeWalk.getDepth()+"   "+treeWalk.getPathString());
 			treeWalk.enterSubtree();
 			hasNext = treeWalk.next();
-			System.out.println("Current depth:"+treeWalk.getDepth()+"   depth="+depth);
 			
 			int position = 0;
-//			System.out.print("!!");
-			
 			while (true) {
-				System.out.println("Current depth:"+treeWalk.getDepth()+"   depth="+depth+"   path:"+treeWalk.getPathString());
-				System.out.println("hasNext:"+hasNext);
 				if (treeWalk.getDepth() <= depth) {
-//					System.out.println("<----Go out the subtree"+treeWalk.getDepth());
-					System.out.println("***before break:"+treeWalk.getPathString());
 					break;
 				}
-//				System.out.println(treeWalk.getPathString());
 				GenerateTreeReturnValue childReturnValue = generateTree(treeWalk);
-//				System.out.println(treeWalk.getPathString());
 				parentNode.insert(childReturnValue.node, position++);
-				System.out.println("childReturnValue.hasNext:"+childReturnValue.hasNext);
 				hasNext = childReturnValue.hasNext;	
 			}
 		}
 		else {
-			System.out.println("non-subtree path:"+treeWalk.getPathString()+"   before else next()");
 			hasNext = treeWalk.next();
-//			System.out.println(treeWalk.getPathString()+"   after else next()");
 		}
-		System.out.println("***after break:"+treeWalk.getPathString());
-		
-		System.out.println(treeWalk.getPathString()+"   before return!!!!!!");
+
 		return new GenerateTreeReturnValue(parentNode, hasNext);
 	}
-	/*
-	 * TODO:
-	 * Still a bug in here:
-	 * After "folder_2   before return!!!!!!"
-	 * should go to "after return before insert~~~~"
-	 * but it is missing.
-	 */
 	
 	/*
 	 * This method "generateTree" need to have two return values,
