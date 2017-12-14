@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import enterovirus.capsid.database.*;
 import enterovirus.capsid.domain.*;
-import enterovirus.gitar.tree.DefaultListableMutableTreeNode;
-import enterovirus.gitar.tree.ListableTreeNode;
 
 @Controller
 public class GitNavigationController {	
@@ -30,20 +28,7 @@ public class GitNavigationController {
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
-		/*
-		 * JSTL has now way to iterate "Enumeration" type, as it can
-		 * (and should) only do immediate evaluation. See 
-		 * https://stackoverflow.com/questions/256910/jstl-foreach-tag-problems-with-enumeration-and-with-understanding-how-it-shoul
-		 * 
-		 * Therefore, we can only do "List" type, and it only goes to the
-		 * root level.
-		 */
 		model.addAttribute("folderStructure", commit.getFolderStructure());
-//		model.addAttribute("folderStructure", new DefaultListableMutableTreeNode("."));
-		
-		for(ListableTreeNode node : commit.getFolderStructure().childrenList()) {
-			System.out.println(node);
-		}
 		
 		return "git-navigation/repository";
 	}

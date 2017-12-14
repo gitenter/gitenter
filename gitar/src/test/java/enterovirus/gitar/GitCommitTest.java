@@ -2,18 +2,9 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.swing.tree.TreeNode;
-
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import enterovirus.gitar.tree.DefaultListableMutableTreeNode;
-import enterovirus.gitar.tree.ListableTreeNode;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
@@ -31,19 +22,6 @@ public class GitCommitTest {
 		
 		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
-//		showFolderStructure(gitCommit);
-		
-//		for (String path : gitCommit.getFolderpaths()) {
-//			System.out.println(path);
-//		}
-		
-//		for (String path : gitCommit.getFolderpaths()) {
-//			System.out.println(path);
-//		}		
-//		
-//		for (String path : gitCommit.getFilepaths()) {
-//			System.out.println(path);
-//		}
 	}
 
 	@Test
@@ -77,7 +55,7 @@ public class GitCommitTest {
 		showHierarchy(gitCommit.getFolderStructure(), 0);
 	}
 	
-	private void showHierarchy (ListableTreeNode parentNode, int level) {
+	private void showHierarchy (GitCommit.ListableTreeNode parentNode, int level) {
 		
 		for (int i = 0; i < level; ++i) {
 			System.out.print("\t");
@@ -93,7 +71,7 @@ public class GitCommitTest {
 //			showHierarchy(node, level+1);
 //		}
 		
-		for(ListableTreeNode node : parentNode.childrenList()) {
+		for(GitCommit.ListableTreeNode node : parentNode.childrenList()) {
 			showHierarchy(node, level+1);
 		}
 	}

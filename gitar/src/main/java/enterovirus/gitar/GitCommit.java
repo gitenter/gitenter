@@ -2,6 +2,12 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -12,9 +18,6 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
-import enterovirus.gitar.tree.ListableTreeNode;
-import enterovirus.gitar.tree.ListableMutableTreeNode;
-import enterovirus.gitar.tree.DefaultListableMutableTreeNode;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
@@ -169,37 +172,36 @@ public class GitCommit {
 		return folderStructure;
 	}
 	
-//	public List<String> getFolders () throws IOException {
-//		
-//		List<String> paths = new ArrayList<String>();
-//		
-//		Enumeration e = folderStructure.children();
-//		while(e.hasMoreElements()) {
-//			ListableMutableTreeNode node = (ListableMutableTreeNode)e.nextElement();
-//			showHierarchy(node);
-//		}
-//		
-////		treeWalk.reset();
-//		while (treeWalk.next()) {
-//			if (treeWalk.isSubtree()) {
-//				paths.add(treeWalk.getPathString());
-//			}
-//		}
-//		
-//		return paths;	
-//	}
-//	
-//	public List<String> getFiles () throws IOException {
-//		
-//		List<String> paths = new ArrayList<String>();
-//		
-////		treeWalk.reset();
-//		while (treeWalk.next()) {
-//			if (!treeWalk.isSubtree()) {
-//				paths.add(treeWalk.getPathString());
-//			}
-//		}
-//		
-//		return paths;	
-//	}
+	/*
+	 * JSTL has no way to iterate "Enumeration" type, as it can
+	 * (and should) only do immediate evaluation. See 
+	 * https://stackoverflow.com/questions/256910/jstl-foreach-tag-problems-with-enumeration-and-with-understanding-how-it-shoul
+	 * Therefore, we can only do "List" type.
+	 * 
+	 * On the other hand, "TreeNode" only has children() which
+	 * gives back an "Enumeration" type. So we use the following
+	 * trick to extend it to "ListableTreeNode" which makes JSTL
+	 * possible.
+	 */
+	public interface ListableTreeNode extends TreeNode {
+		List<ListableTreeNode> childrenList();
+	}
+	
+	private interface ListableMutableTreeNode extends MutableTreeNode, ListableTreeNode {
+	}
+	
+	private class DefaultListableMutableTreeNode extends DefaultMutableTreeNode implements ListableMutableTreeNode {
+
+		static final long serialVersionUID = 1L; 
+
+		private DefaultListableMutableTreeNode(Object arg0) {
+			super(arg0);
+		}
+
+		@Override
+		public List<ListableTreeNode> childrenList() {
+			return Collections.list(this.children());
+		}
+
+	}
 }

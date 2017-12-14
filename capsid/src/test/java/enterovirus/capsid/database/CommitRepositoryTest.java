@@ -2,10 +2,6 @@ package enterovirus.capsid.database;
 
 import org.junit.runner.RunWith;
 
-import java.util.Enumeration;
-
-import javax.swing.tree.TreeNode;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.capsid.domain.*;
-import enterovirus.gitar.tree.ListableTreeNode;
+import enterovirus.gitar.GitCommit;
 
 /*
  * @DataJpaTest cannot @Autowired the DataSource, so I use 
@@ -57,7 +53,7 @@ public class CommitRepositoryTest {
 //		System.out.println(commit.getFolderStructure().childrenList().size());
 	}
 	
-	private void showHierarchy (ListableTreeNode parentNode, int level) {
+	private void showHierarchy (GitCommit.ListableTreeNode parentNode, int level) {
 		
 		for (int i = 0; i < level; ++i) {
 			System.out.print("\t");
@@ -70,7 +66,7 @@ public class CommitRepositoryTest {
 //			showHierarchy(node);
 //		}
 		
-		for(ListableTreeNode node : parentNode.childrenList()) {
+		for(GitCommit.ListableTreeNode node : parentNode.childrenList()) {
 			showHierarchy(node, level+1);
 		}
 	}
