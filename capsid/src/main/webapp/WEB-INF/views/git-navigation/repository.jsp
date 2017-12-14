@@ -8,9 +8,6 @@
       <span class="nav-current">${repository.displayName}</span>
     </nav>
     <article>
-      <c:if test="${!folderStructure.isLeaf()}">
-      <c:forEach var="folderOrFile" items="${folderStructure.childrenList()}">
-        ${folderOrFile}
-      </c:forEach>
-      </c:if>
+      <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
+      <jsp:include page="repository-folder-structure.jsp"/>
     </article>
