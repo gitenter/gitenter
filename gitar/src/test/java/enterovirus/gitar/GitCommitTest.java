@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
@@ -11,6 +12,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import enterovirus.gitar.tree.ListableTreeNode;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
@@ -74,19 +76,23 @@ public class GitCommitTest {
 		showHierarchy(gitCommit.getFolderStructure(), 0);
 	}
 	
-	private void showHierarchy (TreeNode parentNode, int level) {
+	private void showHierarchy (ListableTreeNode parentNode, int level) {
 		
 		for (int i = 0; i < level; ++i) {
 			System.out.print("\t");
 		}
 		System.out.println(parentNode);
 		
-		Enumeration<TreeNode> e = parentNode.children();
-//		while(e.hasMoreElements()) {
-//			TreeNode node = e.nextElement();
-//			showHierarchy(node);
-//		}		
-		for(TreeNode node : Collections.list(e)) {
+//		Enumeration<TreeNode> e = parentNode.children();
+////		while(e.hasMoreElements()) {
+////			TreeNode node = e.nextElement();
+////			showHierarchy(node);
+////		}		
+//		for(TreeNode node : Collections.list(e)) {
+//			showHierarchy(node, level+1);
+//		}
+		
+		for(ListableTreeNode node : parentNode.childrenList()) {
 			showHierarchy(node, level+1);
 		}
 	}
