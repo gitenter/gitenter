@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import enterovirus.gitar.tree.DefaultListableMutableTreeNode;
 import enterovirus.gitar.tree.ListableTreeNode;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
@@ -96,5 +97,4 @@ public class GitCommitTest {
 			showHierarchy(node, level+1);
 		}
 	}
-
 }

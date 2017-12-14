@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.swing.tree.TreeNode;
 
+import enterovirus.gitar.tree.ListableTreeNode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,7 +36,7 @@ public class CommitBean {
 	private String shaChecksumHash;
 	
 	@Transient
-	private TreeNode folderStructure;
+	private ListableTreeNode folderStructure;
 	
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents;

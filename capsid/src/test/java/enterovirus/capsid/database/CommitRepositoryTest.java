@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.capsid.domain.*;
+import enterovirus.gitar.tree.ListableTreeNode;
 
 /*
  * @DataJpaTest cannot @Autowired the DataSource, so I use 
@@ -32,7 +33,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		showHierarchy(commit.getFolderStructure());
+		showHierarchy(commit.getFolderStructure(), 0);
 	}
 
 	@Test
@@ -42,17 +43,35 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		showHierarchy(commit.getFolderStructure());
+		showHierarchy(commit.getFolderStructure(), 0);
+	}
+
+	@Test
+	@Transactional
+	public void test3() throws Exception {
+		CommitBean commit = repository.findByRepositoryId(1);
+		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
+		System.out.println("Repository Name: "+commit.getRepository().getName());
+		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+		showHierarchy(commit.getFolderStructure(), 0);
+//		System.out.println(commit.getFolderStructure().childrenList().size());
 	}
 	
-	private void showHierarchy (TreeNode parentNode) {
+	private void showHierarchy (ListableTreeNode parentNode, int level) {
 		
+		for (int i = 0; i < level; ++i) {
+			System.out.print("\t");
+		}
 		System.out.println(parentNode);
 		
-		Enumeration e = parentNode.children();
-		while(e.hasMoreElements()) {
-			TreeNode node = (TreeNode)e.nextElement();
-			showHierarchy(node);
+//		Enumeration e = parentNode.children();
+//		while(e.hasMoreElements()) {
+//			TreeNode node = (TreeNode)e.nextElement();
+//			showHierarchy(node);
+//		}
+		
+		for(ListableTreeNode node : parentNode.childrenList()) {
+			showHierarchy(node, level+1);
 		}
 	}
 }

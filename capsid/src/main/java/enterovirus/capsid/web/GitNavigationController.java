@@ -1,7 +1,6 @@
 package enterovirus.capsid.web;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import enterovirus.capsid.database.*;
 import enterovirus.capsid.domain.*;
+import enterovirus.gitar.tree.DefaultListableMutableTreeNode;
+import enterovirus.gitar.tree.ListableTreeNode;
 
 @Controller
 public class GitNavigationController {	
@@ -37,8 +38,12 @@ public class GitNavigationController {
 		 * Therefore, we can only do "List" type, and it only goes to the
 		 * root level.
 		 */
-//		model.addAttribute("folderStructure", commit.getFolderStructure());
-		model.addAttribute("rootStructure", Collections.list(commit.getFolderStructure().children()));
+		model.addAttribute("folderStructure", commit.getFolderStructure());
+//		model.addAttribute("folderStructure", new DefaultListableMutableTreeNode("."));
+		
+		for(ListableTreeNode node : commit.getFolderStructure().childrenList()) {
+			System.out.println(node);
+		}
 		
 		return "git-navigation/repository";
 	}
