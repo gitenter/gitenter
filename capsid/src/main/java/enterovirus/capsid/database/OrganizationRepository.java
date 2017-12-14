@@ -14,6 +14,7 @@ import enterovirus.capsid.domain.OrganizationBean;
 @RepositoryRestResource(collectionResourceRel="organizations", path="organizations")
 public interface OrganizationRepository extends PagingAndSortingRepository<OrganizationBean, Integer> {
 
+	List<OrganizationBean> findById(Integer id);
 	List<OrganizationBean> findByName(String name);
 	OrganizationBean saveAndFlush(OrganizationBean member);
 }

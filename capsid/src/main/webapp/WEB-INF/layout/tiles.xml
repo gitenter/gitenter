@@ -24,6 +24,9 @@
   <definition name="main" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/main.jsp" />
   </definition>
+  <definition name="organization" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/organization.jsp" />
+  </definition>
 
   <definition name="settings/main" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/settings/main.jsp" />
