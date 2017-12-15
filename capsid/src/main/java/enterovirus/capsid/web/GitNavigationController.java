@@ -17,7 +17,7 @@ public class GitNavigationController {
 
 	@Autowired private CommitRepository commitRepository;
 	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
 	public String showRepository (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,

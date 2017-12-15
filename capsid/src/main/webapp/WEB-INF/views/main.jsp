@@ -8,6 +8,6 @@
     <article>
       <h2>Organizations:</h2>
       <c:forEach var="organization" items="${organizations}">
-        <h3><a href="<s:url value="/organizations/${organization.id}/" />">${organization.displayName}</a></h3>
+        <h3><a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a></h3>
       </c:forEach>
     </article>
