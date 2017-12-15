@@ -10,6 +10,6 @@
   </c:forEach>
 </c:when>
 <c:otherwise>
-  <p><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${folderStructure}</a></p>
+  <p><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/directories/${folderStructure}" />">${folderStructure}</a></p>
 </c:otherwise>
 </c:choose>
