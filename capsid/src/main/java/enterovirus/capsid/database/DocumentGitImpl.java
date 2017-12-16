@@ -15,6 +15,7 @@ import enterovirus.gitar.wrap.CommitSha;
 public class DocumentGitImpl implements DocumentRepository {
 
 	@Autowired private DocumentDatabaseRepository repository;
+	@Autowired private CommitRepository commitRepository;
 	@Autowired private GitSource gitSource;
 	
 	public DocumentBean findById(Integer id) throws IOException {
@@ -52,6 +53,20 @@ public class DocumentGitImpl implements DocumentRepository {
 		DocumentBean document = documents.get(0);
 		updateGitMaterial(document);
 		return document;
+	}
+	
+	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, String branch, String relativeFilepath) throws IOException {
+		
+		/*
+		 * TODO:
+		 * Should be a better way rather than query the database twice?
+		 */
+		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branch);
+		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
+	}
+	
+	public DocumentBean findByRepositoryIdAndRelativeFilepath(Integer repositoryId, String relativeFilepath) throws IOException {
+		return findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, "master", relativeFilepath);
 	}
 	
 	private DocumentBean updateGitMaterial (DocumentBean document) throws IOException {

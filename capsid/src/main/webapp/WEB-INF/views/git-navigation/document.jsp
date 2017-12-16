@@ -5,7 +5,11 @@
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
-      <span class="nav-current">${repository.displayName}</span>
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
+      <span class="nav-current">${document.relativeFilepath}</span>
     </nav>
     <article>
+      <c:forEach var="lineContent" items="${document.lineContents}">
+        <p>${lineContent.content}</p>
+      </c:forEach>
     </article>
