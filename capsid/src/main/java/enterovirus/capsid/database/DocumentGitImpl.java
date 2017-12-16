@@ -32,6 +32,27 @@ public class DocumentGitImpl implements DocumentRepository {
 		updateGitMaterial(document);
 		return document;
 	}
+
+	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException {
+		
+		List<DocumentBean> documents = repository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);
+		
+		/*
+		 * TODO: 
+		 * Try to add some unique condition in the relative place of the database.
+		 * It is kind of difficult because we are working on a SQL VIEW at this moment.
+		 */
+		if (documents.size() == 0) {
+			throw new IOException ("CommitId and/or filepath is not correct!");
+		}
+		if (documents.size() > 1) {
+			throw new IOException ("CommitId and/or filepath is not unique!");
+		}
+		
+		DocumentBean document = documents.get(0);
+		updateGitMaterial(document);
+		return document;
+	}
 	
 	private DocumentBean updateGitMaterial (DocumentBean document) throws IOException {
 		

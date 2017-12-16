@@ -10,6 +10,10 @@ import enterovirus.capsid.domain.*;
  * "DocumentImpl", so it doesn't need to be public.
  */
 interface DocumentDatabaseRepository extends PagingAndSortingRepository<DocumentBean, Integer> {
+//public interface DocumentDatabaseRepository extends PagingAndSortingRepository<DocumentBean, Integer> {
 
 	List<DocumentBean> findById(Integer id);
+	
+//	public List<DocumentBean> findByCommitIdAndRelativeFilepath(Integer CommitId, String relativeFilepath);
+	List<DocumentBean> findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath);
 }
