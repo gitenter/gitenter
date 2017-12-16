@@ -38,6 +38,14 @@ public class CommitBean {
 	@Transient
 	private GitCommit.ListableTreeNode folderStructure;
 	
+	/*
+	 * TODO:
+	 * Get a more complicated Object inside of "TreeNode",
+	 * and let it link to "DocumentBean" when needed.
+	 * 
+	 * Define a function which only show the part of the
+	 * folder structure that include design document files.
+	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents;
 }

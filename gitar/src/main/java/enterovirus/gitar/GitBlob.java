@@ -32,7 +32,6 @@ public class GitBlob {
 		TreeWalk treeWalk = new TreeWalk(repository);
 		treeWalk.addTree(revTree);
 		treeWalk.setRecursive(true);
-		System.out.println(treeWalk.getDepth());
 		treeWalk.setFilter(PathFilter.create(relativeFilepath));
 		if (!treeWalk.next()) {
 			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */

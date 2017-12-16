@@ -55,10 +55,6 @@ public class GitNavigationController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 		String filepath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		System.out.println(organizationId);
-		System.out.println(repositoryId);
-		System.out.println(filepath);
-		
 		DocumentBean document = documentRepository.findByRepositoryIdAndRelativeFilepath(repositoryId, filepath);
 		model.addAttribute("document", document);
 		
