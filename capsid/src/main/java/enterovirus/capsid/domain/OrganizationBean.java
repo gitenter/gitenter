@@ -52,4 +52,13 @@ public class OrganizationBean {
 			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
 	@JsonBackReference
 	private List<MemberBean> managers;
+	
+	public boolean isManagedBy (Integer memberId) {
+		for (MemberBean manager : managers) {
+			if (manager.getId().equals(memberId)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

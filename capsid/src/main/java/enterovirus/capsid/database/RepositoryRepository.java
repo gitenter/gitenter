@@ -8,4 +8,5 @@ import enterovirus.capsid.domain.*;
 public interface RepositoryRepository extends PagingAndSortingRepository<RepositoryBean, Integer> {
 
 	public List<RepositoryBean> findById(Integer id);
+	RepositoryBean saveAndFlush(RepositoryBean repository);
 }

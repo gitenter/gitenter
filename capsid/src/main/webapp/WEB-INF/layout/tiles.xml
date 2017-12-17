@@ -48,5 +48,8 @@
   <definition name="admin/create-organization" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/admin/create-organization.jsp" />
   </definition>
+  <definition name="admin/create-repository" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/admin/create-repository.jsp" />
+  </definition>
 
 </tiles-definitions>

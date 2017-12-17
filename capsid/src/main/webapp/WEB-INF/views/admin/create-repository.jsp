@@ -4,11 +4,12 @@
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <span class="nav-current">Create a New Organization</span>
+      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
+      <span class="nav-current">Create a New Repository</span>
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="organizationBean" >
+      <sf:form method="POST" commandName="repositoryBean" >
         <table class="fill-in">
           <tr>
             <td class="setting-intro">Name</td>
@@ -20,7 +21,7 @@
           </tr>
           <tr>
             <td></td>
-            <td class="setting-button"><input type="submit" value="Create Organization" /></td>
+            <td class="setting-button"><input type="submit" value="Create Repository" /></td>
           </tr>
         </table>
       </sf:form>
