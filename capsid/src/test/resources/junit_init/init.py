@@ -37,7 +37,7 @@ create_user('xxxy')
 CREATE ORGANIZATION
 '''
 
-def create_organization (name):
+def create_organization (name, org_name):
 
     client = requests.session()
 
@@ -57,8 +57,20 @@ def create_organization (name):
 
     print("log in "+name+" return code "+str(r.status_code))
 
-    '''
-    Log in not successful yet.
-    '''
+    url = 'http://localhost:8888/organizations/create'
 
-create_organization('xxxy')
+    form = client.get(url)
+
+    soup = BeautifulSoup(form.content, 'lxml')
+    token = soup.find('input', {'name':'_csrf'})['value']
+
+    data = {
+        "name" : org_name,
+        "displayName" : org_name,
+        "_csrf" : token
+        }
+    r = client.post(url, data=data, headers=dict(Referer=url))
+
+    print("create organization "+org_name+" return code "+str(r.status_code))
+
+create_organization('xxxy', 'orgxy')
