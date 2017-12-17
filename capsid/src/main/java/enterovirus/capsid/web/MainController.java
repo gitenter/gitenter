@@ -1,6 +1,5 @@
 package enterovirus.capsid.web;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,19 @@ public class MainController {
 	@RequestMapping("/")
 	public String main(Model model, Authentication authentication) {
 		
+		/*
+		 * The organizations the member acts as a manager.
+		 */
 		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
 		List<OrganizationBean> organizations = member.getOrganizations();
 		model.addAttribute("organizations", organizations);
+		
+		/*
+		 * TODO:
+		 * Should also add repositories the member has (some
+		 * kind of) access to.
+		 */
+		
 		return "main";
 	}
 	

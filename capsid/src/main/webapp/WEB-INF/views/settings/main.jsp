@@ -1,7 +1,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 
     <nav>
-      <a href="<s:url value="/" />">Main Page</a> &rarr; 
+      <a href="<s:url value="/" />">Home</a> &rarr; 
       <span class="nav-underline"><span class="nav-current">Settings</span></span>
     </nav>
     <article>

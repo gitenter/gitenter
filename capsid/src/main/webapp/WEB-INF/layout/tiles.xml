@@ -45,4 +45,8 @@
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/document.jsp" />
   </definition>
 
+  <definition name="admin/create-organization" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/admin/create-organization.jsp" />
+  </definition>
+
 </tiles-definitions>

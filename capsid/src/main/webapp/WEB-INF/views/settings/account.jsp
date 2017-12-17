@@ -4,7 +4,7 @@
 <%@ page session="false" %>
 
     <nav>
-      <a href="<s:url value="/" />">Main Page</a> &rarr;  
+      <a href="<s:url value="/" />">Home</a> &rarr;  
       <a href="<s:url value="/settings" />">Settings</a> &rarr;  
       <span class="nav-current">Account</span>
     </nav>

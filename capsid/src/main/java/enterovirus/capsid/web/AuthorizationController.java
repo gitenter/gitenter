@@ -23,7 +23,7 @@ public class AuthorizationController {
 	@Autowired private MemberRepository memberRepository;
 
 	@RequestMapping(value="/register", method=RequestMethod.GET)
-	public String showRegisterForm (Model model) {
+	public String registerUser (Model model) {
 		
 		/* 
 		 * The commandName NEED to be the same as the class name,
