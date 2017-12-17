@@ -13,21 +13,52 @@ def create_user (name):
 
     client = requests.session()
 
-    form = client.get('http://localhost:8888/register')
+    url = 'http://localhost:8888/register'
+
+    form = client.get(url)
 
     soup = BeautifulSoup(form.content, 'lxml')
     token = soup.find('input', {'name':'_csrf'})['value']
 
-    user_data = {
+    data = {
         "username" : name,
         "password" : name,
         "displayName" : name,
         "email" : name+"@"+name+".com",
         "_csrf" : token
         }
-    url = 'http://localhost:8888/register'
-    r = client.post(url, data=user_data, headers=dict(Referer=url))
+    r = client.post(url, data=data, headers=dict(Referer=url))
 
     print("create "+name+" return code "+str(r.status_code))
 
 create_user('xxxy')
+
+'''
+CREATE ORGANIZATION
+'''
+
+def create_organization (name):
+
+    client = requests.session()
+
+    url = 'http://localhost:8888/login'
+
+    form = client.get(url)
+
+    soup = BeautifulSoup(form.content, 'lxml')
+    token = soup.find('input', {'name':'_csrf'})['value']
+
+    data = {
+        "username" : name,
+        "password" : name,
+        "_csrf" : token
+        }
+    r = client.post(url, data=data, headers=dict(Referer=url))
+
+    print("log in "+name+" return code "+str(r.status_code))
+
+    '''
+    Log in not successful yet.
+    '''
+
+create_organization('xxxy')
