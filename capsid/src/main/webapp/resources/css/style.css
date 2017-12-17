@@ -383,15 +383,15 @@ input[type=button].signup {
 }
 
 /* *************************************************************************
- * Various settings
+ * Various form settings
  * ************************************************************************* */
 
-article table.fill-in td:nth-child(1).setting-intro {
+article table.fill-in td:nth-child(1).form-intro {
 	font-size: 20px;
 	width: 250px;
 }
 
-article table.fill-in td.setting-pre-fill {
+article table.fill-in td.form-pre-fill {
 	
 	border: 1px;
 	margin: 0px;
@@ -405,21 +405,21 @@ article table.fill-in td.setting-pre-fill {
 	width: 400px;
 }
 
-article table.fill-in td.setting-button {
+article table.fill-in td.form-button {
 	border: 1px;
 	margin: 0px;
 	padding: 10px 0px 10px 0px;
 }
 
-article span.setting-error {
+article span.form-error {
 	color: #FF0000;
 }
 
-article span.setting-successful-message {
+article span.form-successful-message {
 	color: #00FF00;
 }
 
-article input[type=text].setting-fill-in, input[type=password].setting-fill-in, input[type=email].setting-fill-in, textarea.setting-fill-in {	
+article input[type=text].form-fill-in, input[type=password].form-fill-in, input[type=email].form-fill-in, textarea.form-fill-in {	
 	width: 400px;
 }
 

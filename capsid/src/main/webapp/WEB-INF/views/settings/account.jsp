@@ -13,31 +13,31 @@
       <sf:form method="POST" commandName="memberBean" >
         <table class="fill-in">
           <tr>
-            <td class="setting-intro">Username</td>
-            <td class="setting-pre-fill">
+            <td class="form-intro">Username</td>
+            <td class="form-pre-fill">
               ${memberBean.username}
               <sf:hidden path="username" value="${memberBean.username}" />
             </td>
           </tr>
           <tr>
-            <td class="setting-intro">Old password</td>
-            <td><input class="setting-fill-in" type="password" name="old_password" /></td>
+            <td class="form-intro">Old password</td>
+            <td><input class="form-fill-in" type="password" name="old_password" /></td>
           </tr>
           <tr>
-            <td class="setting-intro">New password</td>
+            <td class="form-intro">New password</td>
             <td>
-              <sf:password class="setting-fill-in" path="password" /> <sf:errors class="setting-error" path="password" />
+              <sf:password class="form-fill-in" path="password" /> <sf:errors class="form-error" path="password" />
               <c:if test="${errorMessage != null}">
-                <span class="setting-error">${errorMessage}</span>
+                <span class="form-error">${errorMessage}</span>
               </c:if>
               <c:if test="${successfulMessage != null}">
-                <span class="setting-successful-message">${successfulMessage}</span>
+                <span class="form-successful-message">${successfulMessage}</span>
               </c:if>
             </td>
           </tr>
           <tr>
             <td></td>
-            <td class="setting-button"><input type="submit" value="Update password" /></td>
+            <td class="form-button"><input type="submit" value="Update password" /></td>
           </tr>
         </table>
       </sf:form>

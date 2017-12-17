@@ -11,16 +11,16 @@
       <sf:form method="POST" commandName="organizationBean" >
         <table class="fill-in">
           <tr>
-            <td class="setting-intro">Name</td>
-            <td><sf:input class="setting-fill-in" path="name" /> <sf:errors class="setting-error" path="name" /></td>
+            <td class="form-intro">Name</td>
+            <td><sf:input class="form-fill-in" path="name" /> <sf:errors class="form-error" path="name" /></td>
           </tr>
           <tr>
-            <td class="setting-intro">Display Name</td>
-            <td><sf:input class="setting-fill-in" path="displayName" />  <sf:errors class="setting-error" path="displayName" /></td>
+            <td class="form-intro">Display Name</td>
+            <td><sf:input class="form-fill-in" path="displayName" />  <sf:errors class="form-error" path="displayName" /></td>
           </tr>
           <tr>
             <td></td>
-            <td class="setting-button"><input type="submit" value="Create Organization" /></td>
+            <td class="form-button"><input type="submit" value="Create Organization" /></td>
           </tr>
         </table>
       </sf:form>
