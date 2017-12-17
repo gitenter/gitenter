@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.validation.Errors;
 
 import enterovirus.capsid.database.*;
 import enterovirus.capsid.domain.*;
+import enterovirus.gitar.GitRepository;
 import enterovirus.gitar.GitSource;
 
 @Controller
@@ -27,6 +29,17 @@ public class AdminController {
 	@Autowired private OrganizationRepository organizationRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private GitSource gitSource;
+	
+	/*
+	 * If the user is not the manager of this repository,
+	 * then this cannot be done.
+	 */
+	private void isManagerCheck (Authentication authentication, OrganizationBean organization) {
+		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		if (!organization.isManagedBy(member.getId())) {
+			throw new AccessDeniedException("You are not authorized as a manager of this organization.");
+		}
+	}
 	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
 	public String createOrganization (Model model) {
@@ -64,15 +77,8 @@ public class AdminController {
 			Authentication authentication) {
 
 		OrganizationBean organization = organizationRepository.findById(organizationId).get(0);
-
-		/*
-		 * If the user is not the manager of this repository,
-		 * then this cannot be done.
-		 */
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
-		if (!organization.isManagedBy(member.getId())) {
-			throw new AccessDeniedException("You are not authorized as a manager of this organization.");
-		}
+		
+		isManagerCheck(authentication, organization);
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repositoryBean", new RepositoryBean());
@@ -85,18 +91,11 @@ public class AdminController {
 			@Valid RepositoryBean repository, 
 			Errors errors, 
 			Model model,
-			Authentication authentication) {
+			Authentication authentication) throws GitAPIException {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId).get(0);
 		
-		/*
-		 * If the user is not the manager of this repository,
-		 * then this cannot be done.
-		 */
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
-		if (!organization.isManagedBy(member.getId())) {
-			throw new AccessDeniedException("You are not authorized as a manager of this organization.");
-		}
+		isManagerCheck(authentication, organization);
 		
 		if (errors.getErrorCount() > 1) {
 			/*
@@ -118,7 +117,14 @@ public class AdminController {
 		File gitUri = gitSource.getRepositoryDirectory(organization.getName(), repository.getName());
 		repository.setGitUri(gitUri.toString());
 		
+		GitRepository.initBare(gitUri);
+		
 		repositoryRepository.saveAndFlush(repository);
 		return "redirect:/organizations/"+organizationId;
 	}
+	
+	/*
+	 * TODO:
+	 * Manager management (add/remove managers).
+	 */
 }

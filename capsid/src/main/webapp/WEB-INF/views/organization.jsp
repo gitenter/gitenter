@@ -10,4 +10,9 @@
       <c:forEach var="repository" items="${organization.repositories}">
         <h3><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a></h3>
       </c:forEach>
+      
+      <h2>Managers:</h2>
+      <c:forEach var="member" items="${organization.managers}">
+        <h3>${member.displayName}</h3>
+      </c:forEach>
     </article>

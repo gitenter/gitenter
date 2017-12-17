@@ -2,6 +2,7 @@ package enterovirus.capsid.web;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -49,8 +50,9 @@ public class MainController {
 		 * organization can see the materials.
 		 */
 		OrganizationBean organization = organizationRepository.findById(organizationId).get(0);
-		model.addAttribute("organization", organization);
+		Hibernate.initialize(organization.getManagers());
 		
+		model.addAttribute("organization", organization);
 		return "organization";
 	}
 }
