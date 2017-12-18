@@ -1,2 +1,4 @@
 id_rsa.pub
 *.pem
+*.pyc
+*.pyo
