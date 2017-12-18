@@ -18,13 +18,9 @@ public class GitSource {
 	}
 	
 	/*
-	 * Here defines the folder structure to save the repositories
-	 * in "/rootFolderPath/ownerName/repositoryName/" .
-	 * 
-	 * TODO:
-	 * To change it to **bare** repository "repositoryName.git"
+	 * Bare git repository at "/rootFolderPath/ownerName/repositoryName.git" .
 	 */
 	public File getRepositoryDirectory (String ownerName, String repositoryName) {
-		return new File(new File(new File(rootFolderPath, ownerName), repositoryName), ".git");
+		return new File(new File(rootFolderPath, ownerName), repositoryName+".git");
 	}
 }
