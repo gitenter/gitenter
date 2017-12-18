@@ -6,17 +6,17 @@ from util import *
 CREATE USER
 '''
 
-create_user('xxxy')
+create_user('user1')
+create_user('user2')
+create_user('user3')
 
 '''
-CREATE ORGANIZATION
+CREATE ORGANIZATION & REPOSITORY
 '''
 
-client = log_in('xxxy')
-create_organization(client, 'orgxy')
-
-'''
-CREATE REPOSITORY
-'''
-
+client = log_in('user1')
+create_organization(client, 'org1')
+create_organization(client, 'org2')
 create_repository(client, 1, 'repo1')
+create_repository(client, 1, 'repo2')
+
