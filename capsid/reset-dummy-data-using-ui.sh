@@ -4,10 +4,10 @@ sh setup.sh
 cd /home/beta/Workspace/enterovirus/capsid/src/main/resources/sql
 sh setup.sh
 
-cd /home/beta/Workspace/enterovirus/capsid/dummy_resources
+cd /home/beta/Workspace/enterovirus-dummy/server
 rm -rf *
 
-cd /home/beta/Workspace/enterovirus/capsid/dummy-results
+cd /home/beta/Workspace/enterovirus-dummy/client
 rm -rf *
 
 # Should execute when the capsid site is on.

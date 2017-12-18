@@ -11,7 +11,7 @@ public class GitConfig {
 	@Bean
 	public GitSource gitSource() {
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus/capsid/dummy-results");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-dummy/server");
 		return gitSource;
 	}
 }

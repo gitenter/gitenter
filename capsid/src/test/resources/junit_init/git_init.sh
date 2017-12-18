@@ -1,6 +1,6 @@
-cd /home/beta/Workspace/enterovirus/capsid/dummy_resources
+cd /home/beta/Workspace/enterovirus-dummy/client
 # Setup git through local protocol
-git clone /home/beta/Workspace/enterovirus/capsid/dummy-results/org1/repo1.git
+git clone /home/beta/Workspace/enterovirus-dummy/server/org1/repo1.git
 cd repo1
 git remote -v
 touch test-add-a-file
