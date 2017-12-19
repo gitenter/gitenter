@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Built-By: beta
+Build-Jdk: 1.8.0_151
+Created-By: Maven Integration for Eclipse
+Main-Class: enterovirus.gihook.update.App
+

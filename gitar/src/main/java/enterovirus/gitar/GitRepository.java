@@ -10,8 +10,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 public class GitRepository {
 	
 	static public void initBare (File repositoryDirectory, File sampleHooksDirectory) throws GitAPIException, IOException {
+	
 		Git.init().setDirectory(repositoryDirectory).setBare(true).call();
 		
+		/*
+		 * Copy Git server-side hooks to the desired directory.
+		 */
 		FileUtils.copyDirectory(sampleHooksDirectory, new File(repositoryDirectory, "hooks"));
 	}
 }

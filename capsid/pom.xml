@@ -32,13 +32,13 @@
 		</repository>
 	</repositories>-->
 
-  <profiles>
-    <profile>
-      <properties>
-        <user.install>${user.home}/Workspace/enterovirus/gitar/target</user.install>
-      </properties>
-    </profile>
-  </profiles>
+	<profiles>
+		<profile>
+			<properties>
+				<user.install>${user.home}/Workspace/enterovirus/gitar/target</user.install>
+			</properties>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<!-- local packages -->

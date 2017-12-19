@@ -32,9 +32,12 @@ To set it up, Go to `Run > Run configurations` and under the `Spring Boot` leave
 
 Install Tomcat 8. Then `sudo chmod 777 /var/lib/tomcat8/webapps` and put the `.war` file into that folder. The site is accessible from `http://localhost:8080/capsid-0.0.1-alpha/`.
 
+Need to update the git home folder in `enterovirus.capsid.config.GitConfig.java`.
+
 ## Testing URLs
 
 ```
 http://localhost:8888/api/users/ann/
 http://localhost:8888/api/organizations/gov
 ```
+
