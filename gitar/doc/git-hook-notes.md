@@ -5,7 +5,8 @@ Fire off custom scripts when certain important actions occur.
 Format:
 
 + Examples as (1) Shell Script and (2) Perl thrown in.
-+ Any properly named executable scripts (without any extension; bundled hook scripts end with `.sample`) will work fine. *(Does that mean that if I want to use the default hooks, I should REMOVE the extension `.sample` then they will work?)*
++ Any properly named executable scripts (without any extension; remove the `.sample` in templates) will work fine.
++ May use Shell Scripts to bundled hook scripts.
 
 ### Client side hook
 

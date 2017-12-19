@@ -15,6 +15,10 @@ public class GitRepository {
 		
 		/*
 		 * Copy Git server-side hooks to the desired directory.
+		 * 
+		 * TODO:
+		 * What about using symlink rather than physically copy
+		 * the inside materials?
 		 */
 		FileUtils.copyDirectory(sampleHooksDirectory, new File(repositoryDirectory, "hooks"));
 	}
