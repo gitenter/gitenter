@@ -1,6 +1,7 @@
 package enterovirus.capsid.web;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class AdminController {
 			@Valid RepositoryBean repository, 
 			Errors errors, 
 			Model model,
-			Authentication authentication) throws GitAPIException {
+			Authentication authentication) throws GitAPIException, IOException {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId).get(0);
 		
@@ -117,7 +118,10 @@ public class AdminController {
 		File gitUri = gitSource.getRepositoryDirectory(organization.getName(), repository.getName());
 		repository.setGitUri(gitUri.toString());
 		
-		GitRepository.initBare(gitUri);
+		ClassLoader classLoader = getClass().getClassLoader();
+		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+		
+		GitRepository.initBare(gitUri, sampleHooksDirectory);
 		
 		repositoryRepository.saveAndFlush(repository);
 		return "redirect:/organizations/"+organizationId;
