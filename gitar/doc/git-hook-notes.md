@@ -8,6 +8,10 @@ Format:
 + Any properly named executable scripts (without any extension; remove the `.sample` in templates) will work fine.
 + May use Shell Scripts to bundled hook scripts.
 
+[This site](https://www.digitalocean.com/community/tutorials/how-to-use-git-hooks-to-automate-development-and-deployment-tasks) gives a list of hooks and their associated commands.
+
+Don't forget to make the hook file executable (using e.g. `chmod +x applypatch-msg`).
+
 ### Client side hook
 
 Triggered by operations such as committing and merging.

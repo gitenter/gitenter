@@ -1,12 +1,19 @@
 #!/bin/sh
 
-# --- Command line
-refname="$1"
-oldrev="$2"
-newrev="$3"
+# Test variables
+#refname="$1"
+#oldrev="$2"
+#newrev="$3"
 
-echo "refname:" $refname
-echo "oldrev:" $oldrev
-echo "newrev:" $newrev
+#echo "refname:" $refname
+#echo "oldrev:" $oldrev
+#echo "newrev:" $newrev
 
-java -jar ./update-0.0.1-alpha.jar $1 $2 $3
+# Since current directory is the root of the corresponding
+# git repository (rather than inside of the "/hooks" folder)
+# executing the ".jar" file will need to navigate into 
+# "/hooks".
+#
+# To check, using
+#echo "current directory:" $PWD
+java -jar hooks/update-0.0.1-alpha.jar $1 $2 $3
