@@ -34,6 +34,8 @@ Install Tomcat 8. Then `sudo chmod 777 /var/lib/tomcat8/webapps` and put the `.w
 
 Need to update the git home folder in `enterovirus.capsid.config.GitConfig.java`.
 
+Shell scripts in `capsid/src/main/resources/git-server-side-hooks` need to be executable. Make it works by e.g., `chmod +x update`.
+
 ## Testing URLs
 
 ```

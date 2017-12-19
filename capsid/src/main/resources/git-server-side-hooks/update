@@ -1,13 +1,12 @@
 #!/bin/sh
 
-echo "!!!!!!!!1update==========!!!!!!!!!"
-
 # --- Command line
 refname="$1"
 oldrev="$2"
 newrev="$3"
 
-echo "refname"
-echo $refname
+echo "refname:" $refname
+echo "oldrev:" $oldrev
+echo "newrev:" $newrev
 
-java -jar update-0.0.1-alpha.jar
+java -jar ./update-0.0.1-alpha.jar $1 $2 $3
