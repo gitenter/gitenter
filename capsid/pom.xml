@@ -43,7 +43,7 @@
 	<dependencies>
 		<!-- local packages -->
 		<dependency>
-			<groupId>enterovirus.gitar</groupId>
+			<groupId>enterovirus</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.1-alpha</version>
 		</dependency>

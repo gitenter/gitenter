@@ -15,5 +15,6 @@
 # "/hooks".
 #
 # To check, using
-#echo "current directory:" $PWD
-java -jar hooks/update-0.0.1-alpha.jar $1 $2 $3
+echo "current directory:" $PWD
+java -jar hooks/update-0.0.1-alpha-jar-with-dependencies.jar $1 $2 $3
+
