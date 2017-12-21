@@ -61,18 +61,18 @@ $ sudo chmod 777 /var/lib/tomcat8/webapps
 In the local side
 
 ```bash
-/path/to/the/key-pair$ scp -i "capsid-key-pair.pem" /path/to/capsid-0.0.1-alpha.war ubuntu@ec2-52-35-43-194.us-west-2.compute.amazonaws.com:/var/lib/tomcat8/webapps
+/path/to/the/key-pair$ scp -i "capsid-key-pair.pem" /path/to/capsid-0.0.1-prototype.war ubuntu@ec2-52-35-43-194.us-west-2.compute.amazonaws.com:/var/lib/tomcat8/webapps
 ```
 
 Then, in the SSH client side we can get
 
 ```
 /var/lib/tomcat8/webapps$ ls
-capsid-0.0.1-alpha  capsid-0.0.1-alpha.war  ROOT
+capsid-0.0.1-prototype  capsid-0.0.1-prototype.war  ROOT
 ```
 
 and the web application can be reached by
 
 ```
-http://ec2-52-35-43-194.us-west-2.compute.amazonaws.com:8080/capsid-0.0.1-alpha/
+http://ec2-52-35-43-194.us-west-2.compute.amazonaws.com:8080/capsid-0.0.1-prototype/
 ```

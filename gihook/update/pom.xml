@@ -4,7 +4,7 @@
 
 	<groupId>enterovirus.gihook</groupId>
 	<artifactId>update</artifactId>
-	<version>0.0.1-alpha</version>
+	<version>0.0.1-prototype</version>
 	<packaging>jar</packaging>
 
 	<name>gihook update</name>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.1-alpha</version>
+			<version>0.0.1-prototype</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

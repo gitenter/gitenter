@@ -184,7 +184,7 @@ public class GitCommit {
 	 * possible.
 	 */
 	public interface ListableTreeNode extends TreeNode {
-		List<ListableTreeNode> childrenList();
+		public List<ListableTreeNode> childrenList();
 	}
 	
 	private interface ListableMutableTreeNode extends MutableTreeNode, ListableTreeNode {
@@ -198,7 +198,6 @@ public class GitCommit {
 			super(arg0);
 		}
 
-		@Override
 		public List<ListableTreeNode> childrenList() {
 			return Collections.list(this.children());
 		}

@@ -4,15 +4,11 @@
 
 #### `gitar`
 
-Although in eclipse/STS you can set up the dependency of `gitar` under `Properties -> Java Build Path -> Projects`, using command line tool `mvn package` you kind of need to fake the `gitar` package under `.m2`.
+Although in eclipse/STS you can set up the dependency of `gitar` under `Properties -> Java Build Path -> Projects`, using command line tools such as `mvn package` you kind of need to fake the `gitar` package under `.m2`.
 
-After successfully compiled and packaged the `gitar` package, navigate to the corresponding folder and run the following command:
+To do it, compile the gitar library using `mvn intall`. See the `README.md` under the gitar package.
 
-```
-mvn install:install-file -Dfile=gitar-0.0.1-alpha.jar -DgroupId=enterovirus.gitar -DartifactId=gitar -Dversion=0.0.1-alpha -Dpackaging=jar
-```
-
-(Try to set it in a local way in the `pom.xml` of `capsid`. Not successful yet. May refer to [here](https://stackoverflow.com/questions/2229757/maven-add-a-dependency-to-a-jar-by-relative-path) or [here](https://maven.apache.org/settings.html) more carefully some other day.)
+(Try to set it in a local way to link to `gitar/target/*.jar` in the `pom.xml` of `capsid`. Not successful yet. May refer to [here](https://stackoverflow.com/questions/2229757/maven-add-a-dependency-to-a-jar-by-relative-path) or [here](https://maven.apache.org/settings.html) more carefully some other day.)
 
 ### Lombok
 
@@ -30,7 +26,7 @@ To set it up, Go to `Run > Run configurations` and under the `Spring Boot` leave
 
 ## Deployment
 
-Install Tomcat 8. Then `sudo chmod 777 /var/lib/tomcat8/webapps` and put the `.war` file into that folder. The site is accessible from `http://localhost:8080/capsid-0.0.1-alpha/`.
+Install Tomcat 8. Then `sudo chmod 777 /var/lib/tomcat8/webapps` and put the `.war` file into that folder. The site is accessible from `http://localhost:8080/capsid-[version]/`.
 
 Need to update the git home folder in `enterovirus.capsid.config.GitConfig.java`.
 

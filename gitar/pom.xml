@@ -5,13 +5,13 @@
 
 	<groupId>enterovirus</groupId>
 	<artifactId>gitar</artifactId>
-	<version>0.0.1-alpha</version>
+	<version>0.0.1-prototype</version>
 	<packaging>jar</packaging>
 
 	<name>gitar</name>
 	<description>gitar</description>
 
-	<build>
+<!--	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -36,7 +36,24 @@
 				</configuration>
 			</plugin>
 		</plugins>
+	</build>-->
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>enterovirus.gitar.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+
 
 	<dependencies>
 		<dependency>
