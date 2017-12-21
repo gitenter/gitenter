@@ -24,5 +24,31 @@ public class App {
 		CommitSha commitSha = new CommitSha(newCommitSha);
 		
 		GitCommit commit = new GitCommit(repositoryDirectory, commitSha);
+		showFolderStructure(commit);
+	}
+	
+	private static void showFolderStructure (GitCommit gitCommit) {
+		showHierarchy(gitCommit.getFolderStructure(), 0);
+	}
+	
+	private static void showHierarchy (GitCommit.ListableTreeNode parentNode, int level) {
+		
+		for (int i = 0; i < level; ++i) {
+			System.out.print("\t");
+		}
+		System.out.println(parentNode);
+		
+//		Enumeration<TreeNode> e = parentNode.children();
+////		while(e.hasMoreElements()) {
+////			TreeNode node = e.nextElement();
+////			showHierarchy(node);
+////		}		
+//		for(TreeNode node : Collections.list(e)) {
+//			showHierarchy(node, level+1);
+//		}
+		
+		for(GitCommit.ListableTreeNode node : parentNode.childrenList()) {
+			showHierarchy(node, level+1);
+		}
 	}
 }
