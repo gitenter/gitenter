@@ -38,7 +38,7 @@ public class _Document2GitImpl implements _Document2Repository {
 
 		_Document2Bean document = new _Document2Bean();
 
-		File repositoryDirectory = gitSource.getRepositoryDirectory(ownerName, repositoryName);
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(ownerName, repositoryName);
 		GitTextFile gitTextFile = new GitTextFile(repositoryDirectory, branchName, filePath);
 		
 		int lineNumber = 1;

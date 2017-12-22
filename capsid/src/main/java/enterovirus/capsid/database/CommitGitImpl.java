@@ -61,7 +61,7 @@ public class CommitGitImpl implements CommitRepository {
 		String organizationName = repositoryBean.getOrganization().getName();
 		String repositoryName = repositoryBean.getName();
 		
-		File repositoryDirectory = gitSource.getRepositoryDirectory(organizationName, repositoryName);
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		BranchName branchName = new BranchName(branch);
 		
 		GitCommit gitCommit = new GitCommit(repositoryDirectory, branchName);
@@ -90,7 +90,7 @@ public class CommitGitImpl implements CommitRepository {
 		String organizationName = commit.getRepository().getOrganization().getName();
 		String repositoryName = commit.getRepository().getName();
 		
-		File repositoryDirectory = gitSource.getRepositoryDirectory(organizationName, repositoryName);
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		CommitSha commitSha = new CommitSha(commit.getShaChecksumHash());
 		
 		GitCommit gitCommit = new GitCommit(repositoryDirectory, commitSha);

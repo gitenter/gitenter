@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import enterovirus.gitar.GitCommit;
+import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.CommitSha;
 
 public class App {
@@ -22,6 +23,11 @@ public class App {
 		
 		File repositoryDirectory = new File(System.getProperty("user.dir"));
 		CommitSha commitSha = new CommitSha(newCommitSha);
+		
+		String organizationName = GitSource.getOrganizationName(repositoryDirectory);
+		String repositoryName = GitSource.getRepositoryName(repositoryDirectory);
+		System.out.println(organizationName);
+		System.out.println(repositoryName);
 		
 		GitCommit commit = new GitCommit(repositoryDirectory, commitSha);
 		showFolderStructure(commit);

@@ -115,7 +115,7 @@ public class AdminController {
 		/*
 		 * Setup git URI which follows the GitSource format.
 		 */
-		File gitUri = gitSource.getRepositoryDirectory(organization.getName(), repository.getName());
+		File gitUri = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		repository.setGitUri(gitUri.toString());
 		
 		ClassLoader classLoader = getClass().getClassLoader();

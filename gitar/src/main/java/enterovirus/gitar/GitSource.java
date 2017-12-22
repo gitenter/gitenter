@@ -20,7 +20,18 @@ public class GitSource {
 	/*
 	 * Bare git repository at "/rootFolderPath/ownerName/repositoryName.git" .
 	 */
-	public File getRepositoryDirectory (String ownerName, String repositoryName) {
+	public File getBareRepositoryDirectory (String ownerName, String repositoryName) {
 		return new File(new File(rootFolderPath, ownerName), repositoryName+".git");
+	}
+	
+	public static String getOrganizationName (File bareRepositoryDirectory) {
+		String[] parts = bareRepositoryDirectory.getPath().split("/");
+		return parts[parts.length-2];
+	}
+	
+	public static String getRepositoryName (File bareRepositoryDirectory) {
+		String[] parts = bareRepositoryDirectory.getPath().split("/");
+		String gitFolder = parts[parts.length-1];
+		return gitFolder.substring(0, gitFolder.length()-4);
 	}
 }
