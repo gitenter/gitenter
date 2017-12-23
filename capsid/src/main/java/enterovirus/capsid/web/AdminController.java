@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
-import enterovirus.capsid.database.*;
-import enterovirus.capsid.domain.*;
+import enterovirus.proteinsistence.database.*;
+import enterovirus.proteinsistence.domain.*;
 import enterovirus.gitar.GitRepository;
 import enterovirus.gitar.GitSource;
 

@@ -32,7 +32,25 @@ Need to update the git home folder in `enterovirus.capsid.config.GitConfig.java`
 
 Shell scripts in `capsid/src/main/resources/git-server-side-hooks` need to be executable. Make it works by e.g., `chmod +x update`.
 
-## Testing URLs
+## Testing
+
+### Spring authorization
+
+It ever happens that the website ask a spring authorization. I don't understand the reason yet (if recompile, the authorization is no longer needed, even if from a different browser).
+
+```
+http://localhost:8888 is requesting your username and password. The site says: “Spring”
+```
+
+If that happens, use user `user` and password printed in the console. E.g.
+
+```
+[main] INFO org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration - 
+
+Using default security password: c543b70b-7aa5-4dcf-ab0b-eea37e792363
+```
+
+### Testing URLs
 
 ```
 http://localhost:8888/api/users/ann/

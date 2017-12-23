@@ -16,8 +16,8 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import org.springframework.util.AntPathMatcher;
 
-import enterovirus.capsid.database.*;
-import enterovirus.capsid.domain.*;
+import enterovirus.proteinsistence.database.*;
+import enterovirus.proteinsistence.domain.*;
 import enterovirus.gitar.*;
 import enterovirus.gitar.wrap.BranchName;
 

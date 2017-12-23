@@ -47,6 +47,11 @@
 			<artifactId>gitar</artifactId>
 			<version>0.0.1-prototype</version>
 		</dependency>
+		<dependency>
+			<groupId>enterovirus</groupId>
+			<artifactId>proteinsistence</artifactId>
+			<version>0.0.1-prototype</version>
+		</dependency>
 		<!-- Compile -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
