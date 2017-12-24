@@ -20,8 +20,7 @@ import enterovirus.gitar.GitCommit;
 @SpringBootTest
 public class CommitRepositoryTest {
 
-	@Autowired
-	private CommitRepository repository;
+	@Autowired private CommitRepository repository;
 	
 	@Test
 	@Transactional

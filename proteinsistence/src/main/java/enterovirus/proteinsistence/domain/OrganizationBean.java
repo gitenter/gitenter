@@ -1,5 +1,6 @@
 package enterovirus.proteinsistence.domain;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -61,5 +61,16 @@ public class OrganizationBean {
 			}
 		}
 		return false;
+	}
+	
+	public RepositoryBean findRepositoryByName(String repositoryName) throws IOException {
+	
+		for (RepositoryBean repository : repositories) {
+			if (repository.getName().equals(repositoryName)) {
+				return repository;
+			}
+		}
+		
+		throw new IOException ("Repository "+repositoryName+" doesn't exist for this organization!");
 	}
 }
