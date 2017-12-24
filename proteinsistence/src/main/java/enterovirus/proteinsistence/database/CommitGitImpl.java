@@ -57,7 +57,7 @@ public class CommitGitImpl implements CommitRepository {
 		 * TODO:
 		 * Should be a better way rather than query the database twice?
 		 */
-		RepositoryBean repositoryBean = repositoryRepository.findById(repositoryId).get(0);
+		RepositoryBean repositoryBean = repositoryRepository.findById(repositoryId);
 		String organizationName = repositoryBean.getOrganization().getName();
 		String repositoryName = repositoryBean.getName();
 		

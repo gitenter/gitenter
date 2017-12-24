@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import enterovirus.proteinsistence.domain._MemberInfoBean;
 
 @RepositoryRestResource(collectionResourceRel="members", path="members")
-public interface MemberInfoRepository extends PagingAndSortingRepository<_MemberInfoBean, Integer> {
+public interface _MemberInfoRepository extends PagingAndSortingRepository<_MemberInfoBean, Integer> {
 
 	List<_MemberInfoBean> findByUsername(String username);
 	

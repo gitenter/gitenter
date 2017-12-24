@@ -27,7 +27,7 @@ public class ApiController {
 
 	@Autowired private _Document2Repository documentRepository;
 	@Autowired private OrganizationRepository organizationRepository;	
-	@Autowired private MemberInfoRepository memberRepository;
+	@Autowired private _MemberInfoRepository memberRepository;
 	@Autowired private MemberRepository newMemberRepository;
 
 	/**

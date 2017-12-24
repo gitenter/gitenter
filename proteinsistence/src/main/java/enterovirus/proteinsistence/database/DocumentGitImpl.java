@@ -12,7 +12,7 @@ import enterovirus.gitar.*;
 import enterovirus.gitar.wrap.CommitSha;
 
 @Repository
-public class DocumentGitImpl implements DocumentRepository {
+class DocumentGitImpl implements DocumentRepository {
 
 	@Autowired private DocumentDatabaseRepository repository;
 	@Autowired private CommitRepository commitRepository;

@@ -16,10 +16,10 @@ import enterovirus.proteinsistence.domain.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MemberInfoRepositoryTest {
+public class _MemberInfoRepositoryTest {
 
 	@Autowired
-	private MemberInfoRepository repository;
+	private _MemberInfoRepository repository;
 	
 	@Test
 	@Transactional

@@ -1,12 +1,11 @@
 package enterovirus.proteinsistence.database;
 
-import java.util.List;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import java.io.IOException;
 
 import enterovirus.proteinsistence.domain.*;
 
-public interface RepositoryRepository extends PagingAndSortingRepository<RepositoryBean, Integer> {
+public interface RepositoryRepository {
 
-	public List<RepositoryBean> findById(Integer id);
-	RepositoryBean saveAndFlush(RepositoryBean repository);
+	public RepositoryBean findById(Integer id) throws IOException;
+	public RepositoryBean saveAndFlush(RepositoryBean repository);
 }
