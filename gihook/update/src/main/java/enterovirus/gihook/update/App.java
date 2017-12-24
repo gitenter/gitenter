@@ -12,6 +12,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
+/*
+ * This main class has nothing to do with unit tests.
+ * If this package is used as a library rather than a
+ * stand-alone executive jar, then this class is not
+ * needed. 
+ */
 @ComponentScan
 public class App {
 	
