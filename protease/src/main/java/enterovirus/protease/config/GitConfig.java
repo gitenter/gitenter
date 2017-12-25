@@ -11,7 +11,19 @@ public class GitConfig {
 	@Bean
 	public GitSource gitSource() {
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-dummy/server");
+
+		/*
+		 * This setup is used for local tests:
+		 * $ sh reset-dummy-data-using-db.sh
+		 */
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus_data");
+
+		/*
+		 * This setup is used for UI automation tests:
+		 * $ sh reset-dummy-data-using-ui.sh
+		 */
+//		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-dummy/server");
+		
 		return gitSource;
 	}
 }

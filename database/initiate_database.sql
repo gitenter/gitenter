@@ -71,12 +71,12 @@ CREATE TABLE git.document (
 	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
-CREATE TABLE git.modified_document (
+CREATE TABLE git.document_modified (
 	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
 	relative_filepath text NOT NULL
 );
 
-CREATE TABLE git.unmodified_document (
+CREATE TABLE git.document_unmodified (
 	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
 	original_document_id serial REFERENCES git.document (id) ON DELETE RESTRICT
 );
@@ -95,7 +95,7 @@ IMMUTABLE;
 CREATE TABLE git.line_content (
 	id serial PRIMARY KEY,
 
-	document_id serial REFERENCES git.modified_document (id) ON DELETE CASCADE,
+	document_id serial REFERENCES git.document_modified (id) ON DELETE CASCADE,
 	line_number integer NOT NULL,
 	UNIQUE (document_id, line_number)	
 );

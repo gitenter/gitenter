@@ -1,12 +1,12 @@
 INSERT INTO config.member VALUES
-	(1, 'user1', 'aaa', 'Ann Author', 'ann@ann.com'),
-	(2, 'user2', 'bbb', 'Bell Author', 'bell@bell.com'),
-	(3, 'user3', 'ccc', NULL, 'cindy@cindy.com');
+	(1, 'user1', 'user1', 'USER1', 'ann@ann.com'),
+	(2, 'user2', 'user2', 'USER2', 'bell@bell.com'),
+	(3, 'user3', 'user3', NULL, 'cindy@cindy.com');
 ALTER SEQUENCE config.member_id_seq RESTART WITH 4;
 
 INSERT INTO config.organization VALUES
-	(1, 'org1', 'Government'),
-	(2, 'org2', 'Non-governmental organization'),
+	(1, 'org1', 'ORG1'),
+	(2, 'org2', 'ORG2'),
 	(3, 'org3', NULL);
 ALTER SEQUENCE config.organization_id_seq RESTART WITH 4;
 
@@ -18,9 +18,9 @@ INSERT INTO config.organization_manager_map VALUES
 	(3, 3);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo1', 'AAA', '/home/beta/user1/repo1/.git'),
-	(2, 1, 'bbb', NULL, 'https://git.com/gov/bbb.git'),
-	(3, 2, 'aaa', 'AAA', 'https://git.com/ngo/aaa.git');
+	(1, 1, 'repo1', 'REPO1', '/home/beta/Workspace/enterovirus_data/org1/repo1/.git'),
+	(2, 1, 'repo2', NULL, 'https://git.com/gov/bbb.git'),
+	(3, 2, 'repo3', 'AAA', 'https://git.com/ngo/aaa.git');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 4;
 
 INSERT INTO git.git_commit VALUES
@@ -38,7 +38,7 @@ INSERT INTO git.document VALUES
 	(3, 7),
 	(4, 7);
 
-INSERT INTO git.modified_document VALUES
+INSERT INTO git.document_modified VALUES
 	(1, 'folder_1/same-name-file'),
 	(2, 'test-add-a-file-from-client_1'),
 	(3, 'folder_1/same-name-file'),

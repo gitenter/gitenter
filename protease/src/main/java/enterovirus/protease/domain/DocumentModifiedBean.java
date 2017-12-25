@@ -17,8 +17,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "git", name = "modified_document")
-public class ModifiedDocumentBean extends DocumentBean {
+@Table(schema = "git", name = "document_modified")
+public class DocumentModifiedBean extends DocumentBean {
 	
 	@Column(name="relative_filepath", updatable=false)
 	private String relativeFilepath;
