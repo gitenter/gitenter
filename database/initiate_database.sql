@@ -95,7 +95,7 @@ IMMUTABLE;
 CREATE TABLE git.line_content (
 	id serial PRIMARY KEY,
 
-	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
+	document_id serial REFERENCES git.modified_document (id) ON DELETE CASCADE,
 	line_number integer NOT NULL,
 	UNIQUE (document_id, line_number)	
 );
