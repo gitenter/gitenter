@@ -9,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import enterovirus.proteinsistence.ComponentScanConfig;
-import enterovirus.proteinsistence.domain.RepositoryBean;
+import enterovirus.proteinsistence.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=ComponentScanConfig.class)

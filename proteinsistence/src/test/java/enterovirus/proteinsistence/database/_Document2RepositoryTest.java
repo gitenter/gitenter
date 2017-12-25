@@ -1,22 +1,21 @@
 package enterovirus.proteinsistence.database;
 
-import org.junit.runner.RunWith;
-
 import java.io.File;
-
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import enterovirus.proteinsistence.ComponentScanConfig;
+import enterovirus.proteinsistence.config.*;
 import enterovirus.proteinsistence.domain.*;
-import enterovirus.gitar.*;
+
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={ComponentScanConfig.class,DatabaseConfig.class})
 public class _Document2RepositoryTest {
 
 	@Autowired

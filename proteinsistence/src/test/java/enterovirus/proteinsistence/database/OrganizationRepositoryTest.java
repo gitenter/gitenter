@@ -1,17 +1,18 @@
 package enterovirus.proteinsistence.database;
 
-import org.junit.runner.RunWith;
-import org.hibernate.Hibernate;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.proteinsistence.ComponentScanConfig;
+import enterovirus.proteinsistence.config.*;
 import enterovirus.proteinsistence.domain.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={ComponentScanConfig.class,DatabaseConfig.class})
 public class OrganizationRepositoryTest {
 
 	@Autowired
@@ -21,7 +22,7 @@ public class OrganizationRepositoryTest {
 	@Transactional
 	public void findByUsername() throws Exception {
 		
-		OrganizationBean organization = repository.findByName("user1").get(0);
+		OrganizationBean organization = repository.findByName("org1").get(0);
 		
 		System.out.println("===Organization Test Results===");
 		System.out.println("Display Name: "+organization.getDisplayName());

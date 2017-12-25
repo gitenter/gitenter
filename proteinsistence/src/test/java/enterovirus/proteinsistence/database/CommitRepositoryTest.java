@@ -1,23 +1,20 @@
 package enterovirus.proteinsistence.database;
 
-import org.junit.runner.RunWith;
-
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import enterovirus.proteinsistence.domain.*;
 import enterovirus.gitar.GitCommit;
 
-/*
- * @DataJpaTest cannot @Autowired the DataSource, so I use 
- * annotation @SpringBootTest
- */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+import enterovirus.proteinsistence.ComponentScanConfig;
+import enterovirus.proteinsistence.config.*;
+import enterovirus.proteinsistence.domain.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={ComponentScanConfig.class,DatabaseConfig.class,GitConfig.class})
 public class CommitRepositoryTest {
 
 	@Autowired private CommitRepository repository;
