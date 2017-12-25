@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import enterovirus.protease.ComponentScanConfig;
+import enterovirus.protease.ApplicationConfig;
 import enterovirus.protease.database.Tmp;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=ComponentScanConfig.class)
+@ContextConfiguration(classes=ApplicationConfig.class)
 public class TmpTest {
 
 	@Autowired Tmp tmp;

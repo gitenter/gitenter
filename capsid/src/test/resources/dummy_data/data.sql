@@ -1,13 +1,13 @@
 INSERT INTO config.member VALUES
-	(1, 'ann', 'aaa', 'Ann Author', 'ann@ann.com'),
-	(2, 'bell', 'bbb', 'Bell Author', 'bell@bell.com'),
-	(3, 'cindy', 'ccc', NULL, 'cindy@cindy.com');
+	(1, 'user1', 'aaa', 'Ann Author', 'ann@ann.com'),
+	(2, 'user2', 'bbb', 'Bell Author', 'bell@bell.com'),
+	(3, 'user3', 'ccc', NULL, 'cindy@cindy.com');
 ALTER SEQUENCE config.member_id_seq RESTART WITH 4;
 
 INSERT INTO config.organization VALUES
-	(1, 'user1', 'Government'),
-	(2, 'ngo', 'Non-governmental organization'),
-	(3, 'individual', NULL);
+	(1, 'org1', 'Government'),
+	(2, 'org2', 'Non-governmental organization'),
+	(3, 'org3', NULL);
 ALTER SEQUENCE config.organization_id_seq RESTART WITH 4;
 
 INSERT INTO config.organization_manager_map VALUES
