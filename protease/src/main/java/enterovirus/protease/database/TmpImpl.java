@@ -1,4 +1,4 @@
-package enterovirus.protease;
+package enterovirus.protease.database;
 
 import org.springframework.stereotype.Component;
 

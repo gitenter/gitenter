@@ -6,6 +6,7 @@ import java.io.IOException;
 import enterovirus.gitar.GitCommit;
 import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.protease.database.Tmp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

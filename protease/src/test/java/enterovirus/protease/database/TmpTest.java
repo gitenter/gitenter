@@ -1,4 +1,4 @@
-package enterovirus.protease;
+package enterovirus.protease.database;
 
 import java.io.IOException;
 
@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import enterovirus.protease.Tmp;
+import enterovirus.protease.ComponentScanConfig;
+import enterovirus.protease.database.Tmp;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=ComponentScanConfig.class)
