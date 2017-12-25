@@ -35,7 +35,8 @@ public class DatabaseConfig {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/enterovirus");
-		dataSource.setUsername("enterovirus_capsid");
+//		dataSource.setUsername("enterovirus_capsid");
+		dataSource.setUsername("enterovirus");
 		dataSource.setPassword("zooo");
 		return dataSource;
 	}
