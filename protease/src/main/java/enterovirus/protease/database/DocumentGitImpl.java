@@ -15,26 +15,47 @@ import enterovirus.gitar.wrap.CommitSha;
 @Repository
 class DocumentGitImpl implements DocumentRepository {
 
-	@Autowired private DocumentModifiedDatabaseRepository documentModifiedDatabaseRepository;
+	@Autowired private DocumentDatabaseRepository documentDbRepository;
+	@Autowired private DocumentModifiedDatabaseRepository documentMoDbRepository;
+	@Autowired private DocumentUnmodifiedDatabaseRepository documentUnmoDbRepository;
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private GitSource gitSource;
-	
+
 	public DocumentBean findById(Integer id) throws IOException {
-		
-		Optional<DocumentModifiedBean> documents = documentModifiedDatabaseRepository.findById(id);
-		
-		if (!documents.isPresent()) {
-			throw new IOException ("Id is not correct!");
-		}
-		
-		DocumentModifiedBean document = documents.get();
-		updateGitMaterial(document);
-		return document;
+	
+	Optional<DocumentBean> documents = documentDbRepository.findById(id);
+	
+	if (!documents.isPresent()) {
+		throw new IOException ("Id is not correct!");
 	}
+	
+	DocumentBean document = documents.get();
+	
+	if (document instanceof DocumentModifiedBean) {
+		updateGitMaterial((DocumentModifiedBean)document);
+	}
+	else {
+		updateGitMaterial(((DocumentUnmodifiedBean)document).getOriginalDocument());
+	}
+	return document;
+}
+	
+//	public DocumentBean findById(Integer id) throws IOException {
+//		
+//		Optional<DocumentModifiedBean> documents = documentMoDbRepository.findById(id);
+//		
+//		if (!documents.isPresent()) {
+//			throw new IOException ("Id is not correct!");
+//		}
+//		
+//		DocumentModifiedBean document = documents.get();
+//		updateGitMaterial(document);
+//		return document;
+//	}
 
 	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException {
 		
-		List<DocumentModifiedBean> documents = documentModifiedDatabaseRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);
+		List<DocumentModifiedBean> documents = documentMoDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);
 		
 		/*
 		 * TODO: 
@@ -67,7 +88,7 @@ class DocumentGitImpl implements DocumentRepository {
 		return findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, "master", relativeFilepath);
 	}
 	
-	private DocumentBean updateGitMaterial (DocumentModifiedBean document) throws IOException {
+	private DocumentModifiedBean updateGitMaterial (DocumentModifiedBean document) throws IOException {
 		
 		String organizationName = document.getCommit().getRepository().getOrganization().getName();
 		String repositoryName = document.getCommit().getRepository().getName();

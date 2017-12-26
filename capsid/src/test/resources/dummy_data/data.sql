@@ -36,10 +36,14 @@ INSERT INTO git.document VALUES
 	(1, 6),
 	(2, 6),
 	(3, 7),
-	(4, 7);
+	(4, 7),
+	(5, 7);
 
 INSERT INTO git.document_modified VALUES
 	(1, 'folder_1/same-name-file'),
 	(2, 'test-add-a-file-from-client_1'),
 	(3, 'folder_1/same-name-file'),
 	(4, 'test-add-a-file-from-client_1');
+
+INSERT INTO git.document_unmodified VALUES
+	(5, 1);

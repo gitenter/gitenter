@@ -1,5 +1,7 @@
 package enterovirus.protease.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,4 +38,22 @@ public class DocumentBean {
 	@ManyToOne
 	@JoinColumn(name="commit_id")
 	private CommitBean commit;
+	
+	public String getRelativeFilepath () {
+		if (this instanceof DocumentModifiedBean) {
+			return ((DocumentModifiedBean)this).getRelativeFilepath();
+		}
+		else {
+			return (((DocumentUnmodifiedBean)this).getOriginalDocument()).getRelativeFilepath();
+		}
+	}
+	
+	public List<LineContentBean> getLineContents () {
+		if (this instanceof DocumentModifiedBean) {
+			return ((DocumentModifiedBean)this).getLineContents();
+		}
+		else {
+			return (((DocumentUnmodifiedBean)this).getOriginalDocument()).getLineContents();
+		}		
+	}
 }
