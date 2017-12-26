@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import enterovirus.proteinsistence.database.*;
-import enterovirus.proteinsistence.domain.*;
+import enterovirus.protease.database.*;
+import enterovirus.protease.domain.*;
 import lombok.Getter;
 import lombok.Setter;
 

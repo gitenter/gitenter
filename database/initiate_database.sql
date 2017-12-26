@@ -71,156 +71,89 @@ CREATE TABLE git.document (
 	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
-CREATE TABLE git.modified_document (
-	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
-	relative_filepath text NOT NULL
-);
-
-CREATE TABLE git.unmodified_document (
-	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
-	original_document_id serial REFERENCES git.document (id) ON DELETE RESTRICT
-);
-
 CREATE FUNCTION git.commit_id_from_document (integer) 
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT txf.commit_id INTO return_id FROM git.document AS txf
-	WHERE txf.id = $1;
+	SELECT doc.commit_id INTO return_id FROM git.document AS doc
+	WHERE doc.id = $1;
 	RETURN return_id;
 END;
 $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
-CREATE TABLE git.line_content (
-	id serial PRIMARY KEY,
-
-	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
-	line_number integer NOT NULL,
-	UNIQUE (document_id, line_number)	
+CREATE TABLE git.document_modified (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
+	relative_filepath text NOT NULL
 );
 
-CREATE FUNCTION git.document_id_from_line_content (integer) 
-RETURNS integer AS $return_id$
-DECLARE return_id integer;
+-- Since there is a PL/pgSQL function involved, there is no way
+-- to give a unique constrain simply by
+-- UNIQUE (git.commit_id_from_document(id), relative_filepath)
+-- So we need to create this index.
+CREATE UNIQUE INDEX document_modified_unique_relative_filepath_idx 
+	ON git.document_modified (
+		git.commit_id_from_document(id), 
+		relative_filepath
+	);
+
+CREATE FUNCTION git.relative_filepath_from_document_modified (integer) 
+RETURNS text AS $return$
+DECLARE return text;
 BEGIN
-	SELECT lct.document_id INTO return_id FROM git.line_content AS lct
-	WHERE lct.id = $1;
-	RETURN return_id;
+	SELECT mod.relative_filepath INTO return FROM git.document_modified AS mod
+	WHERE mod.id = $1;
+	RETURN return;
 END;
-$return_id$ LANGUAGE plpgsql
+$return$ LANGUAGE plpgsql
 IMMUTABLE;
 
-CREATE FUNCTION git.commit_id_from_line_content (integer) 
-RETURNS integer AS $return_id$
-DECLARE return_id integer;
-BEGIN
-	SELECT lct.document_id INTO return_id FROM 
-	(
-		git.document AS txf
-		JOIN
-		git.line_content AS lct
-		ON
-		txf.id = lct.document_id
-	)
-	WHERE lct.id = $1;
-	RETURN return_id;
-END;
-$return_id$ LANGUAGE plpgsql
-IMMUTABLE;
+CREATE TABLE git.document_unmodified (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
+	original_document_id serial REFERENCES git.document_modified (id) ON DELETE RESTRICT
+);
+
+CREATE UNIQUE INDEX document_unmodified_unique_relative_filepath_idx 
+	ON git.document_unmodified (
+		git.commit_id_from_document(id), 
+		git.relative_filepath_from_document_modified(original_document_id)
+	);
+
+-- document_modified.id and document_unmodified.id are mutually exclusive,
+-- but there seems no easy way to define it in PostgreSQL.
+
+-- Actually there should be a stronger constrain that consider
+-- both modified and unmodified documents, commit_id with relative_filepath
+-- is unique. But there seems no easy way to define it in PostgreSQL.
 
 CREATE TABLE git.traceable_item (
-	id serial PRIMARY KEY REFERENCES git.line_content (id) ON DELETE RESTRICT,
-	item_tag text NOT NULL
-);
+	id serial PRIMARY KEY,
 
-CREATE UNIQUE INDEX ON git.traceable_item (git.commit_id_from_line_content(id), item_tag);
+	original_document_id serial REFERENCES git.document_modified (id) ON DELETE CASCADE,
+	line_number integer NOT NULL,
+	item_tag text NOT NULL,
+	content text NOT NULL,
+	UNIQUE (original_document_id, line_number)	
+);
 
 CREATE TABLE git.traceability_map (
 	id serial PRIMARY KEY,
-	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE,
+	upstream_document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
+	downstream_document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	UNIQUE (upstream_item_id, downstream_item_id),
 
-	CHECK (git.commit_id_from_line_content(upstream_item_id) = git.commit_id_from_line_content(downstream_item_id))
+	CHECK (git.commit_id_from_document(upstream_document_id) = git.commit_id_from_document(downstream_document_id))
 );
 
-CREATE INDEX ON git.traceability_map (upstream_item_id);
-CREATE INDEX ON git.traceability_map (downstream_item_id);
+CREATE INDEX ON git.traceability_map (upstream_document_id, upstream_item_id);
+CREATE INDEX ON git.traceability_map (downstream_document_id, downstream_item_id);
 
 --------------------------------------------------------------------------------
 
 CREATE SCHEMA review;
 
-CREATE TABLE review.milestone (
-	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE RESTRICT,
-	name text NOT NULL,
-	description text
-);
-
-CREATE TABLE setting.review_status (
-	id serial PRIMARY KEY,
-	name text NOT NULL UNIQUE
-);
-
-INSERT INTO setting.review_status VALUES
-	(1, 'review'),
-	(2, 'approval'),
-	(3, 'denial');
-
-CREATE TABLE review.review_document (
-	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE RESTRICT,
-
-	milestone_id serial REFERENCES review.milestone (id) ON DELETE CASCADE,
-	CHECK (milestone_id = git.commit_id_from_document(id)),
-
-	status serial REFERENCES setting.review_status (id) ON DELETE RESTRICT --DEFAULT 1
-);
-
-CREATE TABLE review.issue (
-	id serial PRIMARY KEY,
-
-	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
-	review_document_id serial REFERENCES review.review_document (id) ON DELETE CASCADE,
-	line_content_id serial REFERENCES git.line_content (id) ON DELETE CASCADE,
-	CHECK (review_document_id = git.document_id_from_line_content(line_content_id)),
-
-	description text NOT NULL,
-	post_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-	solved_flag boolean DEFAULT FALSE
-);
-
-CREATE TABLE review.discussion (
-	id serial PRIMARY KEY,
-
-	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
-	issue_id serial REFERENCES review.issue (id) ON DELETE CASCADE,
-
-	description text NOT NULL,
-	post_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 --------------------------------------------------------------------------------
 
 CREATE SCHEMA verification;
-
-CREATE TABLE setting.verification_status (
-	id serial PRIMARY KEY,
-	name text NOT NULL UNIQUE
-);
-
-INSERT INTO setting.verification_status VALUES
-	(1, 'unverified'),
-	(2, 'pass'),
-	(3, 'fail');
-
-CREATE TABLE verification.verification_item (
-	id serial PRIMARY KEY REFERENCES git.traceable_item (id) ON DELETE RESTRICT,
-
-	review_document_id serial REFERENCES review.review_document (id) ON DELETE CASCADE,
-	CHECK (review_document_id =  git.document_id_from_line_content(id)),
-
-	status serial REFERENCES setting.verification_status (id) ON DELETE RESTRICT --DEFAULT 1
-);

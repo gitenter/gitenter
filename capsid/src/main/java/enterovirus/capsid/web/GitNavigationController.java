@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
-import enterovirus.proteinsistence.database.*;
-import enterovirus.proteinsistence.domain.*;
+import enterovirus.protease.database.*;
+import enterovirus.protease.domain.*;
 
 @Controller
 public class GitNavigationController {	
