@@ -7,7 +7,9 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {
 		"enterovirus.capsid",
-		"enterovirus.protease"})
+		"enterovirus.protease.config",
+		"enterovirus.protease.database",
+		"enterovirus.protease.domain"})
 public class CapsidApplication {
 
 	public static void main(String[] args) {
