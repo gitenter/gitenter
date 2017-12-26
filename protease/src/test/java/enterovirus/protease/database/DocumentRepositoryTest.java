@@ -52,16 +52,23 @@ public class DocumentRepositoryTest {
 	@Test
 	@Transactional
 	public void testFindByCommitIdAndRelativeFilepath() throws Exception {
-//		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "folder_1/same-name-file");
+		/*
+		 * Need to test several different conditions:
+		 * Unmodified/modified
+		 * Exist/non-exist other documents with the same filepath
+		 * TODO:
+		 * write a better test case later. 
+		 */
+		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "folder_1/same-name-file");
 //		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(6, "folder_1/same-name-file");
-		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "test-add-a-file-from-client_1");
+//		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "test-add-a-file-from-client_1");
 		showDocumentBean(document);
 	}
-//	
-//	@Test
-//	@Transactional
-//	public void test3() throws Exception {
-//		DocumentBean document = repository.findByRepositoryIdAndRelativeFilepath(1, "folder_1/same-name-file");
-//		showDocumentBean(document);
-//	}
+	
+	@Test
+	@Transactional
+	public void testFindByRepositoryIdAndRelativeFilepath() throws Exception {
+		DocumentBean document = repository.findByRepositoryIdAndRelativeFilepath(1, "folder_1/same-name-file");
+		showDocumentBean(document);
+	}
 }

@@ -16,13 +16,13 @@ import enterovirus.gitar.wrap.CommitSha;
 @Repository
 public class CommitGitImpl implements CommitRepository {
 
-	@Autowired private CommitDatabaseRepository repository;
+	@Autowired private CommitDatabaseRepository commitDbRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private GitSource gitSource;
 	
 	public CommitBean findById(Integer id) throws IOException {
 		
-		Optional<CommitBean> commits = repository.findById(id);
+		Optional<CommitBean> commits = commitDbRepository.findById(id);
 		
 		if (!commits.isPresent()) {
 			throw new IOException ("Id is not correct!");
@@ -35,7 +35,7 @@ public class CommitGitImpl implements CommitRepository {
 	
 	public CommitBean findByShaChecksumHash(String shaChecksumHash) throws IOException {
 		
-		List<CommitBean> commits = repository.findByShaChecksumHash(shaChecksumHash);
+		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(shaChecksumHash);
 		
 		if (commits.size() == 0) {
 			throw new IOException ("SHA checksum hash is not correct!");
@@ -65,7 +65,7 @@ public class CommitGitImpl implements CommitRepository {
 		GitCommit gitCommit = new GitCommit(repositoryDirectory, branchName);
 		
 		String shaChecksumHash = gitCommit.getCommitSha().getShaChecksumHash();
-		List<CommitBean> commits = repository.findByShaChecksumHash(shaChecksumHash);
+		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(shaChecksumHash);
 		
 		if (commits.size() == 0) {
 			throw new IOException ("SHA checksum hash is not correct!");

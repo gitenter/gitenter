@@ -56,12 +56,17 @@ class DocumentGitImpl implements DocumentRepository {
 			throw new IOException ("There is no file under this commitId and relativeFilepath!");
 		}
 		
+		DocumentBean document;
 		if (unmoDocuments.size() == 1) {
-			return unmoDocuments.get(0);
+			document = unmoDocuments.get(0);
+			updateGitMaterial((DocumentModifiedBean)document);
 		}
 		else {
-			return moDocuments.get(0);
+			document = moDocuments.get(0);
+			updateGitMaterial(((DocumentUnmodifiedBean)document).getOriginalDocument());
 		}
+		
+		return document;
 	}
 	
 	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, String branch, String relativeFilepath) throws IOException {
