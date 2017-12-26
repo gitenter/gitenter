@@ -54,7 +54,7 @@
 		</dependency>
 		<dependency>
 			<groupId>enterovirus</groupId>
-			<artifactId>proteinsistence</artifactId>
+			<artifactId>protease</artifactId>
 			<version>0.0.1-prototype</version>
 		</dependency>
 

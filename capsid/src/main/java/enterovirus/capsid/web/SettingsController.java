@@ -12,8 +12,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
-import enterovirus.proteinsistence.database.*;
-import enterovirus.proteinsistence.domain.*;
+import enterovirus.protease.database.*;
+import enterovirus.protease.domain.*;
 
 @Controller
 @RequestMapping("/settings")

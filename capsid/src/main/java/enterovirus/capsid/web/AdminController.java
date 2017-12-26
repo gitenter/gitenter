@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
-import enterovirus.proteinsistence.database.*;
-import enterovirus.proteinsistence.domain.*;
+import enterovirus.protease.database.*;
+import enterovirus.protease.domain.*;
 import enterovirus.gitar.GitRepository;
 import enterovirus.gitar.GitSource;
 
@@ -75,9 +76,13 @@ public class AdminController {
 	public String createRepository (
 			@PathVariable Integer organizationId,
 			Model model,
-			Authentication authentication) {
+			Authentication authentication) throws IOException {
 
-		OrganizationBean organization = organizationRepository.findById(organizationId).get(0);
+		Optional<OrganizationBean> organizations = organizationRepository.findById(organizationId);
+		if (!organizations.isPresent()) {
+			throw new IOException ("organizationId does not exist!");
+		}
+		OrganizationBean organization = organizations.get();
 		
 		isManagerCheck(authentication, organization);
 		
@@ -94,7 +99,11 @@ public class AdminController {
 			Model model,
 			Authentication authentication) throws GitAPIException, IOException {
 		
-		OrganizationBean organization = organizationRepository.findById(organizationId).get(0);
+		Optional<OrganizationBean> organizations = organizationRepository.findById(organizationId);
+		if (!organizations.isPresent()) {
+			throw new IOException ("organizationId does not exist!");
+		}
+		OrganizationBean organization = organizations.get();
 		
 		isManagerCheck(authentication, organization);
 		
