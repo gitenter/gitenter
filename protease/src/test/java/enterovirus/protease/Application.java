@@ -1,17 +1,11 @@
 package enterovirus.protease;
 
-import java.io.File;
 import java.io.IOException;
 
-import enterovirus.gitar.GitCommit;
-import enterovirus.gitar.GitSource;
-import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.database.OrganizationRepository;
-import enterovirus.protease.database.Tmp;
 import enterovirus.protease.domain.OrganizationBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -24,13 +18,9 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan
 public class Application {
 	
-	@Autowired Tmp tmp;
 	@Autowired private OrganizationRepository organizationRepository;
 	
-	private void run () {
-		System.out.println("hello world");
-		System.out.println(tmp.find());
-		
+	private void run () {	
 		OrganizationBean organization = organizationRepository.findByName("org1").get(0);
 		System.out.println(organization.getDisplayName());
 	}

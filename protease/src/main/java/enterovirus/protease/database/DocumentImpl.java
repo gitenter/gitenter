@@ -13,7 +13,7 @@ import enterovirus.gitar.*;
 import enterovirus.gitar.wrap.CommitSha;
 
 @Repository
-class DocumentGitImpl implements DocumentRepository {
+class DocumentImpl implements DocumentRepository {
 
 	@Autowired private DocumentDatabaseRepository documentDbRepository;
 	@Autowired private DocumentModifiedDatabaseRepository documentMoDbRepository;
@@ -83,7 +83,7 @@ class DocumentGitImpl implements DocumentRepository {
 		return findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, "master", relativeFilepath);
 	}
 	
-	private DocumentModifiedBean updateGitMaterial (DocumentModifiedBean document) throws IOException {
+	private void updateGitMaterial (DocumentModifiedBean document) throws IOException {
 		
 		String organizationName = document.getCommit().getRepository().getOrganization().getName();
 		String repositoryName = document.getCommit().getRepository().getName();
@@ -100,7 +100,5 @@ class DocumentGitImpl implements DocumentRepository {
 			document.addLineContent(new LineContentBean(new Integer(lineNumber), content));
 			++lineNumber;
 		}
-		
-		return document;
 	}
 }

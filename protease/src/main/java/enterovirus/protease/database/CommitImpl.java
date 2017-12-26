@@ -14,7 +14,7 @@ import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
 @Repository
-public class CommitGitImpl implements CommitRepository {
+public class CommitImpl implements CommitRepository {
 
 	@Autowired private CommitDatabaseRepository commitDbRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
@@ -83,7 +83,7 @@ public class CommitGitImpl implements CommitRepository {
 		return findByRepositoryIdAndBranch(repositoryId, "master");
 	}
 	
-	private CommitBean updateGitMaterial (CommitBean commit) throws IOException {
+	private void updateGitMaterial (CommitBean commit) throws IOException {
 		
 		String organizationName = commit.getRepository().getOrganization().getName();
 		String repositoryName = commit.getRepository().getName();
@@ -94,7 +94,5 @@ public class CommitGitImpl implements CommitRepository {
 		GitCommit gitCommit = new GitCommit(repositoryDirectory, commitSha);
 		
 		commit.setFolderStructure(gitCommit.getFolderStructure());
-		
-		return commit;
 	}
 }

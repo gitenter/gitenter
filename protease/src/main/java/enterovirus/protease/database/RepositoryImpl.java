@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import enterovirus.protease.domain.*;
 
 @Repository
-class RepositoryCustomizeImpl implements RepositoryRepository {
+class RepositoryImpl implements RepositoryRepository {
 
 	@Autowired private RepositoryDatabaseRepository repositoryDbRepository;
 	@Autowired private OrganizationRepository organizationRepository;
