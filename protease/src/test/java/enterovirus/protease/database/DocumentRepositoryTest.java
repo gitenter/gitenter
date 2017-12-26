@@ -48,13 +48,15 @@ public class DocumentRepositoryTest {
 		assertThat(document, instanceOf(DocumentUnmodifiedBean.class));
 		showDocumentBean(document);
 	}
-//	
-//	@Test
-//	@Transactional
-//	public void test2() throws Exception {
+	
+	@Test
+	@Transactional
+	public void testFindByCommitIdAndRelativeFilepath() throws Exception {
+//		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "folder_1/same-name-file");
 //		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(6, "folder_1/same-name-file");
-//		showDocumentBean(document);
-//	}
+		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "test-add-a-file-from-client_1");
+		showDocumentBean(document);
+	}
 //	
 //	@Test
 //	@Transactional

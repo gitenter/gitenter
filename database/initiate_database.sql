@@ -71,26 +71,60 @@ CREATE TABLE git.document (
 	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
+CREATE FUNCTION git.commit_id_from_document (integer) 
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT doc.commit_id INTO return_id FROM git.document AS doc
+	WHERE doc.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
 CREATE TABLE git.document_modified (
 	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
 	relative_filepath text NOT NULL
 );
 
+-- Since there is a PL/pgSQL function involved, there is no way
+-- to give a unique constrain simply by
+-- UNIQUE (git.commit_id_from_document(id), relative_filepath)
+-- So we need to create this index.
+CREATE UNIQUE INDEX document_modified_unique_relative_filepath_idx 
+	ON git.document_modified (
+		git.commit_id_from_document(id), 
+		relative_filepath
+	);
+
+CREATE FUNCTION git.relative_filepath_from_document_modified (integer) 
+RETURNS text AS $return$
+DECLARE return text;
+BEGIN
+	SELECT mod.relative_filepath INTO return FROM git.document_modified AS mod
+	WHERE mod.id = $1;
+	RETURN return;
+END;
+$return$ LANGUAGE plpgsql
+IMMUTABLE;
+
 CREATE TABLE git.document_unmodified (
 	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
-	original_document_id serial REFERENCES git.document (id) ON DELETE RESTRICT
+	original_document_id serial REFERENCES git.document_modified (id) ON DELETE RESTRICT
 );
 
-CREATE FUNCTION git.commit_id_from_document (integer) 
-RETURNS integer AS $return_id$
-DECLARE return_id integer;
-BEGIN
-	SELECT txf.commit_id INTO return_id FROM git.document AS txf
-	WHERE txf.id = $1;
-	RETURN return_id;
-END;
-$return_id$ LANGUAGE plpgsql
-IMMUTABLE;
+CREATE UNIQUE INDEX document_unmodified_unique_relative_filepath_idx 
+	ON git.document_unmodified (
+		git.commit_id_from_document(id), 
+		git.relative_filepath_from_document_modified(original_document_id)
+	);
+
+-- document_modified.id and document_unmodified.id are mutually exclusive,
+-- but there seems no easy way to define it in PostgreSQL.
+
+-- Actually there should be a stronger constrain that consider
+-- both modified and unmodified documents, commit_id with relative_filepath
+-- is unique. But there seems no easy way to define it in PostgreSQL.
 
 CREATE TABLE git.traceable_item (
 	id serial PRIMARY KEY,

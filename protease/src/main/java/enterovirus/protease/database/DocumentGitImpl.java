@@ -39,39 +39,29 @@ class DocumentGitImpl implements DocumentRepository {
 	}
 	return document;
 }
-	
-//	public DocumentBean findById(Integer id) throws IOException {
-//		
-//		Optional<DocumentModifiedBean> documents = documentMoDbRepository.findById(id);
-//		
-//		if (!documents.isPresent()) {
-//			throw new IOException ("Id is not correct!");
-//		}
-//		
-//		DocumentModifiedBean document = documents.get();
-//		updateGitMaterial(document);
-//		return document;
-//	}
 
 	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException {
-		
-		List<DocumentModifiedBean> documents = documentMoDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);
+
+		List<DocumentModifiedBean> unmoDocuments = documentMoDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);	
+		List<DocumentUnmodifiedBean> moDocuments = documentUnmoDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);
 		
 		/*
-		 * TODO: 
-		 * Try to add some unique condition in the relative place of the database.
-		 * It is kind of difficult because we are working on a SQL VIEW at this moment.
+		 * This condition is stronger than what SQL and PL/pgSQL can define.
+		 * But for a consistent and valid git input, it should be correct.
 		 */
-		if (documents.size() == 0) {
-			throw new IOException ("CommitId and/or filepath is not correct!");
+		if (unmoDocuments.size() + moDocuments.size() > 1) {
+			throw new IOException ("Cannot locate an unique file from commitId and relativeFilepath!");
 		}
-		if (documents.size() > 1) {
-			throw new IOException ("CommitId and/or filepath is not unique!");
+		else if (unmoDocuments.size() + moDocuments.size() == 0) {
+			throw new IOException ("There is no file under this commitId and relativeFilepath!");
 		}
 		
-		DocumentModifiedBean document = documents.get(0);
-		updateGitMaterial(document);
-		return document;
+		if (unmoDocuments.size() == 1) {
+			return unmoDocuments.get(0);
+		}
+		else {
+			return moDocuments.get(0);
+		}
 	}
 	
 	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, String branch, String relativeFilepath) throws IOException {

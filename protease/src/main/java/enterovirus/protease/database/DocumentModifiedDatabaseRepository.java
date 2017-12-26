@@ -1,8 +1,6 @@
 package enterovirus.protease.database;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import enterovirus.protease.domain.*;
@@ -13,6 +11,5 @@ import enterovirus.protease.domain.*;
  */
 interface DocumentModifiedDatabaseRepository extends PagingAndSortingRepository<DocumentModifiedBean, Integer> {
 
-	Optional<DocumentModifiedBean> findById(Integer id);
 	List<DocumentModifiedBean> findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath);
 }

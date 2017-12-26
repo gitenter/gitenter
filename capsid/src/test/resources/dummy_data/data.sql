@@ -42,7 +42,7 @@ INSERT INTO git.document VALUES
 INSERT INTO git.document_modified VALUES
 	(1, 'folder_1/same-name-file'),
 	(2, 'test-add-a-file-from-client_1'),
-	(3, 'folder_1/same-name-file'),
+	(3, 'folder_2/same-name-file'),
 	(4, 'test-add-a-file-from-client_1');
 
 INSERT INTO git.document_unmodified VALUES
