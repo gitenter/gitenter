@@ -12,14 +12,14 @@ import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=OneRepoFixCommitTestConfig.class)
+@ContextConfiguration(classes=UserAuthTestConfig.class)
 public class RepositoryRepositoryTest {
 
 	@Autowired RepositoryRepository repositoryRepository;
 	
 	@Test
 	public void test() throws IOException {
-		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org", "repo");
+		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org1", "repo1");
 		System.out.println(repository.getDisplayName());
 	}
 

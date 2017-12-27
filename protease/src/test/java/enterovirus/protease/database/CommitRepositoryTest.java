@@ -1,5 +1,7 @@
 package enterovirus.protease.database;
 
+import java.io.File;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gitar.GitFolderStructure;
+import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
@@ -27,15 +30,19 @@ public class CommitRepositoryTest {
 		showHierarchy(commit.getFolderStructure(), 0);
 	}
 
-//	@Test
-//	@Transactional
-//	public void test2() throws Exception {
-//		CommitBean commit = commitRepository.findByShaChecksumHash("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
-//		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
-//		System.out.println("Repository Name: "+commit.getRepository().getName());
-//		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-//		showHierarchy(commit.getFolderStructure(), 0);
-//	}
+	@Test
+	@Transactional
+	public void test2() throws Exception {
+		
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt");
+		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
+		
+		CommitBean commit = commitRepository.findByShaChecksumHash(commitSha.getShaChecksumHash());
+		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
+		System.out.println("Repository Name: "+commit.getRepository().getName());
+		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+		showHierarchy(commit.getFolderStructure(), 0);
+	}
 
 	@Test
 	@Transactional

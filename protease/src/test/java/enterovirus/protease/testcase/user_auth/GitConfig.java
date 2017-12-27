@@ -16,7 +16,7 @@ public class GitConfig {
 		/* 
 		 * Current this folder doesn't exist, but that doesn't matter. 
 		 */
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/user-auth");
+		gitSource.setRootFolderPath("dummy-position-not-exist");
 		
 		return gitSource;
 	}

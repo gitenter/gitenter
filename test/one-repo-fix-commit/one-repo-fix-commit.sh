@@ -7,6 +7,7 @@ rm -rf $HOME/Workspace/enterovirus-test/one-repo-fix-commit/
 cd $HOME/Workspace/enterovirus-test/
 mkdir one-repo-fix-commit
 cd one-repo-fix-commit
+touch commit-sha-list.txt
 mkdir org
 cd $HOME/Workspace/enterovirus/test/one-repo-fix-commit
 rm one-repo-fix-commit-data.sql
@@ -40,6 +41,7 @@ git push origin master
 
 # Update commit sha in SQL script for for the 1st commit
 export commit_id=$(git log -1 --pretty="%H")
+echo $commit_id >> $HOME/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt
 sed -i "s/\t(1, 1, TO-BE-1ST-COMMIT-SHA),/\t(1, 1, '"$commit_id"'),/g" $HOME/Workspace/enterovirus/test/one-repo-fix-commit/one-repo-fix-commit-data.sql
 
 # Fake client side git 2nd commit
@@ -58,6 +60,7 @@ git push origin master
 
 # Update commit sha in SQL script for the 2nd commit
 export commit_id=$(git log -1 --pretty="%H")
+echo $commit_id >> $HOME/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt
 sed -i "s/\t(2, 1, TO-BE-2ND-COMMIT-SHA);/\t(2, 1, '"$commit_id"');/g" $HOME/Workspace/enterovirus/test/one-repo-fix-commit/one-repo-fix-commit-data.sql
 
 # Update SQL database

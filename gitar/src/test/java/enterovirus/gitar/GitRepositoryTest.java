@@ -11,8 +11,8 @@ public class GitRepositoryTest {
 	@Test
 	public void test1() throws GitAPIException, IOException {
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus_data/local/junit-test.git");
-		File sampleHooksDirectory = new File("/home/beta/Workspace/enterovirus_data/local/sample-hooks");
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/git-init/tmp-for-git-init-with-sample-hook.git");
+		File sampleHooksDirectory = new File("/home/beta/Workspace/enterovirus-test/git-init/sample-hooks");
 		GitRepository.initBare(repositoryDirectory, sampleHooksDirectory);
 	}
 
