@@ -19,7 +19,7 @@ public class RepositoryRepositoryTest {
 	
 	@Test
 	public void test() throws IOException {
-		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org1", "repo1");
+		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org", "repo");
 		System.out.println(repository.getDisplayName());
 	}
 

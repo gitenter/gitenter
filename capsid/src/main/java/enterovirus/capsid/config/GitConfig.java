@@ -1,4 +1,4 @@
-package enterovirus.protease.config;
+package enterovirus.capsid.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
