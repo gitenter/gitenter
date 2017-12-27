@@ -1,4 +1,4 @@
-package enterovirus.protease.config.one_repo_fix_commit;
+package enterovirus.protease.testcase.one_repo_fix_commit;
 
 import javax.sql.DataSource;
 
@@ -18,9 +18,9 @@ public class DatabaseConfig {
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/one_repo_fix_commit");
-		dataSource.setUsername("enterovirus_test");
-		dataSource.setPassword("zooo");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/one_repo_fix_commit_dbname");
+		dataSource.setUsername("one_repo_fix_commit_username");
+		dataSource.setPassword("one_repo_fix_commit_password");
 		return dataSource;
 	}
 }

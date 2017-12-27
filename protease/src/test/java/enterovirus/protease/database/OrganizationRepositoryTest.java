@@ -7,11 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import enterovirus.protease.ApplicationConfig;
+import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={ApplicationConfig.class})
+@ContextConfiguration(classes={UserAuthTestConfig.class})
 public class OrganizationRepositoryTest {
 
 	@Autowired private OrganizationRepository repository;

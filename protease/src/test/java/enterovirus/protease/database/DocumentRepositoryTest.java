@@ -14,7 +14,7 @@ import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=OneRepoFixCommitConfig.class)
+@ContextConfiguration(classes=OneRepoFixCommitTestConfig.class)
 public class DocumentRepositoryTest {
 
 	@Autowired private DocumentRepository repository;
@@ -44,7 +44,7 @@ public class DocumentRepositoryTest {
 	@Test
 	@Transactional
 	public void testModifiedFindById() throws Exception {
-		DocumentBean document = repository.findById(1);
+		DocumentBean document = repository.findById(4);
 		assertThat(document, instanceOf(DocumentUnmodifiedBean.class));
 		showDocumentBean(document);
 	}
@@ -59,7 +59,7 @@ public class DocumentRepositoryTest {
 		 * TODO:
 		 * write a better test case later. 
 		 */
-		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(1, "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
+		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(2, "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
 //		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(6, "folder_1/same-name-file");
 //		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "test-add-a-file-from-client_1");
 		showDocumentBean(document);

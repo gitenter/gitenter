@@ -12,7 +12,7 @@ import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={OneRepoFixCommitConfig.class})
+@ContextConfiguration(classes={OneRepoFixCommitTestConfig.class})
 public class CommitRepositoryTest {
 
 	@Autowired private CommitRepository commitRepository;

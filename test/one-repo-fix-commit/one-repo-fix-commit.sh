@@ -1,3 +1,7 @@
+username=one_repo_fix_commit_username
+password=one_repo_fix_commit_password
+dbname=one_repo_fix_commit_dbname
+
 # Clean up
 rm -rf $HOME/Workspace/enterovirus-test/one-repo-fix-commit/
 cd $HOME/Workspace/enterovirus-test/
@@ -7,7 +11,6 @@ mkdir org
 cd $HOME/Workspace/enterovirus/test/one-repo-fix-commit
 rm one-repo-fix-commit-data.sql
 cp one-repo-fix-commit-data-template.sql one-repo-fix-commit-data.sql
-
 
 # Initialize server side git repo
 cd $HOME/Workspace/enterovirus-test/one-repo-fix-commit/org/
@@ -62,7 +65,7 @@ export PGPASSWORD=postgres
 export PGHOST=localhost
 psql -U postgres -w -f $HOME/Workspace/enterovirus/test/one-repo-fix-commit/one-repo-fix-commit-config.sql
 
-export PGPASSWORD=zooo
+export PGPASSWORD=$password
 export PGHOST=localhost
-psql -U enterovirus_test -d one_repo_fix_commit -w -f $HOME/Workspace/enterovirus/database/initiate_database.sql
-psql -U enterovirus_test -d one_repo_fix_commit -w -f $HOME/Workspace/enterovirus/test/one-repo-fix-commit/one-repo-fix-commit-data.sql
+psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/database/initiate_database.sql
+psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/test/one-repo-fix-commit/one-repo-fix-commit-data.sql
