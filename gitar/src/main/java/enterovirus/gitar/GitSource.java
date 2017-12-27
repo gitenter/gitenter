@@ -24,12 +24,12 @@ public class GitSource {
 		return new File(new File(rootFolderPath, ownerName), repositoryName+".git");
 	}
 	
-	public static String getOrganizationName (File bareRepositoryDirectory) {
+	public static String getBareRepositoryOrganizationName (File bareRepositoryDirectory) {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");
 		return parts[parts.length-2];
 	}
 	
-	public static String getRepositoryName (File bareRepositoryDirectory) {
+	public static String getBareRepositoryName (File bareRepositoryDirectory) {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");
 		String gitFolder = parts[parts.length-1];
 		return gitFolder.substring(0, gitFolder.length()-4);

@@ -95,4 +95,8 @@ public class CommitImpl implements CommitRepository {
 		
 		commit.setFolderStructure(gitCommit.getFolderStructure());
 	}
+	
+	public CommitBean saveAndFlush(CommitBean commit) {
+		return commitDbRepository.saveAndFlush(commit);
+	}
 }

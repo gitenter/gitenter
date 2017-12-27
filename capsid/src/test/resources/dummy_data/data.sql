@@ -18,7 +18,7 @@ INSERT INTO config.organization_manager_map VALUES
 	(3, 3);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo1', 'REPO1', '/home/beta/Workspace/enterovirus_data/org1/repo1/.git'),
+	(1, 1, 'repo1', 'REPO1', '/home/beta/Workspace/enterovirus_data/org1/repo1.git'),
 	(2, 1, 'repo2', NULL, 'https://git.com/gov/bbb.git'),
 	(3, 2, 'repo3', 'AAA', 'https://git.com/ngo/aaa.git');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 4;
@@ -31,6 +31,7 @@ INSERT INTO git.git_commit VALUES
 	(5, 1, 'ac211df0fbe5e2368ba82f1c26a1f3aab192fc35'),
 	(6, 1, 'ff728f5674201025b9fc4ea76a0adde3323fb9fb'),
 	(7, 1, '841d9d8cb6c560f1efc4ff677b8c71362d71203c');
+ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 8;
 
 INSERT INTO git.document VALUES
 	(1, 6),

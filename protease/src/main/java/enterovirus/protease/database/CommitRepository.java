@@ -10,4 +10,6 @@ public interface CommitRepository {
 	public CommitBean findByShaChecksumHash(String shaChecksumHash) throws IOException;
 	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, String branchName) throws IOException;
 	public CommitBean findByRepositoryId(Integer repositoryId) throws IOException;
+	
+	public CommitBean saveAndFlush(CommitBean commit);
 }

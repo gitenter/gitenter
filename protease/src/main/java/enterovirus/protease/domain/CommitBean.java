@@ -6,6 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import enterovirus.gitar.GitCommit;
+import enterovirus.gitar.wrap.CommitSha;
 
 @Getter
 @Setter
@@ -25,6 +28,7 @@ import enterovirus.gitar.GitCommit;
 public class CommitBean {
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id", updatable=false)
 	private Integer id;
 	
@@ -48,4 +52,9 @@ public class CommitBean {
 	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents;
+	
+	public CommitBean (RepositoryBean repository, CommitSha commitSha) {
+		this.repository = repository;
+		this.shaChecksumHash = commitSha.getShaChecksumHash();
+	}
 }

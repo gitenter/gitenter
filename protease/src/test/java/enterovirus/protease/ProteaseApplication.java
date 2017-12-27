@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
  * needed. 
  */
 @ComponentScan
-public class Application {
+public class ProteaseApplication {
 	
 	@Autowired private OrganizationRepository organizationRepository;
 	
@@ -31,8 +31,8 @@ public class Application {
 		 * Cannot use the general "GenericApplicationContext"
 		 * as it is not auto-closable.
 		 */
-		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Application.class)) {
-			Application p = context.getBean(Application.class);
+		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ProteaseApplication.class)) {
+			ProteaseApplication p = context.getBean(ProteaseApplication.class);
 			p.run();
 		}
 	}

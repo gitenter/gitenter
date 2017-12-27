@@ -26,7 +26,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>enterovirus.gihook.update.App</mainClass>
+							<mainClass>enterovirus.gihook.update.Application</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -42,6 +42,11 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>gitar</artifactId>
+			<version>0.0.1-prototype</version>
+		</dependency>
+		<dependency>
+			<groupId>enterovirus</groupId>
+			<artifactId>protease</artifactId>
 			<version>0.0.1-prototype</version>
 		</dependency>
 
