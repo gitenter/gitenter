@@ -1,0 +1,23 @@
+package enterovirus.gihook.update.testcase.client_side_fake;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import enterovirus.gitar.GitSource;
+
+@Configuration
+public class GitConfig {
+
+	@Bean
+	public GitSource gitSource() {
+		
+		GitSource gitSource = new GitSource();
+		
+		/* 
+		 * Current this folder doesn't exist, but that doesn't matter. 
+		 */
+		gitSource.setRootFolderPath("dummy-position-not-exist");
+		
+		return gitSource;
+	}
+}
