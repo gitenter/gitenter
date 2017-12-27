@@ -18,7 +18,7 @@ import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
-import enterovirus.gitar.GitCommit;
+import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.wrap.CommitSha;
 
 @Getter
@@ -40,7 +40,7 @@ public class CommitBean {
 	private String shaChecksumHash;
 	
 	@Transient
-	private GitCommit.ListableTreeNode folderStructure;
+	private GitFolderStructure.ListableTreeNode folderStructure;
 	
 	/*
 	 * TODO:
@@ -52,6 +52,13 @@ public class CommitBean {
 	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents;
+	
+	/*
+	 * This default constructor is needed for Hibernate.
+	 */
+	public CommitBean () {
+		
+	}
 	
 	public CommitBean (RepositoryBean repository, CommitSha commitSha) {
 		this.repository = repository;

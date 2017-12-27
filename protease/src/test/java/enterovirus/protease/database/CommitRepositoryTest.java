@@ -7,12 +7,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import enterovirus.gitar.GitCommit;
-import enterovirus.protease.ApplicationConfig;
+import enterovirus.gitar.GitFolderStructure;
+import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={ApplicationConfig.class})
+@ContextConfiguration(classes={OneRepoFixCommitConfig.class})
 public class CommitRepositoryTest {
 
 	@Autowired private CommitRepository commitRepository;
@@ -27,15 +27,15 @@ public class CommitRepositoryTest {
 		showHierarchy(commit.getFolderStructure(), 0);
 	}
 
-	@Test
-	@Transactional
-	public void test2() throws Exception {
-		CommitBean commit = commitRepository.findByShaChecksumHash("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
-		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
-		System.out.println("Repository Name: "+commit.getRepository().getName());
-		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		showHierarchy(commit.getFolderStructure(), 0);
-	}
+//	@Test
+//	@Transactional
+//	public void test2() throws Exception {
+//		CommitBean commit = commitRepository.findByShaChecksumHash("ff728f5674201025b9fc4ea76a0adde3323fb9fb");
+//		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
+//		System.out.println("Repository Name: "+commit.getRepository().getName());
+//		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+//		showHierarchy(commit.getFolderStructure(), 0);
+//	}
 
 	@Test
 	@Transactional
@@ -48,7 +48,7 @@ public class CommitRepositoryTest {
 //		System.out.println(commit.getFolderStructure().childrenList().size());
 	}
 	
-	private void showHierarchy (GitCommit.ListableTreeNode parentNode, int level) {
+	private void showHierarchy (GitFolderStructure.ListableTreeNode parentNode, int level) {
 		
 		for (int i = 0; i < level; ++i) {
 			System.out.print("\t");
@@ -61,7 +61,7 @@ public class CommitRepositoryTest {
 //			showHierarchy(node);
 //		}
 		
-		for(GitCommit.ListableTreeNode node : parentNode.childrenList()) {
+		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
 			showHierarchy(node, level+1);
 		}
 	}

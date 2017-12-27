@@ -62,7 +62,7 @@ public class CommitImpl implements CommitRepository {
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		BranchName branchName = new BranchName(branch);
 		
-		GitCommit gitCommit = new GitCommit(repositoryDirectory, branchName);
+		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, branchName);
 		
 		String shaChecksumHash = gitCommit.getCommitSha().getShaChecksumHash();
 		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(shaChecksumHash);
@@ -91,7 +91,7 @@ public class CommitImpl implements CommitRepository {
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		CommitSha commitSha = new CommitSha(commit.getShaChecksumHash());
 		
-		GitCommit gitCommit = new GitCommit(repositoryDirectory, commitSha);
+		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, commitSha);
 		
 		commit.setFolderStructure(gitCommit.getFolderStructure());
 	}

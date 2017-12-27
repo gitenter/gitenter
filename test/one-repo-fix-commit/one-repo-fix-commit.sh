@@ -25,8 +25,12 @@ git remote add origin $HOME/Workspace/enterovirus-test/one-repo-fix-commit/org/r
 # Fake client side git 1st commit
 cd $HOME/Workspace/enterovirus-test/one-repo-fix-commit/org/repo
 touch 1st-commit-file-under-root
+echo "1st-commit-file-under-root" > 1st-commit-file-under-root
+touch 1st-commit-file-to-be-change-in-the-2nd-commit
+echo "1st-commit-file-to-be-change-in-the-2nd-commit:\nbefore change" > 1st-commit-file-to-be-change-in-the-2nd-commit
 mkdir 1st-commit-folder
 touch 1st-commit-folder/1st-commit-file-under-1st-commit-folder
+echo "1st-commit-folder/1st-commit-file-under-1st-commit-folder" > 1st-commit-folder/1st-commit-file-under-1st-commit-folder
 git add -A
 git commit -m "1st commit"
 git push origin master
@@ -37,10 +41,14 @@ sed -i "s/\t(1, 1, TO-BE-1ST-COMMIT-SHA),/\t(1, 1, '"$commit_id"'),/g" $HOME/Wor
 
 # Fake client side git 2nd commit
 cd $HOME/Workspace/enterovirus-test/one-repo-fix-commit/org/repo
+echo "1st-commit-file-to-be-change-in-the-2nd-commit:\nchanged" > 1st-commit-file-to-be-change-in-the-2nd-commit
 touch 2nd-commit-file-under-root
+echo "2nd-commit-file-under-root" > 2nd-commit-file-under-root
 touch 1st-commit-folder/2nd-commit-file-under-1st-commit-folder
+echo "1st-commit-folder/2nd-commit-file-under-1st-commit-folder" > 1st-commit-folder/2nd-commit-file-under-1st-commit-folder
 mkdir 2nd-commit-folder
 touch 2nd-commit-folder/2nd-commit-file-under-2nt-commit-folder
+echo "2nd-commit-folder/2nd-commit-file-under-2nt-commit-folder" > 2nd-commit-folder/2nd-commit-file-under-2nt-commit-folder
 git add -A
 git commit -m "2nd commit"
 git push origin master

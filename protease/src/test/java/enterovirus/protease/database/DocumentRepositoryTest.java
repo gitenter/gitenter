@@ -10,11 +10,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import enterovirus.protease.ApplicationConfig;
+import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={ApplicationConfig.class})
+@ContextConfiguration(classes=OneRepoFixCommitConfig.class)
 public class DocumentRepositoryTest {
 
 	@Autowired private DocumentRepository repository;
@@ -44,7 +44,7 @@ public class DocumentRepositoryTest {
 	@Test
 	@Transactional
 	public void testModifiedFindById() throws Exception {
-		DocumentBean document = repository.findById(5);
+		DocumentBean document = repository.findById(1);
 		assertThat(document, instanceOf(DocumentUnmodifiedBean.class));
 		showDocumentBean(document);
 	}
@@ -59,7 +59,7 @@ public class DocumentRepositoryTest {
 		 * TODO:
 		 * write a better test case later. 
 		 */
-		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "folder_1/same-name-file");
+		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(1, "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
 //		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(6, "folder_1/same-name-file");
 //		DocumentBean document = repository.findByCommitIdAndRelativeFilepath(7, "test-add-a-file-from-client_1");
 		showDocumentBean(document);
@@ -68,7 +68,7 @@ public class DocumentRepositoryTest {
 	@Test
 	@Transactional
 	public void testFindByRepositoryIdAndRelativeFilepath() throws Exception {
-		DocumentBean document = repository.findByRepositoryIdAndRelativeFilepath(1, "folder_1/same-name-file");
+		DocumentBean document = repository.findByRepositoryIdAndRelativeFilepath(1, "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
 		showDocumentBean(document);
 	}
 }

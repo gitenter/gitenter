@@ -21,7 +21,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
-public class GitCommit {
+public class GitFolderStructure {
 	
 	private CommitSha commitSha;
 
@@ -45,7 +45,7 @@ public class GitCommit {
 	 */
 	private ListableMutableTreeNode folderStructure;
 	
-	public GitCommit (File repositoryDirectory, CommitSha commitSha) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha) throws IOException {
 		
 		this.commitSha = commitSha;
 		
@@ -62,7 +62,7 @@ public class GitCommit {
 		folderStructure = generateFolderStructureFromTreeWalk(treeWalk);
 	}
 
-	public GitCommit (File repositoryDirectory, BranchName branchName) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
@@ -80,7 +80,7 @@ public class GitCommit {
 		folderStructure = generateFolderStructureFromTreeWalk(treeWalk);
 	}
 	
-	public GitCommit (File repositoryDirectory) throws IOException {
+	public GitFolderStructure (File repositoryDirectory) throws IOException {
 		this(repositoryDirectory, new BranchName("master"));
 	}
 	

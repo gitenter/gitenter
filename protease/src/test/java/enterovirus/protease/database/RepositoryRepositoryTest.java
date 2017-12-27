@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import enterovirus.protease.ApplicationConfig;
+import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=ApplicationConfig.class)
+@ContextConfiguration(classes=OneRepoFixCommitConfig.class)
 public class RepositoryRepositoryTest {
 
 	@Autowired RepositoryRepository repositoryRepository;

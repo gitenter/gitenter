@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import enterovirus.gitar.GitCommit;
+import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.database.*;
@@ -45,7 +45,7 @@ public class UpdateApplication {
 		System.out.println("organizationName="+organizationName);
 		System.out.println("repositoryName="+repositoryName);
 
-		GitCommit gitCommit = new GitCommit(repositoryDirectory, commitSha);
+		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, commitSha);
 		showFolderStructure(gitCommit);
 		
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
@@ -70,18 +70,18 @@ public class UpdateApplication {
 		p.hook(branchName, oldCommitSha, newCommitSha);
 	}
 	
-	private static void showFolderStructure (GitCommit gitCommit) {
+	private static void showFolderStructure (GitFolderStructure gitCommit) {
 		showHierarchy(gitCommit.getFolderStructure(), 0);
 	}
 	
-	private static void showHierarchy (GitCommit.ListableTreeNode parentNode, int level) {
+	private static void showHierarchy (GitFolderStructure.ListableTreeNode parentNode, int level) {
 		
 		for (int i = 0; i < level; ++i) {
 			System.out.print("\t");
 		}
 		System.out.println(parentNode);
 		
-		for(GitCommit.ListableTreeNode node : parentNode.childrenList()) {
+		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
 			showHierarchy(node, level+1);
 		}
 	}

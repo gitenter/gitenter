@@ -1,4 +1,4 @@
-package enterovirus.protease.config;
+package enterovirus.protease.config.one_repo_fix_commit;
 
 import javax.sql.DataSource;
 
