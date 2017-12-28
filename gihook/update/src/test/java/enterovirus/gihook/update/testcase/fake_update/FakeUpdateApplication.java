@@ -1,4 +1,4 @@
-package enterovirus.gihook.update.testcase.client_side_fake;
+package enterovirus.gihook.update.testcase.fake_update;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +21,11 @@ import enterovirus.protease.domain.*;
  * needed. 
  */
 @ComponentScan(basePackages = {
-		"nterovirus.gihook.update.testcase.client_side_fake",
+		"enterovirus.protease.config",
 		"enterovirus.protease.database",
-		"enterovirus.protease.domain"})
-public class ClientSideFakeUpdateApplication {
+		"enterovirus.protease.domain",
+		"enterovirus.gihook.update.testcase.fake_update"})
+public class FakeUpdateApplication {
 	
 //	@Autowired Tmp tmp;
 	@Autowired RepositoryRepository repositoryRepository;
@@ -59,20 +60,19 @@ public class ClientSideFakeUpdateApplication {
 		 * 
 		 * Or may set it up in Eclipse's "Run configuration".
 		 */
-		System.setProperty("user.dir", "/home/beta/Workspace/enterovirus-test/hook-update-client-side-fake/.git/hooks");
+		System.setProperty("user.dir", "/home/beta/Workspace/enterovirus-test/hook-fake-update/org/repo.git");
 		System.out.println("Current directory: "+System.getProperty("user.dir"));
 
-
-		String branchName = args[0];
-		String oldCommitSha = args[1];
-		String newCommitSha = args[2];
+		String branchName = "master";
+		String oldCommitSha = new CommitSha(new File("/home/beta/Workspace/enterovirus-test/hook-fake-update/old_commit_sha.txt"), 1).getShaChecksumHash();
+		String newCommitSha = new CommitSha(new File("/home/beta/Workspace/enterovirus-test/hook-fake-update/new_commit_sha.txt"), 1).getShaChecksumHash();;
 		
 		System.out.println("branchName: "+branchName);
 		System.out.println("oldCommitSha: "+oldCommitSha);
 		System.out.println("newCommitSha: "+newCommitSha);
 		
-		ApplicationContext context = new AnnotationConfigApplicationContext(ClientSideFakeUpdateApplication.class);
-		ClientSideFakeUpdateApplication p = context.getBean(ClientSideFakeUpdateApplication.class);
+		ApplicationContext context = new AnnotationConfigApplicationContext(FakeUpdateApplication.class);
+		FakeUpdateApplication p = context.getBean(FakeUpdateApplication.class);
 		p.hook(branchName, oldCommitSha, newCommitSha);
 	}
 	

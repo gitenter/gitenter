@@ -1,4 +1,4 @@
-package enterovirus.gihook.update.testcase.client_side_fake;
+package enterovirus.gihook.update.testcase.fake_update;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +13,7 @@ public class GitConfig {
 		
 		GitSource gitSource = new GitSource();
 		
-		/* 
-		 * Current this folder doesn't exist, but that doesn't matter. 
-		 */
-		gitSource.setRootFolderPath("dummy-position-not-exist");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/hook-fake-update/org/repo.git");
 		
 		return gitSource;
 	}

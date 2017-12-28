@@ -18,16 +18,16 @@ public class CommitSha {
 	 * This constructor is mainly used for writing tests.
 	 * It gets the commit SHA value of a pre-defined txt file. 
 	 */
-	public CommitSha (File commitFilepath, Integer commitOrder) throws IOException {
+	public CommitSha (File commitFilepath, Integer lineNumber) throws IOException {
 		try (Stream<String> stream = Files.lines(Paths.get(commitFilepath.getAbsolutePath()))) {
 
-			Integer lineNumber = 1;
+			Integer currentLineNumber = 1;
 			for (String line : stream.toArray(String[]::new)) {
-				if (lineNumber.equals(commitOrder)) {
+				if (lineNumber.equals(currentLineNumber)) {
 					this.shaChecksumHash = line;
 					return;
 				}
-				++lineNumber;
+				++currentLineNumber;
 			}
 			
 			throw new IOException ("commitOrder does not exist!");
