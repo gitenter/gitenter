@@ -14,6 +14,15 @@ public class CommitSha {
 		this.shaChecksumHash = shaChecksumHash;
 	}
 	
+	@Override
+	public boolean equals(Object anotherCommitSha) {
+		
+		if (this.shaChecksumHash.equals(((CommitSha)anotherCommitSha).shaChecksumHash)) {
+			return true;
+		}
+		return false;
+	}
+	
 	/*
 	 * This constructor is mainly used for writing tests.
 	 * It gets the commit SHA value of a pre-defined txt file. 

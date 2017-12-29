@@ -31,7 +31,7 @@ public class CommitInfo {
 		return fullMessage;
 	}
 
-	public CommitSha getShaChecksumHash() {
+	public CommitSha getCommitSha() {
 		return new CommitSha(shaChecksumHash);
 	}
 }

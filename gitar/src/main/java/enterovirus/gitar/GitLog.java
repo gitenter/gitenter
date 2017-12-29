@@ -53,14 +53,24 @@ public class GitLog {
 		}
 	}
 	
+	/*
+	 * Seems for the original merge branch
+	 */
 	private void buildCommitShas (Iterable<RevCommit> logs, CommitSha oldCommitSha, CommitSha newCommitSha) {
 	
-		/*
-		 * TODO:
-		 * Filter out in between
-		 */
+		boolean find = false;
 		for (RevCommit rev : logs) {
-			commitInfos.add(new CommitInfo(rev));
+			
+			if (oldCommitSha.getShaChecksumHash().equals(rev.getName())) {
+				break;
+			}
+			
+			if (find == false && newCommitSha.getShaChecksumHash().equals(rev.getName())) {
+				find = true;
+			}
+			if (find == true) {
+				commitInfos.add(new CommitInfo(rev));
+			}
 		}
 	}
 
