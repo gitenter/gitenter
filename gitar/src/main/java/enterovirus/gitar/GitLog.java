@@ -11,18 +11,32 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
+import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.gitar.wrap.CommitSha;
 
 public class GitLog {
 
-	private List<CommitSha> commitShas = new ArrayList<CommitSha>();
-	
-	public GitLog(File repositoryDirectory) throws IOException, GitAPIException {
+	private List<CommitInfo> commitInfos = new ArrayList<CommitInfo>();
+
+	public GitLog(File repositoryDirectory, BranchName branchName) throws IOException, GitAPIException {
 		
 		Repository repository = getRepositoryFromDirectory(repositoryDirectory);
 		Git git = new Git(repository);
-		Iterable<RevCommit> logs = git.log().call();
+		Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
 		buildCommitShas(logs);
+	}
+	
+	/*
+	 * The log of "newCommitSha" is inclusive, while it is of 
+	 * "oldCommitSha" is exclusive.
+	 */
+	public GitLog(File repositoryDirectory, BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) throws IOException, GitAPIException {
+		
+		Repository repository = getRepositoryFromDirectory(repositoryDirectory);
+		Git git = new Git(repository);
+		Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
+		buildCommitShas(logs, oldCommitSha, newCommitSha);
 	}
 	
 	private Repository getRepositoryFromDirectory(File repositoryDirectory) throws IOException {
@@ -35,11 +49,22 @@ public class GitLog {
 	private void buildCommitShas (Iterable<RevCommit> logs) {
 		
 		for (RevCommit rev : logs) {
-			commitShas.add(new CommitSha(rev.getName()));
+			commitInfos.add(new CommitInfo(rev));
+		}
+	}
+	
+	private void buildCommitShas (Iterable<RevCommit> logs, CommitSha oldCommitSha, CommitSha newCommitSha) {
+	
+		/*
+		 * TODO:
+		 * Filter out in between
+		 */
+		for (RevCommit rev : logs) {
+			commitInfos.add(new CommitInfo(rev));
 		}
 	}
 
-	public List<CommitSha> getCommitShas() {
-		return commitShas;
+	public List<CommitInfo> getCommitInfos() {
+		return commitInfos;
 	}
 }

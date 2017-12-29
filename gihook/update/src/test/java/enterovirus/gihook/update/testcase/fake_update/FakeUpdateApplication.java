@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitSource;
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
@@ -31,26 +32,23 @@ public class FakeUpdateApplication {
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired CommitRepository commitRepository;
 	
-	private void hook (String branchName, String oldCommitSha, String newCommitSha) throws IOException {
+	private void hook (BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) throws IOException {
 //		System.out.println("hello world");
 //		System.out.println(tmp.find());
 		
 		File repositoryDirectory = new File(System.getProperty("user.dir"));
-		CommitSha commitSha = new CommitSha(newCommitSha);
 		
 		String organizationName = GitSource.getBareRepositoryOrganizationName(repositoryDirectory);
 		String repositoryName = GitSource.getBareRepositoryName(repositoryDirectory);
 		System.out.println("organizationName="+organizationName);
 		System.out.println("repositoryName="+repositoryName);
 
-		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, commitSha);
+		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, newCommitSha);
 		showFolderStructure(gitCommit);
 		
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
-		CommitBean commitBean = new CommitBean(repository, commitSha);
+		CommitBean commitBean = new CommitBean(repository, newCommitSha);
 		commitRepository.saveAndFlush(commitBean);
-		
-
 	}
 	
 	public static void main (String[] args) throws IOException {
@@ -63,13 +61,13 @@ public class FakeUpdateApplication {
 		System.setProperty("user.dir", "/home/beta/Workspace/enterovirus-test/hook-fake-update/org/repo.git");
 		System.out.println("Current directory: "+System.getProperty("user.dir"));
 
-		String branchName = "master";
-		String oldCommitSha = new CommitSha(new File("/home/beta/Workspace/enterovirus-test/hook-fake-update/old_commit_sha.txt"), 1).getShaChecksumHash();
-		String newCommitSha = new CommitSha(new File("/home/beta/Workspace/enterovirus-test/hook-fake-update/new_commit_sha.txt"), 1).getShaChecksumHash();;
+		BranchName branchName = new BranchName("master");
+		CommitSha oldCommitSha = new CommitSha(new File("/home/beta/Workspace/enterovirus-test/hook-fake-update/old_commit_sha.txt"), 1);
+		CommitSha newCommitSha = new CommitSha(new File("/home/beta/Workspace/enterovirus-test/hook-fake-update/new_commit_sha.txt"), 1);;
 		
 		System.out.println("branchName: "+branchName);
-		System.out.println("oldCommitSha: "+oldCommitSha);
-		System.out.println("newCommitSha: "+newCommitSha);
+		System.out.println("oldCommitSha: "+oldCommitSha.getShaChecksumHash());
+		System.out.println("newCommitSha: "+newCommitSha.getShaChecksumHash());
 		
 		ApplicationContext context = new AnnotationConfigApplicationContext(FakeUpdateApplication.class);
 		FakeUpdateApplication p = context.getBean(FakeUpdateApplication.class);
