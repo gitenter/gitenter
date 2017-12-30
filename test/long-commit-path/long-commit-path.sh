@@ -46,6 +46,14 @@ generate_a_git_commit () {
 }
 
 # fake long commit path
+#
+# TODO:
+# There seems a bug in git. The topology of the commits in the
+# following fake series is not correct (both using "git log", or
+# shown in the graph of "gitg" -- that should be gotten by
+# something like "rev.parent()") at least for this case that 
+# the commit time are really near each other.
+# Need to simplify this fake case, and locate the problem later.
 for i in 1 2 3 4 5
 do
 	generate_a_git_commit master
