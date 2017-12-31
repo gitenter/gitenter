@@ -19,6 +19,10 @@ public class GitLog {
 
 	private List<CommitInfo> commitInfos = new ArrayList<CommitInfo>();
 
+	/*
+	 * TODO:
+	 * Wrap "GitApiException"??
+	 */
 	public GitLog(File repositoryDirectory, BranchName branchName) throws IOException, GitAPIException {
 		
 		Repository repository = getRepositoryFromDirectory(repositoryDirectory);

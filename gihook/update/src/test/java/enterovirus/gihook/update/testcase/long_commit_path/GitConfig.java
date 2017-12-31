@@ -1,4 +1,4 @@
-package enterovirus.gihook.update.testcase.fake_update;
+package enterovirus.gihook.update.testcase.long_commit_path;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ public class GitConfig {
 		
 		GitSource gitSource = new GitSource();
 		
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/hook-fake-update/org/repo.git");
 		
 		return gitSource;
 	}

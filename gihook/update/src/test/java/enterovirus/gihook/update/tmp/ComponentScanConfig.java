@@ -1,4 +1,4 @@
-package enterovirus.gihook.update;
+package enterovirus.gihook.update.tmp;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
