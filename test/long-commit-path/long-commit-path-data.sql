@@ -15,3 +15,7 @@ ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 -- The git.git_commit table doesn't need to be pre-filled,
 -- because how to fillin is the part need to be tested.
+--INSERT INTO git.git_commit VALUES
+--	(1, 1, '86f8e569acf1e989fcaccaf0c744e308761ebf64'),
+--	(2, 1, '427dffe30c6b3e9791c44843075a6a529d101352');
+--ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;

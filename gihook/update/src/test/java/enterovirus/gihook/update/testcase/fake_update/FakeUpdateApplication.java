@@ -18,12 +18,6 @@ import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
-/*
- * This main class has nothing to do with unit tests.
- * If this package is used as a library rather than a
- * stand-alone executive jar, then this class is not
- * needed. 
- */
 @ComponentScan(basePackages = {
 		"enterovirus.protease.config",
 		"enterovirus.protease.database",

@@ -2,11 +2,13 @@ package enterovirus.gihook.update.testcase.fake_update;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
+@Qualifier("fakeUpdate")
 public class DatabaseConfig {
 
 	@Bean
