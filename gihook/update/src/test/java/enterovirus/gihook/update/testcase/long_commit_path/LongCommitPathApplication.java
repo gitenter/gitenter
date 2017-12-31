@@ -79,4 +79,20 @@ public class LongCommitPathApplication {
 		
 		repositoryRepository.saveAndFlush(repository);
 	}
+	
+//	private static void showFolderStructure (GitFolderStructure gitCommit) {
+//		showHierarchy(gitCommit.getFolderStructure(), 0);
+//	}
+//	
+//	private static void showHierarchy (GitFolderStructure.ListableTreeNode parentNode, int level) {
+//		
+//		for (int i = 0; i < level; ++i) {
+//			System.out.print("\t");
+//		}
+//		System.out.println(parentNode);
+//		
+//		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
+//			showHierarchy(node, level+1);
+//		}
+//	}
 }
