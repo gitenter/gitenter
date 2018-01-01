@@ -16,7 +16,7 @@ import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "one_repo_fix_commit")
-@ContextConfiguration(classes=OneRepoFixCommitTestConfig.class)
+@ContextConfiguration(classes=ComponentScanConfig.class)
 public class DocumentRepositoryTest {
 
 	@Autowired private DocumentRepository repository;
