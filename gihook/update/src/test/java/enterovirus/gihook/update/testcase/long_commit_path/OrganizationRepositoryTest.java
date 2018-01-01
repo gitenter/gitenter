@@ -1,4 +1,4 @@
-package enterovirus.protease.database;
+package enterovirus.gihook.update.testcase.long_commit_path;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,12 +8,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.gihook.update.UpdateConfig;
 import enterovirus.protease.*;
+import enterovirus.protease.database.OrganizationRepository;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "user_auth")
-@ContextConfiguration(classes={ProteaseConfig.class})
+@ActiveProfiles(profiles = "long_commit_path")
+@ContextConfiguration(classes={ProteaseConfig.class,UpdateConfig.class})
 public class OrganizationRepositoryTest {
 
 	@Autowired private OrganizationRepository repository;
@@ -22,7 +24,7 @@ public class OrganizationRepositoryTest {
 	@Transactional
 	public void findByUsername() throws Exception {
 		
-		OrganizationBean organization = repository.findByName("org1").get(0);
+		OrganizationBean organization = repository.findByName("org").get(0);
 		
 		System.out.println("===Organization Test Results===");
 		System.out.println("Display Name: "+organization.getDisplayName());

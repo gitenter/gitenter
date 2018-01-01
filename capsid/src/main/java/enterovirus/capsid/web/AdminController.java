@@ -129,7 +129,7 @@ public class AdminController {
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
-		
+
 		GitRepository.initBare(gitUri, sampleHooksDirectory);
 		
 		repositoryRepository.saveAndFlush(repository);

@@ -2,6 +2,7 @@ package enterovirus.gihook.update.testcase.long_commit_path;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import enterovirus.gitar.GitSource;
 
@@ -9,6 +10,7 @@ import enterovirus.gitar.GitSource;
 public class GitConfig {
 
 	@Bean
+	@Primary
 	public GitSource gitSource() {
 		
 		GitSource gitSource = new GitSource();

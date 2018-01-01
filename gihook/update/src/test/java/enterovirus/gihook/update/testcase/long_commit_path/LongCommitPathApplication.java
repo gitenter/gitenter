@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gihook.update.status.CommitStatus;
@@ -18,6 +20,7 @@ import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.protease.ProteaseConfig;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -27,6 +30,7 @@ import enterovirus.protease.domain.*;
 		"enterovirus.protease.domain",
 		"enterovirus.gihook.update.status",
 		"enterovirus.gihook.update.testcase.long_commit_path"})
+@ActiveProfiles(profiles = "long_comomit_path")
 public class LongCommitPathApplication {
 	
 	@Autowired private RepositoryRepository repositoryRepository;
@@ -43,7 +47,10 @@ public class LongCommitPathApplication {
 				new CommitSha(commitRecordFileMaster, 1),
 				new CommitSha(commitRecordFileMaster, 10));
 		
-		ApplicationContext context = new AnnotationConfigApplicationContext(LongCommitPathApplication.class);
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(LongCommitPathApplication.class);
+		context.getEnvironment().setActiveProfiles("long_comomit_path");
+//		context.register(ComponentScanConfig.class);
+		
 		LongCommitPathApplication p = context.getBean(LongCommitPathApplication.class);
 		p.run(status);
 	}
