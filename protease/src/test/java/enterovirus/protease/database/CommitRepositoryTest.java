@@ -5,6 +5,7 @@ import java.io.File;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles(profiles = "one_repo_fix_commit")
 @ContextConfiguration(classes={OneRepoFixCommitTestConfig.class})
 public class CommitRepositoryTest {
 
