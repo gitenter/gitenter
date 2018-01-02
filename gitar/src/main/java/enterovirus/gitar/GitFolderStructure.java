@@ -2,6 +2,7 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class GitFolderStructure {
 		treeWalk.addTree(revTree);
 		treeWalk.setRecursive(false);
 		
-		folderStructure = generateFolderStructureFromTreeWalk(treeWalk);
+		generateDataFromTreeWalk(treeWalk);
 	}
 
 	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
@@ -77,16 +78,16 @@ public class GitFolderStructure {
 		treeWalk.addTree(revTree);
 		treeWalk.setRecursive(false);
 		
-		folderStructure = generateFolderStructureFromTreeWalk(treeWalk);
+		generateDataFromTreeWalk(treeWalk);
 	}
 	
 	public GitFolderStructure (File repositoryDirectory) throws IOException {
 		this(repositoryDirectory, new BranchName("master"));
 	}
 	
-	private ListableMutableTreeNode generateFolderStructureFromTreeWalk (TreeWalk treeWalk) throws IOException {
+	private void generateDataFromTreeWalk (TreeWalk treeWalk) throws IOException {
 		
-		ListableMutableTreeNode folderStructure = new DefaultListableMutableTreeNode(".");
+		folderStructure = new DefaultListableMutableTreeNode(".");
 		
 //		while (treeWalk.next()) {
 //			if (treeWalk.isSubtree()) {
@@ -114,8 +115,6 @@ public class GitFolderStructure {
 				}
 			}
 		}
-		
-		return folderStructure;
 	}
 
 	private GenerateTreeReturnValue generateTree (TreeWalk treeWalk) throws IOException {
@@ -170,6 +169,36 @@ public class GitFolderStructure {
 	
 	public ListableTreeNode getFolderStructure () {
 		return folderStructure;
+	}
+	
+	/*
+	 * TODO:
+	 * Extend this to List<GitDocument> where
+	 * GitDocument extends GitTextFile extends GitBlob
+	 */
+	public List<String> getDocuments() {
+		
+		List<String> documents = new ArrayList<String>();
+		recursivelyIterateDocuments(folderStructure, documents);
+		
+		return documents;
+	}
+	
+	private void recursivelyIterateDocuments (ListableTreeNode parentNode, List<String> documents) {
+
+		if (parentNode.isLeaf()) {
+			String filePath = parentNode.toString();
+			/*
+			 * TODO:
+			 * Decide whether we should add this file by its filename format.
+			 */
+			documents.add(filePath);
+			return;
+		}
+				
+		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
+			recursivelyIterateDocuments(node, documents);
+		}
 	}
 	
 	/*

@@ -30,6 +30,7 @@ public class GitFolderStructureTest {
 		
 		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
+		showDocumentList(gitCommit);
 	}
 
 	@Test
@@ -77,6 +78,13 @@ public class GitFolderStructureTest {
 		
 		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
 			showHierarchy(node, level+1);
+		}
+	}
+	
+	private void showDocumentList (GitFolderStructure gitCommit) {
+		
+		for (String filePath : gitCommit.getDocuments()) {
+			System.out.println(filePath);
 		}
 	}
 }
