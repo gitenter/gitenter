@@ -1,23 +1,29 @@
-package enterovirus.gihook.update.testcase.long_commit_path;
+package enterovirus.gihook.update.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 import enterovirus.gitar.GitSource;
 
 @Configuration
-public class GGGitConfig {
+public class UpdateGitConfig {
 
-	@Profile("long_commit_path")
+	@Profile("fake_update")
 	@Bean
-	public GitSource gitSource() {
+	public GitSource fakeUpdateGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		
 		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/hook-fake-update/org/repo.git");
+		return gitSource;
+	}
+	
+	@Profile("long_commit_path")
+	@Bean
+	public GitSource longCommitPathgitSource() {
 		
+		GitSource gitSource = new GitSource();
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
 		return gitSource;
 	}
 }

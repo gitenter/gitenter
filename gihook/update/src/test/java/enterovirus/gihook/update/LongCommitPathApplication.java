@@ -1,4 +1,4 @@
-package enterovirus.gihook.update.testcase.long_commit_path;
+package enterovirus.gihook.update;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import enterovirus.gihook.update.UpdateConfig;
 import enterovirus.gihook.update.status.CommitStatus;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
@@ -30,13 +29,6 @@ import enterovirus.protease.domain.*;
 @ComponentScan(basePackages = {
 		"enterovirus.protease",
 		"enterovirus.gihook.update"})
-//@ComponentScan(basePackages = {
-//		"enterovirus.protease.config",
-//		"enterovirus.protease.database",
-//		"enterovirus.protease.domain",
-//		"enterovirus.gihook.update.status",
-//		"enterovirus.gihook.update.testcase.long_commit_path"})
-//@ActiveProfiles(profiles = "long_commit_path")
 public class LongCommitPathApplication {
 	
 	@Autowired private RepositoryRepository repositoryRepository;
@@ -53,17 +45,31 @@ public class LongCommitPathApplication {
 				new CommitSha(commitRecordFileMaster, 1),
 				new CommitSha(commitRecordFileMaster, 10));
 		
-		System.out.println("hello");
+		/*
+		 * We need to active the Spring profile definition for 
+		 * "dataSource" and "gitSource".
+		 * 
+		 * "spring.profiles.active" system property is the only
+		 * working we I know until now.
+		 */
 		System.setProperty("spring.profiles.active", "long_commit_path");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(LongCommitPathApplication.class);
-		System.out.println("hello");
+		/*
+		 * It is not good because it hard code system property.
+		 *  
+		 * There should be a better way rather than hard coding
+		 * it. The following post suggest a way using
+		 * "setActiveProfile". However, for me it raises errors
+		 * in the "new AnnotationConfigApplicationContext" part.
+		 * https://dzone.com/articles/using-spring-profiles-and-java
+		 * 
+		 * Lucky, this is only for testing. For real application
+		 * we only have one single dataSource so it is easier.
+		 */
+//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 //		context.register(ProteaseConfig.class, UpdateConfig.class);
 //		context.getEnvironment().setActiveProfiles("long_commit_path");
 //		context.refresh();
-//		context.register(ComponentScanConfig.class);
-		
-		System.out.println("hello");
-		System.out.println(context.getBean(DataSource.class));
 		
 		LongCommitPathApplication p = context.getBean(LongCommitPathApplication.class);
 		p.run(status);

@@ -1,28 +1,16 @@
-package enterovirus.gihook.update.testcase.fake_update;
+package enterovirus.gihook.update;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import enterovirus.gitar.GitFolderStructure;
-import enterovirus.gitar.GitLog;
-import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.BranchName;
-import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.gitar.wrap.CommitSha;
-import enterovirus.protease.database.*;
-import enterovirus.protease.domain.*;
 
 @ComponentScan(basePackages = {
-		"enterovirus.protease.config",
-		"enterovirus.protease.database",
-		"enterovirus.protease.domain",
-		"enterovirus.gihook.update.testcase.fake_update"})
+		"enterovirus.protease",
+		"enterovirus.gihook.update"})
 public class FakeUpdateApplication {
 	
 	public static void main (String[] args) throws IOException {

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import enterovirus.gitar.GitSource;
 
 @Configuration
-public class GitConfig {
+public class ProteaseGitConfig {
 	
 	@Profile("user_auth")
 	@Bean
