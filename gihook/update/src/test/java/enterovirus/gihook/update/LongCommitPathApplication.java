@@ -15,6 +15,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.gihook.update.config.UpdateDatabaseConfig;
+import enterovirus.gihook.update.config.UpdateGitConfig;
 import enterovirus.gihook.update.status.CommitStatus;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
@@ -59,15 +61,26 @@ public class LongCommitPathApplication {
 		 *  
 		 * There should be a better way rather than hard coding
 		 * it. The following post suggest a way using
-		 * "setActiveProfile". However, for me it raises errors
-		 * in the "new AnnotationConfigApplicationContext" part.
+		 * "setActiveProfile":
 		 * https://dzone.com/articles/using-spring-profiles-and-java
+		 * https://spring.io/blog/2011/02/14/spring-3-1-m1-introducing-profile/
+		 * 
+		 * However, for me it raises errors in the
+		 * "new AnnotationConfigApplicationContext" part.
 		 * 
 		 * Lucky, this is only for testing. For real application
 		 * we only have one single dataSource so it is easier.
 		 */
 //		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 //		context.register(ProteaseConfig.class, UpdateConfig.class);
+//		context.getEnvironment().setActiveProfiles("long_commit_path");
+//		context.refresh();
+		/*
+		 * What suggests in the following link seems also doesn't work:
+		 * https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html
+		 */
+//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+//		context.register(UpdateDatabaseConfig.class, UpdateGitConfig.class);
 //		context.getEnvironment().setActiveProfiles("long_commit_path");
 //		context.refresh();
 		
