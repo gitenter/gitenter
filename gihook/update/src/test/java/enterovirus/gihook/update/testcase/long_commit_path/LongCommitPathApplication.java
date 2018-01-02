@@ -3,6 +3,8 @@ package enterovirus.gihook.update.testcase.long_commit_path;
 import java.io.File;
 import java.io.IOException;
 
+import javax.sql.DataSource;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.gihook.update.UpdateConfig;
 import enterovirus.gihook.update.status.CommitStatus;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
@@ -25,12 +28,15 @@ import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
 @ComponentScan(basePackages = {
-		"enterovirus.protease.config",
-		"enterovirus.protease.database",
-		"enterovirus.protease.domain",
-		"enterovirus.gihook.update.status",
-		"enterovirus.gihook.update.testcase.long_commit_path"})
-@ActiveProfiles(profiles = "long_comomit_path")
+		"enterovirus.protease",
+		"enterovirus.gihook.update"})
+//@ComponentScan(basePackages = {
+//		"enterovirus.protease.config",
+//		"enterovirus.protease.database",
+//		"enterovirus.protease.domain",
+//		"enterovirus.gihook.update.status",
+//		"enterovirus.gihook.update.testcase.long_commit_path"})
+//@ActiveProfiles(profiles = "long_commit_path")
 public class LongCommitPathApplication {
 	
 	@Autowired private RepositoryRepository repositoryRepository;
@@ -47,9 +53,17 @@ public class LongCommitPathApplication {
 				new CommitSha(commitRecordFileMaster, 1),
 				new CommitSha(commitRecordFileMaster, 10));
 		
+		System.out.println("hello");
+		System.setProperty("spring.profiles.active", "long_commit_path");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(LongCommitPathApplication.class);
-		context.getEnvironment().setActiveProfiles("long_comomit_path");
+		System.out.println("hello");
+//		context.register(ProteaseConfig.class, UpdateConfig.class);
+//		context.getEnvironment().setActiveProfiles("long_commit_path");
+//		context.refresh();
 //		context.register(ComponentScanConfig.class);
+		
+		System.out.println("hello");
+		System.out.println(context.getBean(DataSource.class));
 		
 		LongCommitPathApplication p = context.getBean(LongCommitPathApplication.class);
 		p.run(status);

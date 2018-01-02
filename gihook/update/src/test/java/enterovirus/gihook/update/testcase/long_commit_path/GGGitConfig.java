@@ -3,14 +3,15 @@ package enterovirus.gihook.update.testcase.long_commit_path;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import enterovirus.gitar.GitSource;
 
 @Configuration
-public class GitConfig {
+public class GGGitConfig {
 
+	@Profile("long_commit_path")
 	@Bean
-	@Primary
 	public GitSource gitSource() {
 		
 		GitSource gitSource = new GitSource();
