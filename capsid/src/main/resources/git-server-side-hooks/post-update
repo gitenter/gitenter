@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "====in update hook===="
+echo "====post-update hook===="
 
 # Since current directory is the root of the corresponding
 # git repository (rather than inside of the "/hooks" folder)
@@ -13,15 +13,4 @@ echo "current directory:" $PWD
 echo "arg1:" $1
 echo "arg2:" $2
 echo "arg3:" $3
-
-# Test variables
-#refname="$1"
-#oldrev="$2"
-#newrev="$3"
-
-#echo "refname:" $refname
-#echo "oldrev:" $oldrev
-#echo "newrev:" $newrev
-
-#java -jar hooks/update-0.0.1-prototype-jar-with-dependencies.jar $1 $2 $3
 

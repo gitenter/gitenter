@@ -8,7 +8,7 @@ cd /home/beta/Workspace/enterovirus-dummy/client
 rm -rf *
 
 # Should execute when the capsid site is on.
-cd /home/beta/Workspace/enterovirus/capsid/src/test/resources/junit_init
+cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
 sh setup.sh
 
 
