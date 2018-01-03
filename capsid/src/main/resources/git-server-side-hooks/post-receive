@@ -8,10 +8,20 @@ echo "====post-receive hook===="
 # "/hooks".
 #
 # To check, using
-echo "current directory:" $PWD
+echo "current directory:" 
+echo $PWD
 
+echo "----arguments----"
 echo "arg1:" $1
 echo "arg2:" $2
 echo "arg3:" $3
 
+# for each ref to be updated it receives on standard input a line of the format
+echo "----stdin----"
+while read LINE; do
+   echo ${LINE}    # do something with it here
+done
+
+# A post-receive example at:
+# https://github.com/git/git/blob/master/contrib/hooks/post-receive-email
 

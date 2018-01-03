@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "====in update hook===="
+echo "====update hook===="
 
 # Since current directory is the root of the corresponding
 # git repository (rather than inside of the "/hooks" folder)
@@ -8,11 +8,19 @@ echo "====in update hook===="
 # "/hooks".
 #
 # To check, using
-echo "current directory:" $PWD
+echo "current directory:" 
+echo $PWD
 
+echo "----arguments----"
 echo "arg1:" $1
 echo "arg2:" $2
 echo "arg3:" $3
+
+# for each ref to be updated it receives on standard input a line of the format
+echo "----stdin----"
+while read LINE; do
+   echo ${LINE}    # do something with it here
+done
 
 # Test variables
 #refname="$1"
