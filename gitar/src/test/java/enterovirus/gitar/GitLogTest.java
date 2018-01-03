@@ -26,8 +26,8 @@ public class GitLogTest {
 	
 	
 	@Test
-	public void test1() throws Exception {
-		
+	public void test() throws Exception {
+
 		BranchName branchName = new BranchName("master");
 		CommitSha oldCommitSha = new CommitSha(commitRecordFileMaster, 1);
 		CommitSha newCommitSha = new CommitSha(commitRecordFileMaster, 10); 
@@ -38,5 +38,4 @@ public class GitLogTest {
 			System.out.println(commitInfo.getCommitSha().getShaChecksumHash());
 		}
 	}
-
 }

@@ -25,9 +25,12 @@ public class CommitStatus {
 		 * the corresponding fake git repository.
 		 * 
 		 * Or may set it up in Eclipse's "Run configuration".
+		 * 
+		 * This is not needed for the final application (because 
+		 * git hook is already running in the correctly directory
+		 * location). But it is useful for testing purposes.
 		 */
 		System.setProperty("user.dir", repositoryDirectory.getAbsolutePath());
-		System.out.println("Current directory: "+System.getProperty("user.dir"));
 	}
 	
 	public File getRepositoryDirectory() {

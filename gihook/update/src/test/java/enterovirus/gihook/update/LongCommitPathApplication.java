@@ -103,6 +103,33 @@ public class LongCommitPathApplication {
 	@Transactional
 	public void updateGitCommits (CommitStatus status) throws IOException, GitAPIException {
 		
+		/*
+		 * TODO:
+		 * It is not working to use the server side git repository directory.
+		 * Since the new commits are not updated yet, there is no way to successfully
+		 * query those logs.
+		 * 
+		 * So this will raise error:
+		 * 
+remote: Exception in thread "main" java.lang.NullPointerException
+remote: 	at org.eclipse.jgit.lib.ObjectIdOwnerMap.get(ObjectIdOwnerMap.java:131)
+remote: 	at org.eclipse.jgit.revwalk.RevWalk.lookupCommit(RevWalk.java:676)
+remote: 	at org.eclipse.jgit.api.LogCommand.add(LogCommand.java:339)
+remote: 	at org.eclipse.jgit.api.LogCommand.add(LogCommand.java:198)
+remote: 	at enterovirus.gitar.GitLog.<init>(GitLog.java:43)
+remote: 	at enterovirus.gihook.update.UpdateApplication.updateGitCommits(UpdateApplication.java:77)
+remote: 	at enterovirus.gihook.update.UpdateApplication$$FastClassBySpringCGLIB$$8eee9a63.invoke(<generated>)
+remote: 	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)
+remote: 	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:747)
+remote: 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+remote: 	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:294)
+remote: 	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:98)
+remote: 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:185)
+remote: 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:689)
+remote: 	at enterovirus.gihook.update.UpdateApplication$$EnhancerBySpringCGLIB$$11cb1a3a.updateGitCommits(<generated>)
+remote: 	at enterovirus.gihook.update.UpdateApplication.run(UpdateApplication.java:63)
+remote: 	at enterovirus.gihook.update.UpdateApplication.main(UpdateApplication.java:59)
+		 */
 		GitLog gitLog = new GitLog(status.getRepositoryDirectory(), status.getBranchName(), status.getOldCommitSha(), status.getNewCommitSha());
 	
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(status.getOrganizationName(), status.getRepositoryName());
