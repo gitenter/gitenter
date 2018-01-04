@@ -190,6 +190,9 @@ public class GitFolderStructure {
 			/*
 			 * TODO:
 			 * Decide whether we should add this file by its filename format.
+			 * 
+			 * TODO:
+			 * Need to check and record the information whether this file is modified or not.
 			 */
 			documents.add(new GitDocument(repositoryDirectory, commitSha, filePath));
 			return;
