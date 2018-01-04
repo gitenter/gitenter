@@ -21,15 +21,6 @@ public class LongCommitPathApplication {
 	
 	public static void main (String[] args) throws Exception {
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
-		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/commit-sha-list-master.txt");
-		
-		CommitStatus status = new CommitStatus(
-				repositoryDirectory,
-				new BranchName("master"),
-				new CommitSha(commitRecordFileMaster, 1),
-				new CommitSha(commitRecordFileMaster, 10));
-		
 		/*
 		 * We need to active the Spring profile definition for 
 		 * "dataSource" and "gitSource".
@@ -68,6 +59,16 @@ public class LongCommitPathApplication {
 //		context.refresh();
 		
 		LongCommitPathApplication p = context.getBean(LongCommitPathApplication.class);
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
+		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/commit-sha-list-master.txt");
+		
+		CommitStatus status = new CommitStatus(
+				repositoryDirectory,
+				new BranchName("master"),
+				new CommitSha(commitRecordFileMaster, 1),
+				new CommitSha(commitRecordFileMaster, 10));
+		
 		p.run(status);
 	}
 	

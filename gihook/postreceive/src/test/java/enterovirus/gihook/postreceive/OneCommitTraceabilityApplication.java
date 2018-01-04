@@ -21,6 +21,11 @@ public class OneCommitTraceabilityApplication {
 	
 	public static void main (String[] args) throws Exception {
 		
+		System.setProperty("spring.profiles.active", "one_commit_traceability");
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(OneCommitTraceabilityApplication.class);
+		
+		OneCommitTraceabilityApplication p = context.getBean(OneCommitTraceabilityApplication.class);
+		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
 		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/commit-sha-list.txt");
 		
@@ -30,10 +35,6 @@ public class OneCommitTraceabilityApplication {
 				new CommitSha("0000000000000000000000000000000000000000"),
 				new CommitSha(commitRecordFileMaster, 1));
 		
-		System.setProperty("spring.profiles.active", "one_commit_traceability");
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(OneCommitTraceabilityApplication.class);
-		
-		OneCommitTraceabilityApplication p = context.getBean(OneCommitTraceabilityApplication.class);
 		p.run(status);
 	}
 	

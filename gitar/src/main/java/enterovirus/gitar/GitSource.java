@@ -17,6 +17,10 @@ public class GitSource {
 		this.rootFolderPath = rootFolderPath;
 	}
 	
+	public String getRootFolderPath() {
+		return rootFolderPath;
+	}
+
 	/*
 	 * Bare git repository at "/rootFolderPath/ownerName/repositoryName.git" .
 	 */
