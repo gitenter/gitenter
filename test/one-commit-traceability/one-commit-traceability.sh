@@ -46,6 +46,9 @@ git add -A
 git commit -m "Commit of two documents with traceability relationship in between."
 git push origin master
 
+export commit_id=$(git log -1 --pretty="%H")
+echo $commit_id >> $HOME/Workspace/enterovirus-test/$testcasename/commit-sha-list.txt
+
 # Initialize SQL database
 export PGPASSWORD=postgres
 export PGHOST=localhost

@@ -17,7 +17,7 @@ public class TraceableRepository {
 		this.repositoryDirectory = repositoryDirectory;
 	}
 
-	boolean addTraceableDocument (TraceableDocument document) {
+	public boolean addTraceableDocument (TraceableDocument document) {
 		return traceableDocuments.add(document);
 	}
 	

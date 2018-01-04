@@ -1,6 +1,7 @@
 package enterovirus.gihook.postreceive;
 
 import java.util.List;
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gihook.postreceive.status.CommitStatus;
+import enterovirus.gihook.postreceive.traceanalyzer.TraceableDocument;
+import enterovirus.gihook.postreceive.traceanalyzer.TraceableRepository;
 import enterovirus.gitar.GitBlob;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
@@ -48,17 +51,32 @@ public class UpdateGitCommit {
 			CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
 			
 			List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitBlobs();
+			
+			TraceableRepository traceableRepository = new TraceableRepository(status.getRepositoryDirectory());
 			for (GitBlob blob : blobs) {
-
+				
 				/*
 				 * TODO:
 				 * Need to distinguish whether this document is modified or not.
 				 */
-				DocumentBean document = new DocumentModifiedBean(commit, blob.getRelativeFilepath());
+				File filepath = new File(status.getRepositoryDirectory(), blob.getRelativeFilepath());
+				String relativeFilepath = blob.getRelativeFilepath();
+				String textContent = new String(blob.getBlobContent());
+				TraceableDocument traceableDocument = new TraceableDocument(traceableRepository, relativeFilepath, textContent);
+				traceableRepository.addTraceableDocument(traceableDocument);
+			}
+			traceableRepository.refreshUpstreamAndDownstreamItems();
+			
+			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
+				
+				DocumentBean document = new DocumentModifiedBean(commit, traceableDocument.getRelativeFilepath());
+				/*
+				 * TODO:
+				 * Should map the traceableDocument data to the corresponding bean.
+				 */
 				commit.addDocument(document);
 			}
-//			showFolderStructure(gitCommit);
-//			
+			
 			repository.addCommit(commit);
 		}
 		
@@ -77,20 +95,4 @@ public class UpdateGitCommit {
 		 */
 		repositoryRepository.saveAndFlush(repository);
 	}
-	
-//	private static void showFolderStructure (GitFolderStructure gitCommit) {
-//		showHierarchy(gitCommit.getFolderStructure(), 0);
-//	}
-//	
-//	private static void showHierarchy (GitFolderStructure.ListableTreeNode parentNode, int level) {
-//		
-//		for (int i = 0; i < level; ++i) {
-//			System.out.print("\t");
-//		}
-//		System.out.println(parentNode);
-//		
-//		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
-//			showHierarchy(node, level+1);
-//		}
-//	}
 }
