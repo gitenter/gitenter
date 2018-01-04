@@ -1,13 +1,13 @@
-package enterovirus.gitar.wrap;
+package enterovirus.gihook.postreceive.traceanalyzer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
-public class TraceableItemParser {
+class TraceableItemParser {
 
-	private String itemTag;
+	private String tag;
 	private List<String> upstreamItemTags = new ArrayList<String>();
 	private String content;
 	private boolean isTraceableItem = true;
@@ -28,7 +28,7 @@ public class TraceableItemParser {
 	 * A curly bracket: \\{ and \\}
 	 * A non-whitespace character: \S
 	 */
-	public TraceableItemParser(String lineContent) {
+	TraceableItemParser(String lineContent) {
 		
 		Scanner s = new Scanner(lineContent);
 
@@ -40,7 +40,7 @@ public class TraceableItemParser {
 			try {
 				s.findInLine("- \\[(\\S+)\\] (\\S+)");
 				MatchResult result = s.match();
-				itemTag = result.group(1);
+				tag = result.group(1);
 				content = result.group(2);
 			}
 			/*
@@ -50,7 +50,7 @@ public class TraceableItemParser {
 			catch (IllegalStateException e) {
 				s.findInLine("- \\[(\\S+)\\]\\{(\\S+)\\} (\\S+)");
 				MatchResult result = s.match();
-				itemTag = result.group(1);
+				tag = result.group(1);
 				for (String upstreamItemTag : result.group(2).split(",")) {
 					upstreamItemTags.add(upstreamItemTag);
 				}
@@ -67,19 +67,19 @@ public class TraceableItemParser {
 		s.close();
 	}
 
-	public String getItemTag() {
-		return itemTag;
+	String getTag() {
+		return tag;
 	}
 	
-	public List<String> getUpstreamItemTags() {
+	List<String> getUpstreamItemTags() {
 		return upstreamItemTags;
 	}
 
-	public String getContent() {
+	String getContent() {
 		return content;
 	}
 	
-	public boolean isTraceableItem () {
+	boolean isTraceableItem () {
 		return isTraceableItem;
 	}
 }

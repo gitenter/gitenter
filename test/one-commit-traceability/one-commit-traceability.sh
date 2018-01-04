@@ -33,12 +33,14 @@ cat > document-1.md <<- EOM
 - [document-1-tag-0001] document-1-0001-content
 - [document-1-tag-0002] document-1-0002-content
 - [document-1-tag-0003] document-1-0003-content
+~~garbage~~not part of the traceable items~~
 EOM
 cat > document-2.md <<- EOM
 - [document-2-tag-0001] document-2-0001-content
 - [document-2-tag-0002]{document-1-tag-0001} document-2-0002-content
 - [document-2-tag-0003]{document-1-tag-0001,document-1-tag-0002} document-2-0003-content
 - [document-2-tag-0004]{document-2-tag-0001} document-2-0004-content
+~~garbage~~not part of the traceable items~~
 EOM
 git add -A
 git commit -m "Commit of two documents with traceability relationship in between."

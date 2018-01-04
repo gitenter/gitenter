@@ -1,6 +1,8 @@
-package enterovirus.gitar.wrap;
+package enterovirus.gihook.postreceive.traceanalyzer;
 
 import org.junit.Test;
+
+import enterovirus.gihook.postreceive.traceanalyzer.TraceableItemParser;
 
 public class TraceableItemParserTest {
 
@@ -8,7 +10,7 @@ public class TraceableItemParserTest {
 	public void test1() {
 		TraceableItemParser parsingResult = new TraceableItemParser("- [document-1-tag-0001] document-1-0001-content");
 		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
-		System.out.println("itemTag: "+parsingResult.getItemTag());
+		System.out.println("tag: "+parsingResult.getTag());
 		System.out.println("content: "+parsingResult.getContent());
 		System.out.println("upstreamItems:");
 		for (String upstreamItemTag : parsingResult.getUpstreamItemTags()) {
@@ -20,7 +22,7 @@ public class TraceableItemParserTest {
 	public void test2() {
 		TraceableItemParser parsingResult = new TraceableItemParser("- [document-2-tag-0003]{document-1-tag-0001,document-1-tag-0002} document-2-0003-content");
 		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
-		System.out.println("itemTag: "+parsingResult.getItemTag());
+		System.out.println("tag: "+parsingResult.getTag());
 		System.out.println("content: "+parsingResult.getContent());
 		System.out.println("upstreamItems:");
 		for (String upstreamItemTag : parsingResult.getUpstreamItemTags()) {
