@@ -11,12 +11,11 @@ echo "====post-receive hook===="
 echo "current directory:" 
 echo $PWD
 
-echo "----arguments----"
-echo "arg1:" $1
-echo "arg2:" $2
-echo "arg3:" $3
+# no argument
 
+# refer to https://git-scm.com/docs/githooks
 # for each ref to be updated it receives on standard input a line of the format
+# <old-value> SP <new-value> SP <ref-name> LF
 echo "----stdin----"
 while read LINE; do
 	echo ${LINE}

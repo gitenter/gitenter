@@ -11,16 +11,16 @@ echo "====update hook===="
 echo "current directory:" 
 echo $PWD
 
+# refer to https://git-scm.com/docs/githooks
+# $1 is the name of the ref being updated,
+# $2 is the old object name stored in the ref,
+# $3 is the new object name to be stored in the ref.
 echo "----arguments----"
 echo "arg1:" $1
 echo "arg2:" $2
 echo "arg3:" $3
 
-# for each ref to be updated it receives on standard input a line of the format
-echo "----stdin----"
-while read LINE; do
-   echo ${LINE}    # do something with it here
-done
+# no stdin
 
 # Test variables
 #refname="$1"
