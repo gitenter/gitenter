@@ -29,6 +29,18 @@ public class DocumentModifiedBean extends DocumentBean {
 	@Transient
 	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
 	
+	/*
+	 * This default constructor is needed for Hibernate.
+	 */
+	public DocumentModifiedBean () {
+		
+	}
+	
+	public DocumentModifiedBean (CommitBean commit, String relativeFilepath) {
+		super(commit);
+		this.relativeFilepath = relativeFilepath;
+	}
+	
 	public void addLineContent(LineContentBean lineContent) {
 		lineContents.add(lineContent);
 	}

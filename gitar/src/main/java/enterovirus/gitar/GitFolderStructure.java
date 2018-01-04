@@ -24,6 +24,7 @@ import enterovirus.gitar.wrap.CommitSha;
 
 public class GitFolderStructure {
 	
+	private File repositoryDirectory;
 	private CommitSha commitSha;
 
 	/*
@@ -48,6 +49,7 @@ public class GitFolderStructure {
 	
 	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha) throws IOException {
 		
+		this.repositoryDirectory = repositoryDirectory;
 		this.commitSha = commitSha;
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -64,6 +66,8 @@ public class GitFolderStructure {
 	}
 
 	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
+		
+		this.repositoryDirectory = repositoryDirectory;
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
@@ -171,20 +175,15 @@ public class GitFolderStructure {
 		return folderStructure;
 	}
 	
-	/*
-	 * TODO:
-	 * Extend this to List<GitDocument> where
-	 * GitDocument extends GitTextFile extends GitBlob
-	 */
-	public List<String> getDocuments() {
+	public List<GitDocument> getGitDocuments() throws IOException {
 		
-		List<String> documents = new ArrayList<String>();
+		List<GitDocument> documents = new ArrayList<GitDocument>();
 		recursivelyIterateDocuments(folderStructure, documents);
 		
 		return documents;
 	}
 	
-	private void recursivelyIterateDocuments (ListableTreeNode parentNode, List<String> documents) {
+	private void recursivelyIterateDocuments (ListableTreeNode parentNode, List<GitDocument> documents) throws IOException {
 
 		if (parentNode.isLeaf()) {
 			String filePath = parentNode.toString();
@@ -192,7 +191,7 @@ public class GitFolderStructure {
 			 * TODO:
 			 * Decide whether we should add this file by its filename format.
 			 */
-			documents.add(filePath);
+			documents.add(new GitDocument(repositoryDirectory, commitSha, filePath));
 			return;
 		}
 				

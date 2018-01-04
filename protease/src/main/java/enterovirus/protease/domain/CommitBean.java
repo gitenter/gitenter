@@ -1,5 +1,6 @@
 package enterovirus.protease.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -51,7 +52,7 @@ public class CommitBean {
 	 * folder structure that include design document files.
 	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
-	private List<DocumentBean> documents;
+	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
 	
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -63,5 +64,9 @@ public class CommitBean {
 	public CommitBean (RepositoryBean repository, CommitSha commitSha) {
 		this.repository = repository;
 		this.shaChecksumHash = commitSha.getShaChecksumHash();
+	}
+	
+	public boolean addDocument (DocumentBean document) {
+		return documents.add(document);
 	}
 }

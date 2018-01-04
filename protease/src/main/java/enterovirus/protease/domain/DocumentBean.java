@@ -39,6 +39,17 @@ public class DocumentBean {
 	@JoinColumn(name="commit_id")
 	private CommitBean commit;
 	
+	/*
+	 * This default constructor is needed for Hibernate.
+	 */
+	public DocumentBean () {
+		
+	}
+	
+	public DocumentBean (CommitBean commit) {
+		this.commit = commit;
+	}
+	
 	public String getRelativeFilepath () {
 		if (this instanceof DocumentModifiedBean) {
 			return ((DocumentModifiedBean)this).getRelativeFilepath();

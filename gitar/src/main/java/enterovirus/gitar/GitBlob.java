@@ -18,10 +18,13 @@ import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
 public class GitBlob {
-	
+
+	private String relativeFilepath;
 	private byte[] blobContent;
 
 	public GitBlob (File repositoryDirectory, CommitSha commitSha, String relativeFilepath) throws IOException {
+		
+		this.relativeFilepath = relativeFilepath;
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
@@ -45,6 +48,8 @@ public class GitBlob {
 	 * For the HEAD of a given branch. 
 	 */
 	public GitBlob (File repositoryDirectory, BranchName branchName, String relativeFilepath) throws IOException {
+
+		this.relativeFilepath = relativeFilepath;
 		
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
@@ -69,11 +74,16 @@ public class GitBlob {
 	/**
 	 * For the HEAD of the master branch. 
 	 */
-	public GitBlob (File repositoryDirectory, String filePath) throws IOException {
-		this(repositoryDirectory, new BranchName("master"), filePath);
+	public GitBlob (File repositoryDirectory, String relativeFilepath) throws IOException {
+		this(repositoryDirectory, new BranchName("master"), relativeFilepath);
 	}
+	
 	public byte[] getBlobContent() {
 		return blobContent;
+	}
+
+	public String getRelativeFilepath() {
+		return relativeFilepath;
 	}
 	
 	/*

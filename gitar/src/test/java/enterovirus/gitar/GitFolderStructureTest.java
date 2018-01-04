@@ -57,6 +57,7 @@ public class GitFolderStructureTest {
 	}
 	
 	private void showFolderStructure (GitFolderStructure gitCommit) {
+		System.out.println("====show folder structure====");
 		showHierarchy(gitCommit.getFolderStructure(), 0);
 	}
 	
@@ -81,10 +82,11 @@ public class GitFolderStructureTest {
 		}
 	}
 	
-	private void showDocumentList (GitFolderStructure gitCommit) {
+	private void showDocumentList (GitFolderStructure gitCommit) throws IOException {
 		
-		for (String filePath : gitCommit.getDocuments()) {
-			System.out.println(filePath);
+		System.out.println("====show a list of documents====");
+		for (GitDocument gitDocument : gitCommit.getGitDocuments()) {
+			System.out.println(gitDocument.getRelativeFilepath());
 		}
 	}
 }

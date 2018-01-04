@@ -43,6 +43,13 @@ public class GitNavigationController {
 	 * because the fake database is not complete.
 	 * 
 	 * http://localhost:8888/organizations/1/repositories/1/directories/folder_1/same-name-file
+	 * 
+	 * TODO:
+	 * This shouldn't go with DocumentBean, because it need to
+	 * display files with are not documents (e.g. images).
+	 * Should define another one with URL such as
+	 * /organizations/{organizationId}/repositories/{repositoryId}/documents/{documentId}
+	 * to handle the display of documents.
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
 	public String navigateRepositoryContent (

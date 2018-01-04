@@ -1,5 +1,6 @@
 package enterovirus.gihook.postreceive;
 
+import java.util.List;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -9,11 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gihook.postreceive.status.CommitStatus;
+import enterovirus.gitar.GitDocument;
+import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
 import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.protease.database.CommitRepository;
 import enterovirus.protease.database.RepositoryRepository;
 import enterovirus.protease.domain.CommitBean;
+import enterovirus.protease.domain.DocumentBean;
+import enterovirus.protease.domain.DocumentModifiedBean;
 import enterovirus.protease.domain.RepositoryBean;
 
 @Service
@@ -40,10 +45,20 @@ public class UpdateGitCommit {
 		
 		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
 			
-//			GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, commitInfo.getCommitSha());
+			CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
+			
+			List<GitDocument> gitDocuments = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitDocuments();
+			for (GitDocument gitDocument : gitDocuments) {
+
+				/*
+				 * TODO:
+				 * Need to distinguish whether this document is modified or not.
+				 */
+				DocumentBean document = new DocumentModifiedBean(commit, gitDocument.getRelativeFilepath());
+				commit.addDocument(document);
+			}
 //			showFolderStructure(gitCommit);
 //			
-			CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
 			repository.addCommit(commit);
 		}
 		
