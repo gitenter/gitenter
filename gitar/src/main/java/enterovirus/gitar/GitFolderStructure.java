@@ -175,15 +175,15 @@ public class GitFolderStructure {
 		return folderStructure;
 	}
 	
-	public List<GitDocument> getGitDocuments() throws IOException {
+	public List<GitBlob> getGitBlobs() throws IOException {
 		
-		List<GitDocument> documents = new ArrayList<GitDocument>();
-		recursivelyIterateDocuments(folderStructure, documents);
+		List<GitBlob> blobs = new ArrayList<GitBlob>();
+		recursivelyIterateDocuments(folderStructure, blobs);
 		
-		return documents;
+		return blobs;
 	}
 	
-	private void recursivelyIterateDocuments (ListableTreeNode parentNode, List<GitDocument> documents) throws IOException {
+	private void recursivelyIterateDocuments (ListableTreeNode parentNode, List<GitBlob> blobs) throws IOException {
 
 		if (parentNode.isLeaf()) {
 			String filePath = parentNode.toString();
@@ -194,12 +194,12 @@ public class GitFolderStructure {
 			 * TODO:
 			 * Need to check and record the information whether this file is modified or not.
 			 */
-			documents.add(new GitDocument(repositoryDirectory, commitSha, filePath));
+			blobs.add(new GitBlob(repositoryDirectory, commitSha, filePath));
 			return;
 		}
 				
 		for(GitFolderStructure.ListableTreeNode node : parentNode.childrenList()) {
-			recursivelyIterateDocuments(node, documents);
+			recursivelyIterateDocuments(node, blobs);
 		}
 	}
 	

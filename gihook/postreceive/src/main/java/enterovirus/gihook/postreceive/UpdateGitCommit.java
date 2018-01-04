@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gihook.postreceive.status.CommitStatus;
-import enterovirus.gitar.GitDocument;
+import enterovirus.gitar.GitBlob;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
 import enterovirus.gitar.wrap.CommitInfo;
@@ -47,14 +47,14 @@ public class UpdateGitCommit {
 			
 			CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
 			
-			List<GitDocument> gitDocuments = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitDocuments();
-			for (GitDocument gitDocument : gitDocuments) {
+			List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitBlobs();
+			for (GitBlob blob : blobs) {
 
 				/*
 				 * TODO:
 				 * Need to distinguish whether this document is modified or not.
 				 */
-				DocumentBean document = new DocumentModifiedBean(commit, gitDocument.getRelativeFilepath());
+				DocumentBean document = new DocumentModifiedBean(commit, blob.getRelativeFilepath());
 				commit.addDocument(document);
 			}
 //			showFolderStructure(gitCommit);

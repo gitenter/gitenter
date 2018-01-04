@@ -93,10 +93,20 @@ class DocumentImpl implements DocumentRepository {
 		CommitSha commitSha = new CommitSha(document.getCommit().getShaChecksumHash());
 		String filepath = document.getRelativeFilepath();
 		
-		GitDocument gitDocument = new GitDocument(repositoryDirectory, commitSha, filepath);
+		GitBlob blob = new GitBlob(repositoryDirectory, commitSha, filepath);
 		
+		/*
+		 * TODO: 
+		 * Split by "newline" which is compatible to Windows
+		 * or Linux formats.
+		 * 
+		 * TODO:
+		 * Notice that blob which is not text file (e.g. images) also need to 
+		 * be loaded and displayed in some way. Should later design a better
+		 * and compitable way to handle both.
+		 */
 		int lineNumber = 1;
-		for (String content : gitDocument.getLinewiseContent()) {
+		for (String content : new String(blob.getBlobContent()).split("\n")) {
 			document.addLineContent(new LineContentBean(new Integer(lineNumber), content));
 			++lineNumber;
 		}

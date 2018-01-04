@@ -84,9 +84,9 @@ public class GitFolderStructureTest {
 	
 	private void showDocumentList (GitFolderStructure gitCommit) throws IOException {
 		
-		System.out.println("====show a list of documents====");
-		for (GitDocument gitDocument : gitCommit.getGitDocuments()) {
-			System.out.println(gitDocument.getRelativeFilepath());
+		System.out.println("====show a list of blob files====");
+		for (GitBlob blob : gitCommit.getGitBlobs()) {
+			System.out.println(blob.getRelativeFilepath());
 		}
 	}
 }

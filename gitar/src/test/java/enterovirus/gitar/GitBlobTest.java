@@ -17,7 +17,7 @@ import enterovirus.gitar.wrap.CommitSha;
 public class GitBlobTest {
 
 	@Test
-	public void test() throws IOException {
+	public void test1() throws IOException {
 		
 		GitBlob gitBlob;
 		
@@ -35,10 +35,17 @@ public class GitBlobTest {
 		
 		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);
 		System.out.println(new String(gitBlob.getBlobContent()));
+	}
 		
-		GitTextFile gitTextFile;
+	@Test
+	public void test2() throws IOException {
 		
-		gitTextFile = new GitTextFile(repositoryDirectory, "1st-commit-file-to-be-change-in-the-2nd-commit");
-		System.out.println(gitTextFile.getStringContent());
+		GitBlob gitBlob;
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability-path/org/repo.git");
+		String relativeFilepath = "document-1.md";
+		
+		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);
+		System.out.println(new String(gitBlob.getBlobContent()));
 	}
 }
