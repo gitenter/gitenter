@@ -26,7 +26,7 @@ public class GitLogTest {
 	
 	
 	@Test
-	public void test() throws Exception {
+	public void test1() throws Exception {
 
 		BranchName branchName = new BranchName("master");
 		CommitSha oldCommitSha = new CommitSha(commitRecordFileMaster, 1);
@@ -34,6 +34,22 @@ public class GitLogTest {
 		
 		GitLog gitLog = new GitLog(repositoryDirectory, branchName, oldCommitSha, newCommitSha);
 		
+		System.out.println("ref: "+branchName.getName());
+		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
+			System.out.println(commitInfo.getCommitSha().getShaChecksumHash());
+		}
+	}
+	
+	@Test
+	public void test2() throws Exception {
+
+		BranchName branchName = new BranchName("refs/heads/master");
+		CommitSha oldCommitSha = new CommitSha(commitRecordFileMaster, 1);
+		CommitSha newCommitSha = new CommitSha(commitRecordFileMaster, 10); 
+		
+		GitLog gitLog = new GitLog(repositoryDirectory, branchName, oldCommitSha, newCommitSha);
+		
+		System.out.println("ref: "+branchName.getName());
 		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
 			System.out.println(commitInfo.getCommitSha().getShaChecksumHash());
 		}

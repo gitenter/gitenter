@@ -25,6 +25,10 @@ public class GitLog {
 	 */
 	public GitLog(File repositoryDirectory, BranchName branchName) throws IOException, GitAPIException {
 		
+		/*
+		 * The JGit function is compatible with branch name with the form
+		 * "master" and "refs/heads/master".
+		 */
 		Repository repository = getRepositoryFromDirectory(repositoryDirectory);
 		Git git = new Git(repository);
 		Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
@@ -34,6 +38,7 @@ public class GitLog {
 	/*
 	 * The log of "newCommitSha" is inclusive, while it is of 
 	 * "oldCommitSha" is exclusive.
+	 * 
 	 */
 	public GitLog(File repositoryDirectory, BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) throws IOException, GitAPIException {
 		

@@ -25,7 +25,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>enterovirus.gihook.update.PostReceiveApplication</mainClass>
+							<mainClass>enterovirus.gihook.postreceive.PostReceiveApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

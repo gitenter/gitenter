@@ -19,7 +19,8 @@ echo "arg3:" $3
 # for each ref to be updated it receives on standard input a line of the format
 echo "----stdin----"
 while read LINE; do
-   echo ${LINE}    # do something with it here
+	echo ${LINE}
+	java -jar hooks/postreceive-0.0.1-prototype-jar-with-dependencies.jar ${LINE}    # do something with it here
 done
 
 # A post-receive example at:
