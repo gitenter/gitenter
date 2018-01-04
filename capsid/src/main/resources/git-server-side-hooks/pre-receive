@@ -19,5 +19,4 @@ echo $PWD
 echo "----stdin----"
 while read LINE; do
 	echo ${LINE}
-	java -jar hooks/postreceive-0.0.1-prototype-jar-with-dependencies.jar ${LINE}    # do something with it here
 done
