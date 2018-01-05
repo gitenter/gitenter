@@ -23,7 +23,7 @@ import enterovirus.gitar.wrap.CommitSha;
 		"enterovirus.gihook.postreceive"})
 public class PostReceiveApplication {
 	
-	@Autowired UpdateDatabaseFromGit updateDatabase;
+	@Autowired private UpdateDatabaseFromGit updateDatabase;
 	
 	public static void main (String[] args) throws Exception {
 

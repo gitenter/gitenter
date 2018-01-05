@@ -2,13 +2,7 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
-
-import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Test;
 
 import enterovirus.gitar.wrap.BranchName;
@@ -42,7 +36,7 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability-path/org/repo.git");
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
 		String relativeFilepath = "document-1.md";
 		
 		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);

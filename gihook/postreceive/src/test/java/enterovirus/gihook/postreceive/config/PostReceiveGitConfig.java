@@ -14,7 +14,7 @@ public class PostReceiveGitConfig {
 	public GitSource longCommitPathgitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/");
 		return gitSource;
 	}
 	
@@ -23,7 +23,7 @@ public class PostReceiveGitConfig {
 	public GitSource oneCommitTraceabilityGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one-commit-traceability/");
 		return gitSource;
 	}
 	
@@ -32,7 +32,7 @@ public class PostReceiveGitConfig {
 	public GitSource fakeUpdateGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/hook-fake-update/org/repo.git");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/hook-fake-update/");
 		return gitSource;
 	}
 }
