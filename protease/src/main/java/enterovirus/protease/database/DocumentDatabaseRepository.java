@@ -12,4 +12,6 @@ import enterovirus.protease.domain.*;
 interface DocumentDatabaseRepository extends PagingAndSortingRepository<DocumentBean, Integer> {
 
 	Optional<DocumentBean> findById(Integer id);
+	
+	DocumentBean saveAndFlush(DocumentBean document);
 }

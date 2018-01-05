@@ -26,6 +26,7 @@ public class UpdateGitCommit {
 
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private CommitRepository commitRepository;
+	@Autowired private DocumentRepository documentRepository;
 	
 	/*
 	 * TODO:
@@ -53,6 +54,7 @@ public class UpdateGitCommit {
 			CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
 			System.out.println(commit.getShaChecksumHash());
 			repository.addCommit(commit);
+			
 			/*
 			 * TODO:
 			 * GitLog gives all the previous commits related to the current 
@@ -65,10 +67,25 @@ public class UpdateGitCommit {
 			 * more then one line of stdin (I don't know any condition until
 			 * now) and check whether the above condition is possible. If 
 			 * yes, need to write an exceptional condition somewhere in here.
+			 *
+			 * NOTE 1:
+			 * We can only use: commitRepository.saveAndFlush(commit);
+			 * but not: repositoryRepository.saveAndFlush(repository);
+			 *   
+			 * For the second case, "commit.id" will not be updated,
+			 * so it will raise errors when we do "commitRepository.saveAndFlush(commit)"
+			 * in later part of this script.
+			 * 
+			 * NOTE 2:
+			 * Data will be saveAndFlush again after the first and the
+			 * second round (see later comments). It doesn't really matter
+			 * whether commit is saved or not in here. We do it here
+			 * as it makes irrelevant things separately handled, but it
+			 * doesn't really causes performance overhead (since the number
+			 * of commits is really tiny compare to other operations).
 			 */
-			repositoryRepository.saveAndFlush(repository);
-			System.out.println("id: "+commit.getId());
-//			commitRepository.saveAndFlush(commit);
+//			repositoryRepository.saveAndFlush(repository);
+			commitRepository.saveAndFlush(commit);
 			
 			List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitBlobs();
 			
@@ -96,7 +113,8 @@ public class UpdateGitCommit {
 			Map<String,TraceableItemBean> traceablilityBuilderMap = new HashMap<String,TraceableItemBean>();
 			
 			/*
-			 * First round to build all traceable items.
+			 * FIRST ROUND: 
+			 * to build all traceable items.
 			 */
 			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
 				
@@ -124,31 +142,44 @@ public class UpdateGitCommit {
 			}
 			
 			/*
-			 * Need to flush "commit" two times, because otherwise the
-			 * document and traceable IDs haven't been update yet.
+			 * NOTE 1:
+			 * We need to flush twice, ones after each loop, because otherwise the
+			 * document and traceable IDs haven't been update yet. It will cause 
+			 * error when Hibernate try to "insert into git.traceability_map" --
+			 * The upstream item and document will have "null" id value.
 			 * 
-			 * TODO:
-			 * Currently it doesn't work. It add try to add another commit
-			 * rather than update the one in the previous 
-			 * "repositoryRepository.saveAndFlush(repository)"
-			 * Gives error:
-			 *  
-			 * duplicate key value violates unique constraint "git_commit_sha_checksum_hash_key"
-			 * Detail: Key (sha_checksum_hash)=(425f5ad854ec1220bb5373d76a42d1980971d11b) already exists.
+			 * NOTE 2:
+			 * The code currently in here is really tricky. We do
+			 * "documentRepository.saveAndFlush" rather than "commitRepository.saveAndFlush",
+			 * because in later case "itemBean.getOriginalDocument()" will
+			 * query the database again and give another Java Object (with a 
+			 * different object ID) rather than refer to the one already
+			 * exists. Therefore, When we saveAndFlush after the second loop,
+			 * it doesn't see any referred "TraceabilityMapBean", so nothing
+			 * will be updated.
+			 * 
+			 * TODO: (because of NOTE 2)
+			 * The code is working right now, but the current approach is
+			 * probably really risky (as it depend on the detail of Hibernate
+			 * which is not by design. So we probably want to change it later.
 			 */
-			commitRepository.saveAndFlush(commit);
+			for (DocumentBean documentBean : commit.getDocuments()) {
+				documentRepository.saveAndFlush(documentBean);
+			}
+//			commitRepository.saveAndFlush(commit);
+			
+			for (DocumentBean documentBean : commit.getDocuments()) {
+				System.out.println("documentId: "+documentBean.getId()+" "+documentBean);
+			}
 			
 			/*
-			 * TODO:
-			 * Second round to retrieve traceability map.
+			 * SECOND ROUND:
+			 * to retrieve traceability map.
 			 */
 			for (Map.Entry<TraceableItem,TraceableItemBean> entry : traceabilityIterateMap.entrySet()) {
 				
 				TraceableItem traceableItem = entry.getKey();
 				TraceableItemBean itemBean = entry.getValue();
-				
-				System.out.println("traceableItem: "+traceableItem.getTag());
-				System.out.println("itemBean: "+itemBean.getItemTag());
 				
 				/*
 				 * TODO:
@@ -175,16 +206,27 @@ public class UpdateGitCommit {
 					TraceableItemBean upstreamItemBean = traceablilityBuilderMap.get(upstreamItem.getTag());
 					DocumentBean upstreamDocument = upstreamItemBean.getOriginalDocument();
 					
-					System.out.println("--upstreamItemBean: "+upstreamItemBean.getItemTag());
-//					System.out.println("--downstreamItemBean: "+downstreamItemBean.getItemTag());
-					
 					TraceabilityMapBean map = new TraceabilityMapBean(upstreamDocument, upstreamItemBean, downstreamDocument, downstreamItemBean);
+					
 					downstreamItemBean.addUpstreamMap(map);
 					upstreamItemBean.addDownstreamMap(map);
+					downstreamDocument.addMapForADownstreamItem(map);
+					upstreamDocument.addMapForAUpstreamItem(map);
 				}
 			}
 			
-//			commitRepository.saveAndFlush(commit);
+			/*
+			 * NOTE:
+			 * In here we "commitRepository.saveAndFlush", rather than
+			 * "documentRepository.saveAndFlush", because in later case
+			 * every "TraceabilityMapBean" will be saved twice (since
+			 * it is referred by two "DocumentBean"s hence causes key
+			 * constrain crash.
+			 */
+			commitRepository.saveAndFlush(commit);
+//			for (DocumentBean documentBean : commit.getDocuments()) {
+//				documentRepository.saveAndFlush(documentBean);
+//			}
 		}
 	}
 }

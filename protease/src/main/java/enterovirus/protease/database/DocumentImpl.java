@@ -111,4 +111,9 @@ class DocumentImpl implements DocumentRepository {
 			++lineNumber;
 		}
 	}
+	
+	public DocumentBean saveAndFlush(DocumentBean document) {
+		
+		return documentDbRepository.saveAndFlush(document);
+	}
 }
