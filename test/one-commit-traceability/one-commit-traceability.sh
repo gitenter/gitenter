@@ -30,12 +30,14 @@ git remote add origin $HOME/Workspace/enterovirus-test/$testcasename/org/repo.gi
 # Fake a commit with two document files with traceable items inside
 cd $HOME/Workspace/enterovirus-test/$testcasename/org/repo
 cat > document-1.md <<- EOM
+~~garbage~~not part of the traceable items~~
 - [document-1-tag-0001] document-1-0001-content
 - [document-1-tag-0002] document-1-0002-content
 - [document-1-tag-0003] document-1-0003-content
 ~~garbage~~not part of the traceable items~~
 EOM
 cat > document-2.md <<- EOM
+~~garbage~~not part of the traceable items~~
 - [document-2-tag-0001] document-2-0001-content
 - [document-2-tag-0002]{document-1-tag-0001} document-2-0002-content
 - [document-2-tag-0003]{document-1-tag-0001,document-1-tag-0002} document-2-0003-content

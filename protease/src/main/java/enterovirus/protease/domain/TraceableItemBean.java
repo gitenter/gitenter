@@ -23,7 +23,7 @@ public class TraceableItemBean {
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name="document_id")
+	@JoinColumn(name="original_document_id")
 	private DocumentModifiedBean document;
 	
 	@Column(name="line_number", updatable=false)
@@ -34,4 +34,18 @@ public class TraceableItemBean {
 	
 	@Column(name="content", updatable=false)
 	private String content;
+	
+	/*
+	 * Hibernate constructor
+	 */
+	public TraceableItemBean () {
+		
+	}
+
+	public TraceableItemBean(DocumentModifiedBean document, Integer lineNumber, String itemTag, String content) {
+		this.document = document;
+		this.lineNumber = lineNumber;
+		this.itemTag = itemTag;
+		this.content = content;
+	}
 }

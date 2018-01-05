@@ -1,6 +1,8 @@
 package enterovirus.gihook.postreceive;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 
@@ -11,18 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gihook.postreceive.status.CommitStatus;
-import enterovirus.gihook.postreceive.traceanalyzer.TraceableDocument;
-import enterovirus.gihook.postreceive.traceanalyzer.TraceableRepository;
+import enterovirus.gihook.postreceive.traceanalyzer.*;
 import enterovirus.gitar.GitBlob;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
 import enterovirus.gitar.wrap.CommitInfo;
-import enterovirus.protease.database.CommitRepository;
-import enterovirus.protease.database.RepositoryRepository;
-import enterovirus.protease.domain.CommitBean;
-import enterovirus.protease.domain.DocumentBean;
-import enterovirus.protease.domain.DocumentModifiedBean;
-import enterovirus.protease.domain.RepositoryBean;
+import enterovirus.protease.database.*;
+import enterovirus.protease.domain.*;
 
 @Service
 public class UpdateGitCommit {
@@ -67,14 +64,35 @@ public class UpdateGitCommit {
 			}
 			traceableRepository.refreshUpstreamAndDownstreamItems();
 			
+			Map<String,TraceableItemBean> traceablilityBuilderMap = new HashMap<String,TraceableItemBean>();
 			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
 				
-				DocumentBean document = new DocumentModifiedBean(commit, traceableDocument.getRelativeFilepath());
 				/*
 				 * TODO:
-				 * Should map the traceableDocument data to the corresponding bean.
+				 * If this document if from a previous commit, then in here we should
+				 * not do this, but load the corresponding "DocumentModifiedBean", and 
+				 * create an new "DocumentUnmodifiedBean".
 				 */
-				commit.addDocument(document);
+				DocumentModifiedBean documentBean = new DocumentModifiedBean(commit, traceableDocument.getRelativeFilepath());
+				
+				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
+					
+					Integer lineNumber = traceableItem.getLineNumber();
+					String itemTag = traceableItem.getTag();
+					String content = traceableItem.getContent();
+					
+					TraceableItemBean itemBean = new TraceableItemBean(documentBean, lineNumber, itemTag, content);
+					traceablilityBuilderMap.put(itemTag, itemBean);
+					
+					documentBean.addTraceableItem(itemBean);
+				}
+				
+				/*
+				 * TODO:
+				 * Another loop to retrieve traceability map.
+				 */
+				
+				commit.addDocument(documentBean);
 			}
 			
 			repository.addCommit(commit);
