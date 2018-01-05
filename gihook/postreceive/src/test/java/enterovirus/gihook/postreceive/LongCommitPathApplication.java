@@ -17,7 +17,7 @@ import enterovirus.gitar.wrap.CommitSha;
 		"enterovirus.gihook.postreceive"})
 public class LongCommitPathApplication {
 	
-	@Autowired UpdateGitCommit updateGitCommit;
+	@Autowired UpdateDatabaseFromGit updateDatabase;
 	
 	public static void main (String[] args) throws Exception {
 		
@@ -73,6 +73,6 @@ public class LongCommitPathApplication {
 	}
 	
 	private void run (CommitStatus status) throws IOException, GitAPIException {
-		updateGitCommit.apply(status);
+		updateDatabase.update(status);
 	}
 }

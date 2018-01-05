@@ -17,7 +17,7 @@ import enterovirus.gitar.wrap.CommitSha;
 		"enterovirus.gihook.postreceive"})
 public class OneCommitTraceabilityApplication {
 	
-	@Autowired UpdateGitCommit updateGitCommit;
+	@Autowired UpdateDatabaseFromGit updateDatabase;
 	
 	public static void main (String[] args) throws Exception {
 		
@@ -39,6 +39,6 @@ public class OneCommitTraceabilityApplication {
 	}
 	
 	private void run (CommitStatus status) throws IOException, GitAPIException {
-		updateGitCommit.apply(status);
+		updateDatabase.update(status);
 	}
 }
