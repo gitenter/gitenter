@@ -26,7 +26,7 @@ public class DocumentModifiedBean extends DocumentBean {
 	@Column(name="relative_filepath", updatable=false)
 	private String relativeFilepath;
 	
-	@OneToMany(targetEntity=TraceableItemBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="document")
+	@OneToMany(targetEntity=TraceableItemBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="originalDocument")
 	private List<TraceableItemBean> traceableItems = new ArrayList<TraceableItemBean>();
 	
 	/*

@@ -1,12 +1,18 @@
 package enterovirus.protease.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.*;
@@ -24,7 +30,7 @@ public class TraceableItemBean {
 	
 	@ManyToOne
 	@JoinColumn(name="original_document_id")
-	private DocumentModifiedBean document;
+	private DocumentModifiedBean originalDocument;
 	
 	@Column(name="line_number", updatable=false)
 	private Integer lineNumber;
@@ -35,6 +41,12 @@ public class TraceableItemBean {
 	@Column(name="content", updatable=false)
 	private String content;
 	
+	@OneToMany(targetEntity=TraceabilityMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="upstreamItem")
+	private List<TraceabilityMapBean> downstreamMaps = new ArrayList<TraceabilityMapBean>();
+
+	@OneToMany(targetEntity=TraceabilityMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="downstreamItem")
+	private List<TraceabilityMapBean> upstreamMaps = new ArrayList<TraceabilityMapBean>();
+	
 	/*
 	 * Hibernate constructor
 	 */
@@ -43,9 +55,17 @@ public class TraceableItemBean {
 	}
 
 	public TraceableItemBean(DocumentModifiedBean document, Integer lineNumber, String itemTag, String content) {
-		this.document = document;
+		this.originalDocument = document;
 		this.lineNumber = lineNumber;
 		this.itemTag = itemTag;
 		this.content = content;
+	}
+	
+	public boolean addDownstreamMap (TraceabilityMapBean map) {
+		return downstreamMaps.add(map);
+	}
+	
+	public boolean addUpstreamMap (TraceabilityMapBean map) {
+		return upstreamMaps.add(map);
 	}
 }
