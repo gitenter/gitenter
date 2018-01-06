@@ -12,6 +12,11 @@ import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
+/*
+ * TODO:
+ * This classes should be later on removed completely by the JUnit
+ * test classes.
+ */
 @ComponentScan(basePackages = {
 		"enterovirus.protease",
 		"enterovirus.gihook.postreceive"})

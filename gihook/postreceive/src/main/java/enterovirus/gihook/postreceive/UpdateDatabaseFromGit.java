@@ -95,6 +95,10 @@ public class UpdateDatabaseFromGit {
 		 * Communicate with git to get the useful information needed
 		 * to be written to the database. This part doesn't touch the
 		 * persistence layer and/or the database.
+		 * 
+		 * TODO:
+		 * Consider add a config file to indicate that this system only 
+		 * traces files of some particular folders/paths.
 		 */
 		TraceableRepository traceableRepository = getTraceableRepository(status, commitInfo);
 		

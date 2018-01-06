@@ -47,6 +47,14 @@ public class GitFolderStructure {
 	 */
 	private ListableMutableTreeNode folderStructure;
 	
+	/*
+	 * TODO:
+	 * Define constructor that only analyze the folder structure
+	 * under some particular paths.
+	 * Then we can have a config file user uses to indicate they
+	 * are using this system, and the folder(s) to used for design
+	 * control documents. 
+	 */
 	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
