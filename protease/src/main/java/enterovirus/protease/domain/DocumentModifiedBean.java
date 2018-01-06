@@ -38,7 +38,8 @@ public class DocumentModifiedBean extends DocumentBean {
 	 * "String blobContent"?
 	 */
 	@Transient
-	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
+//	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
+	private String content;
 	
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -56,7 +57,49 @@ public class DocumentModifiedBean extends DocumentBean {
 		return traceableItems.add(traceableItem);
 	}
 	
-	public boolean addLineContent(LineContentBean lineContent) {
-		return lineContents.add(lineContent);
+	/*
+	 * TODO:
+	 * This function should work for general documents, rather
+	 * than the just modified ones. However, that depends on the
+	 * detail of markdown visualization strategy.
+	 */
+	public List<LineContent> getLineContents () {
+
+		List<LineContent> lineContents = new ArrayList<LineContent>();
+	
+		/*
+		 * TODO: 
+		 * Split by "newline" which is compatible to Windows
+		 * or Linux formats.
+		 */
+		int lineNumber = 1;
+		for (String content : content.split("\n")) {
+			lineContents.add(new LineContent(new Integer(lineNumber), content));
+			++lineNumber;
+		}
+		
+		return lineContents;
+	}
+	
+	@Getter
+	@Setter
+	public class LineContent {
+
+		private Integer lineNumber;
+		private String content;
+		
+		/*
+		 * TODO:
+		 * 
+		 * LineContentBean should link back to DocumentBean.
+		 * But that will cause error of Jackson 2 to transfer to JSON
+		 * because loop exists. Should setup Jaskson (maybe by annotation?)
+		 * to specify that.
+		 */
+		
+		public LineContent(Integer lineNumber, String content) {
+			this.lineNumber = lineNumber;
+			this.content = content;
+		}
 	}
 }

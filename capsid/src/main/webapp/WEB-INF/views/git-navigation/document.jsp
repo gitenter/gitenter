@@ -8,7 +8,6 @@
       <span class="nav-current">${document.relativeFilepath}</span>
     </nav>
     <article>
-      <c:forEach var="lineContent" items="${document.lineContents}">
-        <p>${lineContent.content}</p>
-      </c:forEach>
+      <!-- Need to setup a markdown parser ... -->
+      ${document.content}
     </article>

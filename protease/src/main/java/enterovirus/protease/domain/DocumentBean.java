@@ -60,6 +60,14 @@ public class DocumentBean {
 		this.commit = commit;
 	}
 	
+	public boolean addMapForAUpstreamItem (TraceabilityMapBean map) {
+		return mapsForUpstreamItems.add(map);
+	}
+	
+	public boolean addMapForADownstreamItem (TraceabilityMapBean map) {
+		return mapsForDownstreamItems.add(map);
+	}
+	
 	public String getRelativeFilepath () {
 		if (this instanceof DocumentModifiedBean) {
 			return ((DocumentModifiedBean)this).getRelativeFilepath();
@@ -69,20 +77,12 @@ public class DocumentBean {
 		}
 	}
 	
-	public List<LineContentBean> getLineContents () {
+	public String getContent () {
 		if (this instanceof DocumentModifiedBean) {
-			return ((DocumentModifiedBean)this).getLineContents();
+			return ((DocumentModifiedBean)this).getContent();
 		}
 		else {
-			return (((DocumentUnmodifiedBean)this).getOriginalDocument()).getLineContents();
+			return (((DocumentUnmodifiedBean)this).getOriginalDocument()).getContent();
 		}		
-	}
-	
-	public boolean addMapForAUpstreamItem (TraceabilityMapBean map) {
-		return mapsForUpstreamItems.add(map);
-	}
-	
-	public boolean addMapForADownstreamItem (TraceabilityMapBean map) {
-		return mapsForDownstreamItems.add(map);
 	}
 }

@@ -29,10 +29,7 @@ public class DocumentRepositoryTest {
 		
 		System.out.println("Relative Filepath: "+document.getRelativeFilepath());
 		System.out.println("Content: ");
-		System.out.println(document.getLineContents());
-		for (LineContentBean content : document.getLineContents()) {
-			System.out.println(content.getContent());
-		}
+		System.out.println(document.getContent());
 	}
 	
 	@Test
@@ -41,6 +38,16 @@ public class DocumentRepositoryTest {
 		DocumentBean document = repository.findById(1);
 		assertThat(document, instanceOf(DocumentModifiedBean.class));
 		showDocumentBean(document);
+		
+		/*
+		 * TODO:
+		 * This function should work for general documents, rather
+		 * than the just modified ones. However, that depends on the
+		 * detail of markdown visualization strategy.
+		 */
+		for (DocumentModifiedBean.LineContent content : ((DocumentModifiedBean)document).getLineContents()) {
+			System.out.println(content.getContent());
+		}
 	}
 	
 	@Test
