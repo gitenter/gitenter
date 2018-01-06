@@ -134,6 +134,7 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 		</dependency>
+
 		<!-- Runtime -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
