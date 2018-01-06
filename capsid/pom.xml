@@ -30,6 +30,15 @@
 			<groupId>enterovirus</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.1-prototype</version>
+			<!--
+				Seems not working if excludes in this side. Why?
+			-->
+<!--			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</exclusion>
+			</exclusions>-->
 		</dependency>
 		<dependency>
 			<groupId>enterovirus</groupId>
@@ -76,8 +85,8 @@
 				-->
 			<exclusions>
 				<exclusion>
-					<artifactId>logback-classic</artifactId>
 					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -156,16 +165,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jgit</groupId>
-			<artifactId>org.eclipse.jgit</artifactId>
-			<version>4.8.0.201706111038-r</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jgit</groupId>
-			<artifactId>org.eclipse.jgit.archive</artifactId>
-			<version>4.8.0.201706111038-r</version>
 		</dependency>
 
 		<!-- Test -->
