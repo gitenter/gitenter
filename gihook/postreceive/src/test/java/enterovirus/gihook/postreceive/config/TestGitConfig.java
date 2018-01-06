@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import enterovirus.gitar.GitSource;
 
 @Configuration
-public class PostReceiveGitConfig {
+public class TestGitConfig {
 	
 	@Profile("long_commit_path")
 	@Bean

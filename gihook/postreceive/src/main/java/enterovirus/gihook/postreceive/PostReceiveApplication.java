@@ -54,7 +54,7 @@ public class PostReceiveApplication {
 		System.out.println("oldCommitSha: "+oldCommitSha.getShaChecksumHash());
 		System.out.println("newCommitSha: "+newCommitSha.getShaChecksumHash());
 		
-		System.setProperty("spring.profiles.active", "production");
+//		System.setProperty("spring.profiles.active", "production");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		
 		PostReceiveApplication p = context.getBean(PostReceiveApplication.class);

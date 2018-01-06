@@ -7,8 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+/*
+ * Should have a different name with DatabaseConfig in the main code.
+ * Otherwise it compiles error.
+ */
 @Configuration
-public class PostReceiveDatabaseConfig {
+public class TestDatabaseConfig {
 	
 	@Profile("long_commit_path")
 	@Bean

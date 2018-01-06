@@ -5,12 +5,20 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 public class DatabaseConfig {
 
+	/*
+	 * This bean need to have a profile, because otherwise in the
+	 * test sets they'll @Autowired to this bean rather than the
+	 * one with specific profile.
+	 * 
+	 * There seems no way to setup in spring with @Profile with higher
+	 * priority, and the bean without @Profile to have low priority.
+	 * Just need to set them up either all or none.
+	 */
 	@Profile("production")
 	@Bean
 	public DataSource dataSource() {
