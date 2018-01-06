@@ -8,6 +8,5 @@
       <span class="nav-current">${document.relativeFilepath}</span>
     </nav>
     <article>
-      <!-- Need to setup a markdown parser ... -->
-      ${document.content}
+      ${content}
     </article>

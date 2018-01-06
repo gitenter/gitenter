@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
+import enterovirus.coatmark.MarkdownParser;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -69,6 +70,9 @@ public class GitNavigationController {
 		RepositoryBean repository = commit.getRepository();
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
+		
+		MarkdownParser contentParser = new MarkdownParser(document.getContent());
+		model.addAttribute("content", contentParser.getHtml());
 		
 		return "git-navigation/document";
 	}

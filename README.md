@@ -30,7 +30,7 @@ That seems also because STS cannot handle two classes which accidentally have th
 
 ## Deployment
 
-## Docker
+### Docker
 
 (Re-)build image
 
