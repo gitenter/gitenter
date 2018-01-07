@@ -99,6 +99,9 @@ public class UpdateDatabaseFromGit {
 		 * TODO:
 		 * Consider add a config file to indicate that this system only 
 		 * traces files of some particular folders/paths.
+		 * 
+		 * TODO:
+		 * Gives error if the item tag is not unique along a repository.
 		 */
 		TraceableRepository traceableRepository = getTraceableRepository(status, commitInfo);
 		

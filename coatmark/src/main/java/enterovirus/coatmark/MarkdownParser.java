@@ -15,16 +15,16 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 public class MarkdownParser {
 
-	private String markdownContent;
+	private String content;
 	
-	public MarkdownParser(String markdownContent) {
-		this.markdownContent = markdownContent;
+	public MarkdownParser(String content) {
+		this.content = content;
 	}
 	
 	public String getHtml() {
 		
 		Parser parser = Parser.builder().build();
-		Node document = parser.parse(markdownContent);
+		Node document = parser.parse(content);
 		HtmlRenderer renderer = HtmlRenderer.builder().build();
 		String html = renderer.render(document);
 		
