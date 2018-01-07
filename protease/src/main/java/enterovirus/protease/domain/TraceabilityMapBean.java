@@ -57,4 +57,24 @@ public class TraceabilityMapBean {
 		this.downstreamDocument = downstreamDocument;
 		this.downstreamItem = downstreamItem;
 	}
+	
+	@Getter
+	public class TraceableItemDocumentPair {
+		
+		private DocumentBean document;
+		private TraceableItemBean traceableItem;
+	
+		private TraceableItemDocumentPair(DocumentBean document, TraceableItemBean traceableItem) {
+			this.document = document;
+			this.traceableItem = traceableItem;
+		}
+	}
+
+	public TraceableItemDocumentPair getUpstreamPair () {
+		return new TraceableItemDocumentPair(upstreamDocument, upstreamItem);
+	}
+	
+	public TraceableItemDocumentPair getDownstreamPair () {
+		return new TraceableItemDocumentPair(downstreamDocument, downstreamItem);
+	}
 }

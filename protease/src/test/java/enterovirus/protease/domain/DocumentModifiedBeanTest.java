@@ -1,11 +1,13 @@
-package enterovirus.coatmark;
+package enterovirus.protease.domain;
+
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import enterovirus.protease.domain.*;
 
-public class DesignDocumentParserTest {
+public class DocumentModifiedBeanTest {
 	
 	private DocumentModifiedBean document;
 
@@ -26,23 +28,16 @@ public class DesignDocumentParserTest {
 		traceableItem2.addUpstreamMap(traceabilityMap);
 		document.addMapForAUpstreamItem(traceabilityMap);
 		document.addMapForADownstreamItem(traceabilityMap);
+		
+		document.buildTraceableItemIndex();
 	}
 	
 	@Test
 	public void test() {
-		showHtml( "- [tag-1] content-1\n"
-				+ "- [tag-2]{tag-1} content-2\n"
-				+ "  - nested text\n"
-				+ "- this line is not a traceable text");
-	}
-	
-	private void showHtml (String content) {
 		
-		DesignDocumentParser parser = new DesignDocumentParser(content, document);
-		System.out.println("====================");
-		System.out.println(content);
-		System.out.println("--------------------");
-		System.out.println(parser.getHtml());
-		System.out.println("====================");
+		assertEquals("content-1", document.getTraceableItem("tag-1").getContent());
+		assertEquals("content-2", document.getTraceableItem("tag-2").getContent());
+		assertEquals("tag-2", document.getTraceableItem("tag-1").getDownstreamPairs().get(0).getTraceableItem().getItemTag());
+		assertEquals("tag-1", document.getTraceableItem("tag-2").getUpstreamPairs().get(0).getTraceableItem().getItemTag());
 	}
 }

@@ -51,6 +51,10 @@ public class GitNavigationController {
 	 * Should define another one with URL such as
 	 * /organizations/{organizationId}/repositories/{repositoryId}/documents/{documentId}
 	 * to handle the display of documents.
+	 * 
+	 * TODO:
+	 * We can't do "documents/{documentId}". Link between traceable items (and
+	 * the corresponding documents) need to set up in a relative way.
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
 	public String navigateRepositoryContent (

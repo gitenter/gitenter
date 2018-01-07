@@ -68,4 +68,24 @@ public class TraceableItemBean {
 	public boolean addUpstreamMap (TraceabilityMapBean map) {
 		return upstreamMaps.add(map);
 	}
+	
+	public List<TraceabilityMapBean.TraceableItemDocumentPair> getUpstreamPairs () {
+		
+		List<TraceabilityMapBean.TraceableItemDocumentPair> pairs = new ArrayList<TraceabilityMapBean.TraceableItemDocumentPair>();
+		
+		for (TraceabilityMapBean map : upstreamMaps) {
+			pairs.add(map.getUpstreamPair());
+		}
+		return pairs;
+	}
+	
+	public List<TraceabilityMapBean.TraceableItemDocumentPair> getDownstreamPairs () {
+		
+		List<TraceabilityMapBean.TraceableItemDocumentPair> pairs = new ArrayList<TraceabilityMapBean.TraceableItemDocumentPair>();
+		
+		for (TraceabilityMapBean map : downstreamMaps) {
+			pairs.add(map.getDownstreamPair());
+		}
+		return pairs;
+	}
 }

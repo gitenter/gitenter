@@ -15,7 +15,7 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
 import enterovirus.coatmark.parser.TraceableItemParser;
-import enterovirus.protease.domain.DocumentModifiedBean;
+import enterovirus.protease.domain.*;
 
 public class TraceableItemNodeRenderer implements NodeRenderer {
 	
@@ -23,8 +23,11 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 	private DocumentModifiedBean document;
 
 	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentModifiedBean document) {
+		
 		this.html = context.getWriter();
+		
 		this.document = document;
+		document.buildTraceableItemIndex();
 	}
 
 	@Override
@@ -79,11 +82,36 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 					}
 					else {
 						
-						Map<String,String> attrs = new HashMap<String, String>();
-						attrs.put("id", parser.getTag());
+						String itemTag =  parser.getTag();
+						TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
 						
-						html.tag("ul", attrs);
-						html.text(text+document.getRelativeFilepath());
+						html.tag("ul id=\""+itemTag+"\"");
+						
+						html.text("["+itemTag+"]");
+						
+						/*
+						 * TODO:
+						 * Currently the link path is not correct. We need to calculate the relevant path
+						 * between the original and the linked document, and setup the link correct.
+						 */
+						html.text("{");
+						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getUpstreamPairs()) {
+							html.tag("a href=\""+pair.getDocument().getRelativeFilepath()+"#"+pair.getTraceableItem().getItemTag()+"\"");
+							html.text(pair.getTraceableItem().getItemTag());
+							html.tag("/a");
+						}
+						html.text("}");
+						
+						html.text("{");
+						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getDownstreamPairs()) {
+							html.tag("a href=\""+pair.getDocument().getRelativeFilepath()+"#"+pair.getTraceableItem().getItemTag()+"\"");
+							html.text(pair.getTraceableItem().getItemTag());
+							html.tag("/a");
+						}
+						html.text("}");
+						
+						html.text(traceableItem.getContent());
+						
 						html.tag("/ul");
 						html.line();
 					}

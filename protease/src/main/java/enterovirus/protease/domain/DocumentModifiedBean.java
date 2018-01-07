@@ -1,7 +1,9 @@
 package enterovirus.protease.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -101,5 +103,24 @@ public class DocumentModifiedBean extends DocumentBean {
 			this.lineNumber = lineNumber;
 			this.content = content;
 		}
+	}
+	
+	/*
+	 * Use together with buildTraceableItemIndex()
+	 */
+	@Transient
+	private Map<String,TraceableItemBean> traceableItemMap;
+	
+	public void buildTraceableItemIndex() {
+		
+		traceableItemMap = new HashMap<String,TraceableItemBean>();
+		
+		for (TraceableItemBean item : traceableItems) {
+			traceableItemMap.put(item.getItemTag(), item);
+		}
+	}
+	
+	public TraceableItemBean getTraceableItem (String itemTag) {
+		return traceableItemMap.get(itemTag);
 	}
 }
