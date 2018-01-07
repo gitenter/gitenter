@@ -1,11 +1,11 @@
-package enterovirus.gihook.postreceive.traceanalyzer;
+package enterovirus.coatmark.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
-class TraceableItemParser {
+public class TraceableItemParser {
 
 	private String tag;
 	private List<String> upstreamItemTags = new ArrayList<String>();
@@ -27,19 +27,10 @@ class TraceableItemParser {
 	 * A brackets: \\[ and \\]
 	 * A curly bracket: \\{ and \\}
 	 * A non-whitespace character: \S
-	 * 
-	 * TODO:
-	 * 
-	 * May delete this one and replace it with
-	 * enterovirus.coatmark.parser.TraceableItemParser
-	 * 
-	 * That is basically this one without "- "
-	 * and parse the markdown file by commonmark to get a tree
-	 * structure, rather than just a line-by-line reading.
 	 */
-	TraceableItemParser(String lineContent) {
+	public TraceableItemParser(String text) {
 		
-		Scanner s = new Scanner(lineContent);
+		Scanner s = new Scanner(text);
 
 		try {
 			/*
@@ -47,7 +38,7 @@ class TraceableItemParser {
 			 * (1) - [itemTag] content
 			 */
 			try {
-				s.findInLine("- \\[(\\S+)\\] (\\S+)");
+				s.findInLine("\\[(\\S+)\\] (\\S+)");
 				MatchResult result = s.match();
 				tag = result.group(1);
 				content = result.group(2);
@@ -57,7 +48,7 @@ class TraceableItemParser {
 			 * (2) - [itemTag]{0-or-more-upstreamItemTags} content
 			 */
 			catch (IllegalStateException e) {
-				s.findInLine("- \\[(\\S+)\\]\\{(\\S+)\\} (\\S+)");
+				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} (\\S+)");
 				MatchResult result = s.match();
 				tag = result.group(1);
 				for (String upstreamItemTag : result.group(2).split(",")) {
@@ -76,19 +67,19 @@ class TraceableItemParser {
 		s.close();
 	}
 
-	String getTag() {
+	public String getTag() {
 		return tag;
 	}
 	
-	List<String> getUpstreamItemTags() {
+	public List<String> getUpstreamItemTags() {
 		return upstreamItemTags;
 	}
 
-	String getContent() {
+	public String getContent() {
 		return content;
 	}
 	
-	boolean isTraceableItem () {
+	public boolean isTraceableItem () {
 		return isTraceableItem;
 	}
 }

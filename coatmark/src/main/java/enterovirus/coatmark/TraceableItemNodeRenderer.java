@@ -1,10 +1,11 @@
 package enterovirus.coatmark;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.commonmark.node.BulletList;
-import org.commonmark.node.IndentedCodeBlock;
 import org.commonmark.node.ListItem;
 import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
@@ -13,12 +14,17 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
+import enterovirus.coatmark.parser.TraceableItemParser;
+import enterovirus.protease.domain.DocumentModifiedBean;
+
 public class TraceableItemNodeRenderer implements NodeRenderer {
 	
 	private final HtmlWriter html;
+	private DocumentModifiedBean document;
 
-	TraceableItemNodeRenderer(HtmlNodeRendererContext context) {
+	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentModifiedBean document) {
 		this.html = context.getWriter();
+		this.document = document;
 	}
 
 	@Override
@@ -58,15 +64,36 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 				
 				if (listContent instanceof Paragraph) {
 					
+					String text = ((Text)(listContent.getFirstChild())).getLiteral();
+					TraceableItemParser parser = new TraceableItemParser(text);
+					
+					if (parser.isTraceableItem() == false) {
+						
+						/*
+						 * Here just shows the normal bubble item.
+						 */
+						html.tag("ul");
+						html.text(text);
+						html.tag("/ul");
+						html.line();
+					}
+					else {
+						
+						Map<String,String> attrs = new HashMap<String, String>();
+						attrs.put("id", parser.getTag());
+						
+						html.tag("ul", attrs);
+						html.text(text+document.getRelativeFilepath());
+						html.tag("/ul");
+						html.line();
+					}
+					
 					/*
 					 * TODO:
 					 * If/else the special condition that the bullet item is the special
 					 * traceable item.
 					 */
-					html.tag("ul");
-					html.text(((Text)(listContent.getFirstChild())).getLiteral());
-					html.tag("/ul");
-					html.line();
+					
 				}
 				else {
 					/*

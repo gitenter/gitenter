@@ -1,9 +1,23 @@
 package enterovirus.coatmark;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class DesignDocumentParserTest {
+import enterovirus.protease.domain.*;
 
+public class DesignDocumentParserTest {
+	
+	private DocumentModifiedBean document;
+
+	@Before
+	public void init() {
+		CommitBean commit = new CommitBean();
+		String relativeFilepath = "/a-document.md";
+		document = new DocumentModifiedBean(commit, relativeFilepath);
+		
+//		TraceableItemBean item1 = TraceableItemBean(document, )
+	}
+	
 	@Test
 	public void test1() {
 		showHtml("This is *Sparta*");
@@ -16,7 +30,10 @@ public class DesignDocumentParserTest {
 	
 	@Test
 	public void test3() {
-		showHtml("- item1\n  - item1 subitem1\n- item2");
+		showHtml( "- [tag-1] content-1\n"
+				+ "- [tag-2]{tag-1} content-2\n"
+				+ "  - nested text\n"
+				+ "- not a traceable text");
 	}
 
 	@Test
@@ -26,7 +43,7 @@ public class DesignDocumentParserTest {
 	
 	private void showHtml (String content) {
 		
-		DesignDocumentParser parser = new DesignDocumentParser(content);
+		DesignDocumentParser parser = new DesignDocumentParser(content, document);
 		System.out.println("====================");
 		System.out.println(content);
 		System.out.println("--------------------");

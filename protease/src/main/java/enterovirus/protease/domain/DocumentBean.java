@@ -68,21 +68,20 @@ public class DocumentBean {
 		return mapsForDownstreamItems.add(map);
 	}
 	
-	public String getRelativeFilepath () {
+	public DocumentModifiedBean getOriginalDocument () {
 		if (this instanceof DocumentModifiedBean) {
-			return ((DocumentModifiedBean)this).getRelativeFilepath();
+			return (DocumentModifiedBean)this;
 		}
 		else {
-			return (((DocumentUnmodifiedBean)this).getOriginalDocument()).getRelativeFilepath();
+			return ((DocumentUnmodifiedBean)this).getOriginalDocument();
 		}
 	}
 	
+	public String getRelativeFilepath () {
+		return getOriginalDocument().getRelativeFilepath();
+	}
+	
 	public String getContent () {
-		if (this instanceof DocumentModifiedBean) {
-			return ((DocumentModifiedBean)this).getContent();
-		}
-		else {
-			return (((DocumentUnmodifiedBean)this).getOriginalDocument()).getContent();
-		}		
+		return getOriginalDocument().getContent();		
 	}
 }
