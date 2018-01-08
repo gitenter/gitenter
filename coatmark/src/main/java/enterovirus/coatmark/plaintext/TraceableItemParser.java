@@ -38,7 +38,7 @@ public class TraceableItemParser {
 			 * (1) - [itemTag] content
 			 */
 			try {
-				s.findInLine("\\[(\\S+)\\] (\\S+)");
+				s.findInLine("\\[(\\S+)\\] ([ \\t\\S]+)");
 				MatchResult result = s.match();
 				tag = result.group(1);
 				content = result.group(2);
@@ -48,7 +48,7 @@ public class TraceableItemParser {
 			 * (2) - [itemTag]{0-or-more-upstreamItemTags} content
 			 */
 			catch (IllegalStateException e) {
-				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} (\\S+)");
+				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} ([ \\t\\S]+)");
 				MatchResult result = s.match();
 				tag = result.group(1);
 				for (String upstreamItemTag : result.group(2).split(",")) {

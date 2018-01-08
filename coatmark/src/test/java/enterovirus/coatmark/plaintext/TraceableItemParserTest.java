@@ -8,7 +8,7 @@ public class TraceableItemParserTest {
 
 	@Test
 	public void test1() {
-		TraceableItemParser parsingResult = new TraceableItemParser("[document-1-tag-0001] document-1-0001-content");
+		TraceableItemParser parsingResult = new TraceableItemParser("- [tagWith-_123] Content with !@#$%^&*()[], space and \\t in it.");
 		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
 		System.out.println("tag: "+parsingResult.getTag());
 		System.out.println("content: "+parsingResult.getContent());
@@ -20,7 +20,7 @@ public class TraceableItemParserTest {
 	
 	@Test
 	public void test2() {
-		TraceableItemParser parsingResult = new TraceableItemParser("[document-2-tag-0003]{document-1-tag-0001,document-1-tag-0002} document-2-0003-content");
+		TraceableItemParser parsingResult = new TraceableItemParser("[tagWith-_123]{referWith-_123,referWith-_456} Content with !@#$%^&*()[], space and \\\\t in it.");
 		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
 		System.out.println("tag: "+parsingResult.getTag());
 		System.out.println("content: "+parsingResult.getContent());

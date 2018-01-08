@@ -49,6 +49,18 @@
 			<artifactId>protease</artifactId>
 			<version>0.0.1-prototype</version>
 		</dependency>
+		<dependency>
+			<!-- only to use plaintext parser -->
+			<groupId>enterovirus</groupId>
+			<artifactId>coatmark</artifactId>
+			<version>0.0.1-prototype</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- Compile -->
 		<dependency>

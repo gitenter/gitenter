@@ -140,10 +140,19 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 		 * be one more "../". 
 		 */
 		Path original = Paths.get(document.getRelativeFilepath()).getParent();
-		Path referred = Paths.get(pair.getDocument().getRelativeFilepath());
-		String relativeFilepath = original.relativize(referred).toString();
 		
-		return relativeFilepath;
+		if (original == null) {
+			/*
+			 * This is for the special case that document is at the root.
+			 */
+			return pair.getDocument().getRelativeFilepath();
+		}
+		else {
+			Path referred = Paths.get(pair.getDocument().getRelativeFilepath());
+			String relativeFilepath = original.relativize(referred).toString();
+			
+			return relativeFilepath;
+		}
 	}
 
 }

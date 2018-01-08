@@ -3,6 +3,8 @@ package enterovirus.gihook.postreceive.traceanalyzer;
 import java.util.ArrayList;
 import java.util.List;
 
+import enterovirus.coatmark.plaintext.TraceableItemParser;
+
 public class TraceableDocument {
 
 	private TraceableRepository repository;
