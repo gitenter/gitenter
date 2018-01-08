@@ -53,26 +53,26 @@ canvas {
 
 body {
 
-	color: #e5e5e5;
-	background-color: #212121;
+	color: #444444;
+	background-color: #ffffff;
 	
 	font-family: "Open Sans", Sans, sans-serif, Arial;
 }
 
-a:link { color: #e5e5e5; text-decoration: none; }
-a:visited { color: #e5e5e5; text-decoration: none; }
+a:link { color: #444444; text-decoration: none; }
+a:visited { color: #444444; text-decoration: none; }
 a:hover { color: #aaaaaa; text-decoration: none; }
-a:active { color: #e5e5e5; text-decoration: none; }
+a:active { color: #444444; text-decoration: none; }
 
 header {
-	background-color: #2e2e2e;
+	background-color: #bbbbbb;
 	height:48px;
 }
 
 nav {
 
-	color: #4a4a4a;
-	background-color: #262626;
+	color: #888888;
+	background-color: #dddddd;
 	
 	font-size: 14px;
 	font-weight: bold;
@@ -91,7 +91,7 @@ article {
 footer {
 
 	width: 100%;
-	color: #4a4a4a;
+	color: #bbbbbb;
 	
 	font-size: 16px;
 	text-align: center;
@@ -101,8 +101,8 @@ footer {
 
 header img.logo {
 	float: left;
-	width: 144px;
-	background-color: #2e2e2e;
+	width: 192px;
+	background-color: #bbbbbb;
 }
 
 header div.text, header form {
@@ -113,13 +113,13 @@ header div.text, header form {
 
 header div.text, header input[type=submit] {
 	
-	background-color: #2e2e2e;
-	color: #999999;
+	background-color: #bbbbbb;
+	color: #666666;
 }
 
 header div.text {
 	border: 0px;
-	padding: 13px 18px 10px 18px;
+	padding: 15px 18px 7px 18px;
 	margin: 0px;
 	
 	font-size: 17px;
@@ -143,7 +143,7 @@ header input[type=submit] {
 }
 
 header input[type=submit]:hover {
-	color: #e5e5e5;
+	color: #444444;
 }
 
 /*************************** Navigator details *******************************/
@@ -154,10 +154,10 @@ nav span.nav-current {
 	border-bottom: #c53bce 3px solid;
 }
 
-nav a:link { color: #4a4a4a; text-decoration: none; }
-nav a:visited { color: #4a4a4a; text-decoration: none; }
-nav a:hover { color: #a3a3a3; text-decoration: none; }
-nav a:active { color: #a3a3a3; text-decoration: none;}
+nav a:link { color: #444444; text-decoration: none; }
+nav a:visited { color: #444444; text-decoration: none; }
+nav a:hover { color: #aaaaaa; text-decoration: none; }
+nav a:active { color: #aaaaaa; text-decoration: none;}
 
 /**************************** Article details ********************************/
 
@@ -231,13 +231,13 @@ article table.fill-in td:nth-child(1) {
 
 article input[type=checkbox], article input[type=text], article input[type=password], article input[type=email], article textarea, article select {
 
-	border: 1px solid #666666;
+	border: 1px solid #bbbbbb;
 	margin: 0px;
 	padding: 5px;
 
 	font-size: 20px;
-	background-color: #333333;
-	color: #e5e5e5;
+	background-color: #dddddd;
+	color: #444444;
 }
 
 article input[type=text].inline, article select.inline {
@@ -248,7 +248,7 @@ article input[type=text].inline, article select.inline {
 article input[type=submit], article input[type=button] {
 
 	background-color: #e6e472;
-	color: #212121;
+	color: #444444;
 	
 	border: 1px solid #e6e472; 
 	margin: 0px;
@@ -266,7 +266,7 @@ article input[type=submit], article input[type=button] {
 }
 
 article input[type=submit]:hover, article input[type=button]:hover {
-	background-color: #212121;
+	background-color: #ffffff;
 	color: #e6e472;
 	border: 1px solid #e6e472;
 }
@@ -274,7 +274,7 @@ article input[type=submit]:hover, article input[type=button]:hover {
 article input[type=submit].important {
 
 	background-color: #2fc8a8;
-	color: #212121;
+	color: #444444;
 	border: 1px solid #2fc8a8; 
 	
 	font-size: 40px;
@@ -282,7 +282,7 @@ article input[type=submit].important {
 
 article input[type=submit].important:hover {
 
-	background-color: #212121;
+	background-color: #ffffff;
 	color: #2fc8a8;
 	border: 1px solid #2fc8a8;
 }
@@ -290,7 +290,7 @@ article input[type=submit].important:hover {
 article input[type=submit].unimportant {
 
 	background-color: #3d3d3d;
-	color: #212121;
+	color: #444444;
 	border: 1px solid #3d3d3d;
 
 	font-size: 20px; 
@@ -298,7 +298,7 @@ article input[type=submit].unimportant {
 
 article input[type=submit].unimportant:hover {
 
-	background-color: #212121;
+	background-color: #ffffff;
 	color: #3d3d3d;
 	border: 1px solid #3d3d3d;
 }
@@ -365,7 +365,7 @@ article input[type=text].login-fill-in, input[type=password].login-fill-in {
 article input[type=submit].login {
 
 	background-color: #2fc8a8;
-	color: #212121;
+	color: #444444;
 	border: 1px solid #2fc8a8; 
 	
 	font-size: 40px;
@@ -373,7 +373,7 @@ article input[type=submit].login {
 
 article input[type=submit].login:hover {
 
-	background-color: #212121;
+	background-color: #ffffff;
 	color: #2fc8a8;
 	border: 1px solid #2fc8a8;
 }

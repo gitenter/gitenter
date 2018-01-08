@@ -2,5 +2,5 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 
     <header>
-      <a href="<c:url value="/" />"><img class="logo" src="<s:url value="/resources/image/logo.png" />" alt="enterovirus" height="48" width="144"></a>
+      <a href="<c:url value="/" />"><img class="logo" src="<s:url value="/resources/image/logo.png" />" alt="enterovirus" height="48" width="192"></a>
     </header>
