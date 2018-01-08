@@ -161,57 +161,6 @@ nav a:active { color: #aaaaaa; text-decoration: none;}
 
 /**************************** Article details ********************************/
 
-article div.left-half {
-	float: left;
-	width: calc(50% - 13px);
-}
-
-article div.right-half {
-	float: right;
-	width: calc(50% - 13px);
-}
-
-article div.right-align {
-	float: right;
-	overflow: auto;
-
-	width: 100%;
-	text-align: right;
-}
-
-article div.right-align-right-half {
-	float: right;
-	width: calc(50% - 13px);
-	text-align: right;
-}
-
-article table.hidden {
-	width: 100%;
-}
-
-article table.hidden td {
-	width: 0%;
-	/*border: 1px solid #ffffff;*/
-}
-
-article table.hidden td.expand {
-	width: 100%;
-}
-
-article table.hidden td.left {
-	padding-right: 5px;
-	text-align: left;
-}
-
-article table.hidden td.center {
-	text-align: center;
-}
-
-article table.hidden td.right {
-	padding-left: 5px;
-	text-align: right;
-}
-
 article table.fill-in {
 
 	/* I want to put this table to the center. But it seems doesn't work? */
