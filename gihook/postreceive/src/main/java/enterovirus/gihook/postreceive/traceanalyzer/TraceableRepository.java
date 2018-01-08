@@ -38,7 +38,15 @@ public class TraceableRepository {
 		for (Map.Entry<String,TraceableItem> entry : traceableItemMap.entrySet()) {
 			TraceableItem item = entry.getValue();
 			for (String upstreamItemTag : item.upstreamItemTags) {
+				
+				/*
+				 * Rewrite the error condition using exception.
+				 */
 				TraceableItem upstreamItem = traceableItemMap.get(upstreamItemTag);
+				if (upstreamItem == null) {
+					System.out.println("Item "+item.getTag()+" is refering to upstream item "+upstreamItemTag+", but "+upstreamItemTag+" does not exist.");
+				}
+				
 				upstreamItem.addDownstreamItem(item);
 				item.addUpstreamItem(upstreamItem);
 			}

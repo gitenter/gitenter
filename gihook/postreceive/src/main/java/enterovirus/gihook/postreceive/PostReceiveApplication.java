@@ -23,7 +23,7 @@ import enterovirus.gitar.wrap.CommitSha;
 		"enterovirus.gihook.postreceive"})
 public class PostReceiveApplication {
 	
-	@Autowired private UpdateDatabaseFromGit updateDatabase;
+	@Autowired private UpdateDatabaseFromGit updateDatabaseFromGit;
 	
 	public static void main (String[] args) throws Exception {
 
@@ -54,14 +54,48 @@ public class PostReceiveApplication {
 		System.out.println("oldCommitSha: "+oldCommitSha.getShaChecksumHash());
 		System.out.println("newCommitSha: "+newCommitSha.getShaChecksumHash());
 		
-//		System.setProperty("spring.profiles.active", "production");
+		/*
+		 * We need to active the Spring profile definition for 
+		 * "dataSource" and "gitSource".
+		 * 
+		 * "spring.profiles.active" system property is the only
+		 * working way I know until now.
+		 */
+		System.setProperty("spring.profiles.active", "production");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
+		/*
+		 * It is not good because it hard code system property.
+		 *  
+		 * There should be a better way rather than hard coding
+		 * it. The following post suggest a way using
+		 * "setActiveProfile":
+		 * https://dzone.com/articles/using-spring-profiles-and-java
+		 * https://spring.io/blog/2011/02/14/spring-3-1-m1-introducing-profile/
+		 * 
+		 * However, for me it raises errors in the
+		 * "new AnnotationConfigApplicationContext" part.
+		 * 
+		 * Lucky, this is only for testing. For real application
+		 * we only have one single dataSource so it is easier.
+		 */
+//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+//		context.register(ProteaseConfig.class, PostReceiveConfig.class);
+//		context.getEnvironment().setActiveProfiles("long_commit_path");
+//		context.refresh();
+		/*
+		 * What suggests in the following link seems also doesn't work:
+		 * https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html
+		 */
+//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+//		context.register(DatabaseConfig.class, GitConfig.class);
+//		context.getEnvironment().setActiveProfiles("production");
+//		context.refresh();
 		
 		PostReceiveApplication p = context.getBean(PostReceiveApplication.class);
 		p.run(status);
 	}
 	
 	private void run (CommitStatus status) throws IOException, GitAPIException {
-		updateDatabase.update(status);
+		updateDatabaseFromGit.update(status);
 	}
 }
