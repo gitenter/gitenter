@@ -271,51 +271,6 @@ article input[type=submit]:hover, article input[type=button]:hover {
 	border: 1px solid #e6e472;
 }
 
-article input[type=submit].important {
-
-	background-color: #2fc8a8;
-	color: #444444;
-	border: 1px solid #2fc8a8; 
-	
-	font-size: 40px;
-}
-
-article input[type=submit].important:hover {
-
-	background-color: #ffffff;
-	color: #2fc8a8;
-	border: 1px solid #2fc8a8;
-}
-
-article input[type=submit].unimportant {
-
-	background-color: #3d3d3d;
-	color: #444444;
-	border: 1px solid #3d3d3d;
-
-	font-size: 20px; 
-}
-
-article input[type=submit].unimportant:hover {
-
-	background-color: #ffffff;
-	color: #3d3d3d;
-	border: 1px solid #3d3d3d;
-}
-
-article input[type=submit].in-table-action {
-	
-	margin: 0px;
-	padding: 4px;
-	border-radius: 8px;
-
-	font-size: 12px;
-}
-
-article ul.for-choices {
-	list-style-type:none;
-}
-
 /* *************************************************************************
  * Log in
  * ************************************************************************* */
@@ -412,11 +367,11 @@ article table.fill-in td.form-button {
 }
 
 article span.form-error {
-	color: #FF0000;
+	color: #ff0000;
 }
 
 article span.form-successful-message {
-	color: #00FF00;
+	color: #00ff00;
 }
 
 article input[type=text].form-fill-in, input[type=password].form-fill-in, input[type=email].form-fill-in, textarea.form-fill-in {	
@@ -427,3 +382,74 @@ input[type=submit].setting {
 	font-size: 28px;
 }
 
+/* *************************************************************************
+ * Traceable item tag settings
+ * ************************************************************************* */
+
+article ul.traceable-item {
+	list-style-type: none;
+}
+
+article ul.traceable-item input {
+
+	border: 1px;
+	margin: 0px 5px 0px 5px;
+	padding: 0px 3px 0px 3px;
+	border-radius: 3px;
+
+	font-size: 20px;
+	font-weight: normal;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+
+	transition-duration: 0.3s;
+}
+
+article ul.traceable-item input:hover {
+
+	border: 1px;
+}
+
+article ul.traceable-item input.original {
+
+	border: 1px solid #444444;
+ 	background-color: #444444;
+	color: #ffffff;
+}
+
+article ul.traceable-item input.original:hover {
+
+	border: 1px solid #444444;
+	background-color: #ffffff;
+	color: #444444;
+}
+
+article ul.traceable-item input.upstream {
+
+	border: 1px solid #2fc8a8;
+ 	background-color: #2fc8a8;
+	color: #ffffff;
+}
+
+article ul.traceable-item input.upstream:hover {
+
+	border: 1px solid #2fc8a8;
+	background-color: #ffffff;
+	color: #2fc8a8;
+}
+
+article ul.traceable-item input.downstream {
+
+	border: 1px solid #e6e472;
+ 	background-color: #e6e472;
+	color: #ffffff;
+}
+
+article ul.traceable-item input.downstream:hover {
+
+	border: 1px solid #e6e472;
+	background-color: #ffffff;
+	color: #e6e472;
+}

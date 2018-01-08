@@ -87,34 +87,25 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						String itemTag =  parser.getTag();
 						TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
 						
-						html.tag("ul id=\""+itemTag+"\"");
+						html.tag("ul id=\""+itemTag+"\" class=\"traceable-item\"");
 						
-						html.text("["+itemTag+"]");
+						html.tag("form method=\"GET\" action=\"#"+itemTag+"\"");
+						html.tag("input class=\"original\" type=\"submit\" value=\""+itemTag+"\"");
+						html.tag("/form");
 						
-						/*
-						 * TODO:
-						 * Currently the link path is not correct. We need to calculate the relevant path
-						 * between the original and the linked document, and setup the link correct.
-						 */
-						html.text("{");
 						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getUpstreamPairs()) {
 							
-							html.tag("a href=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
-							html.text(pair.getTraceableItem().getItemTag());
-							html.tag("/a");
+							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
+							html.tag("input class=\"upstream\" type=\"submit\" value=\""+pair.getTraceableItem().getItemTag()+"\"");
+							html.tag("/form");
 						}
-						html.text("}");
 						
-						html.text("{");
 						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getDownstreamPairs()) {
 							
-							
-							
-							html.tag("a href=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
-							html.text(pair.getTraceableItem().getItemTag());
-							html.tag("/a");
+							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
+							html.tag("input class=\"downstream\" type=\"submit\" value=\""+pair.getTraceableItem().getItemTag()+"\"");
+							html.tag("/form");
 						}
-						html.text("}");
 						
 						html.text(traceableItem.getContent());
 						
