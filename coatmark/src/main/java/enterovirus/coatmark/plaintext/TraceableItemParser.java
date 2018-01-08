@@ -1,4 +1,4 @@
-package enterovirus.coatmark.parser;
+package enterovirus.coatmark.plaintext;
 
 import java.util.ArrayList;
 import java.util.List;

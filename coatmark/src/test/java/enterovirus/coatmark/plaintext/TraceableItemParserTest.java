@@ -1,6 +1,8 @@
-package enterovirus.coatmark.parser;
+package enterovirus.coatmark.plaintext;
 
 import org.junit.Test;
+
+import enterovirus.coatmark.plaintext.TraceableItemParser;
 
 public class TraceableItemParserTest {
 

@@ -1,6 +1,8 @@
-package enterovirus.coatmark;
+package enterovirus.coatmark.markdown;
 
 import org.junit.Test;
+
+import enterovirus.coatmark.markdown.MarkdownParser;
 
 public class MarkdownParserTest {
 

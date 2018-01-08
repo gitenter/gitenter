@@ -1,5 +1,7 @@
-package enterovirus.coatmark;
+package enterovirus.coatmark.markdown;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +16,7 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import enterovirus.coatmark.parser.TraceableItemParser;
+import enterovirus.coatmark.plaintext.TraceableItemParser;
 import enterovirus.protease.domain.*;
 
 public class TraceableItemNodeRenderer implements NodeRenderer {
@@ -96,7 +98,8 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						 */
 						html.text("{");
 						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getUpstreamPairs()) {
-							html.tag("a href=\""+pair.getDocument().getRelativeFilepath()+"#"+pair.getTraceableItem().getItemTag()+"\"");
+							
+							html.tag("a href=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
 							html.text(pair.getTraceableItem().getItemTag());
 							html.tag("/a");
 						}
@@ -104,7 +107,10 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						
 						html.text("{");
 						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getDownstreamPairs()) {
-							html.tag("a href=\""+pair.getDocument().getRelativeFilepath()+"#"+pair.getTraceableItem().getItemTag()+"\"");
+							
+							
+							
+							html.tag("a href=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
 							html.text(pair.getTraceableItem().getItemTag());
 							html.tag("/a");
 						}
@@ -133,6 +139,20 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 		}
 		html.tag("/li");
 		html.line();
+	}
+	
+	private String getRelativeFilepath (TraceabilityMapBean.TraceableItemDocumentPair pair) {
+		
+		/*
+		 * "getParent()" is needed, because Java doesn't know the original
+		 * path is a file rather than a directory. If not, then there will
+		 * be one more "../". 
+		 */
+		Path original = Paths.get(document.getRelativeFilepath()).getParent();
+		Path referred = Paths.get(pair.getDocument().getRelativeFilepath());
+		String relativeFilepath = original.relativize(referred).toString();
+		
+		return relativeFilepath;
 	}
 
 }

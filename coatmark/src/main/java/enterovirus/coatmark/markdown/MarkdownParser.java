@@ -1,4 +1,4 @@
-package enterovirus.coatmark;
+package enterovirus.coatmark.markdown;
 
 /*
  * TODO:

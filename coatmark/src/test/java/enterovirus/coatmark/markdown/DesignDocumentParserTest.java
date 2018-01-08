@@ -1,8 +1,9 @@
-package enterovirus.coatmark;
+package enterovirus.coatmark.markdown;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import enterovirus.coatmark.markdown.DesignDocumentParser;
 import enterovirus.protease.domain.*;
 
 public class DesignDocumentParserTest {

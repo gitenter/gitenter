@@ -1,4 +1,4 @@
-package enterovirus.coatmark;
+package enterovirus.coatmark.markdown;
 
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
