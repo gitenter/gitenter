@@ -3,8 +3,6 @@ package enterovirus.coatmark.markdown;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.commonmark.node.BulletList;
@@ -83,7 +81,11 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						html.line();
 					}
 					else {
-						
+
+						/*
+						 * Handle the special condition that the bullet item is the special
+						 * traceable item.
+						 */
 						String itemTag =  parser.getTag();
 						TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
 						
@@ -112,13 +114,6 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						html.tag("/li");
 						html.line();
 					}
-					
-					/*
-					 * TODO:
-					 * If/else the special condition that the bullet item is the special
-					 * traceable item.
-					 */
-					
 				}
 				else {
 					/*
