@@ -58,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>enterovirus</groupId>
-			<artifactId>coatmark</artifactId>
+			<artifactId>enzymark</artifactId>
 			<version>0.0.1-prototype</version>
 		</dependency>
 

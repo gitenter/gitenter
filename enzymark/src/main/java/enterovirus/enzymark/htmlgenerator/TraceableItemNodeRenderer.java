@@ -1,4 +1,4 @@
-package enterovirus.coatmark.htmlgenerator;
+package enterovirus.enzymark.htmlgenerator;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +14,7 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import enterovirus.coatmark.TraceableItemParser;
+import enterovirus.enzymark.TraceableItemParser;
 import enterovirus.protease.domain.*;
 
 class TraceableItemNodeRenderer implements NodeRenderer {

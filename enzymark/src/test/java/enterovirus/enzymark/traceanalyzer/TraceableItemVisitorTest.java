@@ -1,10 +1,11 @@
-package enterovirus.coatmark.traceanalyzer;
+package enterovirus.enzymark.traceanalyzer;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.junit.Test;
 
-import enterovirus.coatmark.traceanalyzer.TraceableItemVisitor;
+import enterovirus.enzymark.traceanalyzer.TraceableItem;
+import enterovirus.enzymark.traceanalyzer.TraceableItemVisitor;
 
 public class TraceableItemVisitorTest {
 	

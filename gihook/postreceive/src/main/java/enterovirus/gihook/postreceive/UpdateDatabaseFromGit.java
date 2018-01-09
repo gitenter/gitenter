@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import enterovirus.coatmark.traceanalyzer.*;
+import enterovirus.enzymark.traceanalyzer.*;
 import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.GitBlob;
 import enterovirus.gitar.GitFolderStructure;

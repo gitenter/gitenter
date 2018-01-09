@@ -1,4 +1,4 @@
-package enterovirus.coatmark.traceanalyzer;
+package enterovirus.enzymark.traceanalyzer;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Test;
+
+import enterovirus.enzymark.traceanalyzer.TraceableDocument;
+import enterovirus.enzymark.traceanalyzer.TraceableItem;
+import enterovirus.enzymark.traceanalyzer.TraceableRepository;
 
 public class TraceableRepositoryTest {
 

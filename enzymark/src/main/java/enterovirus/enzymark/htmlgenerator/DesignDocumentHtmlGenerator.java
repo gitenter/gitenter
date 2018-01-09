@@ -1,4 +1,4 @@
-package enterovirus.coatmark.htmlgenerator;
+package enterovirus.enzymark.htmlgenerator;
 
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;

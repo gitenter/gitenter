@@ -1,9 +1,9 @@
-package enterovirus.coatmark.markdown;
+package enterovirus.enzymark.htmlgenerator;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import enterovirus.coatmark.htmlgenerator.DesignDocumentHtmlGenerator;
+import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.protease.domain.*;
 
 public class DesignDocumentHtmlGeneratorTest {

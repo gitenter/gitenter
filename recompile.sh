@@ -4,7 +4,7 @@ cd ..
 cd protease
 mvn install
 cd ..
-cd coatmark
+cd enzymark
 mvn install
 cd ..
 cd gihook/postreceive

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
-import enterovirus.coatmark.htmlgenerator.DesignDocumentHtmlGenerator;
+import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 

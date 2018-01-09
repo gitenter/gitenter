@@ -1,9 +1,9 @@
-package enterovirus.coatmark.traceanalyzer;
+package enterovirus.enzymark.traceanalyzer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import enterovirus.coatmark.TraceableItemParser;
+import enterovirus.enzymark.TraceableItemParser;
 
 public class TraceableItem {
 	

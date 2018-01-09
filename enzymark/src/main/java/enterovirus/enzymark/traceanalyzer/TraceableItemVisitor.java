@@ -1,4 +1,4 @@
-package enterovirus.coatmark.traceanalyzer;
+package enterovirus.enzymark.traceanalyzer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
 import org.commonmark.node.Text;
 
-import enterovirus.coatmark.TraceableItemParser;
+import enterovirus.enzymark.TraceableItemParser;
 
 class TraceableItemVisitor extends AbstractVisitor {
 

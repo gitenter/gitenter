@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>enterovirus</groupId>
-	<artifactId>coatmark</artifactId>
+	<artifactId>enzymark</artifactId>
 	<version>0.0.1-prototype</version>
 	<packaging>jar</packaging>
 
-	<name>coatmark</name>
-	<description>coatmark</description>
+	<name>enzymark</name>
+	<description>enzymark</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

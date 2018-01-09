@@ -1,4 +1,4 @@
-package enterovirus.coatmark.traceanalyzer;
+package enterovirus.enzymark.traceanalyzer;
 
 import java.util.ArrayList;
 import java.util.List;

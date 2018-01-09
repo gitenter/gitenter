@@ -1,8 +1,8 @@
-package enterovirus.coatmark;
+package enterovirus.enzymark;
 
 import org.junit.Test;
 
-import enterovirus.coatmark.TraceableItemParser;
+import enterovirus.enzymark.TraceableItemParser;
 
 public class TraceableItemParserTest {
 
