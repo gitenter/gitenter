@@ -335,14 +335,14 @@ input[type=submit].setting {
  * Traceable item tag settings
  * ************************************************************************* */
 
-article ul.traceable-item {
+article li.traceable-item {
 	list-style-type: none;
 }
 
-article ul.traceable-item input {
+article li.traceable-item input {
 
 	border: 1px;
-	margin: 0px 5px 0px 5px;
+	margin: 3px 5px 3px 5px;
 	padding: 0px 3px 0px 3px;
 	border-radius: 3px;
 
@@ -356,47 +356,47 @@ article ul.traceable-item input {
 	transition-duration: 0.3s;
 }
 
-article ul.traceable-item input:hover {
+article li.traceable-item input:hover {
 
 	border: 1px;
 }
 
-article ul.traceable-item input.original {
+article li.traceable-item input.original {
 
 	border: 1px solid #444444;
  	background-color: #444444;
 	color: #ffffff;
 }
 
-article ul.traceable-item input.original:hover {
+article li.traceable-item input.original:hover {
 
 	border: 1px solid #444444;
 	background-color: #ffffff;
 	color: #444444;
 }
 
-article ul.traceable-item input.upstream {
+article li.traceable-item input.upstream {
 
 	border: 1px solid #2fc8a8;
  	background-color: #2fc8a8;
 	color: #ffffff;
 }
 
-article ul.traceable-item input.upstream:hover {
+article li.traceable-item input.upstream:hover {
 
 	border: 1px solid #2fc8a8;
 	background-color: #ffffff;
 	color: #2fc8a8;
 }
 
-article ul.traceable-item input.downstream {
+article li.traceable-item input.downstream {
 
 	border: 1px solid #e6e472;
  	background-color: #e6e472;
 	color: #ffffff;
 }
 
-article ul.traceable-item input.downstream:hover {
+article li.traceable-item input.downstream:hover {
 
 	border: 1px solid #e6e472;
 	background-color: #ffffff;

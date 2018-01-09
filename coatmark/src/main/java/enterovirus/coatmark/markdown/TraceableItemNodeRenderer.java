@@ -48,7 +48,7 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 		
 		BulletList bulletList = (BulletList) node;
 		html.line();
-		html.tag("li");
+		html.tag("ul");
 		html.line();
 		/* 
 		 * As all the BulletList's children should always be ListItem 
@@ -77,9 +77,9 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						/*
 						 * Here just shows the normal bubble item.
 						 */
-						html.tag("ul");
+						html.tag("li");
 						html.text(text);
-						html.tag("/ul");
+						html.tag("/li");
 						html.line();
 					}
 					else {
@@ -87,7 +87,7 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						String itemTag =  parser.getTag();
 						TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
 						
-						html.tag("ul id=\""+itemTag+"\" class=\"traceable-item\"");
+						html.tag("li id=\""+itemTag+"\" class=\"traceable-item\"");
 						
 						html.tag("form method=\"GET\" action=\"#"+itemTag+"\"");
 						html.tag("input class=\"original\" type=\"submit\" value=\""+itemTag+"\"");
@@ -109,7 +109,7 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 						
 						html.text(traceableItem.getContent());
 						
-						html.tag("/ul");
+						html.tag("/li");
 						html.line();
 					}
 					
@@ -128,7 +128,7 @@ public class TraceableItemNodeRenderer implements NodeRenderer {
 				}
 			}
 		}
-		html.tag("/li");
+		html.tag("/ul");
 		html.line();
 	}
 	
