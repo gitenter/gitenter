@@ -1,4 +1,4 @@
-package enterovirus.coatmark.markdown;
+package enterovirus.coatmark.htmlgenerator;
 
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
@@ -9,14 +9,14 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import enterovirus.protease.domain.DocumentModifiedBean;
 
-public class DesignDocumentParser {
+public class DesignDocumentHtmlGenerator {
 
 	private String content;
-	private DocumentModifiedBean document;
+	private DocumentModifiedBean documentBean;
 	
-	public DesignDocumentParser(String content, DocumentModifiedBean document) {
+	public DesignDocumentHtmlGenerator(String content, DocumentModifiedBean documentBean) {
 		this.content = content;
-		this.document = document;
+		this.documentBean = documentBean;
 	}
 	
 	public String getHtml() {
@@ -25,13 +25,13 @@ public class DesignDocumentParser {
 		HtmlRenderer renderer = HtmlRenderer.builder()
 		        .nodeRendererFactory(new HtmlNodeRendererFactory() {
 		            public NodeRenderer create(HtmlNodeRendererContext context) {
-		                return new TraceableItemNodeRenderer(context, document);
+		                return new TraceableItemNodeRenderer(context, documentBean);
 		            }
 		        })
 		        .build();
 		
-		Node document = parser.parse(content);
-		String html = renderer.render(document);
+		Node node = parser.parse(content);
+		String html = renderer.render(node);
 		
 		return html;
 	}

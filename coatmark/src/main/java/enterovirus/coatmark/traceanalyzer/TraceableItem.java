@@ -1,13 +1,12 @@
-package enterovirus.gihook.postreceive.traceanalyzer;
+package enterovirus.coatmark.traceanalyzer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import enterovirus.coatmark.plaintext.TraceableItemParser;
+import enterovirus.coatmark.TraceableItemParser;
 
 public class TraceableItem {
 	
-	private Integer lineNumber;
 	private String tag;
 	private String content;
 	
@@ -22,8 +21,7 @@ public class TraceableItem {
 	 */
 	List<String> upstreamItemTags = new ArrayList<String>();
 
-	public TraceableItem(Integer lineNumber, TraceableItemParser parsingResult) {
-		this.lineNumber = lineNumber;
+	public TraceableItem(TraceableItemParser parsingResult) {
 		this.tag = parsingResult.getTag();
 		this.content = parsingResult.getContent();
 		this.upstreamItemTags = parsingResult.getUpstreamItemTags();
@@ -41,10 +39,6 @@ public class TraceableItem {
 	 */
 	boolean addDownstreamItem (TraceableItem item) {
 		return downstreamItems.add(item);
-	}
-
-	public Integer getLineNumber() {
-		return lineNumber;
 	}
 
 	public String getTag() {

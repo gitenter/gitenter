@@ -3,10 +3,10 @@ package enterovirus.coatmark.markdown;
 import org.junit.Before;
 import org.junit.Test;
 
-import enterovirus.coatmark.markdown.DesignDocumentParser;
+import enterovirus.coatmark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.protease.domain.*;
 
-public class DesignDocumentParserTest {
+public class DesignDocumentHtmlGeneratorTest {
 	
 	private DocumentModifiedBean document;
 
@@ -17,8 +17,8 @@ public class DesignDocumentParserTest {
 		String relativeFilepath = "document.md";
 		document = new DocumentModifiedBean(commit, relativeFilepath);
 		
-		TraceableItemBean traceableItem1 = new TraceableItemBean(document, new Integer(1), "tag-1", "content-1");
-		TraceableItemBean traceableItem2 = new TraceableItemBean(document, new Integer(2), "tag-2", "content-2");
+		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
+		TraceableItemBean traceableItem2 = new TraceableItemBean(document, "tag-2", "content-2");
 		document.addTraceableItem(traceableItem1);
 		document.addTraceableItem(traceableItem2);
 		
@@ -39,7 +39,7 @@ public class DesignDocumentParserTest {
 	
 	private void showHtml (String content) {
 		
-		DesignDocumentParser parser = new DesignDocumentParser(content, document);
+		DesignDocumentHtmlGenerator parser = new DesignDocumentHtmlGenerator(content, document);
 		System.out.println("====================");
 		System.out.println(content);
 		System.out.println("--------------------");

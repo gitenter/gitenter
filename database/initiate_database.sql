@@ -130,10 +130,9 @@ CREATE TABLE git.traceable_item (
 	id serial PRIMARY KEY,
 
 	original_document_id serial REFERENCES git.document_modified (id) ON DELETE CASCADE,
-	line_number integer NOT NULL,
 	item_tag text NOT NULL,
 	content text NOT NULL,
-	UNIQUE (original_document_id, line_number)	
+	UNIQUE (original_document_id, item_tag)	
 );
 
 CREATE TABLE git.traceability_map (

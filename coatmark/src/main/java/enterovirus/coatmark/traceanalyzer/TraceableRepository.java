@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive.traceanalyzer;
+package enterovirus.coatmark.traceanalyzer;
 
 import java.io.File;
 import java.util.ArrayList;

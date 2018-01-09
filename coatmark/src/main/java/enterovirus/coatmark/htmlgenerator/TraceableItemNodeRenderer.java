@@ -1,4 +1,4 @@
-package enterovirus.coatmark.markdown;
+package enterovirus.coatmark.htmlgenerator;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,10 +14,10 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import enterovirus.coatmark.plaintext.TraceableItemParser;
+import enterovirus.coatmark.TraceableItemParser;
 import enterovirus.protease.domain.*;
 
-public class TraceableItemNodeRenderer implements NodeRenderer {
+class TraceableItemNodeRenderer implements NodeRenderer {
 	
 	private final HtmlWriter html;
 	private DocumentModifiedBean document;

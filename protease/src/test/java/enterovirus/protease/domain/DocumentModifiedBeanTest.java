@@ -18,8 +18,8 @@ public class DocumentModifiedBeanTest {
 		String relativeFilepath = "document.md";
 		document = new DocumentModifiedBean(commit, relativeFilepath);
 		
-		TraceableItemBean traceableItem1 = new TraceableItemBean(document, new Integer(1), "tag-1", "content-1");
-		TraceableItemBean traceableItem2 = new TraceableItemBean(document, new Integer(2), "tag-2", "content-2");
+		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
+		TraceableItemBean traceableItem2 = new TraceableItemBean(document, "tag-2", "content-2");
 		document.addTraceableItem(traceableItem1);
 		document.addTraceableItem(traceableItem2);
 		

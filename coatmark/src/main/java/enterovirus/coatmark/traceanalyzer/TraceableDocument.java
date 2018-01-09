@@ -1,9 +1,10 @@
-package enterovirus.gihook.postreceive.traceanalyzer;
+package enterovirus.coatmark.traceanalyzer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import enterovirus.coatmark.plaintext.TraceableItemParser;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
 
 public class TraceableDocument {
 
@@ -16,23 +17,20 @@ public class TraceableDocument {
 		this.repository = repository;
 		this.relativeFilepath = relativeFilepath;
 		
+		Parser parser = Parser.builder().build();
+		Node node = parser.parse(textContent);
+		TraceableItemVisitor visitor = new TraceableItemVisitor();
+		node.accept(visitor);
+		
+		traceableItems = visitor.getTraceableItems();
+		
 		/*
 		 * TODO:
-		 * Split by "newline" which is compatible to Windows
-		 * or Linux formats.
+		 * Raise exceptional condition if tag is not unique
+		 * through an repository.
 		 */
-		int lineNumber = 1;
-		for (String lineContent : textContent.split("\n")) {
-			
-			TraceableItemParser parsingResult = new TraceableItemParser(lineContent);
-			
-			if (parsingResult.isTraceableItem()) {
-				TraceableItem item = new TraceableItem(lineNumber, parsingResult);
-				traceableItems.add(item);
-				this.repository.putIntoTraceableItem(item);
-			}
-			
-			++lineNumber;
+		for (TraceableItem traceableItem : visitor.getTraceableItems()) {
+			this.repository.putIntoTraceableItem(traceableItem);
 		}
 	}
 	

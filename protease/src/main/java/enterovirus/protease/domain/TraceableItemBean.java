@@ -32,9 +32,6 @@ public class TraceableItemBean {
 	@JoinColumn(name="original_document_id")
 	private DocumentModifiedBean originalDocument;
 	
-	@Column(name="line_number", updatable=false)
-	private Integer lineNumber;
-	
 	@Column(name="item_tag", updatable=false)
 	private String itemTag;
 	
@@ -54,9 +51,8 @@ public class TraceableItemBean {
 		
 	}
 
-	public TraceableItemBean(DocumentModifiedBean document, Integer lineNumber, String itemTag, String content) {
+	public TraceableItemBean(DocumentModifiedBean document, String itemTag, String content) {
 		this.originalDocument = document;
-		this.lineNumber = lineNumber;
 		this.itemTag = itemTag;
 		this.content = content;
 	}

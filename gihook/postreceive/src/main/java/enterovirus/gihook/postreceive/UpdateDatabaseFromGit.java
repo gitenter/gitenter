@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.coatmark.traceanalyzer.*;
 import enterovirus.gihook.postreceive.status.CommitStatus;
-import enterovirus.gihook.postreceive.traceanalyzer.*;
 import enterovirus.gitar.GitBlob;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
@@ -174,11 +174,10 @@ public class UpdateDatabaseFromGit {
 			
 			for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 				
-				Integer lineNumber = traceableItem.getLineNumber();
 				String itemTag = traceableItem.getTag();
 				String content = traceableItem.getContent();
 				
-				TraceableItemBean itemBean = new TraceableItemBean(documentBean, lineNumber, itemTag, content);
+				TraceableItemBean itemBean = new TraceableItemBean(documentBean, itemTag, content);
 				helper.traceabilityIterateMap.put(traceableItem, itemBean);
 				helper.traceablilityBuilderMap.put(itemTag, itemBean);
 				
