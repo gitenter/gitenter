@@ -1,14 +1,12 @@
 package enterovirus.enzymark;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
 public class TraceableItemParser {
 
 	private String tag;
-	private List<String> upstreamItemTags = new ArrayList<String>();
+	private String[] upstreamItemTags = new String[] {};
 	private String content;
 	private boolean isTraceableItem = true;
 	
@@ -51,9 +49,7 @@ public class TraceableItemParser {
 				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} ([ \\t\\S]+)");
 				MatchResult result = s.match();
 				tag = result.group(1);
-				for (String upstreamItemTag : result.group(2).split(",")) {
-					upstreamItemTags.add(upstreamItemTag);
-				}
+				upstreamItemTags = result.group(2).split(",");
 				content = result.group(3);			
 			}
 		}
@@ -71,7 +67,7 @@ public class TraceableItemParser {
 		return tag;
 	}
 	
-	public List<String> getUpstreamItemTags() {
+	public String[] getUpstreamItemTags() {
 		return upstreamItemTags;
 	}
 

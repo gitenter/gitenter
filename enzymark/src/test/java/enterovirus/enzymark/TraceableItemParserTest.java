@@ -1,5 +1,7 @@
 package enterovirus.enzymark;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import enterovirus.enzymark.TraceableItemParser;
@@ -8,31 +10,31 @@ public class TraceableItemParserTest {
 
 	@Test
 	public void test1() {
-		TraceableItemParser parsingResult = new TraceableItemParser("- [tagWith-_123] Content with !@#$%^&*()[], space and \\t in it.");
-		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
-		System.out.println("tag: "+parsingResult.getTag());
-		System.out.println("content: "+parsingResult.getContent());
-		System.out.println("upstreamItems:");
-		for (String upstreamItemTag : parsingResult.getUpstreamItemTags()) {
-			System.out.println(upstreamItemTag); 
-		}
+		TraceableItemParser parsingResult = new TraceableItemParser("- [tagWith-_123] Content with !@#$%^&*()[], space and \t in it.");
+		assertEquals(parsingResult.isTraceableItem(), true);
+		assertEquals(parsingResult.getTag(), "tagWith-_123");
+		assertEquals(parsingResult.getContent(), "Content with !@#$%^&*()[], space and \t in it.");
+		assertEquals(parsingResult.getUpstreamItemTags(), new String[] {});
 	}
 	
 	@Test
 	public void test2() {
-		TraceableItemParser parsingResult = new TraceableItemParser("[tagWith-_123]{referWith-_123,referWith-_456} Content with !@#$%^&*()[], space and \\\\t in it.");
-		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
-		System.out.println("tag: "+parsingResult.getTag());
-		System.out.println("content: "+parsingResult.getContent());
-		System.out.println("upstreamItems:");
-		for (String upstreamItemTag : parsingResult.getUpstreamItemTags()) {
-			System.out.println(upstreamItemTag); 
-		}
+		TraceableItemParser parsingResult = new TraceableItemParser("[tagWith-_123]{referWith-_123,referWith-_456} Content with !@#$%^&*()[], space and \t in it.");
+		assertEquals(parsingResult.isTraceableItem(), true);
+		assertEquals(parsingResult.getTag(), "tagWith-_123");
+		assertEquals(parsingResult.getContent(), "Content with !@#$%^&*()[], space and \t in it.");
+		assertEquals(parsingResult.getUpstreamItemTags(), new String[] {"referWith-_123", "referWith-_456"});
 	}
 	
 	@Test
 	public void test3() {
 		TraceableItemParser parsingResult = new TraceableItemParser("~~~garbage~~~");
-		System.out.println("isTraceableItem(): "+parsingResult.isTraceableItem());
+		assertEquals(parsingResult.isTraceableItem(), false);
 	}
+	
+	/*
+	 * TODO:
+	 * Add special cases of not well written traceable item cases,
+	 * and conditions whether they should be treated as valid or not.
+	 */
 }

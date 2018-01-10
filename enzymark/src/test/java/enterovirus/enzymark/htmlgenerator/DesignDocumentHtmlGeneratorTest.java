@@ -14,7 +14,7 @@ public class DesignDocumentHtmlGeneratorTest {
 	public void init() {
 		
 		CommitBean commit = new CommitBean();
-		String relativeFilepath = "document.md";
+		String relativeFilepath = "fake-path-for-a-document.md";
 		document = new DocumentModifiedBean(commit, relativeFilepath);
 		
 		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");

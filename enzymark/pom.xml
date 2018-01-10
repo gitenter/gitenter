@@ -39,9 +39,7 @@
 			<artifactId>protease</artifactId>
 			<version>0.0.1-prototype</version>
 			<!-- 
-				Exclude everything, because "protease" is a Spring application,
-				and "capsid" is a Spring Boot application. They only share the
-				domain model code, but not the Spring setups.
+				Just want to use the beans. Nothing else.
 			-->
 			<exclusions>
 				<exclusion>

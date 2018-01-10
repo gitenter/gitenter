@@ -19,7 +19,7 @@ public class TraceableItem {
 	 * After all the upstream and downstream items are refreshed, 
 	 * this attribute has no use.
 	 */
-	List<String> upstreamItemTags = new ArrayList<String>();
+	String[] upstreamItemTags;
 
 	public TraceableItem(TraceableItemParser parsingResult) {
 		this.tag = parsingResult.getTag();
