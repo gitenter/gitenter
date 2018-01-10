@@ -66,9 +66,22 @@ CREATE TABLE git.git_commit (
 	sha_checksum_hash text NOT NULL UNIQUE
 );
 
+CREATE TABLE git.git_commit_valid (
+	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
+);
+
+CREATE TABLE git.git_commit_invalid (
+	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE,
+	error_message text NOT NULL
+);
+
+CREATE TABLE git.git_commit_ignored (
+	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
+);
+
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
-	commit_id serial REFERENCES git.git_commit (id) ON DELETE CASCADE
+	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE
 );
 
 CREATE FUNCTION git.commit_id_from_document (integer) 

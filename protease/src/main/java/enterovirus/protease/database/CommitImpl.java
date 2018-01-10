@@ -62,9 +62,15 @@ public class CommitImpl implements CommitRepository {
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		BranchName branchName = new BranchName(branch);
 		
-		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, branchName);
+		/*
+		 * TODO:
+		 * Consider another gitar class that only get SHA but do not load the
+		 * folder structure. So for commits which are not valid, there's no
+		 * need to load the folder structure.
+		 */
+		GitFolderStructure gitFolderStructure = new GitFolderStructure(repositoryDirectory, branchName);
 		
-		String shaChecksumHash = gitCommit.getCommitSha().getShaChecksumHash();
+		String shaChecksumHash = gitFolderStructure.getCommitSha().getShaChecksumHash();
 		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(shaChecksumHash);
 		
 		if (commits.size() == 0) {
@@ -75,7 +81,11 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		CommitBean commit = commits.get(0);
-		commit.setFolderStructure(gitCommit.getFolderStructure());
+		
+		if (commit instanceof CommitValidBean) {
+			((CommitValidBean)commit).setFolderStructure(gitFolderStructure.getFolderStructure());
+		}
+		
 		return commit;
 	}
 	
@@ -91,9 +101,10 @@ public class CommitImpl implements CommitRepository {
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		CommitSha commitSha = new CommitSha(commit.getShaChecksumHash());
 		
-		GitFolderStructure gitCommit = new GitFolderStructure(repositoryDirectory, commitSha);
-		
-		commit.setFolderStructure(gitCommit.getFolderStructure());
+		if (commit instanceof CommitValidBean) {
+			GitFolderStructure gitFolderStructure = new GitFolderStructure(repositoryDirectory, commitSha);
+			((CommitValidBean)commit).setFolderStructure(gitFolderStructure.getFolderStructure());
+		}
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {
