@@ -12,23 +12,18 @@ public class TraceableDocument {
 	private String relativeFilepath;
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	
-	public TraceableDocument (TraceableRepository repository, String relativeFilepath, String textContent) {
+	public TraceableDocument (TraceableRepository repository, String relativeFilepath, String textContent) throws ItemTagNotUniqueException {
 		
 		this.repository = repository;
 		this.relativeFilepath = relativeFilepath;
 		
 		Parser parser = Parser.builder().build();
 		Node node = parser.parse(textContent);
-		TraceableItemVisitor visitor = new TraceableItemVisitor();
+		TraceableItemVisitor visitor = new TraceableItemVisitor(this);
 		node.accept(visitor);
 		
 		traceableItems = visitor.getTraceableItems();
 		
-		/*
-		 * TODO:
-		 * Raise exceptional condition if tag is not unique
-		 * through an repository.
-		 */
 		for (TraceableItem traceableItem : visitor.getTraceableItems()) {
 			this.repository.putIntoTraceableItem(traceableItem);
 		}

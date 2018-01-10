@@ -99,28 +99,33 @@ public class UpdateDatabaseFromGit {
 		 * TODO:
 		 * Consider add a config file to indicate that this system only 
 		 * traces files of some particular folders/paths.
-		 * 
-		 * TODO:
-		 * Gives error if the item tag is not unique along a repository.
 		 */
-		TraceableRepository traceableRepository = getTraceableRepository(status, commitInfo);
-		
-		/*
-		 * Write the data into the database through the persistence layer.
-		 * 
-		 * First round to build all traceable items, and the second round
-		 * to retrieve the traceability map.
-		 * 
-		 * Save to database may or may not be included in the following 
-		 * methods. In the currently implementation data are saved multiple
-		 * times (by the limitation of Hibernate). See detailed comments
-		 * inside of the methods.
-		 */
-		TraceabilityBuildHelper helper = buildDocumentsAndTraceableItems(commit, traceableRepository);
-		buildTraceabilityMaps(commit, helper);
+		try {
+			TraceableRepository traceableRepository = getTraceableRepository(status, commitInfo);
+			
+			/*
+			 * Write the data into the database through the persistence layer.
+			 * 
+			 * First round to build all traceable items, and the second round
+			 * to retrieve the traceability map.
+			 * 
+			 * Save to database may or may not be included in the following 
+			 * methods. In the currently implementation data are saved multiple
+			 * times (by the limitation of Hibernate). See detailed comments
+			 * inside of the methods.
+			 */
+			TraceabilityBuildHelper helper = buildDocumentsAndTraceableItems(commit, traceableRepository);
+			buildTraceabilityMaps(commit, helper);
+		}
+		catch (TraceAnalyzerException e) {
+			/*
+			 * TODO:
+			 * Gives error if the item tag is not unique along a repository.
+			 */
+		}
 	}
 	
-	private TraceableRepository getTraceableRepository (CommitStatus status, CommitInfo commitInfo) throws IOException {
+	private TraceableRepository getTraceableRepository (CommitStatus status, CommitInfo commitInfo) throws IOException, TraceAnalyzerException {
 
 		List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitBlobs();
 		

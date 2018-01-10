@@ -1,5 +1,11 @@
 package enterovirus.enzymark.traceanalyzer;
 
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.junit.Test;
@@ -10,7 +16,7 @@ import enterovirus.enzymark.traceanalyzer.TraceableItemVisitor;
 public class TraceableItemVisitorTest {
 	
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		
 		/*
 		 * TODO:
@@ -27,16 +33,20 @@ public class TraceableItemVisitorTest {
 				+ "\n"
 				+ "more text\n"
 				+ "\n"
-				+ "- [tag]{refer} traceable item\n"
-				+ "- [another-tag] another traceable item\n";
+				+ "- [tag]{refer} a traceable item.\n"
+				+ "- [another-tag] another traceable item.\n";
+		
+		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
+		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path", content);
 		
 		Parser parser = Parser.builder().build();
 		Node node = parser.parse(content);
-		TraceableItemVisitor visitor = new TraceableItemVisitor();
+		TraceableItemVisitor visitor = new TraceableItemVisitor(document);
 		node.accept(visitor);
 		
-		for (TraceableItem traceableItem : visitor.getTraceableItems()) {
-			System.out.println(traceableItem.getTag());
-		}
+		List<TraceableItem> resultItems = new ArrayList<TraceableItem>(); 
+		resultItems.add(new TraceableItem("tag", "a traceable item.", document, new String[] {"refer"}));
+		resultItems.add(new TraceableItem("another-tag", "another traceable item.", document, new String[] {} ));
+		assertEquals(visitor.getTraceableItems(), resultItems);
 	}
 }

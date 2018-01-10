@@ -21,7 +21,12 @@ public class TraceableRepository {
 		return traceableDocuments.add(document);
 	}
 	
-	TraceableItem putIntoTraceableItem (TraceableItem item) {
+	TraceableItem putIntoTraceableItem (TraceableItem item) throws ItemTagNotUniqueException {
+		
+		if (traceableItemMap.containsKey(item.getTag())) {
+			TraceableItem originalItem = traceableItemMap.get(item.getTag());
+			throw new ItemTagNotUniqueException(item.getTag(), originalItem.getDocument(), item.getDocument());
+		}
 		return traceableItemMap.put(item.getTag(), item);
 	}
 	
@@ -33,7 +38,7 @@ public class TraceableRepository {
 		return traceableDocuments;
 	}
 	
-	public void refreshUpstreamAndDownstreamItems () {
+	public void refreshUpstreamAndDownstreamItems () throws UpstreamTagNotExistException {
 		
 		for (Map.Entry<String,TraceableItem> entry : traceableItemMap.entrySet()) {
 			TraceableItem item = entry.getValue();
@@ -44,7 +49,7 @@ public class TraceableRepository {
 				 */
 				TraceableItem upstreamItem = traceableItemMap.get(upstreamItemTag);
 				if (upstreamItem == null) {
-					System.out.println("Item "+item.getTag()+" is refering to upstream item "+upstreamItemTag+", but "+upstreamItemTag+" does not exist.");
+					throw new UpstreamTagNotExistException(item.getTag(), upstreamItemTag, item.getDocument());
 				}
 				
 				upstreamItem.addDownstreamItem(item);

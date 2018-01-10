@@ -1,9 +1,10 @@
 package enterovirus.enzymark.traceanalyzer;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -12,30 +13,39 @@ import enterovirus.enzymark.traceanalyzer.TraceableItem;
 import enterovirus.enzymark.traceanalyzer.TraceableRepository;
 
 public class TraceableRepositoryTest {
-
+	
 	@Test
-	public void test() throws IOException {
+	public void test1() throws Exception {
 		
-		String[] relativeFilepaths = {"document-1.md", "document-2.md"};
+		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo/");
+		String content1 = "normal text\n"
+				+ "\n"
+				+ "- [tag1] a traceable item.\n"
+				+ "- [tag2]{tag1} a traceable item with in-document reference.";
+		TraceableDocument document1 = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content1);
+		repository.addTraceableDocument(document1);
 		
-		TraceableRepository repository = new TraceableRepository(repositoryDirectory);
-		
-		for (String relativeFilepath : relativeFilepaths) {
-			File filepath = new File(repositoryDirectory, relativeFilepath);
-			String textContent = readFromFile(filepath);
-			TraceableDocument document = new TraceableDocument(repository, relativeFilepath, textContent);
-			repository.addTraceableDocument(document);
-		}
+		String content2 = "normal text\n"
+				+ "\n"
+				+ "- [tag3]{tag1} a traceable item with cross-document reference.";
+		TraceableDocument document2 = new TraceableDocument(repository, "/fake/relative/file/path/for/document2", content2);
+		repository.addTraceableDocument(document2);
 		
 		repository.refreshUpstreamAndDownstreamItems();
 		
+		List<String> tag1Downstream = new ArrayList<String>();
+		for (TraceableItem item : document1.getTraceableItems().get(0).getDownstreamItems()) {
+			tag1Downstream.add(item.getTag());
+		}
+		
+		List<String> tag1DownstreamExpect = new ArrayList<String>();
+		tag1DownstreamExpect.add("tag2");
+		tag1DownstreamExpect.add("tag3");
+		
+		assertEquals(tag1Downstream, tag1DownstreamExpect);
+		
 		display(repository);
-	}
-	
-	private String readFromFile (File filepath) throws IOException {
-		return new String(Files.readAllBytes(Paths.get(filepath.getAbsolutePath())));
 	}
 	
 	private void display (TraceableRepository repository) {
@@ -58,5 +68,46 @@ public class TraceableRepositoryTest {
 				System.out.println("");
 			}
 		}
+	}
+	
+	@Test(expected = ItemTagNotUniqueException.class)
+	public void test2() throws Exception {
+		
+		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
+		
+		String content = "- [tag] a traceable item.\n"
+				+ "- [tag] another traceable item with tag conflict.";
+		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content);
+		repository.addTraceableDocument(document);
+		
+		repository.refreshUpstreamAndDownstreamItems();	
+	}
+	
+	@Test(expected = ItemTagNotUniqueException.class)
+	public void test3() throws Exception {
+		
+		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
+		
+		String content1 = "- [tag] a traceable item.";
+		TraceableDocument document1 = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content1);
+		repository.addTraceableDocument(document1);
+		
+		String content2 = "- [tag] a traceable item with cross-document tag conflict.";
+		TraceableDocument document2 = new TraceableDocument(repository, "/fake/relative/file/path/for/document2", content2);
+		repository.addTraceableDocument(document2);
+		
+		repository.refreshUpstreamAndDownstreamItems();	
+	}
+	
+	@Test(expected = UpstreamTagNotExistException.class)
+	public void test4() throws Exception {
+		
+		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
+		
+		String content = "- [tag]{refer-not-exist} another traceable item with reference not exist.";
+		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content);
+		repository.addTraceableDocument(document);
+		
+		repository.refreshUpstreamAndDownstreamItems();	
 	}
 }

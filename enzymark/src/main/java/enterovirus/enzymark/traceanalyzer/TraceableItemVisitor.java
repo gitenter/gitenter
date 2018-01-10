@@ -15,6 +15,11 @@ import enterovirus.enzymark.TraceableItemParser;
 class TraceableItemVisitor extends AbstractVisitor {
 
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
+	private TraceableDocument document;
+	
+	TraceableItemVisitor (TraceableDocument document) {
+		this.document = document;
+	}
 	
 	/*
 	 * This is a call for all BulletList nodes.
@@ -46,7 +51,7 @@ class TraceableItemVisitor extends AbstractVisitor {
 					
 					if (parsingResult.isTraceableItem() == true) {
 					
-						TraceableItem item = new TraceableItem(parsingResult);
+						TraceableItem item = new TraceableItem(parsingResult, document);
 						traceableItems.add(item);
 					}
 				}
