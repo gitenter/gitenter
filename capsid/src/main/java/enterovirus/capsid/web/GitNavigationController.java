@@ -34,7 +34,12 @@ public class GitNavigationController {
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
-		model.addAttribute("folderStructure", commit.getFolderStructure());
+		/*
+		 * TODO:
+		 * Handle the cases if commit is invalid/ignored.
+		 */
+		assert commit instanceof CommitValidBean;
+		model.addAttribute("folderStructure", ((CommitValidBean)commit).getFolderStructure());
 		
 		return "git-navigation/repository";
 	}

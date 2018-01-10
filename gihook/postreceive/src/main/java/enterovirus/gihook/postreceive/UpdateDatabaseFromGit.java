@@ -56,52 +56,53 @@ public class UpdateDatabaseFromGit {
 	
 	private void updateGitCommit (CommitStatus status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
 		
-		CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
-		repository.addCommit(commit);
-		
-		/*
-		 * TODO:
-		 * GitLog gives all the previous commits related to the current 
-		 * branch (so include the one previous share with other branch).
-		 * Therefore, it is possible that one commit already exists in
-		 * the SQL database system (notice that SQL doesn't in charge of
-		 * the part of the topology/relationship of the commits).
-		 * 
-		 * Need to think carefully the condition that post-receive have 
-		 * more then one line of stdin (I don't know any condition until
-		 * now) and check whether the above condition is possible. If 
-		 * yes, need to write an exceptional condition somewhere in here.
-		 *
-		 * NOTE 1:
-		 * We can only use: commitRepository.saveAndFlush(commit);
-		 * but not: repositoryRepository.saveAndFlush(repository);
-		 *   
-		 * For the second case, "commit.id" will not be updated,
-		 * so it will raise errors when we do "commitRepository.saveAndFlush(commit)"
-		 * in later part of this script.
-		 * 
-		 * NOTE 2:
-		 * Data will be saveAndFlush again after the first and the
-		 * second round (see later comments). It doesn't really matter
-		 * whether commit is saved or not in here. We do it here
-		 * as it makes irrelevant things separately handled, but it
-		 * doesn't really causes performance overhead (since the number
-		 * of commits is really tiny compare to other operations).
-		 */
-//		repositoryRepository.saveAndFlush(repository);
-		commitRepository.saveAndFlush(commit);
-
-		/*
-		 * Communicate with git to get the useful information needed
-		 * to be written to the database. This part doesn't touch the
-		 * persistence layer and/or the database.
-		 * 
+		/* 
 		 * TODO:
 		 * Consider add a config file to indicate that this system only 
 		 * traces files of some particular folders/paths.
 		 */
 		try {
+			/*
+			 * Communicate with git to get the useful information needed
+			 * to be written to the database. This part doesn't touch the
+			 * persistence layer and/or the database.
+			 */
 			TraceableRepository traceableRepository = getTraceableRepository(status, commitInfo);
+			
+			CommitValidBean commit = new CommitValidBean(repository, commitInfo.getCommitSha());
+			repository.addCommit(commit);
+			
+			/*
+			 * TODO:
+			 * GitLog gives all the previous commits related to the current 
+			 * branch (so include the one previous share with other branch).
+			 * Therefore, it is possible that one commit already exists in
+			 * the SQL database system (notice that SQL doesn't in charge of
+			 * the part of the topology/relationship of the commits).
+			 * 
+			 * Need to think carefully the condition that post-receive have 
+			 * more then one line of stdin (I don't know any condition until
+			 * now) and check whether the above condition is possible. If 
+			 * yes, need to write an exceptional condition somewhere in here.
+			 *
+			 * NOTE 1:
+			 * We can only use: commitRepository.saveAndFlush(commit);
+			 * but not: repositoryRepository.saveAndFlush(repository);
+			 *   
+			 * For the second case, "commit.id" will not be updated,
+			 * so it will raise errors when we do "commitRepository.saveAndFlush(commit)"
+			 * in later part of this script.
+			 * 
+			 * NOTE 2:
+			 * Data will be saveAndFlush again after the first and the
+			 * second round (see later comments). It doesn't really matter
+			 * whether commit is saved or not in here. We do it here
+			 * as it makes irrelevant things separately handled, but it
+			 * doesn't really causes performance overhead (since the number
+			 * of commits is really tiny compare to other operations).
+			 */
+//			repositoryRepository.saveAndFlush(repository);
+			commitRepository.saveAndFlush(commit);
 			
 			/*
 			 * Write the data into the database through the persistence layer.
@@ -118,10 +119,11 @@ public class UpdateDatabaseFromGit {
 			buildTraceabilityMaps(commit, helper);
 		}
 		catch (TraceAnalyzerException e) {
-			/*
-			 * TODO:
-			 * Gives error if the item tag is not unique along a repository.
-			 */
+			
+			CommitBean commit = new CommitInvalidBean(repository, commitInfo.getCommitSha(), e.getMessage());
+			repository.addCommit(commit);
+			
+			commitRepository.saveAndFlush(commit);
 		}
 	}
 	
@@ -162,7 +164,7 @@ public class UpdateDatabaseFromGit {
 	}
 	
 	private TraceabilityBuildHelper buildDocumentsAndTraceableItems (
-			CommitBean commit, 
+			CommitValidBean commit, 
 			TraceableRepository traceableRepository) {
 		
 		TraceabilityBuildHelper helper = new TraceabilityBuildHelper();
@@ -222,7 +224,7 @@ public class UpdateDatabaseFromGit {
 	}
 	
 	private void buildTraceabilityMaps (
-			CommitBean commit,
+			CommitValidBean commit,
 			TraceabilityBuildHelper helper) {
 
 		for (Map.Entry<TraceableItem,TraceableItemBean> entry : helper.traceabilityIterateMap.entrySet()) {

@@ -66,6 +66,10 @@ CREATE TABLE git.git_commit (
 	sha_checksum_hash text NOT NULL UNIQUE
 );
 
+-- TODO:
+-- For this table, the created table has another column 
+-- "error_message character varying(255)"
+-- Really weird. Need to check why.
 CREATE TABLE git.git_commit_valid (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );

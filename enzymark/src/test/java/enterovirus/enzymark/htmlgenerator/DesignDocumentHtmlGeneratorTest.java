@@ -13,7 +13,7 @@ public class DesignDocumentHtmlGeneratorTest {
 	@Before
 	public void init() {
 		
-		CommitBean commit = new CommitBean();
+		CommitValidBean commit = new CommitValidBean();
 		String relativeFilepath = "fake-path-for-a-document.md";
 		document = new DocumentModifiedBean(commit, relativeFilepath);
 		

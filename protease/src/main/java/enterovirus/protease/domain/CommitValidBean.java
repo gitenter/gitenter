@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import enterovirus.gitar.GitFolderStructure;
+import enterovirus.gitar.wrap.CommitSha;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,6 +34,17 @@ public class CommitValidBean extends CommitBean {
 	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
+	
+	/*
+	 * This default constructor is needed for Hibernate.
+	 */
+	public CommitValidBean () {
+		super();
+	}
+	
+	public CommitValidBean (RepositoryBean repository, CommitSha commitSha) {
+		super(repository, commitSha);
+	}
 	
 	public boolean addDocument (DocumentBean document) {
 		return documents.add(document);
