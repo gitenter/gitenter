@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,7 +78,7 @@ public class GitNavigationController {
 			@PathVariable Integer repositoryId,
 			@PathVariable CommitSha commitSha,
 			HttpServletRequest request,
-			Model model) throws IOException {
+			Model model) throws Exception {
 		
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
@@ -94,7 +95,7 @@ public class GitNavigationController {
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
-			Model model) throws IOException {
+			Model model) throws Exception {
 		
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
@@ -113,18 +114,27 @@ public class GitNavigationController {
 	public String showFolderStructureDefault (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
+			@ModelAttribute("branch") String branch,
 			HttpServletRequest request,
-			Model model) throws IOException {
+			Model model) throws Exception {
 		
-		BranchName branchName = new BranchName("master");
+		System.out.println("///"+branch+"///");
+		BranchName branchName;
+		if (branch.equals("")) {
+			branchName = new BranchName("master");
+		}
+		else {
+			branchName = new BranchName(branch);
+		}
 		model.addAttribute("branchName", branchName);
 		
-		return showFolderStructureByBranch(organizationId, repositoryId, branchName, request, model);
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName();
 	}
 	
-	private String showFolderStructure (CommitBean commit, Model model) {
+	private String showFolderStructure (CommitBean commit, Model model) throws Exception {
 
 		RepositoryBean repository = commit.getRepository();
+		repositoryGitDAO.loadBranchNames(repository);
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
