@@ -1,6 +1,8 @@
 package enterovirus.capsid.web;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +25,7 @@ import enterovirus.protease.domain.*;
 public class GitNavigationController {	
 
 	@Autowired private RepositoryRepository repositoryRepository;
-	@Autowired private RepositoryCommitLogRepository repositoryCommitLogRepository;
+	@Autowired private RepositoryGitDAO repositoryGitDAO;
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private DocumentRepository documentRepository;
 	
@@ -36,10 +39,11 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
-		model.addAttribute("branch", branchName.getName());
+		model.addAttribute("branchName", branchName);
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
-		repositoryCommitLogRepository.loadCommitLog(repository, branchName);
+		repositoryGitDAO.loadCommitLog(repository, branchName);
+		repositoryGitDAO.loadBranchNames(repository);
 		
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
@@ -56,6 +60,15 @@ public class GitNavigationController {
 		return "git-navigation/commit-list";
 	}
 	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits", method=RequestMethod.GET)
+	public String showCommitListRedirect (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@ModelAttribute("branch") BranchName branchName) {
+		
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName()+"/commits";
+	}
+
 	/*************************************************************************/
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}", method=RequestMethod.GET)
@@ -70,6 +83,8 @@ public class GitNavigationController {
 		model.addAttribute("currentUrl", currentUrl);
 		
 		CommitBean commit = commitRepository.findByCommitSha(commitSha);
+		model.addAttribute("shaChecksumHash", commit.getShaChecksumHash());
+		
 		return showFolderStructure(commit, model);
 	}
 	
@@ -84,7 +99,7 @@ public class GitNavigationController {
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
 		
-		model.addAttribute("branch", branchName.getName());
+		model.addAttribute("branchName", branchName);
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
 		return showFolderStructure(commit, model);
@@ -102,7 +117,7 @@ public class GitNavigationController {
 			Model model) throws IOException {
 		
 		BranchName branchName = new BranchName("master");
-		model.addAttribute("branch", branchName.getName());
+		model.addAttribute("branchName", branchName);
 		
 		return showFolderStructureByBranch(organizationId, repositoryId, branchName, request, model);
 	}

@@ -1,5 +1,6 @@
 package enterovirus.protease.domain;
 
+import java.io.File;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,8 +18,9 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import enterovirus.gitar.wrap.CommitInfo;
 import lombok.*;
+
+import enterovirus.gitar.wrap.*;
 
 @Getter
 @Setter
@@ -43,6 +45,15 @@ public class RepositoryBean {
 	@Column(name="display_name")
 	private String displayName;
 
+	/*
+	 * TODO:
+	 * Currently not in use. Consider delete this one, since it
+	 * is not flexible for global changes.
+	 * 
+	 * Consider always use 
+	 * File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
+	 * to get the desired path.
+	 */
 	@NotNull
 	@Column(name="git_uri")
 	private String gitUri;
@@ -51,8 +62,15 @@ public class RepositoryBean {
 	private List<CommitBean> commits;
 	
 	/*
-	 * Lazy implemented by calling
-	 * RepositoryCommitLogRepository.loadCommitLog(repository, branch)
+	 * Lazy loaded by calling
+	 * RepositoryGitDAO.loadBranchNames(repository)
+	 */
+	@Transient
+	private List<BranchName> branchNames;
+	
+	/*
+	 * Lazy loaded by calling
+	 * RepositoryGitDAO.loadCommitLog(repository, branch)
 	 */
 	@Transient
 	private List<CommitInfo> commitInfos;

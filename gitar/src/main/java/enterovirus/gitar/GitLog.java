@@ -9,7 +9,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitInfo;
@@ -29,10 +28,11 @@ public class GitLog {
 		 * The JGit function is compatible with branch name with the form
 		 * "master" and "refs/heads/master".
 		 */
-		Repository repository = getRepositoryFromDirectory(repositoryDirectory);
-		Git git = new Git(repository);
-		Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
-		buildCommitShas(logs);
+		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		try (Git git = new Git(repository)) {
+			Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
+			buildCommitShas(logs);
+		}
 	}
 	
 	/*
@@ -42,17 +42,11 @@ public class GitLog {
 	 */
 	public GitLog(File repositoryDirectory, BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) throws IOException, GitAPIException {
 		
-		Repository repository = getRepositoryFromDirectory(repositoryDirectory);
-		Git git = new Git(repository);
-		Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
-		buildCommitShas(logs, oldCommitSha, newCommitSha);
-	}
-	
-	private Repository getRepositoryFromDirectory(File repositoryDirectory) throws IOException {
-		
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
-		return repository;
+		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		try (Git git = new Git(repository)) {
+			Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
+			buildCommitShas(logs, oldCommitSha, newCommitSha);
+		}
 	}
 	
 	private void buildCommitShas (Iterable<RevCommit> logs) {

@@ -25,7 +25,8 @@ class RepositoryImpl implements RepositoryRepository {
 			throw new IOException ("Id is not correct!");
 		}
 		
-		return repositories.get();
+		RepositoryBean repository = repositories.get();
+		return repository;
 	}
 	
 	@Transactional
@@ -44,7 +45,7 @@ class RepositoryImpl implements RepositoryRepository {
 		OrganizationBean organization = organizations.get(0);
 		Hibernate.initialize(organization.getRepositories());
 		
-		RepositoryBean repository = organization.findRepositoryByName(repositoryName);
+		RepositoryBean repository = organization.findRepositoryByName(repositoryName);		
 		return repository;
 	}
 

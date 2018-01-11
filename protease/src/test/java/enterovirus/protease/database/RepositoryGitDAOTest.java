@@ -14,19 +14,26 @@ import enterovirus.protease.domain.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "long_commit_path")
 @ContextConfiguration(classes=ProteaseConfig.class)
-public class RepositoryCommitLogRepositoryTest {
+public class RepositoryGitDAOTest {
 
 	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired RepositoryCommitLogRepository repositoryCommitLogRepository;
+	@Autowired RepositoryGitDAO repositoryGitDAO;
 	
 	@Test
 	public void test() throws Exception {
+		
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org", "repo");
+		
 		BranchName branchName = new BranchName("master");
-		repositoryCommitLogRepository.loadCommitLog(repository, branchName);
+		repositoryGitDAO.loadCommitLog(repository, branchName);
 		for (CommitInfo info : repository.getCommitInfos()) {
 			System.out.println(info.getCommitSha());
 			System.out.println(info.getFullMessage());
+		}
+		
+		repositoryGitDAO.loadBranchNames(repository);
+		for (BranchName name : repository.getBranchNames()) {
+			System.out.println(name.getName());
 		}
 	}
 

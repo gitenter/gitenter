@@ -220,6 +220,20 @@ article input[type=submit]:hover, article input[type=button]:hover {
 	border: 1px solid #e6e472;
 }
 
+article input[type=submit].menu {
+
+	background-color: #2fc8a8;
+	color: #212121;
+	border: 1px solid #2fc8a8; 
+}
+
+article input[type=submit].menu:hover {
+
+	background-color: #ffffff;
+	color: #2fc8a8;
+	border: 1px solid #2fc8a8;
+}
+
 /* *************************************************************************
  * Log in
  * ************************************************************************* */
