@@ -13,6 +13,6 @@
 <c:if test="${!folderStructure.isLeaf()}">
   <c:forEach var="folderOrFile" items="${folderStructure.childrenList()}">
     <c:set var="folderStructure" value="${folderOrFile}" scope="request"/>
-    <jsp:include page="repository-folder-structure.jsp"/>
+    <jsp:include page="commit-folder-structure.jsp"/>
   </c:forEach>
 </c:if>

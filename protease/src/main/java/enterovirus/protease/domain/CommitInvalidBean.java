@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "git", name = "git_commit_valid")
+@Table(schema = "git", name = "git_commit_invalid")
 public class CommitInvalidBean extends CommitBean {
 
 	@Column(name="error_message", updatable=false)
