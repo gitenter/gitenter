@@ -41,7 +41,7 @@ public class DocumentBean {
 	
 	@ManyToOne
 	@JoinColumn(name="commit_id")
-	private CommitBean commit;
+	private CommitValidBean commit;
 	
 	@OneToMany(targetEntity=TraceabilityMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="upstreamDocument")
 	private List<TraceabilityMapBean> mapsForUpstreamItems = new ArrayList<TraceabilityMapBean>();
@@ -56,7 +56,7 @@ public class DocumentBean {
 		
 	}
 	
-	public DocumentBean (CommitBean commit) {
+	public DocumentBean (CommitValidBean commit) {
 		this.commit = commit;
 	}
 	

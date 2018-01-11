@@ -29,7 +29,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		showHierarchy(commit.getFolderStructure(), 0);
+		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		showHierarchy(commit.getFolderStructure(), 0);
+		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		showHierarchy(commit.getFolderStructure(), 0);
+		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 //		System.out.println(commit.getFolderStructure().childrenList().size());
 	}
 	

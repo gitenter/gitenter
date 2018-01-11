@@ -56,9 +56,37 @@ public class UpdateDatabaseFromGit {
 	
 	private void updateGitCommit (CommitStatus status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
 		
-		CommitBean commit = new CommitBean(repository, commitInfo.getCommitSha());
-		repository.addCommit(commit);
+		/* 
+		 * TODO:
+		 * Consider add a config file to indicate that this system only 
+		 * traces files of some particular folders/paths.
+		 */
 		
+		/*
+		 * Communicate with git to get the useful information needed
+		 * to be written to the database. This part doesn't touch the
+		 * persistence layer and/or the database.
+		 * 
+		 * If it raises exceptions, insert into the database with a
+		 * by filling the invalid commit table.
+		 */
+		TraceableRepository traceableRepository;
+		
+		try {
+			traceableRepository = getTraceableRepository(status, commitInfo);
+		}
+		catch (TraceAnalyzerException e) {
+			
+			CommitBean commit = new CommitInvalidBean(repository, commitInfo.getCommitSha(), e.getMessage());
+			repository.addCommit(commit);
+			
+			commitRepository.saveAndFlush(commit);
+			return;
+		}
+			
+		CommitValidBean commit = new CommitValidBean(repository, commitInfo.getCommitSha());
+		repository.addCommit(commit);
+			
 		/*
 		 * TODO:
 		 * GitLog gives all the previous commits related to the current 
@@ -88,41 +116,22 @@ public class UpdateDatabaseFromGit {
 		 * doesn't really causes performance overhead (since the number
 		 * of commits is really tiny compare to other operations).
 		 */
-//		repositoryRepository.saveAndFlush(repository);
+//			repositoryRepository.saveAndFlush(repository);
 		commitRepository.saveAndFlush(commit);
-
+		
 		/*
-		 * Communicate with git to get the useful information needed
-		 * to be written to the database. This part doesn't touch the
-		 * persistence layer and/or the database.
+		 * Write the data into the database through the persistence layer.
 		 * 
-		 * TODO:
-		 * Consider add a config file to indicate that this system only 
-		 * traces files of some particular folders/paths.
+		 * First round to build all traceable items, and the second round
+		 * to retrieve the traceability map.
+		 * 
+		 * Save to database may or may not be included in the following 
+		 * methods. In the currently implementation data are saved multiple
+		 * times (by the limitation of Hibernate). See detailed comments
+		 * inside of the methods.
 		 */
-		try {
-			TraceableRepository traceableRepository = getTraceableRepository(status, commitInfo);
-			
-			/*
-			 * Write the data into the database through the persistence layer.
-			 * 
-			 * First round to build all traceable items, and the second round
-			 * to retrieve the traceability map.
-			 * 
-			 * Save to database may or may not be included in the following 
-			 * methods. In the currently implementation data are saved multiple
-			 * times (by the limitation of Hibernate). See detailed comments
-			 * inside of the methods.
-			 */
-			TraceabilityBuildHelper helper = buildDocumentsAndTraceableItems(commit, traceableRepository);
-			buildTraceabilityMaps(commit, helper);
-		}
-		catch (TraceAnalyzerException e) {
-			/*
-			 * TODO:
-			 * Gives error if the item tag is not unique along a repository.
-			 */
-		}
+		TraceabilityBuildHelper helper = buildDocumentsAndTraceableItems(commit, traceableRepository);
+		buildTraceabilityMaps(commit, helper);
 	}
 	
 	private TraceableRepository getTraceableRepository (CommitStatus status, CommitInfo commitInfo) throws IOException, TraceAnalyzerException {
@@ -162,7 +171,7 @@ public class UpdateDatabaseFromGit {
 	}
 	
 	private TraceabilityBuildHelper buildDocumentsAndTraceableItems (
-			CommitBean commit, 
+			CommitValidBean commit, 
 			TraceableRepository traceableRepository) {
 		
 		TraceabilityBuildHelper helper = new TraceabilityBuildHelper();
@@ -222,7 +231,7 @@ public class UpdateDatabaseFromGit {
 	}
 	
 	private void buildTraceabilityMaps (
-			CommitBean commit,
+			CommitValidBean commit,
 			TraceabilityBuildHelper helper) {
 
 		for (Map.Entry<TraceableItem,TraceableItemBean> entry : helper.traceabilityIterateMap.entrySet()) {

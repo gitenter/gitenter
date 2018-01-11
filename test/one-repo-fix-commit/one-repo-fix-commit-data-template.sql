@@ -18,6 +18,11 @@ INSERT INTO git.git_commit VALUES
 	(2, 1, TO-BE-2ND-COMMIT-SHA);
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
+INSERT INTO git.git_commit_valid VALUES
+	(1),
+	(2);
+ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
+
 INSERT INTO git.document VALUES
 	(1, 1),
 	(2, 1),

@@ -9,5 +9,5 @@
     </nav>
     <article>
       <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
-      <jsp:include page="repository-folder-structure.jsp"/>
+      <jsp:include page="commit-folder-structure.jsp"/>
     </article>

@@ -38,8 +38,11 @@
     <put-attribute name="body" value="/WEB-INF/views/organization.jsp" />
   </definition>
   
-  <definition name="git-navigation/repository" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/repository.jsp" />
+  <definition name="git-navigation/commit" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/git-navigation/commit.jsp" />
+  </definition>
+  <definition name="git-navigation/error-commit" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/git-navigation/error-commit.jsp" />
   </definition>
   <definition name="git-navigation/document" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/document.jsp" />

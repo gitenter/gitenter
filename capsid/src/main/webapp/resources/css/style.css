@@ -258,7 +258,7 @@ article td.login-button {
 
 article span.login-error {
 	font-size: 20px;
-	color: #FF0000;
+	color: #ff0000;
 }
 
 article input[type=text].login-fill-in, input[type=password].login-fill-in {

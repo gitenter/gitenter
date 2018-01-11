@@ -50,7 +50,7 @@ public class DocumentModifiedBean extends DocumentBean {
 		
 	}
 	
-	public DocumentModifiedBean (CommitBean commit, String relativeFilepath) {
+	public DocumentModifiedBean (CommitValidBean commit, String relativeFilepath) {
 		super(commit);
 		this.relativeFilepath = relativeFilepath;
 	}

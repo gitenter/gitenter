@@ -14,8 +14,8 @@ public class DocumentModifiedBeanTest {
 	@Before
 	public void init() {
 		
-		CommitBean commit = new CommitBean();
-		String relativeFilepath = "document.md";
+		CommitValidBean commit = new CommitValidBean();
+		String relativeFilepath = "/fake/path/to/a/document.md";
 		document = new DocumentModifiedBean(commit, relativeFilepath);
 		
 		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
