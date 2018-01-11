@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
-import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.*;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -26,11 +26,14 @@ public class GitNavigationController {
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private DocumentRepository documentRepository;
 	
+	/*************************************************************************/
+	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/commits", method=RequestMethod.GET)
 	public String showCommitList (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
+			HttpServletRequest request,
 			Model model) throws Exception {
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
@@ -42,21 +45,57 @@ public class GitNavigationController {
 		return "git-navigation/commit-list";
 	}
 	
+	/*************************************************************************/
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}", method=RequestMethod.GET)
+	public String showFolderStructureByCommit (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable CommitSha commitSha,
+			HttpServletRequest request,
+			Model model) throws IOException {
+		
+		String currentUrl = request.getRequestURL().toString();
+		model.addAttribute("currentUrl", currentUrl);
+		
+		CommitBean commit = commitRepository.findByCommitSha(commitSha);
+		return showFolderStructure(commit, model);
+	}
+	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
-	public String showFolderStructure (
+	public String showFolderStructureByBranch (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
 			Model model) throws IOException {
 		
+		String currentUrl = request.getRequestURL().toString();
+		model.addAttribute("currentUrl", currentUrl);
+		
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
+		return showFolderStructure(commit, model);
+	}
+	
+	/*
+	 * TODO:
+	 * Should the default shown branch be set up by the user?
+	 */
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
+	public String showFolderStructureDefault (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			HttpServletRequest request,
+			Model model) throws IOException {
+		
+		return showFolderStructureByBranch(organizationId, repositoryId, new BranchName("master"), request, model);
+	}
+	
+	private String showFolderStructure (CommitBean commit, Model model) {
+
 		RepositoryBean repository = commit.getRepository();
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
-		
-		String currentUrl = request.getRequestURL().toString();
-		model.addAttribute("currentUrl", currentUrl);
 		
 		if (commit instanceof CommitValidBean) {
 			model.addAttribute("folderStructure", ((CommitValidBean)commit).getFolderStructure());
@@ -74,15 +113,7 @@ public class GitNavigationController {
 		return "";
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
-	public String showFolderStructureDefault (
-			@PathVariable Integer organizationId,
-			@PathVariable Integer repositoryId,
-			HttpServletRequest request,
-			Model model) throws IOException {
-		
-		return showFolderStructure(organizationId, repositoryId, new BranchName("master"), request, model);
-	}
+	/*************************************************************************/
 	
 	/*
 	 * Current only the folder_1/same-name-file works,

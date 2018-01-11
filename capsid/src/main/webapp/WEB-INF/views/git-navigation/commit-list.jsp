@@ -22,7 +22,11 @@
           <td><fmt:formatDate type = "both" dateStyle = "medium" timeStyle = "short" value = "${commitInfo.getCommitDate()}" /></td>
           <td>${commitInfo.gitUserInfo.name}</td>
           <td>${commitInfo.fullMessage}</td>
-          <td>${fn:substring(commitInfo.commitSha.shaChecksumHash, 0, 6)}</td>
+          <td>
+            <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commitInfo.commitSha.shaChecksumHash}" />" >
+              <input type="submit" value="${fn:substring(commitInfo.commitSha.shaChecksumHash, 0, 6)}">
+            </form>
+          </td>
         </tr>
         </c:forEach>
       </table>
