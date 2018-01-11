@@ -14,23 +14,32 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
 @Controller
 public class GitNavigationController {	
 
+	@Autowired private RepositoryRepository repositoryRepository;
+	@Autowired private RepositoryCommitLogRepository repositoryCommitLogRepository;
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private DocumentRepository documentRepository;
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/commits", method=RequestMethod.GET)
-	public String showCommits (
+	public String showCommitList (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			@PathVariable String branchName,
-			Model model) throws IOException {
+			@PathVariable BranchName branchName,
+			Model model) throws Exception {
 		
-		return "";
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		repositoryCommitLogRepository.loadCommitLog(repository, branchName);
+		
+		model.addAttribute("organization", repository.getOrganization());
+		model.addAttribute("repository", repository);
+		
+		return "git-navigation/commit-list";
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)

@@ -44,6 +44,9 @@
   <definition name="git-navigation/error-commit" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/error-commit.jsp" />
   </definition>
+  <definition name="git-navigation/commit-list" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/git-navigation/commit-list.jsp" />
+  </definition>
   <definition name="git-navigation/document" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/document.jsp" />
   </definition>

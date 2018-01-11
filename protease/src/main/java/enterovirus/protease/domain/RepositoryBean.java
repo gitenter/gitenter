@@ -52,7 +52,7 @@ public class RepositoryBean {
 	
 	/*
 	 * Lazy implemented by calling
-	 * RepositoryCommitLogRepository.loadCommitLog()
+	 * RepositoryCommitLogRepository.loadCommitLog(repository, branch)
 	 */
 	@Transient
 	private List<CommitInfo> commitInfos;

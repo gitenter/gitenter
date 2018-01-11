@@ -17,9 +17,8 @@ public class RepositoryCommitLogRepository {
 
 	@Autowired private GitSource gitSource;
 	
-	public RepositoryBean loadCommitLog(RepositoryBean repository, String branch) throws IOException, GitAPIException {
+	public RepositoryBean loadCommitLog(RepositoryBean repository, BranchName branchName) throws IOException, GitAPIException {
 		
-		BranchName branchName = new BranchName(branch);
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
 		
 		GitLog gitLog = new GitLog(repositoryDirectory, branchName);

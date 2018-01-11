@@ -37,6 +37,7 @@ public class GitLogTest {
 		System.out.println("ref: "+branchName.getName());
 		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
 			System.out.println(commitInfo.getCommitSha().getShaChecksumHash());
+			System.out.println(commitInfo.getCommitDate());
 		}
 	}
 	

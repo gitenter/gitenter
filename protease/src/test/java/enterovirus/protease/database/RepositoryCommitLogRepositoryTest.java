@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import enterovirus.gitar.wrap.CommitInfo;
+import enterovirus.gitar.wrap.*;
 import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
@@ -22,7 +22,8 @@ public class RepositoryCommitLogRepositoryTest {
 	@Test
 	public void test() throws Exception {
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org", "repo");
-		repositoryCommitLogRepository.loadCommitLog(repository, "master");
+		BranchName branchName = new BranchName("master");
+		repositoryCommitLogRepository.loadCommitLog(repository, branchName);
 		for (CommitInfo info : repository.getCommitInfos()) {
 			System.out.println(info.getCommitSha());
 			System.out.println(info.getFullMessage());

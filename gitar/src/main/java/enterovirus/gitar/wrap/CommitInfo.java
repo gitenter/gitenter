@@ -1,6 +1,6 @@
 package enterovirus.gitar.wrap;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -21,9 +21,19 @@ public class CommitInfo {
 	public GitUserInfo getGitUserInfo() {
 		return gitUserInfo;
 	}
-	
-	public Timestamp getCommitTimestamp () {
-		return new Timestamp(commitTime);
+
+	public Date getCommitDate () {
+		
+		/*
+		 * JGit getCommitTime(): time, expressed as seconds since the epoch.
+		 * http://download.eclipse.org/jgit/docs/jgit-2.0.0.201206130900-r/apidocs/org/eclipse/jgit/revwalk/RevCommit.html#getCommitTime()
+		 * 
+		 * java.sql.Timestamp(long time): Constructs a Timestamp object using a milliseconds time value.
+		 * https://docs.oracle.com/javase/8/docs/api/java/sql/Timestamp.html
+		 * 
+		 * So here need to do the transformation.
+		 */
+		return new Date(commitTime*1000L);
 	}
 
 
