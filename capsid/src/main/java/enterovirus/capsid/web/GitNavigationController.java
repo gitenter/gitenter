@@ -36,6 +36,8 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
+		model.addAttribute("branch", branchName.getName());
+		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
 		repositoryCommitLogRepository.loadCommitLog(repository, branchName);
 		
@@ -73,6 +75,8 @@ public class GitNavigationController {
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
 		
+		model.addAttribute("branch", branchName.getName());
+		
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
 		return showFolderStructure(commit, model);
 	}
@@ -88,7 +92,10 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws IOException {
 		
-		return showFolderStructureByBranch(organizationId, repositoryId, new BranchName("master"), request, model);
+		BranchName branchName = new BranchName("master");
+		model.addAttribute("branch", branchName.getName());
+		
+		return showFolderStructureByBranch(organizationId, repositoryId, branchName, request, model);
 	}
 	
 	private String showFolderStructure (CommitBean commit, Model model) {

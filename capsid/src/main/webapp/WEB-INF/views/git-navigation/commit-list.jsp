@@ -7,6 +7,7 @@
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch ${branch}</a> &rarr; 
       <span class="nav-current">Commits</span>
     </nav>
     <article>

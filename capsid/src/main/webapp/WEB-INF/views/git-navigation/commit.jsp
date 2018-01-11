@@ -8,6 +8,9 @@
       <span class="nav-current">${repository.displayName}</span>
     </nav>
     <article>
+      <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}/commits/" />" >
+        <input type="submit" value="Browse Commits">
+      </form>
       <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
       <jsp:include page="commit-folder-structure.jsp"/>
     </article>
