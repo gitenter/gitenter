@@ -44,6 +44,15 @@ public class GitNavigationController {
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
+		/*
+		 * TODO:
+		 * Show the status of the commit (valid/invalid/ignored).
+		 * 
+		 * TODO:
+		 * Connect the git user (name and email) to the user of
+		 * this website.
+		 */
+		
 		return "git-navigation/commit-list";
 	}
 	
