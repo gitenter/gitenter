@@ -23,8 +23,18 @@ public class GitNavigationController {
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private DocumentRepository documentRepository;
 	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/commits", method=RequestMethod.GET)
+	public String showCommits (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable String branchName,
+			Model model) throws IOException {
+		
+		return "";
+	}
+	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
-	public String showRepository (
+	public String showFolderStructure (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws IOException {

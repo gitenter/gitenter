@@ -33,4 +33,13 @@ public class TestGitConfig {
 		
 		return gitSource;
 	}
+	
+	@Profile("long_commit_path")
+	@Bean
+	public GitSource longCommitPathgitSource() {
+		
+		GitSource gitSource = new GitSource();
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/");
+		return gitSource;
+	}
 }

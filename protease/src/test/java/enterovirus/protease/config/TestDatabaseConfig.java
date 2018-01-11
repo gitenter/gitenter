@@ -32,6 +32,17 @@ public class TestDatabaseConfig {
 		return dataSource;
 	}
 	
+	@Profile("long_commit_path")
+	@Bean
+	public DataSource longCommitPathDataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("org.postgresql.Driver");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/long_commit_path_dbname");
+		dataSource.setUsername("long_commit_path_username");
+		dataSource.setPassword("long_commit_path_password");
+		return dataSource;
+	}
+	
 //	@Profile("long_commit_path")
 //	@Bean
 //	public DataSource longCommitPathDataSource() {

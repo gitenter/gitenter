@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import enterovirus.gitar.wrap.CommitInfo;
 import lombok.*;
 
 @Getter
@@ -47,6 +49,13 @@ public class RepositoryBean {
 	
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<CommitBean> commits;
+	
+	/*
+	 * Lazy implemented by calling
+	 * RepositoryCommitLogRepository.loadCommitLog()
+	 */
+	@Transient
+	private List<CommitInfo> commitInfos;
 	
 	public void addCommit (CommitBean commit) {
 		commits.add(commit);
