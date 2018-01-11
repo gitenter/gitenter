@@ -39,7 +39,7 @@ public class CommitRepositoryTest {
 		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
-		CommitBean commit = commitRepository.findByShaChecksumHash(commitSha.getShaChecksumHash());
+		CommitBean commit = commitRepository.findByCommitSha(commitSha);
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());

@@ -33,9 +33,9 @@ public class CommitImpl implements CommitRepository {
 		return commit;
 	}
 	
-	public CommitBean findByShaChecksumHash(String shaChecksumHash) throws IOException {
+	public CommitBean findByCommitSha(CommitSha commitSha) throws IOException {
 		
-		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(shaChecksumHash);
+		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(commitSha.getShaChecksumHash());
 		
 		if (commits.size() == 0) {
 			throw new IOException ("SHA checksum hash is not correct!");
@@ -49,7 +49,7 @@ public class CommitImpl implements CommitRepository {
 		return commit;
 	}
 	
-	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, String branch) throws IOException {
+	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, BranchName branchName) throws IOException {
 
 		/*
 		 * TODO:
@@ -60,7 +60,6 @@ public class CommitImpl implements CommitRepository {
 		String repositoryName = repositoryBean.getName();
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
-		BranchName branchName = new BranchName(branch);
 		
 		/*
 		 * TODO:
@@ -90,7 +89,7 @@ public class CommitImpl implements CommitRepository {
 	}
 	
 	public CommitBean findByRepositoryId(Integer repositoryId) throws IOException {
-		return findByRepositoryIdAndBranch(repositoryId, "master");
+		return findByRepositoryIdAndBranch(repositoryId, new BranchName("master"));
 	}
 	
 	private void updateGitMaterial (CommitBean commit) throws IOException {

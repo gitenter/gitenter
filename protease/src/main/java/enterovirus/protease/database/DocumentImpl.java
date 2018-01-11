@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import enterovirus.protease.domain.*;
 import enterovirus.gitar.*;
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
 @Repository
@@ -69,18 +70,18 @@ class DocumentImpl implements DocumentRepository {
 		return document;
 	}
 	
-	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, String branch, String relativeFilepath) throws IOException {
+	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchName branchName, String relativeFilepath) throws IOException {
 		
 		/*
 		 * TODO:
 		 * Should be a better way rather than query the database twice?
 		 */
-		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branch);
+		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
 		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
 	}
 	
 	public DocumentBean findByRepositoryIdAndRelativeFilepath(Integer repositoryId, String relativeFilepath) throws IOException {
-		return findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, "master", relativeFilepath);
+		return findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, new BranchName("master"), relativeFilepath);
 	}
 	
 	private void updateGitMaterial (DocumentModifiedBean document) throws IOException {
