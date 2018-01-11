@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gitar.GitFolderStructure;
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
@@ -49,7 +50,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	public void test3() throws Exception {
-		CommitBean commit = commitRepository.findByRepositoryId(1);
+		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(1, new BranchName("master"));
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());

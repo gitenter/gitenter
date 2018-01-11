@@ -46,17 +46,6 @@ public class GitFolderStructureTest {
 		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);
 	}
-
-	@Test
-	public void test3() throws IOException {
-		
-		GitFolderStructure gitCommit;
-			
-		gitCommit = new GitFolderStructure(repositoryDirectory);
-		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
-	}
 	
 	private void showFolderStructure (GitFolderStructure gitCommit) {
 		System.out.println("====show folder structure====");

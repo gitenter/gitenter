@@ -3,7 +3,7 @@
 
 <c:choose>
 <c:when test="${folderStructure.isLeaf()}">
-  <p><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/directories/${folderStructure}" />">${folderStructure}</a></p>
+  <p><a href="<s:url value="${currentUrl}/directories/${folderStructure}" />">${folderStructure}</a></p>
 </c:when>
 <c:otherwise>
   <p>${folderStructure}</p>

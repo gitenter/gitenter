@@ -80,10 +80,6 @@ class DocumentImpl implements DocumentRepository {
 		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
 	}
 	
-	public DocumentBean findByRepositoryIdAndRelativeFilepath(Integer repositoryId, String relativeFilepath) throws IOException {
-		return findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, new BranchName("master"), relativeFilepath);
-	}
-	
 	private void updateGitMaterial (DocumentModifiedBean document) throws IOException {
 		
 		String organizationName = document.getCommit().getRepository().getOrganization().getName();

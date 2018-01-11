@@ -88,10 +88,6 @@ public class CommitImpl implements CommitRepository {
 		return commit;
 	}
 	
-	public CommitBean findByRepositoryId(Integer repositoryId) throws IOException {
-		return findByRepositoryIdAndBranch(repositoryId, new BranchName("master"));
-	}
-	
 	private void updateGitMaterial (CommitBean commit) throws IOException {
 		
 		String organizationName = commit.getRepository().getOrganization().getName();

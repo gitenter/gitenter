@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.gitar.wrap.BranchName;
 import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
@@ -76,8 +77,8 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	@Transactional
-	public void testFindByRepositoryIdAndRelativeFilepath() throws Exception {
-		DocumentBean document = repository.findByRepositoryIdAndRelativeFilepath(1, "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
+	public void testFindByRepositoryIdAndBranchAndRelativeFilepath() throws Exception {
+		DocumentBean document = repository.findByRepositoryIdAndBranchAndRelativeFilepath(1, new BranchName("master"), "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
 		showDocumentBean(document);
 	}
 }

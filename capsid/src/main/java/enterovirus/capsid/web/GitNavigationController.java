@@ -42,16 +42,21 @@ public class GitNavigationController {
 		return "git-navigation/commit-list";
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
 	public String showFolderStructure (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
+			@PathVariable BranchName branchName,
+			HttpServletRequest request,
 			Model model) throws IOException {
 		
-		CommitBean commit = commitRepository.findByRepositoryId(repositoryId);
+		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
 		RepositoryBean repository = commit.getRepository();
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
+		
+		String currentUrl = request.getRequestURL().toString();
+		model.addAttribute("currentUrl", currentUrl);
 		
 		if (commit instanceof CommitValidBean) {
 			model.addAttribute("folderStructure", ((CommitValidBean)commit).getFolderStructure());
@@ -67,6 +72,16 @@ public class GitNavigationController {
 		 * Raise exception in this case.
 		 */
 		return "";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
+	public String showFolderStructureDefault (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			HttpServletRequest request,
+			Model model) throws IOException {
+		
+		return showFolderStructure(organizationId, repositoryId, new BranchName("master"), request, model);
 	}
 	
 	/*
@@ -86,10 +101,11 @@ public class GitNavigationController {
 	 * We can't do "documents/{documentId}". Link between traceable items (and
 	 * the corresponding documents) need to set up in a relative way.
 	 */
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
-	public String navigateRepositoryContent (
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/directories/**", method=RequestMethod.GET)
+	public String navigateDocumentContent (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
+			@PathVariable BranchName branchName,
 			HttpServletRequest request,
 			Model model) throws IOException {
 		
@@ -97,7 +113,7 @@ public class GitNavigationController {
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 		String filepath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
 		
-		DocumentBean document = documentRepository.findByRepositoryIdAndRelativeFilepath(repositoryId, filepath);
+		DocumentBean document = documentRepository.findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, filepath);
 		model.addAttribute("document", document);
 		
 		CommitBean commit = document.getCommit();
@@ -109,5 +125,15 @@ public class GitNavigationController {
 		model.addAttribute("content", contentParser.getHtml());
 		
 		return "git-navigation/document";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
+	public String navigateDocumentContentDefault (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			HttpServletRequest request,
+			Model model) throws IOException {
+	
+		return navigateDocumentContent(organizationId, repositoryId, new BranchName("master"), request, model);
 	}
 }

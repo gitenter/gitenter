@@ -93,10 +93,6 @@ public class GitFolderStructure {
 		generateDataFromTreeWalk(treeWalk);
 	}
 	
-	public GitFolderStructure (File repositoryDirectory) throws IOException {
-		this(repositoryDirectory, new BranchName("master"));
-	}
-	
 	private void generateDataFromTreeWalk (TreeWalk treeWalk) throws IOException {
 		
 		folderStructure = new DefaultListableMutableTreeNode(".");
