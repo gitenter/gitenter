@@ -8,7 +8,7 @@
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branchName.name}" />">Branch: ${branchName.name}</a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch: ${branch}</a> &rarr; 
       <span class="nav-current">Commits</span>
     </nav>
     <article>
@@ -26,7 +26,7 @@
                 Consider setup the selected value. The following code
                 works but STS will give error. So leave it in here now.
                 
-                <c:if test="${b.name.equals(branchName.name)}">selected="selected"</c:if>
+                <c:if test="${b.name.equals(branch)}">selected="selected"</c:if>
               --%>
               <select class="inline" name="branch">
                 <c:forEach items="${repository.branchNames}" var="b" >

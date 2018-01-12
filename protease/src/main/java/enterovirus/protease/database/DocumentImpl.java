@@ -70,6 +70,16 @@ class DocumentImpl implements DocumentRepository {
 		return document;
 	}
 	
+	public DocumentBean findByCommitShaAndRelativeFilepath(CommitSha commitSha, String relativeFilepath) throws IOException {
+		
+		/*
+		 * TODO:
+		 * Should be a better way rather than query the database twice?
+		 */
+		CommitBean commit = commitRepository.findByCommitSha(commitSha);
+		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
+	}
+	
 	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchName branchName, String relativeFilepath) throws IOException {
 		
 		/*

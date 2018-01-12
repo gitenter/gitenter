@@ -30,6 +30,36 @@ public class GitNavigationController {
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private DocumentRepository documentRepository;
 	
+	private String getWildcardValue (HttpServletRequest request) {
+		
+		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		String wildcard = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
+		
+		return wildcard;
+	}
+	
+	/*
+	 * TODO:
+	 * Should the default shown branch be set up by the user?
+	 */
+	private BranchName getDefaultBranchName (String branch) {
+		
+		BranchName branchName;
+		if (branch.equals("")) {
+			/*
+			 * Because "@ModelAttribute("branch") String branch"
+			 * will get "" rather than null if missing.
+			 */
+			branchName = new BranchName("master");
+		}
+		else {
+			branchName = new BranchName(branch);
+		}
+		
+		return branchName;
+	}
+	
 	/*************************************************************************/
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/commits", method=RequestMethod.GET)
@@ -40,7 +70,7 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
-		model.addAttribute("branchName", branchName);
+		model.addAttribute("branch", branchName.getName());
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
 		repositoryGitDAO.loadCommitLog(repository, branchName);
@@ -80,13 +110,10 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
-		String currentUrl = request.getRequestURL().toString();
-		model.addAttribute("currentUrl", currentUrl);
+		model.addAttribute("shaChecksumHash", commitSha.getShaChecksumHash());
 		
 		CommitBean commit = commitRepository.findByCommitSha(commitSha);
-		model.addAttribute("shaChecksumHash", commit.getShaChecksumHash());
-		
-		return showFolderStructure(commit, model);
+		return showFolderStructure(commit, request, model);
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
@@ -97,44 +124,37 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
-		String currentUrl = request.getRequestURL().toString();
-		model.addAttribute("currentUrl", currentUrl);
-		
-		model.addAttribute("branchName", branchName);
+		model.addAttribute("branch", branchName.getName());
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
-		return showFolderStructure(commit, model);
+		return showFolderStructure(commit, request, model);
 	}
 	
-	/*
-	 * TODO:
-	 * Should the default shown branch be set up by the user?
-	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
 	public String showFolderStructureDefault (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
 			HttpServletRequest request,
-			Model model) throws Exception {
+			Model model) {
 		
-		System.out.println("///"+branch+"///");
-		BranchName branchName;
-		if (branch.equals("")) {
-			branchName = new BranchName("master");
-		}
-		else {
-			branchName = new BranchName(branch);
-		}
-		model.addAttribute("branchName", branchName);
+		BranchName branchName = getDefaultBranchName(branch);
+		model.addAttribute("branch", branchName.getName());
 		
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName();
 	}
 	
-	private String showFolderStructure (CommitBean commit, Model model) throws Exception {
+	private String showFolderStructure (
+			CommitBean commit, 
+			HttpServletRequest request, 
+			Model model) throws Exception {
 
+		String currentUrl = request.getRequestURL().toString();
+		model.addAttribute("currentUrl", currentUrl);
+		
 		RepositoryBean repository = commit.getRepository();
 		repositoryGitDAO.loadBranchNames(repository);
+		
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
@@ -156,6 +176,23 @@ public class GitNavigationController {
 	
 	/*************************************************************************/
 	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/directories/**", method=RequestMethod.GET)
+	public String showDocumentContentByCommit (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable CommitSha commitSha,
+			HttpServletRequest request,
+			Model model) throws Exception {
+		
+		model.addAttribute("shaChecksumHash", commitSha.getShaChecksumHash());
+		
+		String relativeFilepath = getWildcardValue(request);
+		model.addAttribute("relativeFilepath", relativeFilepath);
+		DocumentBean document = documentRepository.findByCommitShaAndRelativeFilepath(commitSha, relativeFilepath);
+		
+		return showDocumentContent(document, request, model);
+	}
+	
 	/*
 	 * Current only the folder_1/same-name-file works,
 	 * because the fake database is not complete.
@@ -174,22 +211,48 @@ public class GitNavigationController {
 	 * the corresponding documents) need to set up in a relative way.
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/directories/**", method=RequestMethod.GET)
-	public String navigateDocumentContent (
+	public String showDocumentContentByBranch (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
-			Model model) throws IOException {
+			Model model) throws Exception {
 		
-		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-		String filepath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
+		model.addAttribute("branch", branchName.getName());
 		
-		DocumentBean document = documentRepository.findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, filepath);
-		model.addAttribute("document", document);
+		String relativeFilepath = getWildcardValue(request);
+		model.addAttribute("relativeFilepath", relativeFilepath);
+		DocumentBean document = documentRepository.findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, relativeFilepath);
+		
+		return showDocumentContent(document, request, model);
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
+	public String showDocumentContentDefault (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@ModelAttribute("branch") String branch,
+			HttpServletRequest request,
+			Model model) {
+		
+		BranchName branchName = getDefaultBranchName(branch);
+		model.addAttribute("branch", branchName.getName());
+		
+		String filepath = getWildcardValue(request);
+		
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName()+"/directories/"+filepath;
+	}
+	
+	private String showDocumentContent (
+			DocumentBean document, 
+			HttpServletRequest request,
+			Model model) throws Exception {
 		
 		CommitBean commit = document.getCommit();
 		RepositoryBean repository = commit.getRepository();
+		repositoryGitDAO.loadBranchNames(repository);
+		
+		model.addAttribute("document", document);
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
@@ -197,15 +260,5 @@ public class GitNavigationController {
 		model.addAttribute("content", contentParser.getHtml());
 		
 		return "git-navigation/document";
-	}
-	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
-	public String navigateDocumentContentDefault (
-			@PathVariable Integer organizationId,
-			@PathVariable Integer repositoryId,
-			HttpServletRequest request,
-			Model model) throws IOException {
-	
-		return navigateDocumentContent(organizationId, repositoryId, new BranchName("master"), request, model);
 	}
 }
