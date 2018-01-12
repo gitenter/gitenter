@@ -17,8 +17,6 @@ import enterovirus.gitar.wrap.CommitSha;
 class DocumentImpl implements DocumentRepository {
 
 	@Autowired private DocumentDatabaseRepository documentDbRepository;
-	@Autowired private DocumentModifiedDatabaseRepository documentMoDbRepository;
-	@Autowired private DocumentUnmodifiedDatabaseRepository documentUnmoDbRepository;
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private GitSource gitSource;
 
@@ -31,42 +29,27 @@ class DocumentImpl implements DocumentRepository {
 	}
 	
 	DocumentBean document = documents.get();
-	
-	if (document instanceof DocumentModifiedBean) {
-		updateGitMaterial((DocumentModifiedBean)document);
-	}
-	else {
-		updateGitMaterial(((DocumentUnmodifiedBean)document).getOriginalDocument());
-	}
+	updateGitMaterial(document);
+
 	return document;
 }
 
 	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException {
 
-		List<DocumentModifiedBean> unmoDocuments = documentMoDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);	
-		List<DocumentUnmodifiedBean> moDocuments = documentUnmoDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);
+		List<DocumentBean> documents = documentDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);	
 		
 		/*
 		 * This condition is stronger than what SQL and PL/pgSQL can define.
 		 * But for a consistent and valid git input, it should be correct.
 		 */
-		if (unmoDocuments.size() + moDocuments.size() > 1) {
+		if (documents.size() > 1) {
 			throw new IOException ("Cannot locate an unique file from commitId and relativeFilepath!");
 		}
-		else if (unmoDocuments.size() + moDocuments.size() == 0) {
+		else if (documents.size() == 0) {
 			throw new IOException ("There is no file under this commitId and relativeFilepath!");
 		}
 		
-		DocumentBean document;
-		if (unmoDocuments.size() == 1) {
-			document = unmoDocuments.get(0);
-			updateGitMaterial((DocumentModifiedBean)document);
-		}
-		else {
-			document = moDocuments.get(0);
-			updateGitMaterial(((DocumentUnmodifiedBean)document).getOriginalDocument());
-		}
-		
+		DocumentBean document = documents.get(0);
 		return document;
 	}
 	
@@ -90,7 +73,7 @@ class DocumentImpl implements DocumentRepository {
 		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
 	}
 	
-	private void updateGitMaterial (DocumentModifiedBean document) throws IOException {
+	private void updateGitMaterial (DocumentBean document) throws IOException {
 		
 		String organizationName = document.getCommit().getRepository().getOrganization().getName();
 		String repositoryName = document.getCommit().getRepository().getName();

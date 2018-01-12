@@ -14,8 +14,8 @@ INSERT INTO config.repository VALUES
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES
-	(1, 1, '47444b1719254957a9aa7c57df427d115b6ca430'),
-	(2, 1, '0dbf506953262f0ca3f68fa6f4de8a50bee34221');
+	(1, 1, '6f16070b3425f5d966238c1996db8b3f5bd3afaa'),
+	(2, 1, 'd69daf3a9ecbbca148296ced86e76f7ada2f9be8');
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
 INSERT INTO git.git_commit_valid VALUES
@@ -24,26 +24,13 @@ INSERT INTO git.git_commit_valid VALUES
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
 INSERT INTO git.document VALUES
-	(1, 1),
-	(2, 1),
-	(3, 1),
-	(4, 2),
-	(5, 2),
-	(6, 2),
-	(7, 2),
-	(8, 2),
-	(9, 2);
+	(1, 1, '1st-commit-file-under-root'),
+	(2, 1, '1st-commit-file-to-be-change-in-the-2nd-commit'),
+	(3, 1, '1st-commit-folder/1st-commit-file-under-1st-commit-folder'),
+	(4, 2, '1st-commit-file-under-root'),
+	(5, 2, '1st-commit-file-to-be-change-in-the-2nd-commit'),
+	(6, 2, '1st-commit-folder/1st-commit-file-under-1st-commit-folder'),
+	(7, 2, '2nd-commit-file-under-root'),
+	(8, 2, '1st-commit-folder/2nd-commit-file-under-1st-commit-folder'),
+	(9, 2, '2nd-commit-folder/2nd-commit-file-under-2nt-commit-folder');
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 10;
-
-INSERT INTO git.document_modified VALUES
-	(1, '1st-commit-file-under-root'),
-	(2, '1st-commit-file-to-be-change-in-the-2nd-commit'),
-	(3, '1st-commit-folder/1st-commit-file-under-1st-commit-folder'),
-	(5, '1st-commit-file-to-be-change-in-the-2nd-commit'),
-	(7, '2nd-commit-file-under-root'),
-	(8, '1st-commit-folder/2nd-commit-file-under-1st-commit-folder'),
-	(9, '2nd-commit-folder/2nd-commit-file-under-2nt-commit-folder');
-
-INSERT INTO git.document_unmodified VALUES
-	(4, 1),
-	(6, 3);

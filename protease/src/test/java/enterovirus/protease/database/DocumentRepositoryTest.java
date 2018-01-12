@@ -1,8 +1,5 @@
 package enterovirus.protease.database;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,28 +32,13 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	@Transactional
-	public void testUnmodifiedFindById() throws Exception {
+	public void testFindById() throws Exception {
 		DocumentBean document = repository.findById(1);
-		assertThat(document, instanceOf(DocumentModifiedBean.class));
 		showDocumentBean(document);
-		
-		/*
-		 * TODO:
-		 * This function should work for general documents, rather
-		 * than the just modified ones. However, that depends on the
-		 * detail of markdown visualization strategy.
-		 */
-		for (DocumentModifiedBean.LineContent content : ((DocumentModifiedBean)document).getLineContents()) {
+
+		for (DocumentBean.LineContent content : document.getLineContents()) {
 			System.out.println(content.getContent());
 		}
-	}
-	
-	@Test
-	@Transactional
-	public void testModifiedFindById() throws Exception {
-		DocumentBean document = repository.findById(4);
-		assertThat(document, instanceOf(DocumentUnmodifiedBean.class));
-		showDocumentBean(document);
 	}
 	
 	@Test

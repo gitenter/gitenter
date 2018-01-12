@@ -29,8 +29,8 @@ public class TraceableItemBean {
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name="original_document_id")
-	private DocumentModifiedBean originalDocument;
+	@JoinColumn(name="document_id")
+	private DocumentBean document;
 	
 	@Column(name="item_tag", updatable=false)
 	private String itemTag;
@@ -38,6 +38,21 @@ public class TraceableItemBean {
 	@Column(name="content", updatable=false)
 	private String content;
 	
+	/*
+	 * Here I am not using @ManyToMany for several reasons:
+	 * 
+	 * (1) "git.traceability_map" has the "id" field, so other tables
+	 * e.g. the review tables may refer to this relationship. Therefore 
+	 * the @ManyToMany annotation cannot really have its full functions.
+	 * (or If I remember it right, it simply cannot be down.
+	 * 
+	 * (2) Unfortunately, @ManyToMany relationship does not support orphonRemoval,
+	 * So using it will cause further complicity.
+	 * > Only relationships with single cardinality on the source side can enable orphan removal, 
+	 * > which is why the orphanRemoval option is defined on the @OneToOne and @OneToMany 
+	 * > relationship annotations, but on neither of the @ManyToOne or @ManyToMany annotations.
+	 * > (book: "Pro JPA 2")
+	 */
 	@OneToMany(targetEntity=TraceabilityMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="upstreamItem")
 	private List<TraceabilityMapBean> downstreamMaps = new ArrayList<TraceabilityMapBean>();
 
@@ -51,8 +66,8 @@ public class TraceableItemBean {
 		
 	}
 
-	public TraceableItemBean(DocumentModifiedBean document, String itemTag, String content) {
-		this.originalDocument = document;
+	public TraceableItemBean(DocumentBean document, String itemTag, String content) {
+		this.document = document;
 		this.itemTag = itemTag;
 		this.content = content;
 	}
@@ -65,23 +80,21 @@ public class TraceableItemBean {
 		return upstreamMaps.add(map);
 	}
 	
-	public List<TraceabilityMapBean.TraceableItemDocumentPair> getUpstreamPairs () {
+	public List<TraceableItemBean> getDownstreamItems () {
 		
-		List<TraceabilityMapBean.TraceableItemDocumentPair> pairs = new ArrayList<TraceabilityMapBean.TraceableItemDocumentPair>();
-		
-		for (TraceabilityMapBean map : upstreamMaps) {
-			pairs.add(map.getUpstreamPair());
+		List<TraceableItemBean> items = new ArrayList<TraceableItemBean>();
+		for (TraceabilityMapBean map : downstreamMaps) {
+			items.add(map.getDownstreamItem());
 		}
-		return pairs;
+		return items;
 	}
 	
-	public List<TraceabilityMapBean.TraceableItemDocumentPair> getDownstreamPairs () {
+	public List<TraceableItemBean> getUpstreamItems () {
 		
-		List<TraceabilityMapBean.TraceableItemDocumentPair> pairs = new ArrayList<TraceabilityMapBean.TraceableItemDocumentPair>();
-		
-		for (TraceabilityMapBean map : downstreamMaps) {
-			pairs.add(map.getDownstreamPair());
+		List<TraceableItemBean> items = new ArrayList<TraceableItemBean>();
+		for (TraceabilityMapBean map : upstreamMaps) {
+			items.add(map.getUpstreamItem());
 		}
-		return pairs;
+		return items;
 	}
 }
