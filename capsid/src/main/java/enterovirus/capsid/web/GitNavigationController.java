@@ -256,7 +256,7 @@ public class GitNavigationController {
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
-		DesignDocumentHtmlGenerator contentParser = new DesignDocumentHtmlGenerator(document.getContent(), document.getOriginalDocument());
+		DesignDocumentHtmlGenerator contentParser = new DesignDocumentHtmlGenerator(document);
 		model.addAttribute("content", contentParser.getHtml());
 		
 		return "git-navigation/document";

@@ -11,12 +11,12 @@ import enterovirus.protease.domain.*;
 
 public class DesignDocumentHtmlGenerator {
 
+	private DocumentBean document;
 	private String content;
-	private DocumentBean documentBean;
 	
-	public DesignDocumentHtmlGenerator(String content, DocumentBean documentBean) {
-		this.content = content;
-		this.documentBean = documentBean;
+	public DesignDocumentHtmlGenerator(DocumentBean document) {
+		this.document = document;
+		this.content = document.getContent();
 	}
 	
 	public String getHtml() {
@@ -25,7 +25,7 @@ public class DesignDocumentHtmlGenerator {
 		HtmlRenderer renderer = HtmlRenderer.builder()
 		        .nodeRendererFactory(new HtmlNodeRendererFactory() {
 		            public NodeRenderer create(HtmlNodeRendererContext context) {
-		                return new TraceableItemNodeRenderer(context, documentBean);
+		                return new TraceableItemNodeRenderer(context, document);
 		            }
 		        })
 		        .build();

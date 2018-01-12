@@ -50,6 +50,7 @@ class DocumentImpl implements DocumentRepository {
 		}
 		
 		DocumentBean document = documents.get(0);
+		updateGitMaterial(document);
 		return document;
 	}
 	
