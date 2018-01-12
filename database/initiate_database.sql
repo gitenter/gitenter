@@ -113,7 +113,7 @@ CREATE FUNCTION git.document_id_from_traceable_item (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT doc.document_id INTO return_id FROM git.traceable_item AS tra
+	SELECT tra.document_id INTO return_id FROM git.traceable_item AS tra
 	WHERE tra.id = $1;
 	RETURN return_id;
 END;

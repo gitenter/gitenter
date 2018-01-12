@@ -178,13 +178,7 @@ public class UpdateDatabaseFromGit {
 		
 		for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
 			
-			/*
-			 * TODO:
-			 * If this document if from a previous commit, then in here we should
-			 * not do this, but load the corresponding "DocumentModifiedBean", and 
-			 * create an new "DocumentUnmodifiedBean".
-			 */
-			DocumentModifiedBean documentBean = new DocumentModifiedBean(commit, traceableDocument.getRelativeFilepath());
+			DocumentBean documentBean = new DocumentBean(commit, traceableDocument.getRelativeFilepath());
 			
 			for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 				
@@ -260,16 +254,12 @@ public class UpdateDatabaseFromGit {
 				 * "DocumentUnmodifiedBean" involve.
 				 */
 				TraceableItemBean downstreamItemBean = itemBean;
-				DocumentBean downstreamDocument = itemBean.getOriginalDocument();
 				TraceableItemBean upstreamItemBean = helper.traceablilityBuilderMap.get(upstreamItem.getTag());
-				DocumentBean upstreamDocument = upstreamItemBean.getOriginalDocument();
 				
-				TraceabilityMapBean map = new TraceabilityMapBean(upstreamDocument, upstreamItemBean, downstreamDocument, downstreamItemBean);
+				TraceabilityMapBean map = new TraceabilityMapBean(upstreamItemBean, downstreamItemBean);
 				
 				downstreamItemBean.addUpstreamMap(map);
 				upstreamItemBean.addDownstreamMap(map);
-				downstreamDocument.addMapForADownstreamItem(map);
-				upstreamDocument.addMapForAUpstreamItem(map);
 			}
 		}
 		
