@@ -66,10 +66,6 @@ CREATE TABLE git.git_commit (
 	sha_checksum_hash text NOT NULL UNIQUE
 );
 
--- TODO:
--- For this table, the created table has another column 
--- "error_message character varying(255)"
--- Really weird. Need to check why.
 CREATE TABLE git.git_commit_valid (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
@@ -82,10 +78,15 @@ CREATE TABLE git.git_commit_invalid (
 CREATE TABLE git.git_commit_ignored (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
+-- There is a constrain that the "id" of table "git_commit_valid",
+-- "git_commit_invalid", and "git_commit_ignored" are mutually exclusive,
+-- but there seems no easy way to define it in PostgreSQL.
 
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
-	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE
+	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE,
+	relative_filepath text NOT NULL,
+	UNIQUE(commit_id, relative_filepath)
 );
 
 CREATE FUNCTION git.commit_id_from_document (integer) 
@@ -99,72 +100,41 @@ END;
 $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
-CREATE TABLE git.document_modified (
-	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
-	relative_filepath text NOT NULL
-);
-
--- Since there is a PL/pgSQL function involved, there is no way
--- to give a unique constrain simply by
--- UNIQUE (git.commit_id_from_document(id), relative_filepath)
--- So we need to create this index.
-CREATE UNIQUE INDEX document_modified_unique_relative_filepath_idx 
-	ON git.document_modified (
-		git.commit_id_from_document(id), 
-		relative_filepath
-	);
-
-CREATE FUNCTION git.relative_filepath_from_document_modified (integer) 
-RETURNS text AS $return$
-DECLARE return text;
-BEGIN
-	SELECT mod.relative_filepath INTO return FROM git.document_modified AS mod
-	WHERE mod.id = $1;
-	RETURN return;
-END;
-$return$ LANGUAGE plpgsql
-IMMUTABLE;
-
-CREATE TABLE git.document_unmodified (
-	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
-	original_document_id serial REFERENCES git.document_modified (id) ON DELETE RESTRICT
-);
-
-CREATE UNIQUE INDEX document_unmodified_unique_relative_filepath_idx 
-	ON git.document_unmodified (
-		git.commit_id_from_document(id), 
-		git.relative_filepath_from_document_modified(original_document_id)
-	);
-
--- document_modified.id and document_unmodified.id are mutually exclusive,
--- but there seems no easy way to define it in PostgreSQL.
-
--- Actually there should be a stronger constrain that consider
--- both modified and unmodified documents, commit_id with relative_filepath
--- is unique. But there seems no easy way to define it in PostgreSQL.
-
 CREATE TABLE git.traceable_item (
 	id serial PRIMARY KEY,
 
-	original_document_id serial REFERENCES git.document_modified (id) ON DELETE CASCADE,
+	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	item_tag text NOT NULL,
 	content text NOT NULL,
-	UNIQUE (original_document_id, item_tag)	
+	UNIQUE (document_id, item_tag)	
+);
+
+CREATE FUNCTION git.document_id_from_traceable_item (integer) 
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT doc.document_id INTO return_id FROM git.traceable_item AS tra
+	WHERE tra.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
+CREATE UNIQUE INDEX traceable_item_tag_unique_per_commit_idx
+	ON git.traceable_item (
+		git.commit_id_from_document(id), 
+		item_tag
 );
 
 CREATE TABLE git.traceability_map (
 	id serial PRIMARY KEY,
-	upstream_document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
-	downstream_document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	UNIQUE (upstream_item_id, downstream_item_id),
 
-	CHECK (git.commit_id_from_document(upstream_document_id) = git.commit_id_from_document(downstream_document_id))
+	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id)) 
+		= git.commit_id_from_document(git.document_id_from_traceable_item(downstream_item_id)))
 );
-
-CREATE INDEX ON git.traceability_map (upstream_document_id, upstream_item_id);
-CREATE INDEX ON git.traceability_map (downstream_document_id, downstream_item_id);
 
 --------------------------------------------------------------------------------
 
