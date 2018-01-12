@@ -127,10 +127,9 @@ CREATE UNIQUE INDEX traceable_item_tag_unique_per_commit_idx
 );
 
 CREATE TABLE git.traceability_map (
-	id serial PRIMARY KEY,
 	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
-	UNIQUE (upstream_item_id, downstream_item_id),
+	PRIMARY KEY (upstream_item_id, downstream_item_id),
 
 	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id)) 
 		= git.commit_id_from_document(git.document_id_from_traceable_item(downstream_item_id)))

@@ -3,7 +3,6 @@ package enterovirus.gihook.postreceive;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -99,25 +98,8 @@ public class UpdateDatabaseFromGit {
 		 * more then one line of stdin (I don't know any condition until
 		 * now) and check whether the above condition is possible. If 
 		 * yes, need to write an exceptional condition somewhere in here.
-		 *
-		 * NOTE 1:
-		 * We can only use: commitRepository.saveAndFlush(commit);
-		 * but not: repositoryRepository.saveAndFlush(repository);
-		 *   
-		 * For the second case, "commit.id" will not be updated,
-		 * so it will raise errors when we do "commitRepository.saveAndFlush(commit)"
-		 * in later part of this script.
-		 * 
-		 * NOTE 2:
-		 * Data will be saveAndFlush again after the first and the
-		 * second round (see later comments). It doesn't really matter
-		 * whether commit is saved or not in here. We do it here
-		 * as it makes irrelevant things separately handled, but it
-		 * doesn't really causes performance overhead (since the number
-		 * of commits is really tiny compare to other operations).
 		 */
-//		repositoryRepository.saveAndFlush(repository);
-		commitRepository.saveAndFlush(commit);
+//		commitRepository.saveAndFlush(commit);
 		
 		/*
 		 * Write the data into the database through the persistence layer.
@@ -189,21 +171,6 @@ public class UpdateDatabaseFromGit {
 			commit.addDocument(documentBean);
 		}
 		
-		/*
-		 * NOTE:
-		 * 
-		 * We need to flush twice, ones after each loop, because otherwise the
-		 * document and traceable IDs haven't been update yet. It will cause 
-		 * error when Hibernate try to "insert into git.traceability_map" --
-		 * The upstream item and document will have "null" id value.
-		 * 
-		 * > ERROR: ERROR: null value in column "downstream_item_id" violates 
-		 * > not-null constraint
-		 * > Detail: Failing row contains (1, 1, null).
-		 * 
-		 * It will be solved if we use the @ManyToMany annotation to handle the map,
-		 * but that has other problems. See the comments there.
-		 */
 		commitRepository.saveAndFlush(commit);
 		
 		return helper;
@@ -232,25 +199,32 @@ public class UpdateDatabaseFromGit {
 				TraceableItemBean downstreamItemBean = itemBean;
 				TraceableItemBean upstreamItemBean = helper.traceablilityBuilderMap.get(upstreamItem.getTag());
 				
-				TraceabilityMapBean map = new TraceabilityMapBean(upstreamItemBean, downstreamItemBean);
-				
-				downstreamItemBean.addUpstreamMap(map);
-				upstreamItemBean.addDownstreamMap(map);
+				downstreamItemBean.addUpstreamItem(upstreamItemBean);
+				upstreamItemBean.addDownstreamItem(downstreamItemBean);
 			}
 		}
 		
-		/*
-		 * NOTE:
-		 * In here we "commitRepository.saveAndFlush", rather than
-		 * "documentRepository.saveAndFlush", because in later case
-		 * every "TraceabilityMapBean" will be saved twice (since
-		 * it is referred by two "DocumentBean"s hence causes key
-		 * constrain crashes.
-		 */
 		System.out.println("===========================");
 		commitRepository.saveAndFlush(commit);
-//		for (DocumentBean documentBean : commit.getDocuments()) {
-//			documentRepository.saveAndFlush(documentBean);
-//		}
 	}
+	
+	/*
+	 * TODO:
+	 * 
+	 * In this class, I have several questions regarding "saveAndFlush()".
+	 * It can be done in several different places.
+	 * (1) When the CommitBean is initialized.
+	 * (2) When we have build all traceable items, but no trace relations has
+	 * involved.
+	 * (3) when the trace relations has been build.
+	 * 
+	 * For whether to save/not save in this places, or whether the saving 
+	 * procedure is by repository/commit/document, several errors raises
+	 * in different combinations.
+	 * (a) "null" value for "document_id", "traceable_item_id", ...
+	 * (b) Double save of some item because of the later @ManyToMany relations.
+	 * 
+	 * The current code works for what I have tested, but I don't know whether
+	 * it is working in general, and/or whether there's a neater way to write it. 
+	 */
 }

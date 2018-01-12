@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -39,25 +41,24 @@ public class TraceableItemBean {
 	private String content;
 	
 	/*
-	 * Here I am not using @ManyToMany for several reasons:
+	 * Note:
 	 * 
-	 * (1) "git.traceability_map" has the "id" field, so other tables
-	 * e.g. the review tables may refer to this relationship. Therefore 
-	 * the @ManyToMany annotation cannot really have its full functions.
-	 * (or If I remember it right, it simply cannot be down.
+	 * @ManyToMany relationship does not support orphonRemoval.
 	 * 
-	 * (2) Unfortunately, @ManyToMany relationship does not support orphonRemoval,
-	 * So using it will cause further complicity.
 	 * > Only relationships with single cardinality on the source side can enable orphan removal, 
 	 * > which is why the orphanRemoval option is defined on the @OneToOne and @OneToMany 
 	 * > relationship annotations, but on neither of the @ManyToOne or @ManyToMany annotations.
 	 * > (book: "Pro JPA 2")
 	 */
-	@OneToMany(targetEntity=TraceabilityMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="upstreamItem")
-	private List<TraceabilityMapBean> downstreamMaps = new ArrayList<TraceabilityMapBean>();
 
-	@OneToMany(targetEntity=TraceabilityMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="downstreamItem")
-	private List<TraceabilityMapBean> upstreamMaps = new ArrayList<TraceabilityMapBean>();
+	@ManyToMany(targetEntity=TraceableItemBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(schema="git", name="traceability_map", 
+			joinColumns=@JoinColumn(name="downstream_item_id"), 
+			inverseJoinColumns=@JoinColumn(name="upstream_item_id"))
+	private List<TraceableItemBean> downstreamItems = new ArrayList<TraceableItemBean>();
+
+	@ManyToMany(mappedBy="downstreamItems")
+	private List<TraceableItemBean> upstreamItems = new ArrayList<TraceableItemBean>();
 	
 	/*
 	 * Hibernate constructor
@@ -71,30 +72,12 @@ public class TraceableItemBean {
 		this.itemTag = itemTag;
 		this.content = content;
 	}
-	
-	public boolean addDownstreamMap (TraceabilityMapBean map) {
-		return downstreamMaps.add(map);
+
+	public boolean addDownstreamItem (TraceableItemBean item) {
+		return downstreamItems.add(item);
 	}
-	
-	public boolean addUpstreamMap (TraceabilityMapBean map) {
-		return upstreamMaps.add(map);
-	}
-	
-	public List<TraceableItemBean> getDownstreamItems () {
-		
-		List<TraceableItemBean> items = new ArrayList<TraceableItemBean>();
-		for (TraceabilityMapBean map : downstreamMaps) {
-			items.add(map.getDownstreamItem());
-		}
-		return items;
-	}
-	
-	public List<TraceableItemBean> getUpstreamItems () {
-		
-		List<TraceableItemBean> items = new ArrayList<TraceableItemBean>();
-		for (TraceabilityMapBean map : upstreamMaps) {
-			items.add(map.getUpstreamItem());
-		}
-		return items;
+
+	public boolean addUpstreamItem (TraceableItemBean item) {
+		return upstreamItems.add(item);
 	}
 }

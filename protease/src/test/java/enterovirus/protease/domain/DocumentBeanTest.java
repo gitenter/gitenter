@@ -21,9 +21,8 @@ public class DocumentBeanTest {
 		document.addTraceableItem(traceableItem1);
 		document.addTraceableItem(traceableItem2);
 		
-		TraceabilityMapBean traceabilityMap = new TraceabilityMapBean(traceableItem1, traceableItem2);
-		traceableItem1.addDownstreamMap(traceabilityMap);
-		traceableItem2.addUpstreamMap(traceabilityMap);
+		traceableItem1.addDownstreamItem(traceableItem2);
+		traceableItem2.addUpstreamItem(traceableItem1);
 		
 		document.buildTraceableItemIndex();
 	}
