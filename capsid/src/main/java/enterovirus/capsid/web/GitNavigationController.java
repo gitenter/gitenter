@@ -23,6 +23,7 @@ public class GitNavigationController {
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private RepositoryGitDAO repositoryGitDAO;
 	@Autowired private CommitRepository commitRepository;
+	@Autowired private CommitGitDAO commitGitDAO;
 	@Autowired private DocumentRepository documentRepository;
 	
 	private String getWildcardValue (HttpServletRequest request) {
@@ -154,6 +155,7 @@ public class GitNavigationController {
 		model.addAttribute("repository", repository);
 		
 		if (commit instanceof CommitValidBean) {
+			commitGitDAO.loadFolderStructure((CommitValidBean)commit);
 			model.addAttribute("folderStructure", ((CommitValidBean)commit).getFolderStructure());
 			return "git-navigation/commit";
 		}

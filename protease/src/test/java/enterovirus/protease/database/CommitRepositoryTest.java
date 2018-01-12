@@ -22,6 +22,7 @@ import enterovirus.protease.domain.*;
 public class CommitRepositoryTest {
 
 	@Autowired private CommitRepository commitRepository;
+	@Autowired private CommitGitDAO commitGitDAO;
 	
 	@Test
 	@Transactional
@@ -30,6 +31,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+		commitGitDAO.loadFolderStructure((CommitValidBean)commit);
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
 
@@ -44,6 +46,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+		commitGitDAO.loadFolderStructure((CommitValidBean)commit);
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
 
@@ -54,6 +57,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+		commitGitDAO.loadFolderStructure((CommitValidBean)commit);
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 //		System.out.println(commit.getFolderStructure().childrenList().size());
 	}

@@ -29,7 +29,6 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		CommitBean commit = commits.get();
-		updateGitMaterial(commit);
 		return commit;
 	}
 	
@@ -45,7 +44,6 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		CommitBean commit = commits.get(0);
-		updateGitMaterial(commit);
 		return commit;
 	}
 	
@@ -86,20 +84,6 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		return commit;
-	}
-	
-	private void updateGitMaterial (CommitBean commit) throws IOException {
-		
-		String organizationName = commit.getRepository().getOrganization().getName();
-		String repositoryName = commit.getRepository().getName();
-		
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
-		CommitSha commitSha = new CommitSha(commit.getShaChecksumHash());
-		
-		if (commit instanceof CommitValidBean) {
-			GitFolderStructure gitFolderStructure = new GitFolderStructure(repositoryDirectory, commitSha);
-			((CommitValidBean)commit).setFolderStructure(gitFolderStructure.getFolderStructure());
-		}
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {

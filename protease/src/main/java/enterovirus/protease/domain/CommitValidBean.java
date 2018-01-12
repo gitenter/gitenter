@@ -21,6 +21,9 @@ import lombok.Setter;
 @Table(schema = "git", name = "git_commit_valid")
 public class CommitValidBean extends CommitBean {
 
+	/*
+	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this)
+	 */
 	@Transient
 	private GitFolderStructure.ListableTreeNode folderStructure;
 	

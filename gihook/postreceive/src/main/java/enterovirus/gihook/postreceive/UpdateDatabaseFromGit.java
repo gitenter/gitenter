@@ -247,6 +247,7 @@ public class UpdateDatabaseFromGit {
 		 * it is referred by two "DocumentBean"s hence causes key
 		 * constrain crashes.
 		 */
+		System.out.println("===========================");
 		commitRepository.saveAndFlush(commit);
 //		for (DocumentBean documentBean : commit.getDocuments()) {
 //			documentRepository.saveAndFlush(documentBean);

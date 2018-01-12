@@ -1,6 +1,5 @@
 package enterovirus.protease.domain;
 
-import java.io.File;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -64,6 +63,11 @@ public class RepositoryBean {
 	/*
 	 * Lazy loaded by calling
 	 * RepositoryGitDAO.loadBranchNames(repository)
+	 * 
+	 * TODO:
+	 * Is there a way to lazily load them when call getter?
+	 * If I don't want to wire RepositoryGitDAO to here to
+	 * make this class no longer POJO... 
 	 */
 	@Transient
 	private List<BranchName> branchNames;
@@ -78,4 +82,8 @@ public class RepositoryBean {
 	public void addCommit (CommitBean commit) {
 		commits.add(commit);
 	}
+
+
+
+
 }
