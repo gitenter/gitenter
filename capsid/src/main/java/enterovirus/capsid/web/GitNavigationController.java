@@ -1,12 +1,7 @@
 package enterovirus.capsid.web;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -176,6 +171,18 @@ public class GitNavigationController {
 	
 	/*************************************************************************/
 	
+	/*
+	 * This functions go with URL "/directories/**".
+	 * 
+	 * They cannot go with "/documents/{documentId}", because link 
+	 * between traceable items (and the corresponding documents) 
+	 * need to set up in a relative way.
+	 * 
+	 * TODO:
+	 * Need to handle blobs (e.g. images) which are not documents.
+	 * (1) They are not written into document table.
+	 * (2) They need to be parsed and shown in a different way.
+	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/directories/**", method=RequestMethod.GET)
 	public String showDocumentContentByCommit (
 			@PathVariable Integer organizationId,
@@ -193,23 +200,6 @@ public class GitNavigationController {
 		return showDocumentContent(document, request, model);
 	}
 	
-	/*
-	 * Current only the folder_1/same-name-file works,
-	 * because the fake database is not complete.
-	 * 
-	 * http://localhost:8888/organizations/1/repositories/1/directories/folder_1/same-name-file
-	 * 
-	 * TODO:
-	 * This shouldn't go with DocumentBean, because it need to
-	 * display files with are not documents (e.g. images).
-	 * Should define another one with URL such as
-	 * /organizations/{organizationId}/repositories/{repositoryId}/documents/{documentId}
-	 * to handle the display of documents.
-	 * 
-	 * TODO:
-	 * We can't do "documents/{documentId}". Link between traceable items (and
-	 * the corresponding documents) need to set up in a relative way.
-	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/directories/**", method=RequestMethod.GET)
 	public String showDocumentContentByBranch (
 			@PathVariable Integer organizationId,

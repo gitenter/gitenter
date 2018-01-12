@@ -116,7 +116,7 @@ public class UpdateDatabaseFromGit {
 		 * doesn't really causes performance overhead (since the number
 		 * of commits is really tiny compare to other operations).
 		 */
-//			repositoryRepository.saveAndFlush(repository);
+//		repositoryRepository.saveAndFlush(repository);
 		commitRepository.saveAndFlush(commit);
 		
 		/*
@@ -140,12 +140,7 @@ public class UpdateDatabaseFromGit {
 		
 		TraceableRepository traceableRepository = new TraceableRepository(status.getRepositoryDirectory());
 		for (GitBlob blob : blobs) {
-			
-			/*
-			 * TODO:
-			 * Need to distinguish whether this document is modified or not.
-			 */
-			File filepath = new File(status.getRepositoryDirectory(), blob.getRelativeFilepath());
+
 			String relativeFilepath = blob.getRelativeFilepath();
 			String textContent = new String(blob.getBlobContent());
 			TraceableDocument traceableDocument = new TraceableDocument(traceableRepository, relativeFilepath, textContent);
@@ -195,31 +190,21 @@ public class UpdateDatabaseFromGit {
 		}
 		
 		/*
-		 * NOTE 1:
+		 * NOTE:
+		 * 
 		 * We need to flush twice, ones after each loop, because otherwise the
 		 * document and traceable IDs haven't been update yet. It will cause 
 		 * error when Hibernate try to "insert into git.traceability_map" --
 		 * The upstream item and document will have "null" id value.
 		 * 
-		 * NOTE 2:
-		 * The code currently in here is really tricky. We do
-		 * "documentRepository.saveAndFlush" rather than "commitRepository.saveAndFlush",
-		 * because in later case "itemBean.getOriginalDocument()" will
-		 * query the database again and give another Java Object (with a 
-		 * different object ID) rather than refer to the one already
-		 * exists. Therefore, When we saveAndFlush after the second loop,
-		 * it doesn't see any referred "TraceabilityMapBean", so nothing
-		 * will be updated.
+		 * > ERROR: ERROR: null value in column "downstream_item_id" violates 
+		 * > not-null constraint
+		 * > Detail: Failing row contains (1, 1, null).
 		 * 
-		 * TODO: (because of NOTE 2)
-		 * The code is working right now, but the current approach is
-		 * probably really risky (as it depend on the detail of Hibernate
-		 * which is not by design. So we probably want to change it later.
+		 * It will be solved if we use the @ManyToMany annotation to handle the map,
+		 * but that has other problems. See the comments there.
 		 */
-		for (DocumentBean documentBean : commit.getDocuments()) {
-			documentRepository.saveAndFlush(documentBean);
-		}
-//		commitRepository.saveAndFlush(commit);
+		commitRepository.saveAndFlush(commit);
 		
 		return helper;
 	}
@@ -244,15 +229,6 @@ public class UpdateDatabaseFromGit {
 			 */
 			for (TraceableItem upstreamItem : traceableItem.getUpstreamItems()) {
 			
-				/*
-				 * TODO:
-				 * Currently "upstreamDocument" and "downstreamDocument"
-				 * are not correct. They are not the DocumentModified of the
-				 * original document, but the document belong to the correct 
-				 * commit.
-				 * Need to correct it together when we modify to let
-				 * "DocumentUnmodifiedBean" involve.
-				 */
 				TraceableItemBean downstreamItemBean = itemBean;
 				TraceableItemBean upstreamItemBean = helper.traceablilityBuilderMap.get(upstreamItem.getTag());
 				
