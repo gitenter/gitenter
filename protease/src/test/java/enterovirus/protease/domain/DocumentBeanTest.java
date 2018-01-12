@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import enterovirus.protease.domain.*;
-
 public class DocumentBeanTest {
 	
 	private DocumentBean document;

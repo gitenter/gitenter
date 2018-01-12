@@ -20,9 +20,9 @@ import enterovirus.protease.domain.*;
 class TraceableItemNodeRenderer implements NodeRenderer {
 	
 	private final HtmlWriter html;
-	private DocumentModifiedBean document;
+	private DocumentBean document;
 
-	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentModifiedBean document) {
+	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentBean document) {
 		
 		this.html = context.getWriter();
 		
@@ -95,17 +95,17 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 						html.tag("input class=\"original\" type=\"submit\" value=\""+itemTag+"\"");
 						html.tag("/form");
 						
-						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getUpstreamPairs()) {
+						for (TraceableItemBean upstreamItem : traceableItem.getUpstreamItems()) {
 							
-							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
-							html.tag("input class=\"upstream\" type=\"submit\" value=\""+pair.getTraceableItem().getItemTag()+"\"");
+							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(upstreamItem)+"#"+upstreamItem.getItemTag()+"\"");
+							html.tag("input class=\"upstream\" type=\"submit\" value=\""+upstreamItem.getItemTag()+"\"");
 							html.tag("/form");
 						}
 						
-						for (TraceabilityMapBean.TraceableItemDocumentPair pair : traceableItem.getDownstreamPairs()) {
+						for (TraceableItemBean downstreamItem : traceableItem.getDownstreamItems()) {
 							
-							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(pair)+"#"+pair.getTraceableItem().getItemTag()+"\"");
-							html.tag("input class=\"downstream\" type=\"submit\" value=\""+pair.getTraceableItem().getItemTag()+"\"");
+							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(downstreamItem)+"#"+downstreamItem.getItemTag()+"\"");
+							html.tag("input class=\"downstream\" type=\"submit\" value=\""+downstreamItem.getItemTag()+"\"");
 							html.tag("/form");
 						}
 						
@@ -127,7 +127,7 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 		html.line();
 	}
 	
-	private String getRelativeFilepath (TraceabilityMapBean.TraceableItemDocumentPair pair) {
+	private String getRelativeFilepath (TraceableItemBean referredItem) {
 		
 		/*
 		 * "getParent()" is needed, because Java doesn't know the original
@@ -140,10 +140,10 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 			/*
 			 * This is for the special case that document is at the root.
 			 */
-			return pair.getDocument().getRelativeFilepath();
+			return referredItem.getDocument().getRelativeFilepath();
 		}
 		else {
-			Path referred = Paths.get(pair.getDocument().getRelativeFilepath());
+			Path referred = Paths.get(referredItem.getDocument().getRelativeFilepath());
 			String relativeFilepath = original.relativize(referred).toString();
 			
 			return relativeFilepath;

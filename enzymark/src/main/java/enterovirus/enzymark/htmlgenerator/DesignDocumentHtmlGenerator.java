@@ -7,14 +7,14 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlNodeRendererFactory;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import enterovirus.protease.domain.DocumentModifiedBean;
+import enterovirus.protease.domain.*;
 
 public class DesignDocumentHtmlGenerator {
 
 	private String content;
-	private DocumentModifiedBean documentBean;
+	private DocumentBean documentBean;
 	
-	public DesignDocumentHtmlGenerator(String content, DocumentModifiedBean documentBean) {
+	public DesignDocumentHtmlGenerator(String content, DocumentBean documentBean) {
 		this.content = content;
 		this.documentBean = documentBean;
 	}
