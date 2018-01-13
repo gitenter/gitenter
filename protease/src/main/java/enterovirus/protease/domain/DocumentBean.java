@@ -56,7 +56,7 @@ public class DocumentBean {
 	 * @Transient is to specify that the property or field is not persistent.
 	 */
 	@Transient
-	private String content;
+	private byte[] blobContent;
 
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -72,6 +72,14 @@ public class DocumentBean {
 	
 	public boolean addTraceableItem(TraceableItemBean traceableItem) {
 		return traceableItems.add(traceableItem);
+	}
+	
+	public String getContent () {
+		return new String(blobContent);
+	}
+	
+	public void setContent (String content) {
+		blobContent = content.getBytes();
 	}
 	
 	/*
@@ -90,7 +98,7 @@ public class DocumentBean {
 		 * or Linux formats.
 		 */
 		int lineNumber = 1;
-		for (String content : content.split("\n")) {
+		for (String content : getContent().split("\n")) {
 			lineContents.add(new LineContent(new Integer(lineNumber), content));
 			++lineNumber;
 		}

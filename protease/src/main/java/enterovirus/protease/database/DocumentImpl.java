@@ -89,7 +89,7 @@ class DocumentImpl implements DocumentRepository {
 		 * "byte[]" type to String.
 		 */
 		GitBlob blob = new GitBlob(repositoryDirectory, commitSha, filepath);
-		document.setContent(new String(blob.getBlobContent()));
+		document.setBlobContent(blob.getBlobContent());
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {

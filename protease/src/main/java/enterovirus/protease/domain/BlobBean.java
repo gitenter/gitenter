@@ -6,6 +6,7 @@ import lombok.*;
 @Setter
 public class BlobBean {
 	
-	private String commitId;
-	private String filePath;
+	private byte[] blobContent;
+	
+	private String mimeType;
 }
