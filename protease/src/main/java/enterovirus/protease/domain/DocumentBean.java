@@ -24,18 +24,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 /*
- * In SQL, use "Joined" inheritance Strategy out of four strategies
- * (1) Mapped Superclass
- * (2) Table per Class
- * (3) Single Table
- * (4) Joined
+ * It seems if we extend another bean, the attributes
+ * in the superclass automatically becomes @Transient.
  */
 @Getter
 @Setter
 @Entity
 @Table(schema = "git", name = "document")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class DocumentBean {
+public class DocumentBean extends BlobBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -55,8 +52,8 @@ public class DocumentBean {
 	/*
 	 * @Transient is to specify that the property or field is not persistent.
 	 */
-	@Transient
-	private byte[] blobContent;
+//	@Transient
+//	private byte[] blobContent;
 
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -74,12 +71,19 @@ public class DocumentBean {
 		return traceableItems.add(traceableItem);
 	}
 	
+//	public String getContent () {
+//		return new String(blobContent);
+//	}
+//	
+//	public void setContent (String content) {
+//		blobContent = content.getBytes();
+//	}
 	public String getContent () {
-		return new String(blobContent);
+		return new String(getBlobContent());
 	}
 	
 	public void setContent (String content) {
-		blobContent = content.getBytes();
+		setBlobContent(content.getBytes());
 	}
 	
 	/*

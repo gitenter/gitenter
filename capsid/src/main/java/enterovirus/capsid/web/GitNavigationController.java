@@ -1,6 +1,9 @@
 package enterovirus.capsid.web;
 
+import java.io.OutputStream;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +23,7 @@ import enterovirus.protease.domain.*;
 @Controller
 public class GitNavigationController {	
 
+	@Autowired private BlobGitDAO blobGitDAO;
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private RepositoryGitDAO repositoryGitDAO;
 	@Autowired private CommitRepository commitRepository;
@@ -172,6 +176,24 @@ public class GitNavigationController {
 	}
 	
 	/*************************************************************************/
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/blob/directories/**", method=RequestMethod.GET)
+	public void showBlobContentByBranch (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable BranchName branchName,
+			HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		String relativeFilepath = getWildcardValue(request);
+		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), branchName, relativeFilepath);
+
+		response.setContentType(blob.getMimeType());
+		OutputStream outputStream = response.getOutputStream();
+		outputStream.write(blob.getBlobContent());
+		outputStream.close();
+	}
 	
 	/*
 	 * This functions go with URL "/directories/**".

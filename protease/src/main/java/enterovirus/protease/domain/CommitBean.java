@@ -16,6 +16,13 @@ import lombok.Setter;
 
 import enterovirus.gitar.wrap.CommitSha;
 
+/*
+ * In SQL, use "Joined" inheritance Strategy out of four strategies
+ * (1) Mapped Superclass
+ * (2) Table per Class
+ * (3) Single Table
+ * (4) Joined
+ */
 @Getter
 @Setter
 @Entity
