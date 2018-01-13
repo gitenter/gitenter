@@ -1,7 +1,11 @@
 package enterovirus.gitar;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -84,6 +88,21 @@ public class GitBlob {
 
 	public String getRelativeFilepath() {
 		return relativeFilepath;
+	}
+	
+	public String getMimeType () throws IOException {
+		
+		/*
+		 * Refer to:
+		 * https://stackoverflow.com/questions/51438/getting-a-files-mime-type-in-java/18640199
+		 * https://stackoverflow.com/questions/33998407/how-to-fetch-the-mime-type-from-byte-array-in-java-6
+		 * https://docs.oracle.com/javaee/5/api/javax/activation/MimetypesFileTypeMap.html
+		 * https://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html
+		 */
+		InputStream is = new BufferedInputStream(new ByteArrayInputStream(blobContent));
+		String mimeType = URLConnection.guessContentTypeFromStream(is);
+		System.out.println("URLConnection: "+mimeType);
+		return mimeType;
 	}
 	
 	/*

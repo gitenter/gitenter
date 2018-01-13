@@ -123,6 +123,10 @@ public class UpdateDatabaseFromGit {
 		TraceableRepository traceableRepository = new TraceableRepository(status.getRepositoryDirectory());
 		for (GitBlob blob : blobs) {
 
+			/*
+			 * TODO:
+			 * Only do with text file.
+			 */
 			String relativeFilepath = blob.getRelativeFilepath();
 			String textContent = new String(blob.getBlobContent());
 			TraceableDocument traceableDocument = new TraceableDocument(traceableRepository, relativeFilepath, textContent);

@@ -21,14 +21,15 @@ public class GitBlobTest {
 		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		gitBlob = new GitBlob(repositoryDirectory, commitSha, relativeFilepath);
-		System.out.println(new String(gitBlob.getBlobContent()));
+		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
 		
 		BranchName branchName = new BranchName("master");
 		gitBlob = new GitBlob(repositoryDirectory, branchName, relativeFilepath);
-		System.out.println(new String(gitBlob.getBlobContent()));
+		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
 		
 		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);
-		System.out.println(new String(gitBlob.getBlobContent()));
+		System.out.println("MIME: "+gitBlob.getMimeType());
+		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
 	}
 		
 	@Test
