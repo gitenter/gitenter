@@ -54,16 +54,10 @@ public class DocumentBean {
 	
 	/*
 	 * @Transient is to specify that the property or field is not persistent.
-	 * 
-	 * TODO:
-	 * Since TraceableItemBean cannot extend LineContentBean (because of JPA
-	 * annotation), should we completely remove this one, and replace it with
-	 * "String blobContent"?
 	 */
 	@Transient
-//	private List<LineContentBean> lineContents = new ArrayList<LineContentBean>();
 	private String content;
-	
+
 	/*
 	 * This default constructor is needed for Hibernate.
 	 */

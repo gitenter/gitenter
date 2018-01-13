@@ -250,7 +250,7 @@ public class GitNavigationController {
 		
 		DesignDocumentHtmlGenerator contentParser = new DesignDocumentHtmlGenerator(document);
 		model.addAttribute("content", contentParser.getHtml());
-		
+			
 		return "git-navigation/document";
 	}
 }
