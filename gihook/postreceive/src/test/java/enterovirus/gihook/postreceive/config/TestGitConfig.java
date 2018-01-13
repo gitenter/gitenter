@@ -14,7 +14,7 @@ public class TestGitConfig {
 	public GitSource longCommitPathgitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long_commit_path/");
 		return gitSource;
 	}
 	
@@ -23,16 +23,7 @@ public class TestGitConfig {
 	public GitSource oneCommitTraceabilityGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one-commit-traceability/");
-		return gitSource;
-	}
-	
-	@Profile("fake_update")
-	@Bean
-	public GitSource fakeUpdateGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/hook-fake-update/");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one_commit_traceability/");
 		return gitSource;
 	}
 }

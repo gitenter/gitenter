@@ -14,8 +14,8 @@ INSERT INTO config.repository VALUES
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES
-	(1, 1, '6f16070b3425f5d966238c1996db8b3f5bd3afaa'),
-	(2, 1, 'd69daf3a9ecbbca148296ced86e76f7ada2f9be8');
+	(1, 1, 'd02f12e15a3d3e8f0abbe0710556a987b5220d2e'),
+	(2, 1, 'bcc58617ca7ddb562eb8199ff4dda5303c4b7ec0');
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
 INSERT INTO git.git_commit_valid VALUES

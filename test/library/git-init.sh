@@ -1,6 +1,6 @@
 #!/bin/sh
 
-git_init_one_repo () {
+git_init_single_repo () {
 
 	testcasename=$1
 
@@ -24,5 +24,7 @@ git_init_one_repo () {
 	git init
 	git remote add origin $HOME/Workspace/enterovirus-test/$testcasename/org/repo.git
 
+	rootfilepath=$HOME/Workspace/enterovirus-test/$testcasename/
+	gitclientfilepath=$HOME/Workspace/enterovirus-test/$testcasename/org/repo
 }
 

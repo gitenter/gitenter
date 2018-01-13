@@ -18,10 +18,10 @@ public class GitLogTest {
 	
 	@Before
 	public void initialize() {
-		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
-		commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/commit-sha-list-master.txt");
-		commitRecordFileUnmergebranch = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/commit-sha-list-unmergebranch.txt");
-		commitRecordFileMergebranch = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/commit-sha-list-mergebranch.txt");
+		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/long_commit_path/org/repo.git");
+		commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/long_commit_path/commit-sha-list-master.txt");
+		commitRecordFileUnmergebranch = new File("/home/beta/Workspace/enterovirus-test/long_commit_path/commit-sha-list-unmergebranch.txt");
+		commitRecordFileMergebranch = new File("/home/beta/Workspace/enterovirus-test/long_commit_path/commit-sha-list-mergebranch.txt");
 	}
 	
 	

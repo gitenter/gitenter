@@ -15,10 +15,10 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/org/repo.git");
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		String relativeFilepath = "1st-commit-file-to-be-change-in-the-2nd-commit";
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt");
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		gitBlob = new GitBlob(repositoryDirectory, commitSha, relativeFilepath);
 		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
@@ -37,7 +37,7 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
 		String relativeFilepath = "document-1.md";
 		
 		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);

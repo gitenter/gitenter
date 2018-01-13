@@ -39,7 +39,7 @@ public class CommitRepositoryTest {
 	@Transactional
 	public void test2() throws Exception {
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt");
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
 		CommitBean commit = commitRepository.findByCommitSha(commitSha);

@@ -18,7 +18,7 @@ public class TestGitConfig {
 		/* 
 		 * Current this folder doesn't exist, but that doesn't matter. 
 		 */
-		gitSource.setRootFolderPath("dummy-position-not-exist");
+		gitSource.setRootFolderPath("/dummy/position/not/exist");
 		
 		return gitSource;
 	}
@@ -29,7 +29,7 @@ public class TestGitConfig {
 		
 		GitSource gitSource = new GitSource();
 		
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit");
 		
 		return gitSource;
 	}
@@ -39,7 +39,7 @@ public class TestGitConfig {
 	public GitSource longCommitPathgitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long-commit-path/");
+		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long_commit_path/");
 		return gitSource;
 	}
 }

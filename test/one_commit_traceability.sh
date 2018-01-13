@@ -1,17 +1,11 @@
-# git constants
-testcasename=one-commit-traceability
-
-# Database constants
-username=one_commit_traceability_username
-password=one_commit_traceability_password
-dbname=one_commit_traceability_dbname
+testcasename=one_commit_traceability
 
 # Initialize git
-. $HOME/Workspace/enterovirus/test/library/git-init.sh
-git_init_one_repo $testcasename
+. $HOME/Workspace/enterovirus/test/library/git-init.sh || exit 1
+git_init_single_repo $testcasename
 
 # Fake a commit with two document files with traceable items inside
-cd $HOME/Workspace/enterovirus-test/$testcasename/org/repo
+cd $gitclientfilepath
 cat > document-1.md <<- EOM
 ~~garbage~~not part of the traceable items~~
 - [document-1-tag-0001] document-1-0001-content
@@ -32,14 +26,8 @@ git commit -m "Commit of two documents with traceability relationship in between
 git push origin master
 
 export commit_id=$(git log -1 --pretty="%H")
-echo $commit_id >> $HOME/Workspace/enterovirus-test/$testcasename/commit-sha-list.txt
+echo $commit_id >> $rootfilepath/commit-sha-list.txt
 
 # Initialize SQL database
-export PGPASSWORD=postgres
-export PGHOST=localhost
-psql -U postgres -w -f $HOME/Workspace/enterovirus/test/$testcasename/$testcasename-config.sql
-
-export PGPASSWORD=$password
-export PGHOST=localhost
-psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/database/initiate_database.sql
-psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/test/$testcasename/$testcasename-data.sql
+. $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1
+sql_init_single_repo $testcasename

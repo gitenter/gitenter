@@ -21,7 +21,7 @@ public class TestDatabaseConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/long_commit_path_dbname");
 		dataSource.setUsername("long_commit_path_username");
-		dataSource.setPassword("long_commit_path_password");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 	
@@ -32,18 +32,7 @@ public class TestDatabaseConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/one_commit_traceability_dbname");
 		dataSource.setUsername("one_commit_traceability_username");
-		dataSource.setPassword("one_commit_traceability_password");
-		return dataSource;
-	}
-	
-	@Profile("fake_update")
-	@Bean
-	public DataSource fakeUpdateDataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/hook_fake_update_dbname");
-		dataSource.setUsername("hook_fake_update_username");
-		dataSource.setPassword("hook_fake_update_password");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 }

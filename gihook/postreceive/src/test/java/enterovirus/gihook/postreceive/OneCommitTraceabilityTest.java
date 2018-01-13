@@ -39,8 +39,8 @@ public class OneCommitTraceabilityTest extends AbstractTestExecutionListener {
 		 * sh /home/beta/Workspace/enterovirus/test/one-commit-traceability/one-commit-traceability.sh
 		 */
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
-		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/commit-sha-list.txt");
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		
 		CommitStatus status = new CommitStatus(
 				repositoryDirectory,

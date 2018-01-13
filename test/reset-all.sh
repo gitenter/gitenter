@@ -1,5 +1,4 @@
-sh hook-fake-update/initialization.sh 
-sh long-commit-path/long-commit-path.sh 
-sh one-commit-traceability/one-commit-traceability.sh 
-sh one-repo-fix-commit/one-repo-fix-commit.sh 
-sh user-auth/user-auth.sh
+sh long_commit_path.sh 
+sh one_commit_traceability.sh 
+sh one_repo_fix_commit.sh 
+sh user_auth.sh

@@ -17,7 +17,7 @@ public class TestDatabaseConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/user_auth_dbname");
 		dataSource.setUsername("user_auth_username");
-		dataSource.setPassword("user_auth_password");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 	
@@ -28,7 +28,7 @@ public class TestDatabaseConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/one_repo_fix_commit_dbname");
 		dataSource.setUsername("one_repo_fix_commit_username");
-		dataSource.setPassword("one_repo_fix_commit_password");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 	
@@ -39,7 +39,7 @@ public class TestDatabaseConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/long_commit_path_dbname");
 		dataSource.setUsername("long_commit_path_username");
-		dataSource.setPassword("long_commit_path_password");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 	

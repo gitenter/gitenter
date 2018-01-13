@@ -15,8 +15,8 @@ public class GitFolderStructureTest {
 	
 	@Before
 	public void initialize() {
-		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/org/repo.git");
-//		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
+		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+//		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
 	}
 	
 	@Test
@@ -24,8 +24,8 @@ public class GitFolderStructureTest {
 		
 		GitFolderStructure gitCommit;
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/commit-sha-list.txt");
-//		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/commit-sha-list.txt");
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+//		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
 		gitCommit = new GitFolderStructure(repositoryDirectory, commitSha);
