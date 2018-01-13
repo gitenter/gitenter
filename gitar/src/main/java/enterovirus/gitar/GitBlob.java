@@ -75,13 +75,6 @@ public class GitBlob {
 		blobContent = loader.getBytes();
 	}
 	
-	/**
-	 * For the HEAD of the master branch. 
-	 */
-	public GitBlob (File repositoryDirectory, String relativeFilepath) throws IOException {
-		this(repositoryDirectory, new BranchName("master"), relativeFilepath);
-	}
-	
 	public byte[] getBlobContent() {
 		return blobContent;
 	}
@@ -101,7 +94,6 @@ public class GitBlob {
 		 */
 		InputStream is = new BufferedInputStream(new ByteArrayInputStream(blobContent));
 		String mimeType = URLConnection.guessContentTypeFromStream(is);
-		System.out.println("URLConnection: "+mimeType);
 		return mimeType;
 	}
 	

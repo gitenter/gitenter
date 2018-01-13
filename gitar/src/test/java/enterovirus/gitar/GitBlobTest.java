@@ -1,5 +1,7 @@
 package enterovirus.gitar;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -26,10 +28,6 @@ public class GitBlobTest {
 		BranchName branchName = new BranchName("master");
 		gitBlob = new GitBlob(repositoryDirectory, branchName, relativeFilepath);
 		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
-		
-		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);
-		System.out.println("MIME: "+gitBlob.getMimeType());
-		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
 	}
 		
 	@Test
@@ -37,10 +35,29 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
-		String relativeFilepath = "document-1.md";
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/mime_types/org/repo.git");
+		BranchName branchName = new BranchName("master");
 		
-		gitBlob = new GitBlob(repositoryDirectory, relativeFilepath);
-		System.out.println(new String(gitBlob.getBlobContent()));
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.png");
+		assertEquals(gitBlob.getMimeType(), "image/png");
+		
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.jpg");
+		assertEquals(gitBlob.getMimeType(), "image/jpeg");
+
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.gif");
+		assertEquals(gitBlob.getMimeType(), "image/gif");
+
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.html");
+		assertEquals(gitBlob.getMimeType(), "text/html");
+
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.md");
+		System.out.println("sample.md MIME type: "+gitBlob.getMimeType());
+
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.pdf");
+		System.out.println("sample.pdf MIME type: "+gitBlob.getMimeType());
+
+		gitBlob = new GitBlob(repositoryDirectory, branchName, "Sample.java");
+		System.out.println("sample.pdf MIME type: "+gitBlob.getMimeType());
+		
 	}
 }
