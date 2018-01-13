@@ -44,7 +44,11 @@ cat > design/D1.md <<- EOM
 
 - [D1T1]{R1T1,R2T1} Content of D1T1
 - [D2T2] Content of D2T2.
+
+![](../sample.jpg "")
 EOM
+
+cp /home/beta/Workspace/enterovirus/test/files/sample.jpg .
 
 git add -A
 git commit -m "Add design document D2.md"

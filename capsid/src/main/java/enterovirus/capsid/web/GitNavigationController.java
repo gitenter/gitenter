@@ -177,24 +177,6 @@ public class GitNavigationController {
 	
 	/*************************************************************************/
 	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/blob/directories/**", method=RequestMethod.GET)
-	public void showBlobContentByBranch (
-			@PathVariable Integer organizationId,
-			@PathVariable Integer repositoryId,
-			@PathVariable BranchName branchName,
-			HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		
-		RepositoryBean repository = repositoryRepository.findById(repositoryId);
-		String relativeFilepath = getWildcardValue(request);
-		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), branchName, relativeFilepath);
-
-		response.setContentType(blob.getMimeType());
-		OutputStream outputStream = response.getOutputStream();
-		outputStream.write(blob.getBlobContent());
-		outputStream.close();
-	}
-	
 	/*
 	 * This functions go with URL "/directories/**".
 	 * 
@@ -230,11 +212,37 @@ public class GitNavigationController {
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
+			HttpServletResponse response,
 			Model model) throws Exception {
 		
 		model.addAttribute("branch", branchName.getName());
 		
 		String relativeFilepath = getWildcardValue(request);
+		
+		/*
+		 * TODO:
+		 * Is there a way to not query git twice (first time just get blob 
+		 * and second time get document)?
+		 */
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), branchName, relativeFilepath);
+
+		if (!blob.getMimeType().equals("text/markdown")) {
+			
+			response.setContentType(blob.getMimeType());
+			OutputStream outputStream = response.getOutputStream();
+			outputStream.write(blob.getBlobContent());
+			outputStream.close();
+			
+			/*
+			 * TODO:
+			 * A mixed way to show blob and call apache tiles? The current way
+			 * give error:
+			 * > java.lang.IllegalStateException: getOutputStream() has already been called for this response
+			 */
+			return "git-navigation/document";
+		}
+		
 		model.addAttribute("relativeFilepath", relativeFilepath);
 		DocumentBean document = documentRepository.findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, relativeFilepath);
 		
