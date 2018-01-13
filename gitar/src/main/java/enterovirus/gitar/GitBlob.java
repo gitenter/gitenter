@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Ref;
@@ -20,6 +21,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
+import eu.medsea.mimeutil.MimeUtil;
 
 public class GitBlob {
 
@@ -85,6 +87,8 @@ public class GitBlob {
 	
 	public String getMimeType () throws IOException {
 		
+		InputStream is = new BufferedInputStream(new ByteArrayInputStream(blobContent));
+		
 		/*
 		 * Refer to:
 		 * https://stackoverflow.com/questions/51438/getting-a-files-mime-type-in-java/18640199
@@ -92,9 +96,41 @@ public class GitBlob {
 		 * https://docs.oracle.com/javaee/5/api/javax/activation/MimetypesFileTypeMap.html
 		 * https://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html
 		 */
-		InputStream is = new BufferedInputStream(new ByteArrayInputStream(blobContent));
-		String mimeType = URLConnection.guessContentTypeFromStream(is);
-		return mimeType;
+		String mimeType;
+		
+		mimeType = URLConnection.guessContentTypeFromStream(is);
+		if (mimeType != null) {
+			return mimeType;
+		}
+		
+		mimeType = URLConnection.guessContentTypeFromName(relativeFilepath);
+		if (mimeType != null) {
+			return mimeType;
+		}
+		
+		/*
+		 * MimeUtil will get markdown MIME type "application/octet-stream",
+		 * which is not correct.
+		 */
+		if (FilenameUtils.getExtension(relativeFilepath).equals("md")) {
+			return "text/markdown";
+		}
+		
+		MimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+		mimeType = MimeUtil.getMimeTypes(is).iterator().next().toString();
+		MimeUtil.unregisterMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+		if (mimeType != null) {
+			return mimeType;
+		}
+		
+		MimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+		mimeType = MimeUtil.getMimeTypes(relativeFilepath).iterator().next().toString();
+		MimeUtil.unregisterMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+		if (mimeType != null) {
+			return mimeType;
+		}
+		
+		return null;
 	}
 	
 	/*

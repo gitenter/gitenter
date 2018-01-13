@@ -51,13 +51,12 @@ public class GitBlobTest {
 		assertEquals(gitBlob.getMimeType(), "text/html");
 
 		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.md");
-		System.out.println("sample.md MIME type: "+gitBlob.getMimeType());
-
+		assertEquals(gitBlob.getMimeType(), "text/markdown");
+		
 		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.pdf");
-		System.out.println("sample.pdf MIME type: "+gitBlob.getMimeType());
+		assertEquals(gitBlob.getMimeType(), "application/pdf");
 
 		gitBlob = new GitBlob(repositoryDirectory, branchName, "Sample.java");
-		System.out.println("sample.pdf MIME type: "+gitBlob.getMimeType());
-		
+		assertEquals(gitBlob.getMimeType(), "text/plain");
 	}
 }
