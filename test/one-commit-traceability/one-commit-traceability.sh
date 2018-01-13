@@ -6,26 +6,9 @@ username=one_commit_traceability_username
 password=one_commit_traceability_password
 dbname=one_commit_traceability_dbname
 
-# Clean up
-rm -rf $HOME/Workspace/enterovirus-test/$testcasename/
-cd $HOME/Workspace/enterovirus-test/
-mkdir $testcasename
-cd $testcasename
-touch commit-sha-list.txt
-mkdir org
-
-# Initialize server side git repo
-cd $HOME/Workspace/enterovirus-test/$testcasename/org/
-mkdir repo.git
-cd repo.git
-git init --bare
-
-# Initialize client side git repo
-cd $HOME/Workspace/enterovirus-test/$testcasename/org/
-mkdir repo
-cd repo
-git init
-git remote add origin $HOME/Workspace/enterovirus-test/$testcasename/org/repo.git
+# Initialize git
+. $HOME/Workspace/enterovirus/test/library/git-init.sh
+git_init_one_repo $testcasename
 
 # Fake a commit with two document files with traceable items inside
 cd $HOME/Workspace/enterovirus-test/$testcasename/org/repo

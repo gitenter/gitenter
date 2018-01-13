@@ -90,9 +90,9 @@ done
 # Initialize SQL database
 export PGPASSWORD=postgres
 export PGHOST=localhost
-psql -U postgres -w -f $HOME/Workspace/enterovirus/test/$testcasename/$testcasename-config.sql
+psql -U postgres -w -f $HOME/Workspace/enterovirus/test/$testcasename/config.sql
 
 export PGPASSWORD=$password
 export PGHOST=localhost
 psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/database/initiate_database.sql
-psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/test/$testcasename/$testcasename-data.sql
+psql -U $username -d $dbname -w -f $HOME/Workspace/enterovirus/test/$testcasename/data.sql
