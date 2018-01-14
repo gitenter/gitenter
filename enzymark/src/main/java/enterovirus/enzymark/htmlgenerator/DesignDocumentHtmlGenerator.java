@@ -28,6 +28,11 @@ public class DesignDocumentHtmlGenerator {
 		                return new TraceableItemNodeRenderer(context, document);
 		            }
 		        })
+		        .nodeRendererFactory(new HtmlNodeRendererFactory() {
+		            public NodeRenderer create(HtmlNodeRendererContext context) {
+		                return new ImageNodeRenderer(context);
+		            }
+		        })
 		        .build();
 		
 		Node node = parser.parse(content);

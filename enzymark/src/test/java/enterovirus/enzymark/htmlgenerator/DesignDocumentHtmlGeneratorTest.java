@@ -18,7 +18,9 @@ public class DesignDocumentHtmlGeneratorTest {
 				  "- [tag-1] content-1\n"
 				+ "- [tag-2]{tag-1} content-2\n"
 				+ "  - nested text\n"
-				+ "- this line is not a traceable text";
+				+ "- this line is not a traceable text\n"
+				+ "\n"
+				+ "![alt text](sample.png \"title text\")\n";
 		document.setContent(content);
 		
 		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
