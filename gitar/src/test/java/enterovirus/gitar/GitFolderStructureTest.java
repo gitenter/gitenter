@@ -21,7 +21,7 @@ public class GitFolderStructureTest {
 	}
 	
 	@Test
-	public void test1() throws IOException {
+	public void testSha() throws IOException {
 		
 		GitFolderStructure gitCommit;
 		
@@ -37,7 +37,7 @@ public class GitFolderStructureTest {
 	}
 
 	@Test
-	public void test2() throws IOException {
+	public void testBranch() throws IOException {
 		
 		GitFolderStructure gitCommit;
 		
@@ -49,12 +49,26 @@ public class GitFolderStructureTest {
 	}
 
 	@Test
-	public void test3() throws IOException {
+	public void testTag() throws IOException {
 		
 		GitFolderStructure gitCommit;
 		
 		TagName tagName = new TagName("first-commit");
 		gitCommit = new GitFolderStructure(repositoryDirectory, tagName);
+		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
+		showFolderStructure(gitCommit);
+	}
+	
+	@Test
+	public void testBranchWithFilter() throws IOException {
+		
+		GitFolderStructure gitCommit;
+		
+		String[] filtedDirectory = new String[]{"1st-commit-folder"};
+		
+		BranchName branchName = new BranchName("master"); 
+		gitCommit = new GitFolderStructure(repositoryDirectory, branchName, filtedDirectory);
 		
 		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);

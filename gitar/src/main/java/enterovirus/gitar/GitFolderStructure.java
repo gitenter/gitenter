@@ -18,6 +18,7 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
@@ -56,7 +57,7 @@ public class GitFolderStructure {
 	 * are using this system, and the folder(s) to used for design
 	 * control documents. 
 	 */
-	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha, String[] filtedFilepaths) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
 		this.commitSha = commitSha;
@@ -64,10 +65,14 @@ public class GitFolderStructure {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
-		writeToFolderStructure(repository, ObjectId.fromString(commitSha.getShaChecksumHash()));
+		writeToFolderStructure(repository, filtedFilepaths, ObjectId.fromString(commitSha.getShaChecksumHash()));
+	}
+	
+	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha) throws IOException {
+		this(repositoryDirectory, commitSha, new String[]{});
 	}
 
-	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, BranchName branchName, String[] filtedFilepaths) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
 		
@@ -76,10 +81,14 @@ public class GitFolderStructure {
 		
 		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
 		commitSha = new CommitSha(branch.getObjectId().getName());
-		writeToFolderStructure(repository, branch.getObjectId());
+		writeToFolderStructure(repository, filtedFilepaths, branch.getObjectId());
 	}
 	
-	public GitFolderStructure (File repositoryDirectory, TagName tagName) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
+		this(repositoryDirectory, branchName, new String[]{});
+	}
+	
+	public GitFolderStructure (File repositoryDirectory, TagName tagName, String[] filtedFilepaths) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
 		
@@ -88,16 +97,23 @@ public class GitFolderStructure {
 		
 		Ref tag = repository.exactRef("refs/tags/"+tagName.getName());
 		commitSha = new CommitSha(tag.getObjectId().getName());
-		writeToFolderStructure(repository, tag.getObjectId());
+		writeToFolderStructure(repository, filtedFilepaths, tag.getObjectId());
 	}
 	
-	private void writeToFolderStructure (Repository repository, ObjectId objectId) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, TagName tagName) throws IOException {
+		this(repositoryDirectory, tagName, new String[]{});
+	}
+	
+	private void writeToFolderStructure (Repository repository, String[] filtedFilepaths, ObjectId objectId) throws IOException {
 		
 		try (RevWalk revWalk = new RevWalk(repository)) {
 			
 			RevCommit commit = revWalk.parseCommit(objectId);
 			RevTree revTree = commit.getTree();
 			TreeWalk treeWalk = new TreeWalk(repository);
+			for (String filtedFilepath : filtedFilepaths) {
+				treeWalk.setFilter(PathFilter.create(filtedFilepath));
+			}
 			treeWalk.addTree(revTree);
 			treeWalk.setRecursive(false);
 			

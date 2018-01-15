@@ -10,6 +10,13 @@ cp $testcasename-data-template.sql $testcasename-data.sql
 
 # Fake client side git 1st commit
 cd $gitclientfilepath
+cat > enterovirus.conf <<- EOM
+# ------------------------------
+# Enterovirus configuration file
+# ------------------------------
+
+enable_systemwide = on
+EOM
 touch 1st-commit-file-under-root
 echo "1st-commit-file-under-root" > 1st-commit-file-under-root
 touch 1st-commit-file-to-be-change-in-the-2nd-commit

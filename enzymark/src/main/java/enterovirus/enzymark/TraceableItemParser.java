@@ -3,6 +3,9 @@ package enterovirus.enzymark;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
+import lombok.Getter;
+
+@Getter
 public class TraceableItemParser {
 
 	private String tag;
@@ -61,18 +64,6 @@ public class TraceableItemParser {
 		}
 		
 		s.close();
-	}
-
-	public String getTag() {
-		return tag;
-	}
-	
-	public String[] getUpstreamItemTags() {
-		return upstreamItemTags;
-	}
-
-	public String getContent() {
-		return content;
 	}
 	
 	public boolean isTraceableItem () {
