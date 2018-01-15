@@ -21,6 +21,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.gitar.wrap.TagName;
 import eu.medsea.mimeutil.MimeUtil;
 
 public class GitBlob {
@@ -35,19 +36,7 @@ public class GitBlob {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
-		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitSha.getShaChecksumHash()));
-		RevTree revTree = commit.getTree();
-		TreeWalk treeWalk = new TreeWalk(repository);
-		treeWalk.addTree(revTree);
-		treeWalk.setRecursive(true);
-		treeWalk.setFilter(PathFilter.create(relativeFilepath));
-		if (!treeWalk.next()) {
-			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
-			throw new IllegalStateException("Did not find expected file");
-		}
-		ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
-		blobContent = loader.getBytes();
+		writeToBlobContent(repository, ObjectId.fromString(commitSha.getShaChecksumHash()));
 	}
 
 	/**
@@ -61,20 +50,40 @@ public class GitBlob {
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
 		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
+		writeToBlobContent(repository, branch.getObjectId());
+	}
+
+	public GitBlob (File repositoryDirectory, TagName tagName, String relativeFilepath) throws IOException {
+
+		this.relativeFilepath = relativeFilepath;
 		
-		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(branch.getObjectId());
-		RevTree revTree = commit.getTree();
-		TreeWalk treeWalk = new TreeWalk(repository);
-		treeWalk.addTree(revTree);
-		treeWalk.setRecursive(true);
-		treeWalk.setFilter(PathFilter.create(relativeFilepath));
-		if (!treeWalk.next()) {
-			/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
-			throw new IllegalStateException("Did not find expected file");
+		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
+		
+		Ref tag = repository.exactRef("refs/tags/"+tagName.getName());
+		writeToBlobContent(repository, tag.getObjectId());
+	}
+	
+	private void writeToBlobContent (Repository repository, ObjectId objectId) throws IOException {
+		
+		try (RevWalk revWalk = new RevWalk(repository)) {
+		
+			RevCommit commit = revWalk.parseCommit(objectId);
+			RevTree revTree = commit.getTree();
+		
+			try (TreeWalk treeWalk = new TreeWalk(repository)) {
+				
+				treeWalk.addTree(revTree);
+				treeWalk.setRecursive(true);
+				treeWalk.setFilter(PathFilter.create(relativeFilepath));
+				if (!treeWalk.next()) {
+					/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
+					throw new IllegalStateException("Did not find expected file");
+				}
+				ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
+				blobContent = loader.getBytes();
+			}
 		}
-		ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
-		blobContent = loader.getBytes();
 	}
 	
 	public byte[] getBlobContent() {

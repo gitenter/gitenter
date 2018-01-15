@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.gitar.wrap.TagName;
 
 public class GitFolderStructureTest {
 	
@@ -42,6 +43,18 @@ public class GitFolderStructureTest {
 		
 		BranchName branchName = new BranchName("master"); 
 		gitCommit = new GitFolderStructure(repositoryDirectory, branchName);
+		
+		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
+		showFolderStructure(gitCommit);
+	}
+
+	@Test
+	public void test3() throws IOException {
+		
+		GitFolderStructure gitCommit;
+		
+		TagName tagName = new TagName("first-commit");
+		gitCommit = new GitFolderStructure(repositoryDirectory, tagName);
 		
 		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
 		showFolderStructure(gitCommit);

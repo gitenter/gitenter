@@ -21,6 +21,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.gitar.wrap.TagName;
 
 public class GitFolderStructure {
 	
@@ -63,14 +64,7 @@ public class GitFolderStructure {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
-		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitSha.getShaChecksumHash()));
-		RevTree revTree = commit.getTree();
-		TreeWalk treeWalk = new TreeWalk(repository);
-		treeWalk.addTree(revTree);
-		treeWalk.setRecursive(false);
-		
-		generateDataFromTreeWalk(treeWalk);
+		writeToFolderStructure(repository, ObjectId.fromString(commitSha.getShaChecksumHash()));
 	}
 
 	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
@@ -82,15 +76,33 @@ public class GitFolderStructure {
 		
 		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
 		commitSha = new CommitSha(branch.getObjectId().getName());
+		writeToFolderStructure(repository, branch.getObjectId());
+	}
+	
+	public GitFolderStructure (File repositoryDirectory, TagName tagName) throws IOException {
 		
-		RevWalk revWalk = new RevWalk(repository);
-		RevCommit commit = revWalk.parseCommit(branch.getObjectId());
-		RevTree revTree = commit.getTree();
-		TreeWalk treeWalk = new TreeWalk(repository);
-		treeWalk.addTree(revTree);
-		treeWalk.setRecursive(false);
+		this.repositoryDirectory = repositoryDirectory;
 		
-		generateDataFromTreeWalk(treeWalk);
+		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
+		
+		Ref tag = repository.exactRef("refs/tags/"+tagName.getName());
+		commitSha = new CommitSha(tag.getObjectId().getName());
+		writeToFolderStructure(repository, tag.getObjectId());
+	}
+	
+	private void writeToFolderStructure (Repository repository, ObjectId objectId) throws IOException {
+		
+		try (RevWalk revWalk = new RevWalk(repository)) {
+			
+			RevCommit commit = revWalk.parseCommit(objectId);
+			RevTree revTree = commit.getTree();
+			TreeWalk treeWalk = new TreeWalk(repository);
+			treeWalk.addTree(revTree);
+			treeWalk.setRecursive(false);
+			
+			generateDataFromTreeWalk(treeWalk);
+		}
 	}
 	
 	private void generateDataFromTreeWalk (TreeWalk treeWalk) throws IOException {

@@ -51,6 +51,8 @@ do
 done
 git merge $mergebranch
 git branch -d $mergebranch
+git tag merged
+git push origin --tags
 
 git branch $unmergebranch
 git checkout $unmergebranch
@@ -64,6 +66,8 @@ for i in 1 2 3
 do
 	generate_a_git_commit $master
 done
+git tag newest
+git push origin --tags
 
 # Initialize SQL database
 . $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1

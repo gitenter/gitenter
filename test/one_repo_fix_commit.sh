@@ -21,6 +21,9 @@ git add -A
 git commit -m "1st commit"
 git push origin master
 
+git tag first-commit
+git push origin --tags
+
 # Update commit sha in SQL script for for the 1st commit
 export commit_id=$(git log -1 --pretty="%H")
 echo $commit_id >> $rootfilepath/commit-sha-list.txt

@@ -4,15 +4,15 @@ import java.io.File;
 
 import org.junit.Test;
 
-import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.TagName;
 
-public class GitBranchTest {
+public class GitTagTest {
 
 	@Test
 	public void test() throws Exception {
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/long_commit_path/org/repo.git");
-		GitBranch gitBranch = new GitBranch(repositoryDirectory);
-		for (BranchName name : gitBranch.getBranchNames()) {
+		GitTag gitTag = new GitTag(repositoryDirectory);
+		for (TagName name : gitTag.getTagNames()) {
 			System.out.println(name.getName());
 		}
 	}

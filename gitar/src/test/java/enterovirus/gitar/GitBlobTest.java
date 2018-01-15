@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.gitar.wrap.TagName;
 
 public class GitBlobTest {
 
@@ -27,6 +28,10 @@ public class GitBlobTest {
 		
 		BranchName branchName = new BranchName("master");
 		gitBlob = new GitBlob(repositoryDirectory, branchName, relativeFilepath);
+		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
+
+		TagName tagName = new TagName("first-commit");
+		gitBlob = new GitBlob(repositoryDirectory, tagName, relativeFilepath);
 		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
 	}
 		
