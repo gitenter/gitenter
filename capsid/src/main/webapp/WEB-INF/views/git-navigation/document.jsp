@@ -19,7 +19,7 @@
       <table class="hidden">
         <tr>
           <td class="right">
-            <sf:form method="GET" action="/organizations/${organization.id}/repositories/${repository.id}/directories/${relativeFilepath}">
+            <sf:form method="GET" action="/organizations/${organization.id}/repositories/${repository.id}/documents/directories/${relativeFilepath}">
               <select class="inline" name="branch">
                 <c:forEach items="${repository.branchNames}" var="b">
                   <option value="${b.name}"><c:out value="Branch: ${b.name}" /></option>

@@ -30,7 +30,7 @@ public class DesignDocumentHtmlGenerator {
 		        })
 		        .nodeRendererFactory(new HtmlNodeRendererFactory() {
 		            public NodeRenderer create(HtmlNodeRendererContext context) {
-		                return new ImageNodeRenderer(context);
+		                return new ImageNodeRenderer(context, document);
 		            }
 		        })
 		        .build();

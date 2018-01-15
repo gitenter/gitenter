@@ -1,5 +1,8 @@
 package enterovirus.enzymark.htmlgenerator;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
 
@@ -10,13 +13,17 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
+import enterovirus.protease.domain.DocumentBean;
+
 class ImageNodeRenderer implements NodeRenderer {
 	
 	private final HtmlWriter html;
-
-	ImageNodeRenderer(HtmlNodeRendererContext context) {
+	private DocumentBean document;
+	
+	ImageNodeRenderer(HtmlNodeRendererContext context, DocumentBean document) {
 		
 		this.html = context.getWriter();
+		this.document = document;
 	}
 
 	@Override
@@ -29,8 +36,13 @@ class ImageNodeRenderer implements NodeRenderer {
 		
 		Image image = (Image) node;
 		
-		String destination = image.getDestination()+"?blob=true";
+		String destination = image.getDestination();
+		Path referredPath = Paths.get("documents", "directories", document.getRelativeFilepath()).getParent();
+		Path imagePath = Paths.get("blobs", "directories", document.getRelativeFilepath()).getParent().resolve(destination);
+		String url = referredPath.relativize(imagePath).toString();
+		
 		String title = image.getTitle();
+		
 		String alt;
 		if (image.getFirstChild() != null && image.getFirstChild() instanceof Text) {
 			alt = ((Text)image.getFirstChild()).getLiteral();
@@ -39,6 +51,6 @@ class ImageNodeRenderer implements NodeRenderer {
 			alt = "";
 		}
 		
-		html.tag("img src=\""+destination+"\" alt=\""+alt+"\" title=\""+title+"\" /");
+		html.tag("img src=\""+url+"\" alt=\""+alt+"\" title=\""+title+"\" /");
 	}
 }

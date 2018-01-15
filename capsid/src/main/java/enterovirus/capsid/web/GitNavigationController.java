@@ -173,6 +173,49 @@ public class GitNavigationController {
 	}
 	
 	/*************************************************************************/
+
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/blobs/directories/**", method=RequestMethod.GET)
+	public void showBlobContentByCommit (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable CommitSha commitSha,
+			HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		String relativeFilepath = getWildcardValue(request);
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), commitSha, relativeFilepath);
+
+		writeToOutputStream(blob, response);
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/blobs/directories/**", method=RequestMethod.GET)
+	public void showBlobContentByBranch (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable BranchName branchName,
+			HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		String relativeFilepath = getWildcardValue(request);
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), branchName, relativeFilepath);
+
+		writeToOutputStream(blob, response);
+	}
+	
+	private void writeToOutputStream (BlobBean blob, HttpServletResponse response) throws Exception {
+
+		if (!blob.getMimeType().equals("text/markdown")) {
+			
+			response.setContentType(blob.getMimeType());
+			OutputStream outputStream = response.getOutputStream();
+			outputStream.write(blob.getBlobContent());
+			outputStream.close();
+		}
+	}
+	
+	/*************************************************************************/
 	
 	/*
 	 * This functions go with URL "/directories/**".
@@ -186,7 +229,7 @@ public class GitNavigationController {
 	 * (1) They are not written into document table.
 	 * (2) They need to be parsed and shown in a different way.
 	 */
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/directories/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/documents/directories/**", method=RequestMethod.GET)
 	public String showDocumentContentByCommit (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
@@ -202,81 +245,25 @@ public class GitNavigationController {
 		
 		return showDocumentContent(document, request, model);
 	}
-
-	@RequestMapping(
-			value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/directories/**", 
-			params="blob", 
-			method=RequestMethod.GET)
-	public void showBlobContentByBranch (
-			@PathVariable Integer organizationId,
-			@PathVariable Integer repositoryId,
-			@PathVariable BranchName branchName,
-			HttpServletRequest request,
-			HttpServletResponse response,
-			Model model) throws Exception {
-		
-		model.addAttribute("branch", branchName.getName());
-		
-		String relativeFilepath = getWildcardValue(request);
-		
-		RepositoryBean repository = repositoryRepository.findById(repositoryId);
-		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), branchName, relativeFilepath);
-
-		if (!blob.getMimeType().equals("text/markdown")) {
-			
-			response.setContentType(blob.getMimeType());
-			OutputStream outputStream = response.getOutputStream();
-			outputStream.write(blob.getBlobContent());
-			outputStream.close();
-		}
-	}
 	
-	@RequestMapping(
-			value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/directories/**", 
-			method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/documents/directories/**", method=RequestMethod.GET)
 	public String showDocumentContentByBranch (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
-			HttpServletResponse response,
 			Model model) throws Exception {
 		
 		model.addAttribute("branch", branchName.getName());
 		
 		String relativeFilepath = getWildcardValue(request);
-		
-//		/*
-//		 * TODO:
-//		 * Is there a way to not query git twice (first time just get blob 
-//		 * and second time get document)?
-//		 */
-//		RepositoryBean repository = repositoryRepository.findById(repositoryId);
-//		BlobBean blob = blobGitDAO.find(repository.getOrganization().getName(), repository.getName(), branchName, relativeFilepath);
-//
-//		if (!blob.getMimeType().equals("text/markdown")) {
-//			
-//			response.setContentType(blob.getMimeType());
-//			OutputStream outputStream = response.getOutputStream();
-//			outputStream.write(blob.getBlobContent());
-//			outputStream.close();
-//			
-//			/*
-//			 * TODO:
-//			 * A mixed way to show blob and call apache tiles? The current way
-//			 * give error:
-//			 * > java.lang.IllegalStateException: getOutputStream() has already been called for this response
-//			 */
-//			return "git-navigation/document";
-//		}
-		
 		model.addAttribute("relativeFilepath", relativeFilepath);
 		DocumentBean document = documentRepository.findByRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, relativeFilepath);
 		
 		return showDocumentContent(document, request, model);
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/directories/**", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/documents/directories/**", method=RequestMethod.GET)
 	public String showDocumentContentDefault (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
@@ -285,7 +272,7 @@ public class GitNavigationController {
 		
 		BranchName branchName = getDefaultBranchName(branch);
 		String filepath = getWildcardValue(request);
-		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName()+"/directories/"+filepath;
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName()+"/documents/directories/"+filepath;
 	}
 	
 	private String showDocumentContent (
