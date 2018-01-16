@@ -1,12 +1,10 @@
-package enterovirus.enzymark;
+package enterovirus.gihook.postreceive.conffileparser;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import lombok.Getter;
 
 /*
  * The config file is read using the Properties file:
@@ -21,7 +19,7 @@ public class ConfFileParser {
 	
 	private boolean enableSystemwide;
 
-	public ConfFileParser(File confFile) throws IOException {
+	public ConfFileParser(File confFile) throws ConfFileFormatException {
 		
 		Properties prop = new Properties();
 		
@@ -29,19 +27,16 @@ public class ConfFileParser {
 			
 			prop.load(input);
 			
-			String enableSystemValue = prop.getProperty("enable_systemwide");
+			String enableSystemValue = getValue(prop, "enable_systemwide");
 			if (enableSystemValue.equals("on")) {
 				enableSystemwide = true;
 			}
 			else if (enableSystemValue.equals("off")) {
 				enableSystemwide = false;
 			} 
-			
-			/*
-			 * TODO: 
-			 * what if the conf file has wrong format?
-			 * (prop.getProperty will give "null") 
-			 */
+			else {
+				throw new ConfFilePropValueException("enable_systemwide");
+			}
 		}
 		catch (IOException e) {
 			/*
@@ -54,5 +49,19 @@ public class ConfFileParser {
 	
 	public boolean isEnabledSystemwide () {
 		return enableSystemwide;
+	}
+	
+	private String removeCommentsAndWhiteSpace (String value) {
+		return value.split("#")[0].trim();
+	}
+	
+	private String getValue (Properties prop, String propName) throws ConfFileFormatException {
+
+		String propValue = prop.getProperty(propName);
+		if (propValue == null) {
+			throw new ConfFilePropNameException(propName);
+		}
+
+		return removeCommentsAndWhiteSpace(propValue);
 	}
 }
