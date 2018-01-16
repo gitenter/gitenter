@@ -6,6 +6,9 @@ git_init_single_repo $testcasename
 
 # Fake a commit with two document files with traceable items inside
 cd $gitclientfilepath
+mkdir requirement
+mkdir design
+
 cat > enterovirus.properties <<- EOM
 # ------------------------------
 # Enterovirus configuration file

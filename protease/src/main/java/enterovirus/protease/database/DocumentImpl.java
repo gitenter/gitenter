@@ -43,10 +43,10 @@ class DocumentImpl implements DocumentRepository {
 		 * But for a consistent and valid git input, it should be correct.
 		 */
 		if (documents.size() > 1) {
-			throw new IOException ("Cannot locate an unique file from commitId and relativeFilepath!");
+			throw new IOException ("Cannot locate an unique file from commitId \""+commitId+"\" and relativeFilepath! \""+relativeFilepath+"\"");
 		}
 		else if (documents.size() == 0) {
-			throw new IOException ("There is no file under this commitId and relativeFilepath!");
+			throw new IOException ("There is no file under commitId \""+commitId+"\" and relativeFilepath \""+relativeFilepath+"\"!");
 		}
 		
 		DocumentBean document = documents.get(0);

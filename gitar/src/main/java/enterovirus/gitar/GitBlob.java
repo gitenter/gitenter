@@ -82,8 +82,8 @@ public class GitBlob implements AutoCloseable {
 				treeWalk.setRecursive(true);
 				treeWalk.setFilter(PathFilter.create(relativeFilepath));
 				if (!treeWalk.next()) {
-					/*if not do next(), always only get the first file "test-add-a-file-from-client_1" */
-					throw new IllegalStateException("Did not find expected file");
+					/*if not do next(), always only get the first file. */
+					throw new IllegalStateException("Did not find expected file with relative path \""+relativeFilepath+"\".");
 				}
 				ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
 				blobContent = loader.getBytes();

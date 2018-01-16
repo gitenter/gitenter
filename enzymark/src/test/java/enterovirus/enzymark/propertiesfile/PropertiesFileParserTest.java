@@ -51,6 +51,19 @@ public class PropertiesFileParserTest {
 		assertTrue(parser.isEnabledSystemwide());
 		assertArrayEquals(parser.getIncludePaths(), new String[] {"folder1", "folder2", "folder3"});
 	}
+
+	@Test
+	public void testNoIncludePath() throws Exception {
+		
+		File confFile = testFolder.newFile("enterovirus.properties");
+		FileUtils.writeStringToFile(confFile,
+				"enable_systemwide = on",
+				"UTF-8");
+				
+		PropertiesFileParser parser = new PropertiesFileParser(confFile);
+		assertTrue(parser.isEnabledSystemwide());
+		assertArrayEquals(parser.getIncludePaths(), new String[]{});
+	}
 	
 	@Test
 	public void testConfFileNotExist() throws Exception {
@@ -74,7 +87,7 @@ public class PropertiesFileParserTest {
 	@Test(expected = PropertiesFileFormatException.class)
 	public void testWrongPropValue() throws Exception {
 		
-		File confFile = testFolder.newFile("enterovirus.conf");
+		File confFile = testFolder.newFile("enterovirus.properties");
 		FileUtils.writeStringToFile(confFile,
 				"enable_systemwide = onnnnnnn",
 				"UTF-8");
@@ -94,6 +107,6 @@ public class PropertiesFileParserTest {
 	
 		PropertiesFileParser parser = new PropertiesFileParser(repositoryDirectory, commitSha, relativeFilepath);
 		assertTrue(parser.isEnabledSystemwide());
-		assertArrayEquals(parser.getIncludePaths(), new String[] {"requirement"});
+		assertArrayEquals(parser.getIncludePaths(), new String[] {"requirement", "design"});
 	}
 }

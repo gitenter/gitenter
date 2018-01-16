@@ -121,16 +121,16 @@ public class PropertiesFileParser {
 		 * 
 		 * At least one path should be provided.
 		 * 
-		 * TODO:
-		 * Extend to "include_patterns" which may include e.g., "doc/*.md"
+		 * NOTE:
+		 * if there is no path provided, this will give "includePaths"
+		 * equals empty String "new String[]{}". Then based on the implementation
+		 * in GitFolderStrucuture, no filter will be setup and everything will
+		 * be returned.
 		 * 
 		 * TODO:
-		 * Consider if this path is not included, then include everything.
+		 * Extend to "include_patterns" which may include e.g., "doc/*.md"
 		 */
 		includePaths = config.getStringArray("include_paths");
-		if (includePaths.length == 0) {
-			throw new PropertiesFileFormatException("At least one \"include_paths\" should be provided.");
-		}
 	}
 	
 	public boolean isEnabledSystemwide () {

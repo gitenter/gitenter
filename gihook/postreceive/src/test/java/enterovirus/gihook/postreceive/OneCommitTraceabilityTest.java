@@ -54,6 +54,6 @@ public class OneCommitTraceabilityTest extends AbstractTestExecutionListener {
 	@Test
 	public void test() throws Exception {
 		
-		DocumentBean document = documentRepository.findByCommitIdAndRelativeFilepath(1, "document-1.md");
+		DocumentBean document = documentRepository.findByCommitIdAndRelativeFilepath(1, "requirement/R1.md");
 	}
 }

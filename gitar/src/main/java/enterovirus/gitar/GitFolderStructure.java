@@ -18,13 +18,17 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.OrTreeFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.gitar.wrap.TagName;
 
 public class GitFolderStructure {
+	
+	private static final String rootMarker = ".";
 	
 	private File repositoryDirectory;
 	private CommitSha commitSha;
@@ -57,7 +61,7 @@ public class GitFolderStructure {
 	 * are using this system, and the folder(s) to used for design
 	 * control documents. 
 	 */
-	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha, String[] filtedFilepaths) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha, String[] includePaths) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
 		this.commitSha = commitSha;
@@ -65,14 +69,14 @@ public class GitFolderStructure {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
 		
-		writeToFolderStructure(repository, filtedFilepaths, ObjectId.fromString(commitSha.getShaChecksumHash()));
+		writeToFolderStructure(repository, includePaths, ObjectId.fromString(commitSha.getShaChecksumHash()));
 	}
 	
 	public GitFolderStructure (File repositoryDirectory, CommitSha commitSha) throws IOException {
 		this(repositoryDirectory, commitSha, new String[]{});
 	}
 
-	public GitFolderStructure (File repositoryDirectory, BranchName branchName, String[] filtedFilepaths) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, BranchName branchName, String[] includePaths) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
 		
@@ -81,14 +85,14 @@ public class GitFolderStructure {
 		
 		Ref branch = repository.exactRef("refs/heads/"+branchName.getName());
 		commitSha = new CommitSha(branch.getObjectId().getName());
-		writeToFolderStructure(repository, filtedFilepaths, branch.getObjectId());
+		writeToFolderStructure(repository, includePaths, branch.getObjectId());
 	}
 	
 	public GitFolderStructure (File repositoryDirectory, BranchName branchName) throws IOException {
 		this(repositoryDirectory, branchName, new String[]{});
 	}
 	
-	public GitFolderStructure (File repositoryDirectory, TagName tagName, String[] filtedFilepaths) throws IOException {
+	public GitFolderStructure (File repositoryDirectory, TagName tagName, String[] includePaths) throws IOException {
 		
 		this.repositoryDirectory = repositoryDirectory;
 		
@@ -97,23 +101,46 @@ public class GitFolderStructure {
 		
 		Ref tag = repository.exactRef("refs/tags/"+tagName.getName());
 		commitSha = new CommitSha(tag.getObjectId().getName());
-		writeToFolderStructure(repository, filtedFilepaths, tag.getObjectId());
+		writeToFolderStructure(repository, includePaths, tag.getObjectId());
 	}
 	
 	public GitFolderStructure (File repositoryDirectory, TagName tagName) throws IOException {
 		this(repositoryDirectory, tagName, new String[]{});
 	}
 	
-	private void writeToFolderStructure (Repository repository, String[] filtedFilepaths, ObjectId objectId) throws IOException {
+	private void writeToFolderStructure (Repository repository, String[] includePaths, ObjectId objectId) throws IOException {
 		
 		try (RevWalk revWalk = new RevWalk(repository)) {
 			
 			RevCommit commit = revWalk.parseCommit(objectId);
 			RevTree revTree = commit.getTree();
 			TreeWalk treeWalk = new TreeWalk(repository);
-			for (String filtedFilepath : filtedFilepaths) {
-				treeWalk.setFilter(PathFilter.create(filtedFilepath));
+			
+			if (includePaths.length >= 2) {
+				/*
+				 * Use OrTreeFilter because either path works.
+				 */
+				List<TreeFilter> treeFilters = new ArrayList<TreeFilter>();
+				for (String path : includePaths) {
+					treeFilters.add(PathFilter.create(path));
+				}
+				treeWalk.setFilter(OrTreeFilter.create(treeFilters));	
 			}
+			else if (includePaths.length == 1) {
+				/*
+				 * Because OrTreeFilter needs at least two filters (otherwise
+				 * it raises exception), we need to make this condition special.
+				 */
+				treeWalk.setFilter(PathFilter.create(includePaths[0]));
+			}
+			else {
+				/*
+				 * If no specified "includePaths" are provided, then no filter
+				 * will be set up, and everything will be returned.
+				 */
+				assert includePaths.length == 0;
+			}
+			
 			treeWalk.addTree(revTree);
 			treeWalk.setRecursive(false);
 			
@@ -123,7 +150,7 @@ public class GitFolderStructure {
 	
 	private void generateDataFromTreeWalk (TreeWalk treeWalk) throws IOException {
 		
-		folderStructure = new DefaultListableMutableTreeNode(".");
+		folderStructure = new DefaultListableMutableTreeNode(rootMarker);
 		
 //		while (treeWalk.next()) {
 //			if (treeWalk.isSubtree()) {
@@ -218,14 +245,17 @@ public class GitFolderStructure {
 	private void recursivelyIterateDocuments (ListableTreeNode parentNode, List<GitBlob> blobs) throws IOException {
 
 		if (parentNode.isLeaf()) {
+			
 			String filePath = parentNode.toString();
+			
 			/*
-			 * TODO:
-			 * Decide whether we should add this file by its filename format.
-			 * 
-			 * TODO:
-			 * Need to check and record the information whether this file is modified or not.
+			 * In this special case, rootMarker is the leaf. But there is no file
+			 * with the name of the root marker. 
 			 */
+			if (filePath.equals(rootMarker)) {
+				return;
+			}
+			
 			blobs.add(new GitBlob(repositoryDirectory, commitSha, filePath));
 			return;
 		}

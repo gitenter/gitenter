@@ -12,66 +12,85 @@ import enterovirus.gitar.wrap.TagName;
 
 public class GitFolderStructureTest {
 	
-	File repositoryDirectory;
 	
-	@Before
-	public void initialize() {
-		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
-//		repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+	@Test
+	public void testSha1() throws IOException {
+	
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
+		
+		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, commitSha);
+		
+		System.out.println(fs.getCommitSha().getShaChecksumHash());
+		showFolderStructure(fs);
+		showDocumentList(fs);
 	}
 	
 	@Test
-	public void testSha() throws IOException {
-		
-		GitFolderStructure gitCommit;
-		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
-//		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
+	public void testSha2() throws IOException {
+	
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
-		gitCommit = new GitFolderStructure(repositoryDirectory, commitSha);
+		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, commitSha);
 		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
-		showDocumentList(gitCommit);
+		System.out.println(fs.getCommitSha().getShaChecksumHash());
+		showFolderStructure(fs);
+		showDocumentList(fs);
 	}
 
 	@Test
 	public void testBranch() throws IOException {
 		
-		GitFolderStructure gitCommit;
-		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		BranchName branchName = new BranchName("master"); 
-		gitCommit = new GitFolderStructure(repositoryDirectory, branchName);
 		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
+		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, branchName);
+		
+		System.out.println(fs.getCommitSha().getShaChecksumHash());
+		showFolderStructure(fs);
 	}
 
 	@Test
 	public void testTag() throws IOException {
 		
-		GitFolderStructure gitCommit;
-		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		TagName tagName = new TagName("first-commit");
-		gitCommit = new GitFolderStructure(repositoryDirectory, tagName);
 		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
+		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, tagName);
+		
+		System.out.println(fs.getCommitSha().getShaChecksumHash());
+		showFolderStructure(fs);
 	}
 	
 	@Test
 	public void testBranchWithFilter() throws IOException {
 		
-		GitFolderStructure gitCommit;
-		
-		String[] filtedDirectory = new String[]{"1st-commit-folder"};
-		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		BranchName branchName = new BranchName("master"); 
-		gitCommit = new GitFolderStructure(repositoryDirectory, branchName, filtedDirectory);
+		String[] includePaths = new String[]{"1st-commit-folder"};
 		
-		System.out.println(gitCommit.getCommitSha().getShaChecksumHash());
-		showFolderStructure(gitCommit);
+		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, branchName, includePaths);
+		
+		System.out.println(fs.getCommitSha().getShaChecksumHash());
+		showFolderStructure(fs);
+	}
+	
+	@Test
+	public void testShaWithFilter() throws IOException {
+	
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
+		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
+		String[] includePaths = new String[]{"requirement", "design"};
+		
+		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, commitSha, includePaths);
+		
+		System.out.println(fs.getCommitSha().getShaChecksumHash());
+		showFolderStructure(fs);
+		showDocumentList(fs);
 	}
 	
 	private void showFolderStructure (GitFolderStructure gitCommit) {

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
+import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
 import enterovirus.enzymark.traceanalyzer.*;
 import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.GitBlob;
@@ -55,13 +57,30 @@ public class UpdateDatabaseFromGit {
 	
 	private void updateGitCommit (CommitStatus status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
 		
-		/* 
-		 * TODO:
-		 * Consider add a config file to indicate that this system only 
-		 * traces files of some particular folders/paths.
-		 */
+		PropertiesFileParser propertiesFileParser;
+		try {
+			propertiesFileParser = new PropertiesFileParser(status.getRepositoryDirectory(), commitInfo.getCommitSha(), "enterovirus.properties"); 
+		}
+		catch (PropertiesFileFormatException e) {
+
+			CommitBean commit = new CommitInvalidBean(repository, commitInfo.getCommitSha(), e.getMessage());
+			repository.addCommit(commit);
+			
+			commitRepository.saveAndFlush(commit);
+			return;
+		}
 		
+		if (propertiesFileParser.isEnabledSystemwide() == false) {
+			
+			CommitBean commit = new CommitIgnoredBean(repository, commitInfo.getCommitSha());
+			repository.addCommit(commit);
+			
+			commitRepository.saveAndFlush(commit);
+			return;
+		}
 		
+		String[] includePaths = propertiesFileParser.getIncludePaths();
+			
 		/*
 		 * Communicate with git to get the useful information needed
 		 * to be written to the database. This part doesn't touch the
@@ -73,7 +92,7 @@ public class UpdateDatabaseFromGit {
 		TraceableRepository traceableRepository;
 		
 		try {
-			traceableRepository = getTraceableRepository(status, commitInfo);
+			traceableRepository = getTraceableRepository(status, commitInfo, includePaths);
 		}
 		catch (TraceAnalyzerException e) {
 			
@@ -117,9 +136,9 @@ public class UpdateDatabaseFromGit {
 		buildTraceabilityMaps(commit, helper);
 	}
 	
-	private TraceableRepository getTraceableRepository (CommitStatus status, CommitInfo commitInfo) throws IOException, TraceAnalyzerException {
+	private TraceableRepository getTraceableRepository (CommitStatus status, CommitInfo commitInfo, String[] includePaths) throws IOException, TraceAnalyzerException {
 
-		List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha()).getGitBlobs();
+		List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha(), includePaths).getGitBlobs();
 		
 		TraceableRepository traceableRepository = new TraceableRepository(status.getRepositoryDirectory());
 		for (GitBlob blob : blobs) {
