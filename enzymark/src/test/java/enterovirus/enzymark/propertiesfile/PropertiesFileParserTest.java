@@ -11,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
+import enterovirus.gitar.wrap.CommitSha;
 
 public class PropertiesFileParserTest {
 	
@@ -80,5 +81,19 @@ public class PropertiesFileParserTest {
 				
 		@SuppressWarnings("unused")
 		PropertiesFileParser parser = new PropertiesFileParser(confFile);
+	}
+	
+	@Test
+	public void testFromGit() throws Exception {
+		
+		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		String relativeFilepath = "enterovirus.properties";
+		
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
+		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
+	
+		PropertiesFileParser parser = new PropertiesFileParser(repositoryDirectory, commitSha, relativeFilepath);
+		assertTrue(parser.isEnabledSystemwide());
+		assertArrayEquals(parser.getIncludePaths(), new String[] {"requirement"});
 	}
 }

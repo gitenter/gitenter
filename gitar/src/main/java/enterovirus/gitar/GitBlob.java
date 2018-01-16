@@ -24,10 +24,15 @@ import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.gitar.wrap.TagName;
 import eu.medsea.mimeutil.MimeUtil;
 
-public class GitBlob {
+public class GitBlob implements AutoCloseable {
 
 	private String relativeFilepath;
 	private byte[] blobContent;
+	
+	/*
+	 * TODO:
+	 * Write a better exception if the file doesn't exist in the corresponding commit.
+	 */
 
 	public GitBlob (File repositoryDirectory, CommitSha commitSha, String relativeFilepath) throws IOException {
 		
@@ -140,5 +145,16 @@ public class GitBlob {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public void close() {
+		
+		/*
+		 * TODO:
+		 * Shouldn't implemented anything in here. Since we already use try blocks
+		 * so "RevWalk" and "TreeWalk" has already been properly closed.
+		 * Double check!!
+		 */
 	}
 }

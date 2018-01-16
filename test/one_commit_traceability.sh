@@ -6,23 +6,42 @@ git_init_single_repo $testcasename
 
 # Fake a commit with two document files with traceable items inside
 cd $gitclientfilepath
-cat > document-1.md <<- EOM
-~~garbage~~not part of the traceable items~~
-- [document-1-tag-0001] document-1-0001-content
-- [document-1-tag-0002] document-1-0002-content
-- [document-1-tag-0003] document-1-0003-content
-~~garbage~~not part of the traceable items~~
+cat > enterovirus.properties <<- EOM
+# ------------------------------
+# Enterovirus configuration file
+# ------------------------------
+
+enable_systemwide = on
+include_paths = requirement
 EOM
-cat > document-2.md <<- EOM
-~~garbage~~not part of the traceable items~~
-- [document-2-tag-0001] document-2-0001-content
-- [document-2-tag-0002]{document-1-tag-0001} document-2-0002-content
-- [document-2-tag-0003]{document-1-tag-0001,document-1-tag-0002} document-2-0003-content
-- [document-2-tag-0004]{document-2-tag-0001} document-2-0004-content
-~~garbage~~not part of the traceable items~~
+
+cat > requirement/R1.md <<- EOM
+# Requirement-1
+
+- [R1T1] Content of R1T1.
+- [R1T2] Content of R1T2.
+- [R1T3] Content of R1T3.
 EOM
+
+cat > requirement/R2.md <<- EOM
+# Requirement-2
+
+- [R2T1] Content of R2T1.
+- [R2T2]{R1T1} Content of R2T2.
+- [R2T3]{R1T1,R1T2} Content of R2T3.
+- [R2T4]{R2T1} Content of R2T4.
+- [R2T5]{R1T1,R2T1} Content of R2T5
+EOM
+
+cat > design/D1.md <<- EOM
+# Design-1
+
+- [D1T1]{R1T1,R2T1} Content of D1T1
+- [D2T2] Content of D2T2.
+EOM
+
 git add -A
-git commit -m "Commit of two documents with traceability relationship in between."
+git commit -m "Commit with traceability relationship in between."
 git push origin master
 
 export commit_id=$(git log -1 --pretty="%H")

@@ -61,6 +61,7 @@ public class UpdateDatabaseFromGit {
 		 * traces files of some particular folders/paths.
 		 */
 		
+		
 		/*
 		 * Communicate with git to get the useful information needed
 		 * to be written to the database. This part doesn't touch the
