@@ -1,5 +1,6 @@
 package enterovirus.capsid.web;
 
+import java.io.File;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
+import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
+import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
+import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.*;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
@@ -29,6 +33,7 @@ public class GitNavigationController {
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private CommitGitDAO commitGitDAO;
 	@Autowired private DocumentRepository documentRepository;
+	@Autowired private GitSource gitSource;
 	
 	private String getWildcardValue (HttpServletRequest request) {
 		
@@ -156,7 +161,35 @@ public class GitNavigationController {
 		model.addAttribute("repository", repository);
 		
 		if (commit instanceof CommitValidBean) {
-			commitGitDAO.loadFolderStructure((CommitValidBean)commit);
+			
+			/*
+			 * TODO:
+			 * Consider move this part to "commitGitDAO.loadFolderStructure()".
+			 * Currently cannot be done, because "PropertiesFileParser" is in enzymark.
+			 * But enzymark depends on protease (mainly for using the domain models).
+			 * But CommitGitDAO is in protease. So if included, it will cause loop 
+			 * dependencies.
+			 * Consider a better way how to set up which content belongs to which package.
+			 */
+			String organizationName = commit.getRepository().getOrganization().getName();
+			String repositoryName = commit.getRepository().getName();
+			
+			File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
+			CommitSha commitSha = new CommitSha(commit.getShaChecksumHash());
+			
+			PropertiesFileParser propertiesFileParser;
+			try {
+				propertiesFileParser = new PropertiesFileParser(repositoryDirectory, commitSha, "enterovirus.properties"); 
+			}
+			catch (PropertiesFileFormatException e) {
+				/*
+				 * It shouldn't happen if the post-receive parser does the correct job.
+				 */
+				throw new RuntimeException("PropertiesFileFormatException in CommitGitDAO");
+			}
+			String[] includePaths = propertiesFileParser.getIncludePaths();
+			
+			commitGitDAO.loadFolderStructure((CommitValidBean)commit, includePaths);
 			model.addAttribute("folderStructure", ((CommitValidBean)commit).getFolderStructure());
 			return "git-navigation/commit";
 		}

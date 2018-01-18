@@ -31,7 +31,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		commitGitDAO.loadFolderStructure((CommitValidBean)commit);
+		commitGitDAO.loadFolderStructure((CommitValidBean)commit, new String[] {});
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
 
@@ -46,7 +46,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		commitGitDAO.loadFolderStructure((CommitValidBean)commit);
+		commitGitDAO.loadFolderStructure((CommitValidBean)commit, new String[] {});
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
 
@@ -57,7 +57,7 @@ public class CommitRepositoryTest {
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
-		commitGitDAO.loadFolderStructure((CommitValidBean)commit);
+		commitGitDAO.loadFolderStructure((CommitValidBean)commit, new String[] {});
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 //		System.out.println(commit.getFolderStructure().childrenList().size());
 	}

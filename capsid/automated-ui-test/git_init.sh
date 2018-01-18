@@ -1,12 +1,16 @@
-cd /home/beta/Workspace/enterovirus-dummy/client
+clientroot=/home/beta/Workspace/enterovirus-dummy/client
+cd $clientroot
 # Setup git through git local protocol
 git clone /home/beta/Workspace/enterovirus-dummy/server/org1/repo1.git
 cd repo1
 git remote -v
 
+mkdir doc
+cd doc
 mkdir requirement
+mkdir design
 
-cat > requirement/R1.md <<- EOM
+cat > $clientroot/repo1/doc/requirement/R1.md <<- EOM
 # Requirement-1
 
 - [R1T1] Content of R1T1.
@@ -23,7 +27,7 @@ git add -A
 git commit -m "Add requirement document R1.md"
 git push origin master
 
-cat > requirement/R2.md <<- EOM
+cat > $clientroot/repo1/doc/requirement/R2.md <<- EOM
 # Requirement-2
 
 - [R2T1] Content of R2T1.
@@ -37,9 +41,7 @@ git add -A
 git commit -m "Add requirement document R2.md"
 git push origin master
 
-mkdir design
-
-cat > design/D1.md <<- EOM
+cat > $clientroot/repo1/doc/design/D1.md <<- EOM
 # Design-1
 
 - [D1T1]{R1T1,R2T1} Content of D1T1
@@ -48,7 +50,7 @@ cat > design/D1.md <<- EOM
 ![](../sample.jpg "")
 EOM
 
-cp /home/beta/Workspace/enterovirus/test/files/sample.jpg .
+cp /home/beta/Workspace/enterovirus/test/files/sample.jpg $clientroot/repo1/doc
 
 git add -A
 git commit -m "Add design document D2.md"

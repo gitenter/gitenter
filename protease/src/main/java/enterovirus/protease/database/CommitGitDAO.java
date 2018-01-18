@@ -16,15 +16,15 @@ public class CommitGitDAO {
 
 	@Autowired private GitSource gitSource;
 	
-	public CommitValidBean loadFolderStructure (CommitValidBean commit) throws IOException {
+	public CommitValidBean loadFolderStructure (CommitValidBean commit, String[] includePaths) throws IOException {
 		
 		String organizationName = commit.getRepository().getOrganization().getName();
 		String repositoryName = commit.getRepository().getName();
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		CommitSha commitSha = new CommitSha(commit.getShaChecksumHash());
-		
-		GitFolderStructure gitFolderStructure = new GitFolderStructure(repositoryDirectory, commitSha);
+			
+		GitFolderStructure gitFolderStructure = new GitFolderStructure(repositoryDirectory, commitSha, includePaths);
 		commit.setFolderStructure(gitFolderStructure.getFolderStructure());
 		
 		return commit;
