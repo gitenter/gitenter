@@ -2,6 +2,11 @@ package enterovirus.protease.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +16,9 @@ import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitLog;
 import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.CommitInfo;
+import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.protease.domain.CommitBean;
 import enterovirus.protease.domain.RepositoryBean;
 
 /*
@@ -26,13 +34,41 @@ import enterovirus.protease.domain.RepositoryBean;
 public class RepositoryGitDAO {
 
 	@Autowired private GitSource gitSource;
+	@Autowired private CommitRepository commitRepository;
 	
 	public RepositoryBean loadCommitLog(RepositoryBean repository, BranchName branchName) throws IOException, GitAPIException {
 		
+		/*
+		 * TODO:
+		 * Paging which only load part of the log.
+		 */
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
 		GitLog gitLog = new GitLog(repositoryDirectory, branchName);
-		repository.setCommitInfos(gitLog.getCommitInfos());
+		List<CommitInfo> commitInfos = gitLog.getCommitInfos();
 		
+		List<CommitSha> commitShas = new ArrayList<CommitSha>();
+		for (CommitInfo commitInfo : commitInfos) {
+			commitShas.add(commitInfo.getCommitSha());
+		}
+		
+		/*
+		 * Do it in one single SQL query by performance concerns.
+		 */
+		List<CommitBean> commits = commitRepository.findByCommitShaIn(commitShas);
+		Map<String,CommitBean> commitMap = new HashMap<String,CommitBean>();
+		for (CommitBean commit : commits) {
+			commitMap.put(commit.getShaChecksumHash(), commit);
+		}
+		
+		/*
+		 * LinkedHashMap to maintain key's order.
+		 */
+		Map<CommitInfo,CommitBean> commitLogMap = new LinkedHashMap<CommitInfo,CommitBean>();
+		for (CommitInfo commitInfo : commitInfos) {
+			commitLogMap.put(commitInfo, commitMap.get(commitInfo.getCommitSha().getShaChecksumHash()));
+		}
+		
+		repository.setCommitLogMap(commitLogMap);
 		return repository;
 	}
 	

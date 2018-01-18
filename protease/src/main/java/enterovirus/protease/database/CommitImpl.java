@@ -2,6 +2,7 @@ package enterovirus.protease.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class CommitImpl implements CommitRepository {
 		Optional<CommitBean> commits = commitDbRepository.findById(id);
 		
 		if (!commits.isPresent()) {
-			throw new IOException ("Id is not correct!");
+			throw new IOException ("Commit id "+id+" is not correct!");
 		}
 		
 		CommitBean commit = commits.get();
@@ -37,14 +38,24 @@ public class CommitImpl implements CommitRepository {
 		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(commitSha.getShaChecksumHash());
 		
 		if (commits.size() == 0) {
-			throw new IOException ("SHA checksum hash is not correct!");
+			throw new IOException ("SHA checksum hash "+commitSha.getShaChecksumHash()+" is not correct!");
 		}
 		if (commits.size() > 1) {
-			throw new IOException ("SHA checksum hash is not unique!");
+			throw new IOException ("SHA checksum hash "+commitSha.getShaChecksumHash()+" is not unique!");
 		}
 		
 		CommitBean commit = commits.get(0);
 		return commit;
+	}
+	
+	public List<CommitBean> findByCommitShaIn(List<CommitSha> commitShas) {
+		
+		List<String> shaChecksumHashs = new ArrayList<String>();
+		for (CommitSha commitSha : commitShas) {
+			shaChecksumHashs.add(commitSha.getShaChecksumHash());
+		}
+		
+		return commitDbRepository.findByShaChecksumHashIn(shaChecksumHashs);
 	}
 	
 	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, BranchName branchName) throws IOException {
@@ -71,10 +82,10 @@ public class CommitImpl implements CommitRepository {
 		List<CommitBean> commits = commitDbRepository.findByShaChecksumHash(shaChecksumHash);
 		
 		if (commits.size() == 0) {
-			throw new IOException ("SHA checksum hash is not correct!");
+			throw new IOException ("SHA checksum hash "+shaChecksumHash+" is not correct!");
 		}
 		if (commits.size() > 1) {
-			throw new IOException ("SHA checksum hash is not unique!");
+			throw new IOException ("SHA checksum hash "+shaChecksumHash+" is not unique!");
 		}
 		
 		CommitBean commit = commits.get(0);

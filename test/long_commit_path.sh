@@ -4,10 +4,16 @@ testcasename=long_commit_path
 . $HOME/Workspace/enterovirus/test/library/git-init.sh || exit 1
 git_init_single_repo $testcasename
 
+# Initialize SQL database
+. $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1
+sql_init_single_repo $testcasename
+
 # setup branches
 master=master
 unmergebranch=unmergebranch
 mergebranch=mergebranch
+
+commitcount=1
 
 generate_a_git_commit () {
 	branchname=$1
@@ -21,6 +27,14 @@ generate_a_git_commit () {
 
 	export commit_id=$(git log -1 --pretty="%H")
 	echo $commit_id >> $rootfilepath/commit-sha-list-$branchname.txt
+
+	username=$testcasename
+	dbname=$testcasename
+	export PGPASSWORD=postgres
+	export PGHOST=localhost
+	psql -U $username -d $dbname -c "INSERT INTO git.git_commit VALUES ($commitcount, 1, '$commit_id')"
+	psql -U $username -d $dbname -c "INSERT INTO git.git_commit_valid VALUES ($commitcount)"
+	commitcount=$((commitcount+1))
 }
 
 # fake long commit path
@@ -68,7 +82,3 @@ do
 done
 git tag newest
 git push origin --tags
-
-# Initialize SQL database
-. $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1
-sql_init_single_repo $testcasename

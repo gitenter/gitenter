@@ -10,6 +10,7 @@ interface CommitDatabaseRepository extends PagingAndSortingRepository<CommitBean
 
 	Optional<CommitBean> findById(Integer id);
 	List<CommitBean> findByShaChecksumHash(String shaChecksumHash);
+	List<CommitBean> findByShaChecksumHashIn(List<String> shaChecksumHashs);
 	
 	public CommitBean saveAndFlush(CommitBean commit);
 }

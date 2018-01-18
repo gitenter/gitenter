@@ -44,16 +44,16 @@
           <th class="left">Log</th>
           <th>Browse files</th>
         </tr>
-        <c:forEach var="commitInfo" items="${repository.commitInfos}">
+        <c:forEach var="commitLog" items="${repository.commitLogMap}">
         <tr>
-          <td></td>
+          <td>${commitLog.value.getClass()}</td>
           <td class="left">
-            <p>${commitInfo.fullMessage}</p>
-            <p>By ${commitInfo.gitUserInfo.name} at <fmt:formatDate type = "both" dateStyle = "medium" timeStyle = "short" value = "${commitInfo.getCommitDate()}" /></p>
+            <p>${commitLog.key.fullMessage}</p>
+            <p>By ${commitLog.key.gitUserInfo.name} at <fmt:formatDate type = "both" dateStyle = "medium" timeStyle = "short" value = "${commitLog.key.getCommitDate()}" /></p>
           </td>
           <td>
-            <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commitInfo.commitSha.shaChecksumHash}" />" >
-              <input type="submit" value="${fn:substring(commitInfo.commitSha.shaChecksumHash, 0, 6)}">
+            <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commitLog.key.commitSha.shaChecksumHash}" />" >
+              <input type="submit" value="${fn:substring(commitLog.key.commitSha.shaChecksumHash, 0, 6)}">
             </form>
           </td>
         </tr>

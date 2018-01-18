@@ -1,5 +1,8 @@
 package enterovirus.protease.database;
 
+import java.util.Map;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +19,38 @@ import enterovirus.protease.domain.*;
 @ContextConfiguration(classes=ProteaseConfig.class)
 public class RepositoryGitDAOTest {
 
-	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired RepositoryGitDAO repositoryGitDAO;
+	@Autowired private RepositoryRepository repositoryRepository;
+	@Autowired private RepositoryGitDAO repositoryGitDAO;
+	
+	private RepositoryBean repository;
+	
+	@Before
+	public void init() throws Exception {
+		repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org", "repo");
+	}
 	
 	@Test
-	public void test() throws Exception {
+	public void test1() throws Exception {
 		
-		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName("org", "repo");
-		
+		/*
+		 * TODO:
+		 * Currently, it can run but the number of results doesn't match.
+		 */
 		BranchName branchName = new BranchName("master");
 		repositoryGitDAO.loadCommitLog(repository, branchName);
-		for (CommitInfo info : repository.getCommitInfos()) {
-			System.out.println(info.getCommitSha());
-			System.out.println(info.getFullMessage());
+		for (Map.Entry<CommitInfo,CommitBean> entry : repository.getCommitLogMap().entrySet()) {
+			
+			CommitInfo commitInfo = entry.getKey();
+			CommitBean commit = entry.getValue();
+			
+			System.out.println(commitInfo.getCommitSha());
+			System.out.println(commitInfo.getFullMessage());
+			System.out.println(commit.getClass());
 		}
+	}
+	
+	@Test
+	public void test2() throws Exception {
 		
 		repositoryGitDAO.loadBranchNames(repository);
 		for (BranchName name : repository.getBranchNames()) {

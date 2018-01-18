@@ -59,5 +59,9 @@ public class GitRepository {
 			RefSpec spec = new RefSpec(branch + ":" + branch);
 			git.push().setRemote(repositoryDirectory.getAbsolutePath()).setRefSpecs(spec).call();
 		}
+		/*
+		 * TODO:
+		 * Should write to the database about this commit.
+		 */
 	}
 }

@@ -1,6 +1,8 @@
 package enterovirus.protease.database;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +28,7 @@ public class CommitRepositoryTest {
 	
 	@Test
 	@Transactional
-	public void test1() throws Exception {
+	public void testFindById() throws Exception {
 		CommitBean commit = commitRepository.findById(1);
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
@@ -37,7 +39,7 @@ public class CommitRepositoryTest {
 
 	@Test
 	@Transactional
-	public void test2() throws Exception {
+	public void testFindByCommitSha() throws Exception {
 		
 		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
@@ -49,10 +51,27 @@ public class CommitRepositoryTest {
 		commitGitDAO.loadFolderStructure((CommitValidBean)commit, new String[] {});
 		showHierarchy(((CommitValidBean)commit).getFolderStructure(), 0);
 	}
+	
+	@Test
+	@Transactional
+	public void testFindByCommitShaIn() throws Exception {
+		
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		List<CommitSha> commitShas = new ArrayList<CommitSha>();
+		commitShas.add(new CommitSha(commitRecordFile, 1));
+		commitShas.add(new CommitSha(commitRecordFile, 2));
+		
+		List<CommitBean> commits = commitRepository.findByCommitShaIn(commitShas);
+		for (CommitBean commit : commits) {
+			System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
+			System.out.println("Repository Name: "+commit.getRepository().getName());
+			System.out.println("Commit SHA: "+commit.getShaChecksumHash());
+		}
+	}
 
 	@Test
 	@Transactional
-	public void test3() throws Exception {
+	public void testFindByRepositoryIdAndBranch() throws Exception {
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(1, new BranchName("master"));
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());

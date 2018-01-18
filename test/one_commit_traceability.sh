@@ -4,6 +4,10 @@ testcasename=one_commit_traceability
 . $HOME/Workspace/enterovirus/test/library/git-init.sh || exit 1
 git_init_single_repo $testcasename
 
+# Initialize SQL database
+. $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1
+sql_init_single_repo $testcasename
+
 # Fake a commit with two document files with traceable items inside
 cd $gitclientfilepath
 mkdir requirement
@@ -49,7 +53,3 @@ git push origin master
 
 export commit_id=$(git log -1 --pretty="%H")
 echo $commit_id >> $rootfilepath/commit-sha-list.txt
-
-# Initialize SQL database
-. $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1
-sql_init_single_repo $testcasename

@@ -19,8 +19,8 @@ public class TestDatabaseConfig {
 	public DataSource longCommitPathDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/long_commit_path_dbname");
-		dataSource.setUsername("long_commit_path_username");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/long_commit_path");
+		dataSource.setUsername("long_commit_path");
 		dataSource.setPassword("postgres");
 		return dataSource;
 	}
@@ -30,8 +30,8 @@ public class TestDatabaseConfig {
 	public DataSource oneCommitTraceabilityDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/one_commit_traceability_dbname");
-		dataSource.setUsername("one_commit_traceability_username");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/one_commit_traceability");
+		dataSource.setUsername("one_commit_traceability");
 		dataSource.setPassword("postgres");
 		return dataSource;
 	}
