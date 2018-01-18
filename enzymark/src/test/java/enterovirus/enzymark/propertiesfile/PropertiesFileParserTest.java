@@ -107,6 +107,6 @@ public class PropertiesFileParserTest {
 	
 		PropertiesFileParser parser = new PropertiesFileParser(repositoryDirectory, commitSha, relativeFilepath);
 		assertTrue(parser.isEnabledSystemwide());
-		assertArrayEquals(parser.getIncludePaths(), new String[] {"requirement", "design"});
+		assertArrayEquals(parser.getIncludePaths(), new String[] {"requirement"});
 	}
 }

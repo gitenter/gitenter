@@ -129,7 +129,7 @@ public class AdminController {
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
-
+		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
 		/*
 		 * See the following link for a list of possible server side hooks:
 		 * https://git-scm.com/docs/githooks
@@ -137,7 +137,7 @@ public class AdminController {
 		 * In here, I just set them all. If some is not needed, we can just
 		 * write blank in the corresponding hook.
 		 */
-		GitRepository.initBare(gitUri, sampleHooksDirectory);
+		GitRepository.initBareWithConfig(gitUri, sampleHooksDirectory, configFilesDirectory);
 		new File(new File(gitUri, "hooks"), "pre-receive").setExecutable(true);
 		new File(new File(gitUri, "hooks"), "update").setExecutable(true);
 		new File(new File(gitUri, "hooks"), "post-receive").setExecutable(true);
