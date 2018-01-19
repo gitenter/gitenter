@@ -71,7 +71,8 @@ done
 
 git merge $mergebranch
 export commit_id=$(git log -1 --pretty="%H")
-write_last_commit_to_db ($commit_id)
+echo $commit_id >> $rootfilepath/commit-sha-list-$master.txt
+write_last_commit_to_db $commit_id
 git branch -d $mergebranch
 
 git tag merged

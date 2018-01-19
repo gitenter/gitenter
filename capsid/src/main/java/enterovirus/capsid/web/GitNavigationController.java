@@ -195,7 +195,10 @@ public class GitNavigationController {
 		}
 		else if (commit instanceof CommitInvalidBean) {
 			model.addAttribute("errorMessage", ((CommitInvalidBean)commit).getErrorMessage());
-			return "git-navigation/error-commit";
+			return "git-navigation/invalid-commit";
+		}
+		else if (commit instanceof CommitIgnoredBean) {
+			return "git-navigation/ignored-commit";
 		}
 		
 		/*

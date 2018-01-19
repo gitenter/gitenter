@@ -1,5 +1,6 @@
 clientroot=/home/beta/Workspace/enterovirus-dummy/client
 cd $clientroot
+
 # Setup git through git local protocol
 git clone /home/beta/Workspace/enterovirus-dummy/server/org1/repo1.git
 cd repo1
@@ -24,7 +25,9 @@ sed -i "s/enable_systemwide = off/enable_systemwide = on/g" $clientroot/repo1/en
 
 cp /home/beta/Workspace/enterovirus/test/files/sample.jpg $clientroot/repo1/doc
 
-cat > $clientroot/repo1/doc/markdown-template.md <<-EOM
+# Use 'EOM' rather than EOM because the content include code:
+# https://stackoverflow.com/questions/22697688/how-to-cat-eof-a-file-containing-code-in-shell
+cat > $clientroot/repo1/doc/markdown-template.md <<-'EOM'
 # H1
 
 ## H2
@@ -45,16 +48,44 @@ Combined emphasis with **asterisks and _underscores_**.
 
 Strikethrough uses two tildes. ~~Scratch this.~~
 
-Bubble itemss:
+#### Link
+
+This [linked to google](http://www.google.com).
+
+#### Bubble items
 
 - Item 1.
 - Item 2.
 
-Image:
+#### Ordered items
+
+1. Item 1.
+2. Item 2.
+
+#### Image
 
 ![](sample.jpg "")
 
+#### Code
+
 Inline `code` has `back-ticks around` it.
+
+```javascript
+var s = "JavaScript syntax highlighting";
+alert(s);
+```
+ 
+```python
+s = "Python syntax highlighting"
+print s
+```
+ 
+```
+No language indicated, so no syntax highlighting. 
+But let's throw in a <b>tag</b>.
+```
+
+#### Table
 
 | Tables        | Are           | Cool  |
 | ------------- |:-------------:| -----:|
@@ -62,18 +93,14 @@ Inline `code` has `back-ticks around` it.
 | col 2 is      | centered      |   $12 |
 | zebra stripes | are neat      |    $1 |
 
-Blockquotes:
+#### Blockquotes
 
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
 
-Horizontal Rule:
+#### Horizontal Rule
 
 ---
-
-Link:
-
-This [linked to google](http://www.google.com).
 EOM
 
 git add -A

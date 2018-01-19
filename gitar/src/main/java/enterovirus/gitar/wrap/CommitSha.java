@@ -39,7 +39,7 @@ public class CommitSha {
 				++currentLineNumber;
 			}
 			
-			throw new IOException ("commitOrder does not exist!");
+			throw new IOException ("commit SHA list file "+commitFilepath+" does not exist!");
 		}
 	}
 	
