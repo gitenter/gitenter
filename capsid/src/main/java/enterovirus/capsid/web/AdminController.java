@@ -141,21 +141,7 @@ public class AdminController {
 		GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
 		
 		/*
-		 * See the following link for a list of possible server side hooks:
-		 * https://git-scm.com/docs/githooks
-		 * 
-		 * In here, I just set them all. If some is not needed, we can just
-		 * write blank in the corresponding hook.
-		 */
-		new File(new File(repositoryDirectory, "hooks"), "pre-receive").setExecutable(true);
-		new File(new File(repositoryDirectory, "hooks"), "update").setExecutable(true);
-		new File(new File(repositoryDirectory, "hooks"), "post-receive").setExecutable(true);
-		new File(new File(repositoryDirectory, "hooks"), "post-update").setExecutable(true);
-		
-		/*
-		 * Write into the database about this initial setup commit.
-		 * (This one is always valid, since nothing is in it. So there's no
-		 * need to (and cannot!) use post-receive hook to analyze it). 
+		 * Dirty but this part can only be done in here. See comments under GitRepository.
 		 */
 		GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1);
 		CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
