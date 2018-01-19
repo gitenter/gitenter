@@ -14,6 +14,18 @@ unmergebranch=unmergebranch
 mergebranch=mergebranch
 
 commitcount=1
+write_last_commit_to_db () {
+
+	commit_id=$1
+
+	username=$testcasename
+	dbname=$testcasename
+	export PGPASSWORD=postgres
+	export PGHOST=localhost
+	psql -U $username -d $dbname -c "INSERT INTO git.git_commit VALUES ($commitcount, 1, '$commit_id')"
+	psql -U $username -d $dbname -c "INSERT INTO git.git_commit_valid VALUES ($commitcount)"
+	commitcount=$((commitcount+1))
+}
 
 generate_a_git_commit () {
 	branchname=$1
@@ -27,14 +39,7 @@ generate_a_git_commit () {
 
 	export commit_id=$(git log -1 --pretty="%H")
 	echo $commit_id >> $rootfilepath/commit-sha-list-$branchname.txt
-
-	username=$testcasename
-	dbname=$testcasename
-	export PGPASSWORD=postgres
-	export PGHOST=localhost
-	psql -U $username -d $dbname -c "INSERT INTO git.git_commit VALUES ($commitcount, 1, '$commit_id')"
-	psql -U $username -d $dbname -c "INSERT INTO git.git_commit_valid VALUES ($commitcount)"
-	commitcount=$((commitcount+1))
+	write_last_commit_to_db $commit_id
 }
 
 # fake long commit path
@@ -63,8 +68,12 @@ for i in 1 2
 do
 	generate_a_git_commit $master
 done
+
 git merge $mergebranch
+export commit_id=$(git log -1 --pretty="%H")
+write_last_commit_to_db ($commit_id)
 git branch -d $mergebranch
+
 git tag merged
 git push origin --tags
 

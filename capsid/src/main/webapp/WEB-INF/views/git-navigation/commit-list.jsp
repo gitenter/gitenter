@@ -40,22 +40,22 @@
       </table>
       <table class="info">
         <tr>
-          <th>Status</th>
+          <th>Commit</th>
           <th class="left">Log</th>
-          <th>Browse files</th>
+          <th>Status</th>
         </tr>
         <c:forEach var="commitLog" items="${repository.commitLogMap}">
         <tr>
-          <td>${commitLog.value.getClass()}</td>
-          <td class="left">
-            <p>${commitLog.key.fullMessage}</p>
-            <p>By ${commitLog.key.gitUserInfo.name} at <fmt:formatDate type = "both" dateStyle = "medium" timeStyle = "short" value = "${commitLog.key.getCommitDate()}" /></p>
-          </td>
           <td>
             <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commitLog.key.commitSha.shaChecksumHash}" />" >
               <input type="submit" value="${fn:substring(commitLog.key.commitSha.shaChecksumHash, 0, 6)}">
             </form>
           </td>
+          <td class="left">
+            <p>${commitLog.key.fullMessage}</p>
+            <p>By ${commitLog.key.gitUserInfo.name} at <fmt:formatDate type = "both" dateStyle = "medium" timeStyle = "short" value = "${commitLog.key.getCommitDate()}" /></p>
+          </td>
+          <td><img src="<s:url value="/resources/image/status_icons/${commitLog.value.getClass().simpleName}.png" />" alt="${commitLog.value.getClass().simpleName}"></td>
         </tr>
         </c:forEach>
       </table>

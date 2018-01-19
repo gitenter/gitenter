@@ -31,11 +31,7 @@ public class RepositoryGitDAOTest {
 	
 	@Test
 	public void test1() throws Exception {
-		
-		/*
-		 * TODO:
-		 * Currently, it can run but the number of results doesn't match.
-		 */
+
 		BranchName branchName = new BranchName("master");
 		repositoryGitDAO.loadCommitLog(repository, branchName);
 		for (Map.Entry<CommitInfo,CommitBean> entry : repository.getCommitLogMap().entrySet()) {
@@ -43,7 +39,7 @@ public class RepositoryGitDAOTest {
 			CommitInfo commitInfo = entry.getKey();
 			CommitBean commit = entry.getValue();
 			
-			System.out.println(commitInfo.getCommitSha());
+			System.out.println(commitInfo.getCommitSha().getShaChecksumHash());
 			System.out.println(commitInfo.getFullMessage());
 			System.out.println(commit.getClass());
 		}
