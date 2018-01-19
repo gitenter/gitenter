@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -30,7 +31,25 @@ public class GitLog {
 		 */
 		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
-			Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
+			Iterable<RevCommit> logs = git.log()
+					.add(repository.resolve(branchName.getName()))
+					.call();
+			buildCommitShas(logs);
+		}
+	}
+
+	public GitLog(File repositoryDirectory, BranchName branchName, Integer maxCount) throws IOException, GitAPIException {
+		
+		/*
+		 * The JGit function is compatible with branch name with the form
+		 * "master" and "refs/heads/master".
+		 */
+		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		try (Git git = new Git(repository)) {
+			Iterable<RevCommit> logs = git.log()
+					.add(repository.resolve(branchName.getName()))
+					.setMaxCount(maxCount)
+					.call();
 			buildCommitShas(logs);
 		}
 	}
@@ -44,8 +63,15 @@ public class GitLog {
 		
 		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
-			Iterable<RevCommit> logs = git.log().add(repository.resolve(branchName.getName())).call();
-			buildCommitShas(logs, oldCommitSha, newCommitSha);
+			
+			ObjectId oldObjectId = ObjectId.fromString(oldCommitSha.getShaChecksumHash());
+			ObjectId newObjectId = ObjectId.fromString(newCommitSha.getShaChecksumHash());
+			
+			Iterable<RevCommit> logs = git.log()
+					.add(repository.resolve(branchName.getName()))
+					.addRange(oldObjectId, newObjectId)
+					.call();
+			buildCommitShas(logs);
 		}
 	}
 	
@@ -53,27 +79,6 @@ public class GitLog {
 		
 		for (RevCommit rev : logs) {
 			commitInfos.add(new CommitInfo(rev));
-		}
-	}
-	
-	/*
-	 * Seems for the original merge branch
-	 */
-	private void buildCommitShas (Iterable<RevCommit> logs, CommitSha oldCommitSha, CommitSha newCommitSha) {
-	
-		boolean find = false;
-		for (RevCommit rev : logs) {
-			
-			if (oldCommitSha.getShaChecksumHash().equals(rev.getName())) {
-				break;
-			}
-			
-			if (find == false && newCommitSha.getShaChecksumHash().equals(rev.getName())) {
-				find = true;
-			}
-			if (find == true) {
-				commitInfos.add(new CommitInfo(rev));
-			}
 		}
 	}
 

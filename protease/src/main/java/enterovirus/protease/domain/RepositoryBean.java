@@ -1,5 +1,6 @@
 package enterovirus.protease.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class RepositoryBean {
 	private String gitUri;
 	
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<CommitBean> commits;
+	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
 	/*
 	 * Lazy loaded by calling

@@ -21,8 +21,8 @@ import org.springframework.validation.Errors;
 
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
-import enterovirus.gitar.GitRepository;
-import enterovirus.gitar.GitSource;
+import enterovirus.gitar.*;
+import enterovirus.gitar.wrap.*;
 
 @Controller
 public class AdminController {
@@ -30,6 +30,13 @@ public class AdminController {
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private OrganizationRepository organizationRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
+	@Autowired private CommitRepository commitRepository;
+	
+	/*
+	 * TODO:
+	 * Should all calls go through the persistence layer
+	 * rather than from gitSource?
+	 */
 	@Autowired private GitSource gitSource;
 	
 	/*
@@ -124,18 +131,14 @@ public class AdminController {
 		/*
 		 * Setup git URI which follows the GitSource format.
 		 */
-		File gitUri = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
-		repository.setGitUri(gitUri.toString());
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
+		repository.setGitUri(repositoryDirectory.toString());
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
 		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
 
-		GitRepository.initBareWithConfig(gitUri, sampleHooksDirectory, configFilesDirectory);
-		/*
-		 * TODO:
-		 * Should write to the database about this commit.
-		 */
+		GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
 		
 		/*
 		 * See the following link for a list of possible server side hooks:
@@ -144,10 +147,20 @@ public class AdminController {
 		 * In here, I just set them all. If some is not needed, we can just
 		 * write blank in the corresponding hook.
 		 */
-		new File(new File(gitUri, "hooks"), "pre-receive").setExecutable(true);
-		new File(new File(gitUri, "hooks"), "update").setExecutable(true);
-		new File(new File(gitUri, "hooks"), "post-receive").setExecutable(true);
-		new File(new File(gitUri, "hooks"), "post-update").setExecutable(true);
+		new File(new File(repositoryDirectory, "hooks"), "pre-receive").setExecutable(true);
+		new File(new File(repositoryDirectory, "hooks"), "update").setExecutable(true);
+		new File(new File(repositoryDirectory, "hooks"), "post-receive").setExecutable(true);
+		new File(new File(repositoryDirectory, "hooks"), "post-update").setExecutable(true);
+		
+		/*
+		 * Write into the database about this initial setup commit.
+		 * (This one is always valid, since nothing is in it. So there's no
+		 * need to (and cannot!) use post-receive hook to analyze it). 
+		 */
+		GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1);
+		CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
+		CommitBean commit = new CommitValidBean(repository, commitSha);
+		repository.addCommit(commit);
 		
 		repositoryRepository.saveAndFlush(repository);
 		return "redirect:/organizations/"+organizationId;
