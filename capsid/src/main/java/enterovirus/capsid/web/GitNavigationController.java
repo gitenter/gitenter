@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
@@ -72,27 +73,27 @@ public class GitNavigationController {
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
+			@RequestParam(value="page", required=false, defaultValue="0") Integer page,
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
+		final Integer itemPerPage = 10;
+		
 		model.addAttribute("branch", branchName.getName());
+		model.addAttribute("page", page);
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
-		repositoryGitDAO.loadCommitLog(repository, branchName);
+		repositoryGitDAO.loadCommitLog(repository, branchName, itemPerPage, itemPerPage*page);
 		repositoryGitDAO.loadBranchNames(repository);
 		
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
-		/*
-		 * TODO:
-		 * Show the status of the commit (valid/invalid/ignored).
-		 * 
+		/* 
 		 * TODO:
 		 * Connect the git user (name and email) to the user of
 		 * this website.
 		 */
-		
 		return "git-navigation/commit-list";
 	}
 	
@@ -100,7 +101,7 @@ public class GitNavigationController {
 	public String showCommitListRedirect (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			@ModelAttribute("branch") BranchName branchName) {
+			@RequestParam("branch") BranchName branchName) {
 		
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName()+"/commits";
 	}

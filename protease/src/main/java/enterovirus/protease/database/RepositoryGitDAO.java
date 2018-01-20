@@ -36,14 +36,14 @@ public class RepositoryGitDAO {
 	@Autowired private GitSource gitSource;
 	@Autowired private CommitRepository commitRepository;
 	
-	public RepositoryBean loadCommitLog(RepositoryBean repository, BranchName branchName) throws IOException, GitAPIException {
+	public RepositoryBean loadCommitLog(RepositoryBean repository, BranchName branchName, Integer maxCount, Integer skip) throws IOException, GitAPIException {
 		
 		/*
 		 * TODO:
 		 * Paging which only load part of the log.
 		 */
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
-		GitLog gitLog = new GitLog(repositoryDirectory, branchName);
+		GitLog gitLog = new GitLog(repositoryDirectory, branchName, maxCount, skip);
 		List<CommitInfo> commitInfos = gitLog.getCommitInfos();
 		
 		List<CommitSha> commitShas = new ArrayList<CommitSha>();

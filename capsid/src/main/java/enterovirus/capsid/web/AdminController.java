@@ -30,7 +30,6 @@ public class AdminController {
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private OrganizationRepository organizationRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
-	@Autowired private CommitRepository commitRepository;
 	
 	/*
 	 * TODO:
@@ -143,7 +142,7 @@ public class AdminController {
 		/*
 		 * Dirty but this part can only be done in here. See comments under GitRepository.
 		 */
-		GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1);
+		GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);
 		CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
 		CommitBean commit = new CommitValidBean(repository, commitSha);
 		repository.addCommit(commit);

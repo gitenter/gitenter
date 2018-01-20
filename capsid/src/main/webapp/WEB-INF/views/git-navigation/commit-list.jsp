@@ -59,4 +59,10 @@
         </tr>
         </c:forEach>
       </table>
+      <table class="hidden">
+        <tr>
+          <td class="right" width="50%"><c:if test="${page>0}"><a class="paging" href="?page=${page-1}">&laquo; Previous</a></c:if></td>
+          <td class="left" width="50%"><a class="paging" href="?page=${page+1}">Next &raquo;</a></td>
+        </tr>
+      </table>
     </article>

@@ -38,7 +38,7 @@ public class GitLog {
 		}
 	}
 
-	public GitLog(File repositoryDirectory, BranchName branchName, Integer maxCount) throws IOException, GitAPIException {
+	public GitLog(File repositoryDirectory, BranchName branchName, Integer maxCount, Integer skip) throws IOException, GitAPIException {
 		
 		/*
 		 * The JGit function is compatible with branch name with the form
@@ -49,6 +49,7 @@ public class GitLog {
 			Iterable<RevCommit> logs = git.log()
 					.add(repository.resolve(branchName.getName()))
 					.setMaxCount(maxCount)
+					.setSkip(skip)
 					.call();
 			buildCommitShas(logs);
 		}

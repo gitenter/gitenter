@@ -163,6 +163,13 @@ nav a:active { color: #aaaaaa; text-decoration: none;}
 
 article table.hidden {
 	width: 100%;
+
+	/*
+	 * If a column has a width set, then no matter what the content is, 
+	 * it will be the specified width. Columns without a width set will 
+	 * divide whatever room is left over among themselves.
+	 */
+	table-layout: fixed;
 }
 
 article table.hidden td {
@@ -259,6 +266,28 @@ article input[type=submit].menu:hover {
 	background-color: #ffffff;
 	color: #2fc8a8;
 	border: 1px solid #2fc8a8;
+}
+
+article a.paging {
+
+	font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    
+	background-color: #dddddd;
+
+	border: 1px solid #dddddd;
+    margin: 4px;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+article a.paging:hover {
+	
+    background-color: #ffffff;
+    color: #dddddd;
+
+    border: 1px solid #dddddd;
 }
 
 /* *************************************************************************

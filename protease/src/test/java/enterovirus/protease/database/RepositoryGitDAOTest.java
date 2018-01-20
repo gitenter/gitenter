@@ -33,7 +33,7 @@ public class RepositoryGitDAOTest {
 	public void test1() throws Exception {
 
 		BranchName branchName = new BranchName("master");
-		repositoryGitDAO.loadCommitLog(repository, branchName);
+		repositoryGitDAO.loadCommitLog(repository, branchName, 10, 0);
 		for (Map.Entry<CommitInfo,CommitBean> entry : repository.getCommitLogMap().entrySet()) {
 			
 			CommitInfo commitInfo = entry.getKey();
