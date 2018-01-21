@@ -1,5 +1,11 @@
 package enterovirus.protease.database;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.gitar.wrap.BranchName;
+import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.*;
 import enterovirus.protease.domain.*;
 
@@ -46,7 +53,6 @@ public class DocumentRepositoryTest {
 	public void testFindByCommitIdAndRelativeFilepath() throws Exception {
 		/*
 		 * Need to test several different conditions:
-		 * Unmodified/modified
 		 * Exist/non-exist other documents with the same filepath
 		 * TODO:
 		 * write a better test case later. 
@@ -59,8 +65,41 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	@Transactional
+	public void testFindByCommitIdAndRelativeFilepathIn() throws Exception {
+		
+		List<String> filepaths = new ArrayList<String>();
+		filepaths.add("1st-commit-folder/1st-commit-file-under-1st-commit-folder");
+		filepaths.add("1st-commit-file-under-root");
+		
+		List<DocumentBean> documents = repository.findByCommitIdAndRelativeFilepathIn(1, filepaths);
+		
+		for (DocumentBean document : documents) {
+			showDocumentBean(document);
+		}
+	}
+
+	@Test
+	@Transactional
+	public void testFindByCommitShaAndRelativeFilepath() throws Exception {
+		
+		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
+		String filepath = "1st-commit-folder/1st-commit-file-under-1st-commit-folder";
+		
+		DocumentBean document = repository.findByCommitShaAndRelativeFilepath(commitSha, filepath);
+		
+		assertEquals(document.getRelativeFilepath(), filepath);
+	}
+	
+	@Test
+	@Transactional
 	public void testFindByRepositoryIdAndBranchAndRelativeFilepath() throws Exception {
-		DocumentBean document = repository.findByRepositoryIdAndBranchAndRelativeFilepath(1, new BranchName("master"), "1st-commit-folder/2nd-commit-file-under-1st-commit-folder");
-		showDocumentBean(document);
+		
+		String branch = "master";
+		String filepath = "1st-commit-folder/2nd-commit-file-under-1st-commit-folder";
+		
+		DocumentBean document = repository.findByRepositoryIdAndBranchAndRelativeFilepath(1, new BranchName(branch), filepath);
+		
+		assertEquals(document.getRelativeFilepath(), filepath);
 	}
 }

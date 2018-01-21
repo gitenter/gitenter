@@ -268,28 +268,6 @@ article input[type=submit].menu:hover {
 	border: 1px solid #2fc8a8;
 }
 
-article a.paging {
-
-	font-size: 16px;
-    text-decoration: none;
-    display: inline-block;
-    
-	background-color: #dddddd;
-
-	border: 1px solid #dddddd;
-    margin: 4px;
-    padding: 4px;
-    border-radius: 4px;
-}
-
-article a.paging:hover {
-	
-    background-color: #ffffff;
-    color: #dddddd;
-
-    border: 1px solid #dddddd;
-}
-
 /* *************************************************************************
  * Log in
  * ************************************************************************* */
@@ -429,6 +407,31 @@ article table.info th {
 
 article table.info th.left, table.info td.left {
 	text-align: left;
+}
+
+article a.paging {
+
+	font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    
+	background-color: #dddddd;
+	color: 777777;
+
+	border: 1px solid #dddddd;
+    margin: 4px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 4px;
+
+    transition-duration: 0.3s;
+}
+
+article a.paging:hover {
+
+    background-color: #ffffff;
+    color: #dddddd;
+
+    border: 1px solid #dddddd;
 }
 
 /* *************************************************************************

@@ -1,7 +1,9 @@
 package enterovirus.protease.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -20,12 +22,6 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "git_commit_valid")
 public class CommitValidBean extends CommitBean {
-
-	/*
-	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this)
-	 */
-	@Transient
-	private GitFolderStructure.ListableTreeNode folderStructure;
 	
 	/*
 	 * TODO:
@@ -37,6 +33,33 @@ public class CommitValidBean extends CommitBean {
 	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
+	
+	/*
+	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this).
+	 */
+	@Transient
+	private GitFolderStructure.ListableTreeNode folderStructure;
+	
+	/*
+	 * Map "folderStructure" leaves to actual "DocumentBean".
+	 * Lazily load by calling setDocumentMap().
+	 * 
+	 * NOTE:
+	 * 
+	 * The other possibility is to have a "TreeNode(Object arg0)" which 
+	 * instead to have "String" (filepath) in it, but have a "DocumentBean"
+	 * in it. It is not done that way, because
+	 * 
+	 * (1) It is technically annoying (and maybe also have performance overhead)
+	 * to copy tree structure. I am too lazy to do it.
+	 * 
+	 * (2) Some leaves in "folderStructure" (e.g. the image files) doesn't
+	 * have the corresponding "DocumentBean". In the map we may simply set
+	 * the value to be null, but in the other approach we can only have a
+	 * complicated structure so it can still wrap filepath.
+	 */
+	@Transient
+	private Map<String,DocumentBean> documentMap = new HashMap<String,DocumentBean>();
 	
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -51,5 +74,16 @@ public class CommitValidBean extends CommitBean {
 	
 	public boolean addDocument (DocumentBean document) {
 		return documents.add(document);
+	}
+	
+	/*
+	 * TODO:
+	 * A way to run it automatically after the bean is created?
+	 */
+	public void setDocumentMap () {
+		Map<String,DocumentBean> documentMap = new HashMap<String,DocumentBean>();
+		for (DocumentBean document : documents) {
+			documentMap.put(document.getRelativeFilepath(), document);
+		}
 	}
 }

@@ -54,14 +54,29 @@ class DocumentImpl implements DocumentRepository {
 		return document;
 	}
 	
+	public List<DocumentBean> findByCommitIdAndRelativeFilepathIn(Integer commitId, List<String> relativeFilepaths) throws IOException {
+	
+		List<DocumentBean> documents = documentDbRepository.findByCommitIdAndRelativeFilepathIn(commitId, relativeFilepaths);
+		for (DocumentBean document : documents) {
+			updateGitMaterial(document);
+		}
+		return documents;
+	}
+	
 	public DocumentBean findByCommitShaAndRelativeFilepath(CommitSha commitSha, String relativeFilepath) throws IOException {
+
+		List<DocumentBean> documents = documentDbRepository.findByShaChecksumHashAndRelativeFilepath(commitSha.getShaChecksumHash(), relativeFilepath);
 		
-		/*
-		 * TODO:
-		 * Should be a better way rather than query the database twice?
-		 */
-		CommitBean commit = commitRepository.findByCommitSha(commitSha);
-		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
+		if (documents.size() > 1) {
+			throw new IOException ("Cannot locate an unique file from commitSha \""+commitSha.getShaChecksumHash()+"\" and relativeFilepath! \""+relativeFilepath+"\"");
+		}
+		else if (documents.size() == 0) {
+			throw new IOException ("There is no file under commitSha \""+commitSha.getShaChecksumHash()+"\" and relativeFilepath \""+relativeFilepath+"\"!");
+		}
+		
+		DocumentBean document = documents.get(0);
+		updateGitMaterial(document);
+		return document; 
 	}
 	
 	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchName branchName, String relativeFilepath) throws IOException {
@@ -69,6 +84,7 @@ class DocumentImpl implements DocumentRepository {
 		/*
 		 * TODO:
 		 * Should be a better way rather than query the database twice?
+		 * It is pretty hard, since "branch" is not saved in database.
 		 */
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
 		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);

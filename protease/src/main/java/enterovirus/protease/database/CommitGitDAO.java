@@ -18,6 +18,9 @@ public class CommitGitDAO {
 	
 	public CommitValidBean loadFolderStructure (CommitValidBean commit, String[] includePaths) throws IOException {
 		
+		/*
+		 * Setup CommitValidBean.folderStructure
+		 */
 		String organizationName = commit.getRepository().getOrganization().getName();
 		String repositoryName = commit.getRepository().getName();
 		
