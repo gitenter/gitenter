@@ -161,6 +161,14 @@ nav a:active { color: #aaaaaa; text-decoration: none;}
 
 /**************************** Article details ********************************/
 
+article div {
+	/*
+	 * Margin in bottom. So things will not look like next to each 
+	 * other.
+	 */
+	padding-bottom: 5px;
+}
+
 article table.hidden {
 	width: 100%;
 
@@ -432,6 +440,23 @@ article a.paging:hover {
     color: #dddddd;
 
     border: 1px solid #dddddd;
+}
+
+/* *************************************************************************
+ * Folder structure
+ * ************************************************************************* */
+
+article p.folder {
+	background-color: #dddddd;
+}
+
+
+article p.non-document-file {
+	background-color: #bbbbbb;
+}
+
+article p.document-file {
+	background-color: #e6e472;
 }
 
 /* *************************************************************************

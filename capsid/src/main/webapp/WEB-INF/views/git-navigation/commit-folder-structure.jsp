@@ -3,10 +3,16 @@
 
 <c:choose>
 <c:when test="${folderStructure.isLeaf()}">
-  <p><a href="<s:url value="${currentUrl}/documents/directories/${folderStructure}" />">${folderStructure}</a></p>
+  <c:set var="filepath" value="${folderStructure}" />
+  <c:if test="${documentMap.containsKey(filepath.toString())}">
+    <p class="document-file"><a href="<s:url value="${currentUrl}/documents/directories/${filepath}" />">${filepath}</a></p>
+  </c:if>
+  <c:if test="${!documentMap.containsKey(filepath.toString())}">
+    <p class="non-document-file">${filepath}</p>
+  </c:if>
 </c:when>
 <c:otherwise>
-  <p>${folderStructure}</p>
+  <p class="folder">${folderStructure}</p>
 </c:otherwise>
 </c:choose>
 

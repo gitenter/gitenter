@@ -35,14 +35,8 @@ public class CommitValidBean extends CommitBean {
 	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
 	
 	/*
-	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this).
-	 */
-	@Transient
-	private GitFolderStructure.ListableTreeNode folderStructure;
-	
-	/*
-	 * Map "folderStructure" leaves to actual "DocumentBean".
-	 * Lazily load by calling setDocumentMap().
+	 * Used to map "folderStructure" leaves to actual "DocumentBean".
+	 * Initialized by initDocumentMap()
 	 * 
 	 * NOTE:
 	 * 
@@ -59,7 +53,13 @@ public class CommitValidBean extends CommitBean {
 	 * complicated structure so it can still wrap filepath.
 	 */
 	@Transient
-	private Map<String,DocumentBean> documentMap = new HashMap<String,DocumentBean>();
+	private Map<String,DocumentBean> documentMap;
+	
+	/*
+	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this).
+	 */
+	@Transient
+	private GitFolderStructure.ListableTreeNode folderStructure;
 	
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -72,18 +72,18 @@ public class CommitValidBean extends CommitBean {
 		super(repository, commitSha);
 	}
 	
-	public boolean addDocument (DocumentBean document) {
-		return documents.add(document);
-	}
-	
 	/*
 	 * TODO:
-	 * A way to run it automatically after the bean is created?
+	 * Any way like @PostReceive? But this is not a spring Bean. 
 	 */
-	public void setDocumentMap () {
-		Map<String,DocumentBean> documentMap = new HashMap<String,DocumentBean>();
+	public void initDocumentMap() throws Exception {
+		documentMap = new HashMap<String,DocumentBean>();
 		for (DocumentBean document : documents) {
 			documentMap.put(document.getRelativeFilepath(), document);
-		}
+		}		
+	}
+	
+	public boolean addDocument (DocumentBean document) {
+		return documents.add(document);
 	}
 }

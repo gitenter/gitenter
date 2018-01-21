@@ -89,11 +89,6 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		CommitBean commit = commits.get(0);
-		
-		if (commit instanceof CommitValidBean) {
-			((CommitValidBean)commit).setFolderStructure(gitFolderStructure.getFolderStructure());
-		}
-		
 		return commit;
 	}
 	

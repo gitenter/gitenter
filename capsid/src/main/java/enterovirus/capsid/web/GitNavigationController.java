@@ -2,10 +2,12 @@ package enterovirus.capsid.web;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -163,6 +165,8 @@ public class GitNavigationController {
 		
 		if (commit instanceof CommitValidBean) {
 			
+			CommitValidBean commitValid = (CommitValidBean)commit;
+			
 			/*
 			 * TODO:
 			 * Consider move this part to "commitGitDAO.loadFolderStructure()".
@@ -190,8 +194,13 @@ public class GitNavigationController {
 			}
 			String[] includePaths = propertiesFileParser.getIncludePaths();
 			
-			commitGitDAO.loadFolderStructure((CommitValidBean)commit, includePaths);
-			model.addAttribute("folderStructure", ((CommitValidBean)commit).getFolderStructure());
+			commitGitDAO.loadFolderStructure(commitValid, includePaths);
+			model.addAttribute("folderStructure", commitValid.getFolderStructure());
+			
+			Hibernate.initialize(commitValid.getDocuments());
+			commitValid.initDocumentMap();
+			model.addAttribute("documentMap", commitValid.getDocumentMap());
+			
 			return "git-navigation/commit";
 		}
 		else if (commit instanceof CommitInvalidBean) {

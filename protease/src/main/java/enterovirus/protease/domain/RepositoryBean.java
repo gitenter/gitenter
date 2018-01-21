@@ -77,10 +77,6 @@ public class RepositoryBean {
 	/*
 	 * Lazy loaded by calling
 	 * RepositoryGitDAO.loadCommitLog(repository, branch)
-	 * 
-	 * TODO:
-	 * Consider paging, and/or only load part of the related
-	 * information.
 	 */
 	@Transient
 	private Map<CommitInfo,CommitBean> commitLogMap;
