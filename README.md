@@ -32,22 +32,28 @@ That seems also because STS cannot handle two classes which accidentally have th
 
 ### Docker
 
+Docker is installed by following [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04). Currently there's no need to `sudo` run docker commands.
+
 (Re-)build image
 
 ```
-sudo docker stop gitar
-#sudo docker rm gitar
-sudo docker rm $(sudo docker ps -a -q -f status=exited)
-sudo docker rmi ozooxo/enterovirus
-sudo docker build -t ozooxo/enterovirus .
-sudo docker run -d -p 52022:22 -p 52418:9418 -p 58080:8080 --name gitar ozooxo/enterovirus
-#sudo docker port gitar
+docker stop panda
+#docker rm panda
+docker rm $(docker ps -a -q -f status=exited)
+docker rmi ozooxo/enterovirus
+docker build -t ozooxo/enterovirus .
+docker run -d -p 52022:22 -p 52418:9418 -p 58080:8080 --name panda ozooxo/enterovirus
+#docker port panda
 ```
 
-Access shell (need to stop containers first...)
+```
+docker build --no-cache -t ozooxo/enterovirus .
+```
+
+Access shell (need to stop containers first by `docker stop panda`):
 
 ```
-sudo docker run -it ozooxo/enterovirus sh
+docker run -it ozooxo/enterovirus sh
 ```
 
 Log in by SSH

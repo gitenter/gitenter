@@ -25,7 +25,7 @@ and change the line
 local   all             postgres                                peer
 ```
 
-to
+to (remote connections to the database are possible)
 
 ```
 # Database administrative login by Unix domain socket
