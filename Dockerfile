@@ -14,10 +14,10 @@ RUN apt-get update && \
 
 ###################### Setup Users ########################
 
-RUN echo 'root:password' | chpasswd
+RUN echo 'root:secretpassword' | chpasswd
 
 RUN useradd -ms /bin/bash git
-RUN echo 'git:password' | chpasswd
+RUN echo 'git:secretpassword' | chpasswd
 
 ###################### Install Java #######################
 
