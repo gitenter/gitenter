@@ -22,4 +22,7 @@
         <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
         <jsp:include page="components/commit-folder-structure.jsp"/>
       </div>
+      <div>
+        <p>Clone with SSH: <code>git clone git@${rootUrl}:${organization.name}/${repository.name}</code></p>
+      </div>
     </article>

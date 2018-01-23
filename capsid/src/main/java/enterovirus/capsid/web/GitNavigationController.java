@@ -2,7 +2,6 @@ package enterovirus.capsid.web;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +29,12 @@ import enterovirus.protease.source.GitSource;
 @Controller
 public class GitNavigationController {	
 
+	/*
+	 * TODO:
+	 * Make it depend on profiles.
+	 */
+	private static final String rootUrl = "localhost";
+	
 	@Autowired private BlobGitDAO blobGitDAO;
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private RepositoryGitDAO repositoryGitDAO;
@@ -154,6 +159,8 @@ public class GitNavigationController {
 			HttpServletRequest request, 
 			Model model) throws Exception {
 
+		model.addAttribute("rootUrl", rootUrl);
+		
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
 		
