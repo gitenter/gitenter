@@ -28,6 +28,27 @@ That seems also because STS cannot handle two classes which accidentally have th
 [main] ERROR org.springframework.boot.SpringApplication - Application startup failed
 ```
 
+### Log4j multiple binding
+
+Analyze the dependency tree using `mvn dependency:tree`. Then remove the dependencies by e.g.
+
+```
+<exclusions>
+    <exclusion>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+    </exclusion>
+    <exclusion>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+    </exclusion>
+</exclusions>
+```
+
+I try to remove all logging dependencies from packages, and define a independent one in every package.
+
+At this moment, I try to do the modules under `org.slf4j:slf4j-log4j12` (working), and maybe use `ch.qos.logback:logback-classic` for `capsid` (has problem inside of STS).
+
 ## Deployment
 
 ### Docker
