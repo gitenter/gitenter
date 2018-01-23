@@ -21,6 +21,7 @@ import org.springframework.validation.Errors;
 
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
+import enterovirus.protease.source.GitSource;
 import enterovirus.gitar.*;
 import enterovirus.gitar.wrap.*;
 

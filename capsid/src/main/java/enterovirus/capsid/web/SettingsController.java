@@ -134,7 +134,7 @@ public class SettingsController {
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.POST)
 	public String processAddASshKey (@Valid SshKeyBean sshKey, Errors errors, 
-			Model model, Authentication authentication) {
+			Model model, Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
 			/* So <sf:> will render the values in object "member" to the form. */

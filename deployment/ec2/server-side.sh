@@ -36,3 +36,7 @@ sudo usermod -a -G enterovirus git
 sudo chown -R git:enterovirus /home/git # Change the group of "/home/git" to enterovirus
 sudo chmod 775 /home/git
 sudo service tomcat8 restart # When adding a user to a new group, that won't be applied in any currently-running processes, only new ones. So one need to logout and login again to make the group changes.
+
+sudo mkdir /home/git/.ssh/
+sudo chown -R git:enterovirus /home/git/.ssh
+sudo chmod 775 /home/git/.ssh

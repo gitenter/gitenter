@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import enterovirus.gitar.GitFolderStructure;
-import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.domain.*;
+import enterovirus.protease.source.GitSource;
 
 @Component
 public class CommitGitDAO {

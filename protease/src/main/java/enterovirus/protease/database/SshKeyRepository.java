@@ -1,10 +1,10 @@
 package enterovirus.protease.database;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import java.io.IOException;
 
 import enterovirus.protease.domain.*;
 
-public interface SshKeyRepository extends PagingAndSortingRepository<SshKeyBean, Integer> {
+public interface SshKeyRepository {
 
-	SshKeyBean saveAndFlush(SshKeyBean sshKey);
+	public SshKeyBean saveAndFlush(SshKeyBean sshKey) throws IOException;
 }

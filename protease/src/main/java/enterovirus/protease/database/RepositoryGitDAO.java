@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 
 import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitLog;
-import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.domain.CommitBean;
 import enterovirus.protease.domain.RepositoryBean;
+import enterovirus.protease.source.GitSource;
 
 /*
  * Functions of this class is not merged into RepositoryRepository,

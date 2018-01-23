@@ -2,9 +2,9 @@ package enterovirus.gihook.postreceive.status;
 
 import java.io.File;
 
-import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.protease.source.GitSource;
 
 public class CommitStatus {
 

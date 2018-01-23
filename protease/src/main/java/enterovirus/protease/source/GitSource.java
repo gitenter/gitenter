@@ -1,7 +1,12 @@
-package enterovirus.gitar;
+package enterovirus.protease.source;
 
 import java.io.File;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class GitSource {
 
 	/*
@@ -10,16 +15,7 @@ public class GitSource {
 	 * in JDBC. Will think carefully how to implement it
 	 * later.
 	 */
-	
 	private String rootFolderPath;
-
-	public void setRootFolderPath(String rootFolderPath) {
-		this.rootFolderPath = rootFolderPath;
-	}
-	
-	public String getRootFolderPath() {
-		return rootFolderPath;
-	}
 
 	/*
 	 * Bare git repository at "/rootFolderPath/ownerName/repositoryName.git" .

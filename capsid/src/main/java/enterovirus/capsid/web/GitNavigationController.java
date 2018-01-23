@@ -22,10 +22,10 @@ import org.springframework.web.servlet.HandlerMapping;
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
-import enterovirus.gitar.GitSource;
 import enterovirus.gitar.wrap.*;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
+import enterovirus.protease.source.GitSource;
 
 @Controller
 public class GitNavigationController {	

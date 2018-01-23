@@ -1,9 +1,11 @@
-package enterovirus.gitar;
+package enterovirus.protease.source;
 
 import java.io.File;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
+
+import enterovirus.protease.source.GitSource;
 
 public class GitSourceTest {
 
