@@ -30,6 +30,9 @@
   <definition name="settings/account" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/settings/account.jsp" />
   </definition>
+  <definition name="settings/ssh" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/settings/ssh.jsp" />
+  </definition>
 
   <definition name="main" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/main.jsp" />

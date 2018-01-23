@@ -20,6 +20,7 @@ import enterovirus.protease.domain.*;
 public class SettingsController {
 
 	@Autowired private MemberRepository memberRepository;
+	@Autowired private SshKeyRepository sshKeyRepository;
 
 	@RequestMapping(method=RequestMethod.GET)
 	public String showSettings (Model model) {
@@ -122,5 +123,29 @@ public class SettingsController {
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/settings/account";
+	}
+	
+	@RequestMapping(value="/ssh", method=RequestMethod.GET)
+	public String showSshKeyForm (Model model) {
+		
+		model.addAttribute("sshKeyBean", new SshKeyBean());
+		return "settings/ssh";
+	}
+	
+	@RequestMapping(value="/ssh", method=RequestMethod.POST)
+	public String processAddASshKey (@Valid SshKeyBean sshKey, Errors errors, 
+			Model model, Authentication authentication) {
+		
+		if (errors.hasErrors()) {
+			/* So <sf:> will render the values in object "member" to the form. */
+			model.addAttribute("sshKeyBean", sshKey); 
+			return "settings/ssh";
+		}
+		
+		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		sshKey.setMember(member);
+		
+		sshKeyRepository.saveAndFlush(sshKey);
+		return "redirect:/";
 	}
 }

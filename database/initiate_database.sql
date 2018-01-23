@@ -12,6 +12,12 @@ CREATE TABLE config.member (
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)')
 );
 
+CREATE TABLE config.ssh_key (
+	id serial PRIMARY KEY,
+	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
+	key text NOT NULL UNIQUE
+);
+
 CREATE TABLE config.organization (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE,

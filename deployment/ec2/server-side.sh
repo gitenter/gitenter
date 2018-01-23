@@ -24,7 +24,7 @@ sh setup.sh
 
 sudo apt-get install git # It seems already installed by default.
 
-adduser git # Current set password "secretpassword".
+adduser git # Current set password "git".
 
 sudo groupadd enterovirus
 #getent group # List all groups with corresponding information
