@@ -13,13 +13,11 @@ public class TestGitConfig {
 	@Bean
 	public GitSource userAuthGitSource() {
 		
-		GitSource gitSource = new GitSource();
-		
 		/* 
-		 * Current this folder doesn't exist, but that doesn't matter. 
-		 */
-		gitSource.setRootFolderPath("/dummy/position/not/exist");
-		
+		 * Since this test doesn't touch the git part, non-existence doesn't matter. 
+		 */ 
+		GitSource gitSource = new GitSource();
+		gitSource.setRootFolderPath("/dummy/position/not/exist"); 
 		return gitSource;
 	}
 
@@ -28,9 +26,7 @@ public class TestGitConfig {
 	public GitSource oneRepoFixCommitGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		
 		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit");
-		
 		return gitSource;
 	}
 	

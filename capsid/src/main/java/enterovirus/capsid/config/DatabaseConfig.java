@@ -4,15 +4,14 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 public class DatabaseConfig {
 
 	/*
-	 * TODO:
-	 * Need to later define a SQL user for this persistence layer.
+	 * No need to setup profile for "DataSource", since everything
+	 * is currently using the same database setup.
 	 */
 	@Bean
 	public DataSource dataSource() {
