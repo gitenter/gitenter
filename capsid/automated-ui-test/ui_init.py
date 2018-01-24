@@ -19,6 +19,6 @@ client = log_in('user1')
 create_organization(client, 'org1')
 create_organization(client, 'org2')
 create_repository(client, 1, 'repo1')
-time.sleep(0.1) # Otherwise the two repos may be made at exactly the same time, so exactly the same SHA checksum hash.
+time.sleep(1) # Otherwise the two repos may be made at exactly the same time, so exactly the same SHA checksum hash.
 create_repository(client, 1, 'repo2')
 

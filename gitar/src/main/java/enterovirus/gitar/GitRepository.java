@@ -2,7 +2,16 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.attribute.GroupPrincipal;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.UserPrincipalLookupService;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
@@ -22,13 +31,13 @@ public class GitRepository {
 	
 	static public void initBare (File repositoryDirectory, File sampleHooksDirectory) throws GitAPIException, IOException {
 		
-		Git.init().setDirectory(repositoryDirectory).setBare(true).call();
+		initGitBareDefault(repositoryDirectory);
 		setupHooks(repositoryDirectory, sampleHooksDirectory);
 	}
 	
 	static public void initBareWithConfig (File repositoryDirectory, File sampleHooksDirectory, File configFilesDirectory) throws GitAPIException, IOException {
 		
-		Git.init().setDirectory(repositoryDirectory).setBare(true).call();
+		initGitBareDefault(repositoryDirectory);
 		
 		/*
 		 * TODO:
@@ -65,6 +74,60 @@ public class GitRepository {
 		}
 		
 		setupHooks(repositoryDirectory, sampleHooksDirectory);
+	}
+	
+	static private void initGitBareDefault (File repositoryDirectory) throws IOException, GitAPIException {
+		
+		Git.init().setDirectory(repositoryDirectory).setBare(true).call();
+		
+		Set<PosixFilePermission> perms = new HashSet<>();
+		perms.add(PosixFilePermission.OWNER_READ);
+		perms.add(PosixFilePermission.OWNER_WRITE);
+		perms.add(PosixFilePermission.OWNER_EXECUTE);
+		perms.add(PosixFilePermission.GROUP_READ);
+		perms.add(PosixFilePermission.GROUP_WRITE);
+		perms.add(PosixFilePermission.GROUP_EXECUTE);
+		perms.add(PosixFilePermission.OTHERS_READ);
+		perms.add(PosixFilePermission.OTHERS_EXECUTE);
+		
+		UserPrincipalLookupService lookupService = FileSystems.getDefault().getUserPrincipalLookupService();
+		GroupPrincipal group = lookupService.lookupPrincipalByGroupName("enterovirus");
+		
+		iterateFiles(repositoryDirectory, perms, group);
+	}
+	
+	static private void iterateFiles (File directory, Set<PosixFilePermission> perms, GroupPrincipal group) throws IOException {
+		
+		/*
+		 * TODO:
+		 * 
+		 * This is quite dirty. The main aim is to change the
+		 * file ownership, so both user "tomcat8" and user "git"
+		 * (they are in the same group called "enterovirus)
+		 * have full authorization to work on the git file system.
+		 * 
+		 * The other possibility is to let tomcat to run under the
+		 * user "git". However, I can't make it succeed. 
+		 * 
+		 * See the comments on the "server-side.sh" setups.
+		 */
+		for (File file : directory.listFiles()) {
+			
+			if (file.isDirectory()) {
+				iterateFiles(file, perms, group);
+			}
+			
+			/*
+			 * chmod -R 775 /path/to/the/directory
+			 */
+			Files.setPosixFilePermissions(file.toPath(), perms);
+			
+			/*
+			 * chown original-owner:enterovirus /path/to/the/directory
+			 */
+			PosixFileAttributeView view = Files.getFileAttributeView(file.toPath(), PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
+			view.setGroup(group);
+		}
 	}
 	
 	static private void setupHooks (File repositoryDirectory, File sampleHooksDirectory) throws IOException {

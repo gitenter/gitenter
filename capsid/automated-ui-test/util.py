@@ -6,7 +6,8 @@ import requests
 from bs4 import BeautifulSoup
 
 # without the "/" at the end of it
-root = 'http://localhost:8888' 
+#root = 'http://localhost:8080/capsid-0.0.1-prototype/' 
+root = 'http://localhost:8888/' 
 
 def get_csrf (client, url):
 

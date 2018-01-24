@@ -24,6 +24,10 @@ Although for deployment we should just `mvn package` and put the `.war` file in 
 
 To set it up, Go to `Run > Run configurations` and under the `Spring Boot` leave and Main type `enterovirus.capsid.CapsidApplication`. In Override Properties, you right click Add Row and set property as `server.port`, and value as `8888`. Then the site is accessible from `http://localhost:8888`.
 
+#### Linux group and user
+
+In the final product, I have group `enterovirus` with users (1)`tomcat8` and (2)`git`. While testing, I have `enterovirus` with users (1) `tomcat8`, (2)`git`, and (3)`beta` -- myself. Since the STS tomcat is running under myself (rather than user `tomcat8`), that will make the development process easier.
+
 ## Deployment
 
 Install Tomcat 8. Then `sudo chmod 777 /var/lib/tomcat8/webapps` and put the `.war` file into that folder. The site is accessible from `http://localhost:8080/capsid-[version]/`.

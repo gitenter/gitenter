@@ -26,6 +26,44 @@ sudo apt-get install git # It seems already installed by default.
 
 adduser git # Current set password "git".
 
+# chmod and chown of the "/home/git" folder and its subfolders, so
+# both user "tomcat8" (from the UI) and user "git" (from git server)
+# can work on it.
+#
+# It is quite dirty, since you also need to change everything writen 
+# to in "capsid" ("mkdir" of creating new repository, and "git init").
+#
+# The other possibility (maybe neater) is to let tomcat to run under
+# the user git, but I can't make it succeed.
+#
+#sudo sed -i "s/TOMCAT8_USER=tomcat8/TOMCAT8_USER=git/g" /etc/default/tomcat8
+#sudo sed -i "s/TOMCAT8_GROUP=tomcat8/TOMCAT8_GROUP=git/g" /etc/default/tomcat8
+#sudo server tomcat8 restart
+# > Job for tomcat8.service failed because the control process exited with error code. See "systemctl status tomcat8.service" and "journalctl -xe" for details.
+# $ systemctl status tomcat8.service
+# ● tomcat8.service - LSB: Start Tomcat.
+#    Loaded: loaded (/etc/init.d/tomcat8; bad; vendor preset: enabled)
+#    Active: failed (Result: exit-code) since Wed 2018-01-24 13:59:38 EST; 38s ago
+#      Docs: man:systemd-sysv-generator(8)
+#   Process: 5673 ExecStop=/etc/init.d/tomcat8 stop (code=exited, status=0/SUCCESS
+#   Process: 5682 ExecStart=/etc/init.d/tomcat8 start (code=exited, status=1/FAILU
+#     Tasks: 35
+#    Memory: 666.2M
+#       CPU: 200ms
+#    CGroup: /system.slice/tomcat8.service
+#            └─23168 /usr/lib/jvm/default-java/bin/java -Djava.util.logging.config
+# 
+# Jan 24 13:59:33 landslide systemd[1]: Stopped LSB: Start Tomcat..
+# Jan 24 13:59:33 landslide systemd[1]: Starting LSB: Start Tomcat....
+# Jan 24 13:59:33 landslide tomcat8[5682]:  * Starting Tomcat servlet engine tomca
+# Jan 24 13:59:38 landslide tomcat8[5682]:    ...fail!
+# Jan 24 13:59:38 landslide systemd[1]: tomcat8.service: Control process exited, c
+# Jan 24 13:59:38 landslide systemd[1]: Failed to start LSB: Start Tomcat..
+# Jan 24 13:59:38 landslide systemd[1]: tomcat8.service: Unit entered failed state
+# Jan 24 13:59:38 landslide systemd[1]: tomcat8.service: Failed with result 'exit-
+# ...skipping...
+
+
 sudo groupadd enterovirus
 #getent group # List all groups with corresponding information
 

@@ -72,6 +72,20 @@ public class GitSource {
 	private void chmodAndChown(File directory) throws IOException {
 		
 		/*
+		 * TODO:
+		 * 
+		 * This is quite dirty. The main aim is to change the
+		 * file ownership, so both user "tomcat8" and user "git"
+		 * (they are in the same group called "enterovirus)
+		 * have full authorization to work on the git file system.
+		 * 
+		 * The other possibility is to let tomcat to run under the
+		 * user "git". However, I can't make it succeed. 
+		 * 
+		 * See the comments on the "server-side.sh" setups.
+		 */
+		
+		/*
 		 * chmod 775 [path-of-the-directory]
 		 */
 		Set<PosixFilePermission> perms = new HashSet<>();
