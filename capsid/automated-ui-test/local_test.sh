@@ -22,5 +22,8 @@ echo "\n"
 echo "Run automatic UI test"
 echo "====================="
 cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
-python3 ui_init.py
-sh git_init.sh
+
+# without the "/" at the end of it
+python3 ui_init.py http://localhost:8080/capsid-0.0.1-prototype
+#python3 ui_init.py http://localhost:8888
+sh git_init.sh localhost

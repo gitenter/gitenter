@@ -27,6 +27,6 @@ public class SshKeyBean {
 	@JoinColumn(name="member_id", updatable=false)
 	private MemberBean member;
 	
-	@Column(name="key", updatable=false)
+	@Column(name="key")
 	private String key;
 }

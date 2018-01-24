@@ -2,24 +2,28 @@
 
 from util import *
 import time
+import sys
+
+# the URL should go without the "/" at the end of it
+root = sys.argv[1]
 
 '''
 CREATE USER
 '''
 
-create_user('user1')
-create_user('user2')
-create_user('user3')
+create_user(root, 'user1')
+create_user(root, 'user2')
+create_user(root, 'user3')
 
 '''
 CREATE ORGANIZATION & REPOSITORY
 '''
 
-client = log_in('user1')
-add_ssh_key(client)
-create_organization(client, 'org1')
-create_organization(client, 'org2')
-create_repository(client, 1, 'repo1')
+client = log_in(root, 'user1')
+add_ssh_key(root, client)
+create_organization(root, client, 'org1')
+create_organization(root, client, 'org2')
+create_repository(root, client, 1, 'repo1')
 time.sleep(1) # Otherwise the two repos may be made at exactly the same time, so exactly the same SHA checksum hash.
-create_repository(client, 1, 'repo2')
+create_repository(root, client, 1, 'repo2')
 

@@ -5,10 +5,6 @@ from lxml import html
 import requests
 from bs4 import BeautifulSoup
 
-# without the "/" at the end of it
-#root = 'http://localhost:8080/capsid-0.0.1-prototype/' 
-root = 'http://localhost:8888/' 
-
 def get_csrf (client, url):
 
     form = client.get(url)
@@ -22,7 +18,7 @@ def get_csrf (client, url):
 CREATE USER
 '''
 
-def create_user (name):
+def create_user (root, name):
 
     client = requests.session()
 
@@ -43,7 +39,7 @@ def create_user (name):
 LOG IN
 '''
 
-def log_in (name):
+def log_in (root, name):
 
     client = requests.session()
 
@@ -64,7 +60,7 @@ def log_in (name):
 Add SSH KEY
 '''
 
-def add_ssh_key (client):
+def add_ssh_key (root, client):
 
 	url = root+'/settings/ssh'
 
@@ -75,13 +71,13 @@ def add_ssh_key (client):
 		}
 	r = client.post(url, data=data, headers=dict(Referer=url))
 
-	print("add ssh key for the current logged in user")
+	print("add ssh key for the current logged in user return code "+str(r.status_code))
 
 '''
 CREATE ORGANIZATION
 '''
 
-def create_organization (client, org_name):
+def create_organization (root, client, org_name):
 
     url = root+'/organizations/create'
 
@@ -100,7 +96,7 @@ CREATE ORGANIZATION
 
 # So it need to secretly know the org_id that is
 # managed by the logged in user.
-def create_repository (client, org_id, repo_name):
+def create_repository (root, client, org_id, repo_name):
 
     url = root+'/organizations/'+str(org_id)+'/repositories/create'
 

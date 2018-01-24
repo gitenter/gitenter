@@ -100,7 +100,7 @@ public class GitSource {
 		Files.setPosixFilePermissions(directory.toPath(), perms);
 		
 		/*
-		 * chown sudo chown git:enterovirus [path-of-the-directory]
+		 * chown git:enterovirus [path-of-the-directory]
 		 */
 		UserPrincipalLookupService lookupService = FileSystems.getDefault().getUserPrincipalLookupService();
 		PosixFileAttributeView view = Files.getFileAttributeView(directory.toPath(), PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);

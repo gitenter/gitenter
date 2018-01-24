@@ -1,8 +1,10 @@
+ip=$1
+
 clientroot=/home/beta/Workspace/enterovirus-test/fake_client
 cd $clientroot
 
 # Setup git through git local protocol
-git clone git@localhost:org1/repo1.git
+git clone git@$ip:org1/repo1.git
 cd repo1
 git remote -v
 
