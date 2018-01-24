@@ -31,7 +31,6 @@ class SshKeyImpl implements SshKeyRepository {
 		
 			bw.write(sshKey.getKey());
 			bw.newLine();
-			bw.newLine();
 		}
 		
 		return sshKey;

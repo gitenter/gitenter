@@ -1,4 +1,4 @@
-clientroot=/home/beta/Workspace/enterovirus-test/fake-client
+clientroot=/home/beta/Workspace/enterovirus-test/fake_client
 cd $clientroot
 
 # Setup git through git local protocol

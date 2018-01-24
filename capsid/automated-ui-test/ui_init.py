@@ -16,6 +16,7 @@ CREATE ORGANIZATION & REPOSITORY
 '''
 
 client = log_in('user1')
+add_ssh_key(client)
 create_organization(client, 'org1')
 create_organization(client, 'org2')
 create_repository(client, 1, 'repo1')

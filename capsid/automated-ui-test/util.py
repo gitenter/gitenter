@@ -61,6 +61,23 @@ def log_in (name):
     return client
 
 '''
+Add SSH KEY
+'''
+
+def add_ssh_key (client):
+
+	url = root+'/settings/ssh'
+
+	f = open("/home/beta/.ssh/id_rsa.pub", "r")
+	data = {
+		"key" : f.read(),
+        "_csrf" : get_csrf(client, url)
+		}
+	r = client.post(url, data=data, headers=dict(Referer=url))
+
+	print("add ssh key for the current logged in user")
+
+'''
 CREATE ORGANIZATION
 '''
 
