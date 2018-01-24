@@ -62,7 +62,7 @@ public class AdminController {
 			@Valid OrganizationBean organization, 
 			Errors errors, 
 			Model model,
-			Authentication authentication) {
+			Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
 			/* So <sf:> will render the values in object "member" to the form. */
@@ -74,6 +74,11 @@ public class AdminController {
 		List<MemberBean> managers = new ArrayList<MemberBean>();
 		managers.add(member);
 		organization.setManagers(managers);
+		
+		/*
+		 * The "mkdir" part include "chmod" and "chown".
+		 */
+		gitSource.mkdirOrganizationDirectory(organization.getName());
 		
 		organizationRepository.saveAndFlush(organization);
 		return "redirect:/";
@@ -130,7 +135,9 @@ public class AdminController {
 		
 		/*
 		 * Setup git URI which follows the GitSource format.
+		 * The "mkdir" part include "chmod" and "chown".
 		 */
+		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		repository.setGitUri(repositoryDirectory.toString());
 		

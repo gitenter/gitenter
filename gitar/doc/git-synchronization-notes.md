@@ -114,7 +114,7 @@ After provide available password, the clone will be established.
 
 Note:
 
-1. Only absolute path works. `~/git/server.git` will give error "Please make sure you have the correct access rights and the repository exists".
+1. Work for (1) absolute path `git clone beta@192.168.0.106:/home/beta/git/server.git` or (2) relative path `clone beta@192.168.0.106:git/server.git` (not `~/git/server.git`).
 2. For a user who has read access to `/home/beta/git/server.git` can `pull`, while if s/he has write access then s/he can also `push`. In my example here is the user `beta` is accessing her home folder, so she has giant permission for everything.
 
 #### Multiple users case
