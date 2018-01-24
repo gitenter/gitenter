@@ -24,7 +24,17 @@ sh setup.sh
 
 sudo apt-get install git # It seems already installed by default.
 
-adduser git # Current set password "git".
+# To make the new added user accessable by ssh, follow the
+# link of: https://aws.amazon.com/premiumsupport/knowledge-center/new-user-accounts-linux-instance/
+
+sudo adduser git --disabled-password
+sudo su - git
+mkdir .ssh
+chmod 700 .ssh
+touch .ssh/authorized_keys
+chmod 600 .ssh/authorized_keys
+#echo -e "[my id_rsa.pub]" >> ~/.ssh/authorized_keys 
+#Then "ssh git@52.41.66.37" works. But I seems cannot change the authorization of its root.
 
 # chmod and chown of the "/home/git" folder and its subfolders, so
 # both user "tomcat8" (from the UI) and user "git" (from git server)
