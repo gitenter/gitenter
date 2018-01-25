@@ -27,7 +27,6 @@ cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
 # UI automatic test.
 # URL without the "/" at the end of it
 #
-# TODO:
 # This will write the .ssh/autorized_keys to a fake position.
 # But it doesn't matter, since "git clone" is by local protocol.
 python3 ui_init.py http://localhost:8888
