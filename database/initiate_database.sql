@@ -69,7 +69,22 @@ CREATE SCHEMA git;
 CREATE TABLE git.git_commit (
 	id serial PRIMARY KEY,
 	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
-	sha_checksum_hash text NOT NULL UNIQUE
+	sha_checksum_hash text NOT NULL,
+
+	/*
+	 * It is not save to make "sha_checksum_hash" itself unique,
+	 * since empty repositories make at the same time (should be up 
+	 * to second?) will have exactly the same "sha_checksum_hash".
+	 * It happens in my automatic UI test case, and causes SQL errors.
+	 *
+	 * On the other hand, although not exactly true, it is quite safe
+	 * to make (repository_id, sha_checksum_hash) pair unique. Since
+	 * Different commits belongs to the same repository should at least
+	 * modified a little bit, there's no problem.
+	 * (Automatic code with add something commit and delete something and
+	 * commit again may have problem, but that's not a natural case).
+	 */
+	UNIQUE(repository_id, sha_checksum_hash)
 );
 
 CREATE TABLE git.git_commit_valid (

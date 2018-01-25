@@ -54,7 +54,7 @@ public class RepositoryGitDAO {
 		/*
 		 * Do it in one single SQL query by performance concerns.
 		 */
-		List<CommitBean> commits = commitRepository.findByCommitShaIn(commitShas);
+		List<CommitBean> commits = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), commitShas);
 		Map<String,CommitBean> commitMap = new HashMap<String,CommitBean>();
 		for (CommitBean commit : commits) {
 			commitMap.put(commit.getShaChecksumHash(), commit);

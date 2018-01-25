@@ -125,7 +125,7 @@ public class GitNavigationController {
 		
 		model.addAttribute("shaChecksumHash", commitSha.getShaChecksumHash());
 		
-		CommitBean commit = commitRepository.findByCommitSha(commitSha);
+		CommitBean commit = commitRepository.findByRepositoryIdAndCommitSha(repositoryId, commitSha);
 		return showFolderStructure(commit, request, model);
 	}
 	

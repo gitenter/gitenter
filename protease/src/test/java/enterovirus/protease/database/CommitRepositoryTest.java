@@ -39,12 +39,13 @@ public class CommitRepositoryTest {
 
 	@Test
 	@Transactional
-	public void testFindByCommitSha() throws Exception {
+	public void testFindByRepositoryIdAndCommitSha() throws Exception {
 		
 		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
-		CommitBean commit = commitRepository.findByCommitSha(commitSha);
+		Integer repositoryId = 1; // There is only one single repository in this testcase. So its Id is "1".
+		CommitBean commit = commitRepository.findByRepositoryIdAndCommitSha(repositoryId, commitSha);
 		System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+commit.getRepository().getName());
 		System.out.println("Commit SHA: "+commit.getShaChecksumHash());
@@ -54,14 +55,15 @@ public class CommitRepositoryTest {
 	
 	@Test
 	@Transactional
-	public void testFindByCommitShaIn() throws Exception {
+	public void testFindByRepositoryIdAndCommitShaIn() throws Exception {
 		
 		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		List<CommitSha> commitShas = new ArrayList<CommitSha>();
 		commitShas.add(new CommitSha(commitRecordFile, 1));
 		commitShas.add(new CommitSha(commitRecordFile, 2));
 		
-		List<CommitBean> commits = commitRepository.findByCommitShaIn(commitShas);
+		Integer repositoryId = 1; // There is only one single repository in this testcase. So its Id is "1".
+		List<CommitBean> commits = commitRepository.findByRepositoryIdAndCommitShaIn(repositoryId, commitShas);
 		for (CommitBean commit : commits) {
 			System.out.println("Organization: "+commit.getRepository().getOrganization().getName());
 			System.out.println("Repository Name: "+commit.getRepository().getName());

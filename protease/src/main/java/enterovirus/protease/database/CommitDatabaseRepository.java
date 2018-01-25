@@ -9,8 +9,8 @@ import enterovirus.protease.domain.*;
 interface CommitDatabaseRepository extends PagingAndSortingRepository<CommitBean, Integer> {
 
 	Optional<CommitBean> findById(Integer id);
-	List<CommitBean> findByShaChecksumHash(String shaChecksumHash);
-	List<CommitBean> findByShaChecksumHashIn(List<String> shaChecksumHashs);
+	List<CommitBean> findByRepositoryIdAndShaChecksumHash(Integer repositoryId, String shaChecksumHash);
+	List<CommitBean> findByRepositoryIdAndShaChecksumHashIn(Integer repositoryId, List<String> shaChecksumHashs);
 	
 	public CommitBean saveAndFlush(CommitBean commit);
 }

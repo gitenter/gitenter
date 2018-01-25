@@ -9,8 +9,8 @@ import enterovirus.protease.domain.*;
 public interface CommitRepository {
 
 	public CommitBean findById(Integer id) throws IOException;
-	public CommitBean findByCommitSha(CommitSha commitSha) throws IOException;
-	public List<CommitBean> findByCommitShaIn(List<CommitSha> commitShas);
+	public CommitBean findByRepositoryIdAndCommitSha(Integer repositoryId, CommitSha commitSha) throws IOException;
+	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<CommitSha> commitShas);
 	
 	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, BranchName branchName) throws IOException;
 	
