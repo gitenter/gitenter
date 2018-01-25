@@ -127,7 +127,6 @@ public class AdminController {
 		 */
 		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
-		repository.setGitUri(repositoryDirectory.toString());
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());

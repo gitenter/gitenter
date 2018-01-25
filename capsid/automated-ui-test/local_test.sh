@@ -1,3 +1,10 @@
+# After change the tomcat user to be "git",
+# tomcat sometimes (not sure yet) cannot do auto-deployment. 
+# So we need to manually
+# rm /var/lib/tomcat8/webapps/capsid-0.0.1-prototype.war
+# rm -rf /var/lib/tomcat8/webapps/capsid-0.0.1-prototype
+# before copy the war in.
+
 echo "\n"
 echo "Reset/Initialize the database"
 echo "============================="

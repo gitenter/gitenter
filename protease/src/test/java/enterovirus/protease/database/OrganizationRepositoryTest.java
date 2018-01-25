@@ -37,7 +37,6 @@ public class OrganizationRepositoryTest {
 		for (RepositoryBean repository : organization.getRepositories()) {
 			System.out.println("  --Name: "+repository.getName());
 			System.out.println("    Display Name: "+repository.getDisplayName());
-			System.out.println("    Git URI: "+repository.getGitUri());
 		}
 		
 	}

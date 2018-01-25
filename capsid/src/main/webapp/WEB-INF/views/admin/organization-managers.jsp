@@ -15,7 +15,7 @@
           <h3>
             ${member.displayName}
             <sf:form method="POST" action="/organizations/${organization.id}/managers/${member.id}/remove">
-              <input class="delete" type="submit" value="delete" />
+              <input class="delete" type="submit" value="x" />
             </sf:form>
           </h3>
         </c:forEach>

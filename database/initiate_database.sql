@@ -36,9 +36,7 @@ CREATE TABLE config.repository (
 	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
 	name text NOT NULL,
 	display_name text,
-	UNIQUE (organization_id, name),
-
-	git_uri text NOT NULL UNIQUE
+	UNIQUE (organization_id, name)
 );
 
 CREATE TABLE setting.repository_member_roll (

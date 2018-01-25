@@ -91,7 +91,23 @@ def create_organization (root, client, org_name):
     print("create organization "+org_name+" return code "+str(r.status_code))
 
 '''
-CREATE ORGANIZATION
+ADD MANAGER
+'''
+
+def add_manager (root, client, org_id, manager_username):
+
+    url = root+'/organizations/'+str(org_id)+'/managers'
+
+    data = {
+        "managerName" : manager_username,
+        "_csrf" : get_csrf(client, url)
+        }
+    r = client.post(url+'/add', data=data, headers=dict(Referer=url))
+
+    print("add manager "+manager_username+" for organization "+str(org_id)+" return code "+str(r.status_code))
+
+'''
+CREATE REPOSITORY
 '''
 
 # So it need to secretly know the org_id that is
@@ -107,4 +123,4 @@ def create_repository (root, client, org_id, repo_name):
         }
     r = client.post(url, data=data, headers=dict(Referer=url))
 
-    print("create repository "+repo_name+" return code "+str(r.status_code))
+    print("create repository "+repo_name+" for organization "+str(org_id)+" return code "+str(r.status_code))

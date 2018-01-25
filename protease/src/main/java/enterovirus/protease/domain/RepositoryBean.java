@@ -46,19 +46,6 @@ public class RepositoryBean {
 	@Column(name="display_name")
 	private String displayName;
 
-	/*
-	 * TODO:
-	 * Currently not in use. Consider delete this one, since it
-	 * is not flexible for global changes.
-	 * 
-	 * Consider always use 
-	 * File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
-	 * to get the desired path.
-	 */
-	@NotNull
-	@Column(name="git_uri")
-	private String gitUri;
-	
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
