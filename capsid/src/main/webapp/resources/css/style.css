@@ -276,6 +276,25 @@ article input[type=submit].menu:hover {
 	border: 1px solid #2fc8a8;
 }
 
+article input[type=submit].delete {
+
+	font-size: 20px;
+
+	border-radius: 4px;
+
+	background-color: #ffffff;
+	color: #444444;
+	border: 0px; 
+	padding: 4px 4px 4px 4px;
+}
+
+article input[type=submit].delete:hover {
+
+	background-color: #444444;
+	color: #ffffff;
+	border: 0px;
+}
+
 /* *************************************************************************
  * Log in
  * ************************************************************************* */
@@ -381,10 +400,6 @@ article span.form-successful-message {
 
 article input[type=text].form-fill-in, input[type=password].form-fill-in, input[type=email].form-fill-in, textarea.form-fill-in {	
 	width: 400px;
-}
-
-input[type=submit].setting {
-	font-size: 28px;
 }
 
 /* *************************************************************************

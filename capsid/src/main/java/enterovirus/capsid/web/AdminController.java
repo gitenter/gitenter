@@ -75,9 +75,6 @@ public class AdminController {
 		managers.add(member);
 		organization.setManagers(managers);
 		
-		/*
-		 * The "mkdir" part include "chmod" and "chown".
-		 */
 		gitSource.mkdirOrganizationDirectory(organization.getName());
 		
 		organizationRepository.saveAndFlush(organization);
@@ -127,7 +124,6 @@ public class AdminController {
 		
 		/*
 		 * Setup git URI which follows the GitSource format.
-		 * The "mkdir" part include "chmod" and "chown".
 		 */
 		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
@@ -157,12 +153,10 @@ public class AdminController {
 			Model model,
 			Authentication authentication) throws IOException {
 		
-		/*
-		 * TODO:
-		 * Only people who's the organization manager can see the materials.
-		 */
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		Hibernate.initialize(organization.getManagers());
+		
+		isManagerCheck(authentication, organization);
 		
 		model.addAttribute("organization", organization);
 		return "admin/organization-managers";
@@ -172,15 +166,34 @@ public class AdminController {
 	public String addAOrganizationManager (
 			@PathVariable Integer organizationId,
 			String managerName,
+			Authentication authentication) throws Exception {
+		
+		OrganizationBean organization = organizationRepository.findById(organizationId);
+		Hibernate.initialize(organization.getManagers());
+		
+		isManagerCheck(authentication, organization);
+		
+		MemberBean newManager = memberRepository.findByUsername(managerName);
+		organization.addManager(newManager);
+		
+		organizationRepository.saveAndFlush(organization);
+		
+		return "redirect:/organizations/"+organizationId+"/managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/managers/{memberId}/remove", method=RequestMethod.POST)
+	public String addAOrganizationManager (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer memberId,
 			Model model,
 			Authentication authentication) throws Exception {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		Hibernate.initialize(organization.getManagers());
 		
-		MemberBean newManager = memberRepository.findByUsername(managerName);
-		organization.addManager(newManager);
+		isManagerCheck(authentication, organization);
 		
+		organization.removeManager(memberId);
 		organizationRepository.saveAndFlush(organization);
 		
 		return "redirect:/organizations/"+organizationId+"/managers";

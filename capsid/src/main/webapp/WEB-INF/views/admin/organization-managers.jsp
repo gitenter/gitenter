@@ -12,11 +12,24 @@
       <div>
         <h2>Managers:</h2>
         <c:forEach var="member" items="${organization.managers}">
-          <h3>${member.displayName}</h3>
+          <h3>
+            ${member.displayName}
+            <sf:form method="POST" action="/organizations/${organization.id}/managers/${member.id}/remove">
+              <input class="delete" type="submit" value="delete" />
+            </sf:form>
+          </h3>
         </c:forEach>
         <sf:form method="POST" action="/organizations/${organization.id}/managers/add">
-          <input class="form-fill-in" name="managerName" />
-          <input type="submit" value="Add" />
+          <table class="fill-in">
+            <tr>
+              <td class="form-intro">Username</td>
+              <td><input class="form-fill-in" name="managerName" /></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="form-button"><input type="submit" value="Add a new manager" /></td>
+            </tr>
+          </table>
         </sf:form>
       </div>
     </article>

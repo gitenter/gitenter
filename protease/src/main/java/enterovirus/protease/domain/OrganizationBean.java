@@ -1,6 +1,7 @@
 package enterovirus.protease.domain;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -60,6 +61,20 @@ public class OrganizationBean {
 	
 	public boolean addManager (MemberBean manager) {
 		return managers.add(manager);
+	}
+	
+	public boolean removeManager (Integer memberId) {
+		
+		Iterator<MemberBean> i = managers.iterator();
+		while (i.hasNext()) {
+			MemberBean manager = i.next();
+			if (manager.getId().equals(memberId)) {
+				i.remove();
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public RepositoryBean findRepositoryByName(String repositoryName) throws IOException {
