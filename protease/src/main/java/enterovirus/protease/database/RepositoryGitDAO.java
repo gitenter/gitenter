@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitLog;
@@ -30,7 +30,7 @@ import enterovirus.protease.source.GitSource;
  * Can it be done in the way that it loads the Git data when calling 
  * "repository.getCommitLog()" and "repository.getBranchNames()" ?
  */
-@Component
+@Repository
 public class RepositoryGitDAO {
 
 	@Autowired private GitSource gitSource;

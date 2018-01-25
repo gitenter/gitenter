@@ -1,7 +1,6 @@
 package enterovirus.protease.database;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Hibernate;
@@ -38,11 +37,7 @@ class RepositoryImpl implements RepositoryRepository {
 		 * (https://docs.jboss.org/hibernate/orm/3.3/reference/en-US/html/queryhql.html)
 		 */
 		
-		List<OrganizationBean> organizations = organizationRepository.findByName(organizationName);
-		if (organizations.size() == 0) {
-			throw new IOException ("Organization name is not correct!");
-		}
-		OrganizationBean organization = organizations.get(0);
+		OrganizationBean organization = organizationRepository.findByName(organizationName);
 		Hibernate.initialize(organization.getRepositories());
 		
 		RepositoryBean repository = organization.findRepositoryByName(repositoryName);		

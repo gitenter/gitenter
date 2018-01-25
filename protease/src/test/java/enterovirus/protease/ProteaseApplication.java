@@ -20,8 +20,8 @@ public class ProteaseApplication {
 	
 	@Autowired private OrganizationRepository organizationRepository;
 	
-	private void run () {	
-		OrganizationBean organization = organizationRepository.findByName("org1").get(0);
+	private void run () throws IOException {	
+		OrganizationBean organization = organizationRepository.findByName("org1");
 		System.out.println(organization.getDisplayName());
 	}
 	

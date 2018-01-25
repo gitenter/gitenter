@@ -28,7 +28,7 @@ public class SshKeyRepositoryTest {
 	@Ignore
 	public void test() throws IOException {
 		
-		MemberBean member = memberRepository.findById(1).get();
+		MemberBean member = memberRepository.findById(1);
 		
 		SshKeyBean sshKey = new SshKeyBean();
 		sshKey.setMember(member);

@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -43,8 +43,8 @@ public class AdminController {
 	 * If the user is not the manager of this repository,
 	 * then this cannot be done.
 	 */
-	private void isManagerCheck (Authentication authentication, OrganizationBean organization) {
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+	private void isManagerCheck (Authentication authentication, OrganizationBean organization) throws IOException {
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		if (!organization.isManagedBy(member.getId())) {
 			throw new AccessDeniedException("You are not authorized as a manager of this organization.");
 		}
@@ -70,7 +70,7 @@ public class AdminController {
 			return "admin/create-organization";
 		}
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		List<MemberBean> managers = new ArrayList<MemberBean>();
 		managers.add(member);
 		organization.setManagers(managers);
@@ -88,13 +88,9 @@ public class AdminController {
 	public String createRepository (
 			@PathVariable Integer organizationId,
 			Model model,
-			Authentication authentication) throws IOException {
+			Authentication authentication) throws Exception {
 
-		Optional<OrganizationBean> organizations = organizationRepository.findById(organizationId);
-		if (!organizations.isPresent()) {
-			throw new IOException ("organizationId does not exist!");
-		}
-		OrganizationBean organization = organizations.get();
+		OrganizationBean organization = organizationRepository.findById(organizationId);
 		
 		isManagerCheck(authentication, organization);
 		
@@ -111,11 +107,7 @@ public class AdminController {
 			Model model,
 			Authentication authentication) throws GitAPIException, IOException {
 		
-		Optional<OrganizationBean> organizations = organizationRepository.findById(organizationId);
-		if (!organizations.isPresent()) {
-			throw new IOException ("organizationId does not exist!");
-		}
-		OrganizationBean organization = organizations.get();
+		OrganizationBean organization = organizationRepository.findById(organizationId);
 		
 		isManagerCheck(authentication, organization);
 		
@@ -159,8 +151,38 @@ public class AdminController {
 		return "redirect:/organizations/"+organizationId;
 	}
 	
-	/*
-	 * TODO:
-	 * Manager management (add/remove managers).
-	 */
+	@RequestMapping(value="/organizations/{organizationId}/managers", method=RequestMethod.GET)
+	public String manageOrganizationManagers (
+			@PathVariable Integer organizationId,
+			Model model,
+			Authentication authentication) throws IOException {
+		
+		/*
+		 * TODO:
+		 * Only people who's the organization manager can see the materials.
+		 */
+		OrganizationBean organization = organizationRepository.findById(organizationId);
+		Hibernate.initialize(organization.getManagers());
+		
+		model.addAttribute("organization", organization);
+		return "admin/organization-managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/managers/add", method=RequestMethod.POST)
+	public String addAOrganizationManager (
+			@PathVariable Integer organizationId,
+			String managerName,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		OrganizationBean organization = organizationRepository.findById(organizationId);
+		Hibernate.initialize(organization.getManagers());
+		
+		MemberBean newManager = memberRepository.findByUsername(managerName);
+		organization.addManager(newManager);
+		
+		organizationRepository.saveAndFlush(organization);
+		
+		return "redirect:/organizations/"+organizationId+"/managers";
+	}
 }

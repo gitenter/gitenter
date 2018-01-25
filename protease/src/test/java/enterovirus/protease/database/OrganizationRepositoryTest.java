@@ -22,7 +22,7 @@ public class OrganizationRepositoryTest {
 	@Transactional
 	public void findByUsername() throws Exception {
 		
-		OrganizationBean organization = repository.findByName("org1").get(0);
+		OrganizationBean organization = repository.findByName("org1");
 		
 		System.out.println("===Organization Test Results===");
 		System.out.println("Display Name: "+organization.getDisplayName());

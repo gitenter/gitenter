@@ -2,7 +2,6 @@ package enterovirus.capsid.web;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,12 @@ public class MainController {
 	@Autowired private OrganizationRepository organizationRepository;
 		
 	@RequestMapping("/")
-	public String main(Model model, Authentication authentication) {
+	public String main(Model model, Authentication authentication) throws Exception {
 		
 		/*
 		 * The organizations the member acts as a manager.
 		 */
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		List<OrganizationBean> organizations = member.getOrganizations();
 		model.addAttribute("organizations", organizations);
 		
@@ -51,11 +50,7 @@ public class MainController {
 		 * For private contents, only users who belong to that
 		 * organization can see the materials.
 		 */
-		Optional<OrganizationBean> organizations = organizationRepository.findById(organizationId);
-		if (!organizations.isPresent()) {
-			throw new IOException ("organizationId does not exist!");
-		}
-		OrganizationBean organization = organizations.get();
+		OrganizationBean organization = organizationRepository.findById(organizationId);
 		
 		Hibernate.initialize(organization.getManagers());
 		

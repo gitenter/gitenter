@@ -88,6 +88,11 @@ CREATE TABLE git.git_commit (
 );
 
 CREATE TABLE git.git_commit_valid (
+	/*
+	 * There is a constrain that the "id" of table "git_commit_valid",
+	 * "git_commit_invalid", and "git_commit_ignored" are mutually exclusive,
+	 * but there seems no easy way to define it in PostgreSQL.
+	 */
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
@@ -99,9 +104,6 @@ CREATE TABLE git.git_commit_invalid (
 CREATE TABLE git.git_commit_ignored (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
--- There is a constrain that the "id" of table "git_commit_valid",
--- "git_commit_invalid", and "git_commit_ignored" are mutually exclusive,
--- but there seems no easy way to define it in PostgreSQL.
 
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,

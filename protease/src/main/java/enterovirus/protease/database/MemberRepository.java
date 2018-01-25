@@ -1,19 +1,13 @@
 package enterovirus.protease.database;
 
-import java.util.List;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import java.io.IOException;
 
 import enterovirus.protease.domain.MemberBean;
 
-public interface MemberRepository extends PagingAndSortingRepository<MemberBean, Integer> {
+public interface MemberRepository {
 
-	List<MemberBean> findByUsername(String username);
+	public MemberBean findById(Integer id) throws IOException;
+	public MemberBean findByUsername(String username) throws IOException;
 	
-	/* In Spring Data JPA, save() does both jobs of INSERT and UPDATE,
-	 * depend on whether the primary key is the same or not. 
-	 * 
-	 * The difference between save() and saveAndFlush() is 
-	 * saveAndFlush() will commit immediately, while save() will only 
-	 * comment when commit() or flush(). */
-	MemberBean saveAndFlush(MemberBean member);
+	public MemberBean saveAndFlush(MemberBean member);
 }

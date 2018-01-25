@@ -44,9 +44,9 @@ public class SettingsController {
 	}
 	
 	@RequestMapping(value="/profile", method=RequestMethod.GET)
-	public String showUpdateProfileForm (Model model, Authentication authentication) {
+	public String showUpdateProfileForm (Model model, Authentication authentication) throws Exception {
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		model.addAttribute("memberBean", member);
 		
 		return "settings/profile";
@@ -55,7 +55,7 @@ public class SettingsController {
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
 	public String processUpdateProfile (
 			@Valid MemberBean memberAfterChange, Errors errors, 
-			RedirectAttributes model, Authentication authentication) {
+			RedirectAttributes model, Authentication authentication) throws Exception {
 		
 		/* Because an null password field is for sure causes errors, here we need 
 		 * skip these associated errors. */
@@ -67,7 +67,7 @@ public class SettingsController {
 			return "settings/profile";
 		}
 
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		
 		/* Since "saveAndFlush()" will decide by itself whether the operation is
 		 * INSERT or UPDATE, the bean being actually modified and refreshed should 
@@ -85,9 +85,9 @@ public class SettingsController {
 	}
 	
 	@RequestMapping(value="/account", method=RequestMethod.GET)
-	public String showUpdateAccountForm (Model model, Authentication authentication) {
+	public String showUpdateAccountForm (Model model, Authentication authentication) throws Exception {
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		model.addAttribute("memberBean", member);
 		
 		return "settings/account";
@@ -97,7 +97,7 @@ public class SettingsController {
 	public String processUpdateAccount (
 			@Valid MemberBean memberAfterChange, Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
-			RedirectAttributes model, Authentication authentication) {
+			RedirectAttributes model, Authentication authentication) throws Exception {
 		
 		int expectErrorCount = 0;
 		expectErrorCount += errors.getFieldErrorCount("displayName");
@@ -108,7 +108,7 @@ public class SettingsController {
 			return "settings/account";
 		}
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		
 		if (!member.getPassword().equals(oldPassword)) {
 			model.addAttribute("memberBean", memberAfterChange);
@@ -142,7 +142,7 @@ public class SettingsController {
 			return "settings/ssh";
 		}
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		sshKey.setMember(member);
 		
 		sshKeyRepository.saveAndFlush(sshKey);

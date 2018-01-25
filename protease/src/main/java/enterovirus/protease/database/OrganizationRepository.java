@@ -1,15 +1,13 @@
 package enterovirus.protease.database;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.repository.PagingAndSortingRepository;
+import java.io.IOException;
 
 import enterovirus.protease.domain.OrganizationBean;
 
-public interface OrganizationRepository extends PagingAndSortingRepository<OrganizationBean, Integer> {
-
-	public Optional<OrganizationBean> findById(Integer id);
-	public List<OrganizationBean> findByName(String name);
+public interface OrganizationRepository {
+	
+	public OrganizationBean findById(Integer id) throws IOException;
+	public OrganizationBean findByName(String name) throws IOException;
+	
 	public OrganizationBean saveAndFlush(OrganizationBean organization);
 }

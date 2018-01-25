@@ -58,6 +58,10 @@ public class OrganizationBean {
 		return false;
 	}
 	
+	public boolean addManager (MemberBean manager) {
+		return managers.add(manager);
+	}
+	
 	public RepositoryBean findRepositoryByName(String repositoryName) throws IOException {
 	
 		for (RepositoryBean repository : repositories) {
