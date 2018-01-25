@@ -6,13 +6,19 @@ sudo -u postgres psql postgres
 
 sudo apt-get install tomcat8
 
-sudo apt-get install git # It seems already installed by default.
+sudo apt-get install git # Already installed by EC2 default
 
 ################################# Environment #################################
 
 # Add user "git"
 
 sudo adduser git --disabled-password
+
+# Disable password authentication
+
+sudo sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/g" /etc/ssh/sshd_config # Already done by EC2 default
+
+#PasswordAuthentication yes
 
 # Make user "git" accessable by SSH, Then "ssh git@52.41.66.37" works.
 #

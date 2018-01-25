@@ -65,7 +65,6 @@ public class AdminController {
 			Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
-			/* So <sf:> will render the values in object "member" to the form. */
 			model.addAttribute("organizationBean", organization); 
 			return "admin/create-organization";
 		}
@@ -108,13 +107,7 @@ public class AdminController {
 		
 		isManagerCheck(authentication, organization);
 		
-		if (errors.getErrorCount() > 1) {
-			/*
-			 * Because "gitUri" is not set up by the form, it at least 
-			 * contribute "1" for the error count.
-			 */
-			
-			/* So <sf:> will render the values in object "member" to the form. */
+		if (errors.hasErrors()) {
 			model.addAttribute("repositoryBean", repository); 
 			model.addAttribute("organization", organization);
 			return "admin/create-repository";
@@ -123,7 +116,17 @@ public class AdminController {
 		repository.setOrganization(organization);
 		
 		/*
-		 * Setup git URI which follows the GitSource format.
+		 * TODO:
+		 * 
+		 * Here makes a bare repository with one commit (include the
+		 * configuration file) in it.
+		 * 
+		 * The other possibility is (in the client side) to add the 
+		 * configuration file into an existing git repository.
+		 * Then in here we just want to "mkdir" but do not need to
+		 * "git init". 
+		 * 
+		 * Should give the user the choices in the UI.
 		 */
 		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
