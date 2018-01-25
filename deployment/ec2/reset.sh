@@ -1,6 +1,13 @@
+echo "\n"
+echo "Reset/Initialize the database"
+echo "============================="
 cd /tmp/database
 sh setup.sh
-cd /home/git
-sudo rm -rf *
-cd /home/git/.ssh
-sudo rm -rf *
+
+echo "\n"
+echo "Reset/Initialize the git storage"
+echo "================================"
+sudo -H -u git bash -c 'rm -rf /home/git/*' 
+sudo -H -u git bash -c 'rm -rf /home/git/.ssh/*'
+sudo -H -u git bash -c 'touch /home/git/.ssh/authorized_keys' 
+sudo -H -u git bash -c 'chmod 600 /home/git/.ssh/authorized_keys' 

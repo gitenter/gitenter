@@ -1,3 +1,13 @@
+# TODO:
+# After the tomcat user changes, the /webapps folder can
+# nolonger auto deploy the new site. Quick solution below,
+# need to find a better solution later.
+#
+#sh ssh.sh
+#cd /var/lib/tomcat8/webapps
+#sudo rm -rf ROOT
+#sudo rm ROOT.war
+
 # Shall first setup the server
 #cd /home/beta/Workspace/enterovirus/deployment/ec2
 #sh scp.sh

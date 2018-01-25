@@ -58,6 +58,11 @@ exit
 # One problem of this solution is "apt-get update" may break the setups.
 # However, since we are gonna deploy in some OS other than Debian/ubuntu,
 # right now we will just keep it like this.
+#
+# TODO:
+# Currently this setup has another problem. When copy the .war file to
+# "/var/lib/tomcat8/webapps", tomcat cannot delete the all folders. So you need to
+# "rm -rf" the old one manually.
 
 sudo service tomcat8 stop
 sudo sed -i "s/TOMCAT8_USER=tomcat8/TOMCAT8_USER=git/g" /etc/default/tomcat8
