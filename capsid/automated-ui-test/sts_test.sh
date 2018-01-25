@@ -7,10 +7,11 @@ sh setup.sh
 echo "\n"
 echo "Reset/Initialize the git storage"
 echo "================================"
-sudo -H -u git bash -c 'rm -rf /home/git/*' 
-sudo -H -u git bash -c 'rm -rf /home/git/.ssh/*'
-sudo -H -u git bash -c 'touch /home/git/.ssh/authorized_keys' 
-sudo -H -u git bash -c 'chmod 600 /home/git/.ssh/authorized_keys' 
+cd /home/beta/Workspace/enterovirus-test/fake_server
+rm -rf *
+cd /home/beta/Workspace/enterovirus-test/fake_server/.ssh
+rm -rf *
+touch authorized_keys
 
 echo "\n"
 echo "Reset/Initialize fake client"
@@ -25,8 +26,11 @@ cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
 
 # UI automatic test.
 # URL without the "/" at the end of it
-python3 ui_init.py http://localhost:8080/capsid-0.0.1-prototype
+#
+# TODO:
+# This will write the .ssh/autorized_keys to a fake position.
+# But it doesn't matter, since "git clone" is by local protocol.
+python3 ui_init.py http://localhost:8888
 
-# Git automatic test
-# "git clone" by SSH protocol
-sh git_init.sh git@localhost:org1/repo1.git
+# "git clone" by local protocol
+#sh git_init.sh /home/beta/Workspace/enterovirus-test/fake_server/org1/repo1.git

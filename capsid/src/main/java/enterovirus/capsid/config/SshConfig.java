@@ -14,7 +14,7 @@ public class SshConfig {
 	public SshSource stsSshGitSource() {
 		
 		SshSource sshSource = new SshSource();
-		sshSource.setSshFolderPath("/home/beta/.ssh");
+		sshSource.setSshFolderPath("/home/beta/Workspace/enterovirus-test/fake_server/.ssh");
 		return sshSource;
 	}
 	
