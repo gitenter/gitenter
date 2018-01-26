@@ -74,6 +74,13 @@ public class GitRepository {
 		 * Copy Git server-side hooks to the desired directory.
 		 * 
 		 * TODO:
+		 * Rather than manually make the hooks, and do it in git,
+		 * consider doing hook inside of JGit.
+		 * May refer to:
+		 * (1) Using Git hooks together with JGit / Egit: https://zauner.nllk.net/post/0001-git-hooks-currently-supported-by-jgit/
+		 * (2) jgit does not support the same hooks that 'man githooks' talks about: http://gitolite.com/gitolite/overview/
+		 * 
+		 * TODO:
 		 * What about using symlink rather than physically copy
 		 * the inside materials?
 		 */
