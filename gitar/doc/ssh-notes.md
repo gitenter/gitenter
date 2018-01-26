@@ -1,6 +1,6 @@
 # SSH Notes
 
-SSH stands **S**ecure **Sh**ell.
+SSH stands **S**-ecure **Sh**-ell.
 
 + A secure protocol.
 + Send local commands to remote server through an encrypted SSH tunnel, and execute them there.
@@ -155,6 +155,55 @@ Withing the SSH shell from the client side
 + Disconnection: `~.`
 + Place to the background: `~[Ctrl-z]`. Return from local shell session to the SSH session: `fg`, and if list multiple ones and choose `jobs` and `fg %2`
 +Change port forwarding options: `~C`
+
+## Customization/forced commands
+
+SSH can be used to execute commands remotely. By default, after executed the command, it returns to the local shell. If you don't want user to access the shell, you want to do "forced commands".
+
+`.ssh/authorized_keys` file can be altered, so every line (include a public key) can have a set of (1) options and (2) command= values to restrict the incoming users. With `.ssh/authorized_keys` form:
+
+```
+command="[path],[more options] ssh-rsa AAAA...
+command="./an-executable-script.sh arg1 arg2",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty ssh-rsa AAAA....
+```
+
+`./an-executable-script.sh` stays at the root of the home directory of the real unix user. Or one may do absolute path starting with `/`.
+
+SSH save the original command the user use to the `SSH_ORIGINAL_COMMAND` environment variable, which the command script may later query from.
+
+Without the `command=` option, ssh gives you back the shell with full authorization.
+
+Tricks:
+
++ Write the username as an `arg` of the script (hence write explicitly in the `.ssh/authorized_keys` file). So each time a user tries to log in (it triggered the corresponding public key), the username is known.
++ The original `SSH_ORIGINAL_COMMAND` saves the other information, e.g., the git repository name (if it is a git SSH connection).
+
+May refer to [a general introduction](https://binblog.info/2008/10/20/openssh-going-flexible-with-forced-commands/) include a Shell example of command script, and [a perl example of command script](https://blog.farville.com/using-command-in-authorized_keys-to-restrict-shell-like-gitolite/).
+
+### `SSH_ORIGINAL_COMMAND` environment variable
+
+How to get it?
+
++ Shell: `$SSH_ORIGINAL_COMMAND`
++ Perl: `$ENV{SSH_ORIGINAL_COMMAND}`
+
+Form:
+
+`ssh ip uname -a` => `uname -a`
+
+`git clone ssh://git@ip:path/to/a/repo.git` => ?
+
+`git clone git@ip:path/to/a/repo.git` => ?
+
+### Disable aadvanced SSH features
+
++ `no-port-forwarding`
++ `no-X11-forwarding`
++ `no-agent-forwarding`
++ `no-pty`
++ ...
+
+Full list of [restricting public keys](https://sanctum.geek.nz/arabesque/restricting-public-keys/).
 
 ## References
 
