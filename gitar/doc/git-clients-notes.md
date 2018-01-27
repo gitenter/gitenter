@@ -1,4 +1,6 @@
-# Gitolite Notes
+# Git Clients Notes
+
+## Gitolite
 
 (Conclusion: Not helpful for my case.)
 
@@ -13,11 +15,11 @@ Problem solved:
 1. (Per-branch access control: alter the `update` hook)
 1. (Per-path access control)
 
-## SSH-gitolite collaboration
+### SSH-gitolite collaboration
 
-### SSH side
+#### SSH side
 
-#### `.ssh/authorized_keys` general
+##### `.ssh/authorized_keys` general
 
 Every line is a public key from a particular user.
 
@@ -25,7 +27,7 @@ Every line can have a set of (1) options and (2) `command=` values to restrict t
 
 Without `command=` option, ssh gives you back the shell with full authorization.
 
-#### special setup for gitolite
+##### special setup for gitolite
 
 Every `.ssh/authorized_keys` line has the same `command=`
 
@@ -39,7 +41,7 @@ command="[path]/gitolite-shell some-username",[more options] ssh-rsa AAAAB3NzaC1
 2. Setup the `SSH_ORIGINAL_COMMAND` environment variable, to save what originally the user want to run.
 3. Execute the gitolite command, so gitolite know the username who's logged in.
 
-### gitolite side
+#### gitolite side
 
 `gitolite-shell` does:
 
@@ -50,11 +52,11 @@ gitolite shell stays in the middle of sshd and `git-receive-pack` (the command w
 
 ![](http://gitolite.com/gitolite/ov01.png "") => ![](http://gitolite.com/gitolite/ov02.png "")
 
-## Setup
+### Setup
 
 gitolite uses/clones a special git repository `gitolite-admin` to save its configurations. That do have the advantages of remembering the setup history (as it is done by git).
 
-### (My comments)
+#### (My comments)
 
 However, it doesn't fit my usage, as it is extremely hard to migrate the gitolite configuration to mine.
 
@@ -77,9 +79,9 @@ My other question:
 
 How can SSH handle a huge amount of private keys saved in a plain-text `.ssh/authorized_keys` file. Will it be really slowly if there's really a lot.
 
-## Technical
+### Technical
 
-### Installation
+#### Installation
 
 Installation: (1) `sudo apt-get install gitolite3`. (2) `$ ssh-keygen -t rsa -C "ozoox.o@gmail.com"` to generate the key. (3) Set the admin's SSH key to be in path `/home/git/.ssh/id_rsa.pub_`
 
@@ -92,11 +94,11 @@ WARNING: /var/lib/gitolite3/.ssh/authorized_keys missing; creating a new one
     (this is normal on a brand new install)
 ```
 
-### Java APIs
+#### Java APIs
 
 `java-gitolite-manager`: https://github.com/devhub-tud/Java-Gitolite-Manager
 
-## Other alternatives
+### Other alternatives
 
 1. By Unix access control list (ACL). Cons: (1) Too many Unix users/passwords, (2) setup with multiple/tedious commands, (3) view premissions also with multiple commands.
 1. Change ssh access from `shell` to [`git-shell`](https://git-scm.com/docs/git-shell), and work with it together with a set of Unix groups.
@@ -107,8 +109,24 @@ WARNING: /var/lib/gitolite3/.ssh/authorized_keys missing; creating a new one
 
 (Find the clues from [this link](https://serverfault.com/questions/170048/create-ssh-user-with-limited-privileges-to-only-use-git-repository)...)
 
-## References
+### References
 
 1. [gitolite overview](http://gitolite.com/gitolite/overview/)
 1. [How gitolite uses ssh](http://gitolite.com/gitolite/glssh/index.html)
 1. [How To Use Gitolite to Control Access to a Git Server on an Ubuntu 12.04 VPS ](https://www.digitalocean.com/community/tutorials/how-to-use-gitolite-to-control-access-to-a-git-server-on-an-ubuntu-12-04-vps)
+
+## Gerrit
+
+A.k.a, Googit Git
+
+Gerrit itself is for code review, which doesn't fit my propose. The part of Gerrit I am interested, is how it handles the access control while everybody is connecting through SSH using the same username `git`.
+
+It does stays in [maven](https://mvnrepository.com/artifact/com.google.gerrit), but it doesn't come as a general library :-(
+
+I haven't local which part of its code is working for that propose. Nor do I find any good references.
+
+### References
+
+1. [Gerrit Code Review - A Quick Introduction](https://review.openstack.org/Documentation/intro-quick.html): Not useful. Mostly the implementation part how to use it as a code review tool.
+1. [Gerrit Documentations](https://gerrit-documentation.storage.googleapis.com/Documentation/2.14.5.1/index.html)
+1. [Gerrit Code Review - Access Controls](https://review.openstack.org/Documentation/access-control.html): Too detailed and fit to the use case of itself. Mostly comes as a user manual.
