@@ -205,6 +205,19 @@ Form:
 
 Full list of [restricting public keys](https://sanctum.geek.nz/arabesque/restricting-public-keys/).
 
+## Versions
+
++ Different versions of protocols:
+	+ SSH-1 (year 1995)
+	+ SSH-2 (year 2006)
+
+## Software
+
++ **SSH**: The client. Disable it means you cannot use SSH to connect to other machines.
+	+ OpenSSH: `openssh-client`
++ **SSHD**: the daemon (守护进程). Disable it makes you won't be able to login remotely. It is the technical term of ssh server.
+	+ OpenSSH: `openssh-server`. Configuration at `	/etc/ssh/sshd_config`.
+
 ## References
 
 1. [SSH Essentials: Working with SSH Servers, Clients, and Keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys)
