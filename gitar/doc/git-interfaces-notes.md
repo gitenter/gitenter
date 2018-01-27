@@ -1,4 +1,8 @@
-# Git Clients Notes
+# Git Interfaces Notes
+
+See a full list in [here](https://git.wiki.kernel.org/index.php/InterfacesFrontendsAndTools).
+
+*(TODO: Need to be reorganized by different proposes. I am starting this survey by seeking git SSH permission control tools, but some comments below are not limited to that.)*
 
 ## Gitolite
 
