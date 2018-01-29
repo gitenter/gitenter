@@ -180,6 +180,8 @@ Tricks:
 
 May refer to [a general introduction](https://binblog.info/2008/10/20/openssh-going-flexible-with-forced-commands/) include a Shell example of command script, and [a perl example of command script](https://blog.farville.com/using-command-in-authorized_keys-to-restrict-shell-like-gitolite/).
 
+[Here](https://research.kudelskisecurity.com/2013/05/14/restrict-ssh-logins-to-a-single-command/) talks about examples how to write forced commands.
+
 ### `SSH_ORIGINAL_COMMAND` environment variable
 
 How to get it?
