@@ -14,12 +14,14 @@
         <c:forEach var="member" items="${organization.managers}">
           <h3>
             ${member.displayName}
-            <sf:form method="POST" action="/organizations/${organization.id}/managers/${member.id}/remove">
+            <s:url var="remove_manager_url" value="/organizations/${organization.id}/managers/${member.id}/remove" />
+            <sf:form method="POST" action="${remove_manager_url}">
               <input class="delete" type="submit" value="x" />
             </sf:form>
           </h3>
         </c:forEach>
-        <sf:form method="POST" action="/organizations/${organization.id}/managers/add">
+        <s:url var="add_manager_url" value="/organizations/${organization.id}/managers/add" />
+        <sf:form method="POST" action="${add_manager_url}">
           <table class="fill-in">
             <tr>
               <td class="form-intro">Username</td>

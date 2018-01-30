@@ -182,6 +182,8 @@ May refer to [a general introduction](https://binblog.info/2008/10/20/openssh-go
 
 [Here](https://research.kudelskisecurity.com/2013/05/14/restrict-ssh-logins-to-a-single-command/) talks about examples how to write forced commands.
 
+[Link to the OFFICIAL](http://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_FORMAT) `authorized_keys` file format
+
 ### `SSH_ORIGINAL_COMMAND` environment variable
 
 How to get it?

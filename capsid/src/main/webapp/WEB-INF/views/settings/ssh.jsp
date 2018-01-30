@@ -10,11 +10,11 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="sshKeyBean" >
+      <sf:form method="POST" commandName="oneFieldBean" >
         <table class="fill-in">
           <tr>
             <td class="form-intro">SSH public key</td>
-            <td><sf:textarea class="form-fill-in" path="key" />  <sf:errors class="form-error" path="key" /></td>
+            <td><sf:textarea class="form-fill-in" path="value" />  <sf:errors class="form-error" path="value" /></td>
           </tr>
           <tr>
             <td></td>

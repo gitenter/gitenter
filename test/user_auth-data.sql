@@ -18,7 +18,7 @@ INSERT INTO config.organization_manager_map VALUES
 	(3, 3);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo1', 'REPO1', '~/org1/repo1.git'),
-	(2, 1, 'repo2', 'REPO2', '~/org1/repo2.git'),
-	(3, 2, 'repo1', 'REPO1', '~/org2/repo1.git');
+	(1, 1, 'repo1', 'REPO1'),
+	(2, 1, 'repo2', 'REPO2'),
+	(3, 2, 'repo1', 'REPO1');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 4;

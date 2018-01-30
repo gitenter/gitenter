@@ -111,6 +111,13 @@
 			<version>4.2.3.RELEASE</version>
 		</dependency>
 		<dependency>
+			<!-- Since we exclude all the dependencies of "protease", 
+			     this one need to be added manually. -->
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-core</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 		</dependency>

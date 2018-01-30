@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
+import enterovirus.capsid.web.util.OneFieldBean;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -128,21 +129,22 @@ public class SettingsController {
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)
 	public String showSshKeyForm (Model model) {
 		
-		model.addAttribute("sshKeyBean", new SshKeyBean());
+		model.addAttribute("oneFieldBean", new OneFieldBean());
 		return "settings/ssh";
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.POST)
-	public String processAddASshKey (@Valid SshKeyBean sshKey, Errors errors, 
+	public String processAddASshKey (@Valid OneFieldBean returnOneField, Errors errors, 
 			Model model, Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
-			/* So <sf:> will render the values in object "member" to the form. */
-			model.addAttribute("sshKeyBean", sshKey); 
+			model.addAttribute("OneFieldBean", returnOneField); 
 			return "settings/ssh";
 		}
 		
 		MemberBean member = memberRepository.findByUsername(authentication.getName());
+		
+		SshKeyBean sshKey = new SshKeyBean(returnOneField.getValue());
 		sshKey.setMember(member);
 		
 		sshKeyRepository.saveAndFlush(sshKey);

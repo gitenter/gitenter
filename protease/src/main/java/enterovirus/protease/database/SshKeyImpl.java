@@ -33,21 +33,15 @@ class SshKeyImpl implements SshKeyRepository {
 		 * ".ssh/authorized_keys" file.
 		 * 
 		 * TODO:
-		 * Consider using a Java SSH API, such as 
-		 * 1. Java Secure Channel (SJch): http://www.jcraft.com/jsch/
-		 * 2. sshj: https://github.com/hierynomus/sshj
-		 * 3. Apache Mina/Apache sshd: http://mina.apache.org/sshd-project/
-		 * rather than manually handle the SSH setups.
-		 * (Compare: sshj has a much more concise API than JSch.)
-		 * 
-		 * TODO:
-		 * Or do it through gitolite.
+		 * Since keys may also be removed, this one should probably
+		 * load the database and rewrite the entire "authorized_keys"
+		 * file.
 		 */
 		File authorizedKeys = sshSource.getAuthorizedKeysFilepath();
 		
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(authorizedKeys, true))) {
-		
-			bw.write(sshKey.getKey());
+			
+			bw.write(sshKey.toString());
 			bw.newLine();
 		}
 		

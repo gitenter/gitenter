@@ -1,8 +1,6 @@
 package enterovirus.capsid.web;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,10 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import enterovirus.capsid.web.util.MemberLoginBean;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
-import lombok.Getter;
-import lombok.Setter;
 
 @Controller
 public class AuthorizationController {
@@ -57,22 +54,5 @@ public class AuthorizationController {
 
 		model.addAttribute("memberLoginBean", new MemberLoginBean());
 		return "authorization/login";
-	}
-	
-	/*
-	 * This inner class is used for validation only. Persistent is
-	 * irrelevant.
-	 */
-	@Getter
-	@Setter
-	class MemberLoginBean {
-		
-		@NotNull
-		@Size(min=2, max=16)
-		private String username;
-		
-		@NotNull
-		@Size(min=2, max=16)
-		private String password;
 	}
 }

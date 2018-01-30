@@ -10,7 +10,7 @@ INSERT INTO config.organization_manager_map VALUES
 	(1, 1);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo', 'REPO', '/not/in/use');
+	(1, 1, 'repo', 'REPO');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 -- The git.git_commit table doesn't need to be pre-filled,

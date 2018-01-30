@@ -10,12 +10,12 @@ INSERT INTO config.organization_manager_map VALUES
 	(1, 1);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo', 'REPO', '/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/org/repo.git');
+	(1, 1, 'repo', 'REPO');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES
-	(1, 1, '22b03ea6b631b7495c6d3fd986c741170e0a0c8e'),
-	(2, 1, 'bd088a5ccd42d4d9d892746ee5304e0f49223f63');
+	(1, 1, 'f54e8808a2c4ed677b77576481f03ca026b955ee'),
+	(2, 1, 'f3701f5d13711905db635cfed71fc97e4086b5eb');
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
 INSERT INTO git.git_commit_valid VALUES

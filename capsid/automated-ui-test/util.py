@@ -66,7 +66,7 @@ def add_ssh_key (root, client):
 
 	f = open("/home/beta/.ssh/id_rsa.pub", "r")
 	data = {
-		"key" : f.read(),
+		"value" : f.read(),
         "_csrf" : get_csrf(client, url)
 		}
 	r = client.post(url, data=data, headers=dict(Referer=url))

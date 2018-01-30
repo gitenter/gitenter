@@ -15,7 +15,22 @@ CREATE TABLE config.member (
 CREATE TABLE config.ssh_key (
 	id serial PRIMARY KEY,
 	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
-	key text NOT NULL UNIQUE
+
+	/* 
+	 * Key type has limited possibilities of “ecdsa-sha2-nistp256”, 
+	 * “ecdsa-sha2-nistp384”, “ecdsa-sha2-nistp521”, “ssh-ed25519”, 
+	 * “ssh-dss” or “ssh-rsa”.
+	 *
+	 * However, it is handled by the I/O and security package,
+	 * so we don't need to link a reference table in here.
+	 *
+	 * An `authorized_keys` file may also have a set of options
+	 * (Refer to: http://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_FORMAT)
+	 * but that is not user defined, so should not be set in here.
+	 */
+	key_type text NOT NULL, 
+	key_data bytea NOT NULL, /* Should be unique. But I loose the constrain a little bit at this moment. */
+	comment text
 );
 
 CREATE TABLE config.organization (

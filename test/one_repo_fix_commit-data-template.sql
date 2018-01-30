@@ -10,7 +10,7 @@ INSERT INTO config.organization_manager_map VALUES
 	(1, 1);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo', 'REPO', '/home/beta/Workspace/enterovirus-test/one-repo-fix-commit/org/repo.git');
+	(1, 1, 'repo', 'REPO');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES

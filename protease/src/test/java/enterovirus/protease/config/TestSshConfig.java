@@ -11,10 +11,10 @@ import enterovirus.protease.source.SshSource;
 public class TestSshConfig {
 	
 	@Bean
-	public SshSource sshGitSource() {
+	public SshSource sshSource() {
 		
 		SshSource sshSource = new SshSource();
-		sshSource.setSshFolderPath("/home/git/.ssh");
+		sshSource.setSshFolderPath("/home/beta/Workspace/enterovirus-test/ssh_tests/.ssh");
 		return sshSource;
 	}
 }
