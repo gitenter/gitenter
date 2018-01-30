@@ -14,13 +14,14 @@
 # The following link gives clues what is happening.
 # https://stackoverflow.com/questions/8170436/git-remote-error-fatal-protocol-error-bad-line-length-character-unab
 
-# Could not "echo", as git protocol doesn't allow other reply rather than
+# Could not "echo" to shell, as git protocol doesn't allow other reply rather than
 # the pure git protocol. It cannot really display this on the screen,
 # but reply with 
 # > fatal: protocol error: bad line length character: the 
 # > fatal: ''/home/git/org1/repo1.git'' does not appear to be a git repository
-#echo "the original SSH_ORIGINAL_COMMAND environment varible has value:"
-#echo $SSH_ORIGINAL_COMMAND
+echo "the original SSH_ORIGINAL_COMMAND environment varible has value:" >> /tmp/stdout.txt
+echo $SSH_ORIGINAL_COMMAND >> /tmp/stdout.txt # git-upload-pack 'org1/repo1.git'
+#echo $SSH_ORIGINAL_COMMAND | tr -d "'" >> /tmp/stdout.txt
 
 # This one currently also doesn't work. It seems accidentally makes double quote??
 #
@@ -35,4 +36,10 @@
 # >
 # > Please make sure you have the correct access rights
 # > and the repository exists.
-$SSH_ORIGINAL_COMMAND
+tr_command=$(echo $SSH_ORIGINAL_COMMAND | tr -d "'")
+echo "hello" >> /tmp/stdout.txt
+echo $tr_command >> /tmp/stdout.txt
+$tr_command
+
+# This one is currently working.
+# > ssh git@localhost git-receive-pack /home/git/org1/repo1.git
