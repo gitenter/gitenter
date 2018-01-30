@@ -41,6 +41,8 @@ class SshKeyImpl implements SshKeyRepository {
 		
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(authorizedKeys, true))) {
 			
+			bw.write("command=\"./git-authorization.sh\",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty");
+			bw.write(" ");
 			bw.write(sshKey.toString());
 			bw.newLine();
 		}
