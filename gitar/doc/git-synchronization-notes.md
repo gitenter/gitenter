@@ -201,6 +201,48 @@ It is unlikely to be the case in here, because (1) their `error: gnutls_handshak
 
 Git protocol is read only, so even GitHub is not using it (the two choices GitHub provided are SSH and HTTPS). The setup may be referred to [here](https://git-scm.com/book/en/v2/Git-on-the-Server-Git-Daemon). Currently I am facing problem with the port 9418, so don't have a working solution yet.
 
+## Restrict malicious uses
+
+### `git-shell`
+
+`git-shell` is to restrict a user to only doing git activities rather than the general SSH activities.
+
+```
+$ which git-shell
+/usr/bin/git-shell
+```
+
+Add it to `/etc/shells` if it is not already in there.
+
+```
+sudo chsh git -s $(which git-shell)
+```
+
+Then user `git` an only access SSH for git activities.
+
+One may also restrict the detailed (1) git user's home directory, (2) the git commands the server can accept, (3) message, using `git-shell`. Refer to `git help shell` for details.
+
+### Git Daemon
+
+To make the repository unauthenticated accessible (anonymous read).
+
+### Complicated authentications
+
+For lots of users to access the git server with different authentication of different repositories.
+
+What is needed is a set of scripts that help you manage the `authorized_keys` file as well as implement some simple access controls.
+
++ [Gitosis](https://github.com/tv42/gitosis)
+    + In Python
+    + Simpler
++ Gitolite
+    + In Perl
+    + Had advanced functions of authorize pushing to certain refs (branches/tags).
+
+Both have similar design to save the users and repositories setups in a special git repository `gitosis-admin`/`gitolite-admin`.
+
+Need to have general SSH shell rather than `git-shell`, then let THIS program to be in charge of that.
+
 ## References
 
-1. Scott Chacon and Ben Straub, [Pro Git](https://git-scm.com/book/en/v2), Chapter 4.
+1. Scott Chacon and Ben Straub, Chapter 4 of the Git Pro book [v1](https://git-scm.com/book/en/v1/Git-on-the-Server) [v2](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols). Should refer to v1 because it discusses `Gitosis` and `Gitolite` which are not included in v2.

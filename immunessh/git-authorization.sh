@@ -25,15 +25,12 @@
 # This one currently also doesn't work. It seems accidentally makes double quote??
 #
 # $ git clone ssh://git@localhost:/home/git/org1/repo1.git
+# or
+# $ git clone ssh://git@localhost/org1/repo1.git
+# or
+# $ git clone git@localhost:org1/repo1.git
 # > Cloning into 'repo1'...
 # > fatal: ''/home/git/org1/repo1.git'' does not appear to be a git repository
-# > fatal: Could not read from remote repository.
-# >
-# > Please make sure you have the correct access rights
-# > and the repository exists.
-#
-# $ git clone ssh://git@localhost:org1/repo1.git
-# > ssh: Could not resolve hostname localhost:org1: Temporary failure in name resolution
 # > fatal: Could not read from remote repository.
 # >
 # > Please make sure you have the correct access rights
