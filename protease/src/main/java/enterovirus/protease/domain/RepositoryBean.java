@@ -74,4 +74,20 @@ public class RepositoryBean {
 	public void addCommit (CommitBean commit) {
 		commits.add(commit);
 	}
+	
+	/*
+	 * TODO:
+	 * Should have a JOIN query to have this. Should have
+	 * better performance.
+	 */
+	public RepositoryMemberRole getMemberRole(Integer memberId) {
+		
+		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+			if (map.getMember().getId().equals(memberId)) {
+				return map.getRole();
+			}
+		}
+		
+		return null;
+	}
 }

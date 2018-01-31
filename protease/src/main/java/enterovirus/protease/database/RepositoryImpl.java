@@ -1,12 +1,11 @@
 package enterovirus.protease.database;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import enterovirus.protease.domain.*;
 
@@ -14,7 +13,6 @@ import enterovirus.protease.domain.*;
 class RepositoryImpl implements RepositoryRepository {
 
 	@Autowired private RepositoryDatabaseRepository repositoryDbRepository;
-	@Autowired private OrganizationRepository organizationRepository;
 	
 	public RepositoryBean findById(Integer id) throws IOException {
 		
@@ -28,20 +26,18 @@ class RepositoryImpl implements RepositoryRepository {
 		return repository;
 	}
 	
-	@Transactional
 	public RepositoryBean findByOrganizationNameAndRepositoryName(String organizationName, String repositoryName) throws IOException {
 		
-		/*
-		 * TODO:
-		 * Consider using JOIN FETCH in Hibernate to implement this method.
-		 * (https://docs.jboss.org/hibernate/orm/3.3/reference/en-US/html/queryhql.html)
-		 */
+		List<RepositoryBean> repositories = repositoryDbRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
 		
-		OrganizationBean organization = organizationRepository.findByName(organizationName);
-		Hibernate.initialize(organization.getRepositories());
+		if (repositories.size() > 1) {
+			throw new IOException ("Repository is not unique under organization name \""+organizationName+"\" and repository name \""+repositoryName+"\".");
+		}
+		else if (repositories.size() == 0) {
+			throw new IOException ("Repository does not exist under organization name \""+organizationName+"\" and repository name \""+repositoryName+"\".");
+		}
 		
-		RepositoryBean repository = organization.findRepositoryByName(repositoryName);		
-		return repository;
+		return repositories.get(0);
 	}
 
 	public RepositoryBean saveAndFlush(RepositoryBean repository) {

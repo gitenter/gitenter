@@ -18,9 +18,7 @@ import enterovirus.gitar.wrap.CommitSha;
  * stand-alone executive jar, then this class is not
  * needed. 
  */
-@ComponentScan(basePackages = {
-		"enterovirus.protease",
-		"enterovirus.gihook.postreceive"})
+@ComponentScan(basePackages = {"enterovirus.protease","enterovirus.gihook.postreceive"})
 public class PostReceiveApplication {
 	
 	@Autowired private UpdateDatabaseFromGit updateDatabaseFromGit;

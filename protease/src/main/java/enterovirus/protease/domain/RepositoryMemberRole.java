@@ -17,7 +17,6 @@ public enum RepositoryMemberRole {
 	}
 
 	public static RepositoryMemberRole fromShortName(Character shortName) {
-		System.out.println("shortName: "+shortName);
 		switch (shortName) {
 		case 'R':
 			return READER;

@@ -13,7 +13,6 @@ public class RepositoryMemberRoleConventer implements AttributeConverter<Reposit
 	
 	@Override
 	public RepositoryMemberRole convertToEntityAttribute (Character dbData) {
-		System.out.println("dbData: "+dbData);
 		return RepositoryMemberRole.fromShortName(dbData);
 	}
 }
