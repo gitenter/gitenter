@@ -4,15 +4,15 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
-public class RepositoryMemberRoleConventer implements AttributeConverter<RepositoryMemberRole,String> {
+public class RepositoryMemberRoleConventer implements AttributeConverter<RepositoryMemberRole,Character> {
 
 	@Override
-	public String convertToDatabaseColumn (RepositoryMemberRole role) {
+	public Character convertToDatabaseColumn (RepositoryMemberRole role) {
 		return role.getShortName();
 	}
 	
 	@Override
-	public RepositoryMemberRole convertToEntityAttribute (String dbData) {
+	public RepositoryMemberRole convertToEntityAttribute (Character dbData) {
 		System.out.println("dbData: "+dbData);
 		return RepositoryMemberRole.fromShortName(dbData);
 	}

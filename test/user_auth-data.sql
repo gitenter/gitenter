@@ -29,9 +29,4 @@ INSERT INTO config.repository_member_map VALUES
 	(3, 1, 3, 'V'),
 	(4, 2, 1, 'L'),
 	(5, 3, 1, 'E');
---	(1, 1, 1, 4),
---	(2, 1, 2, 3),
---	(3, 1, 3, 2),
---	(4, 2, 1, 4),
---	(5, 3, 1, 3);
 ALTER SEQUENCE config.repository_member_map_id_seq RESTART WITH 6;

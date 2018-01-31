@@ -1,12 +1,8 @@
 package enterovirus.protease.domain;
 
-import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Converter;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,58 +30,21 @@ public class RepositoryMemberMapBean {
 	@JoinColumn(name="member_id")
 	private MemberBean member;
 	
+	/*
+	 * Rather than a lookup table in SQL, we define the
+	 * enum types in the persistent layer.
+	 * 
+	 * Refer to:
+	 * https://stackoverflow.com/questions/2751733/map-enum-in-jpa-with-fixed-values
+	 * https://www.thoughts-on-java.org/jpa-21-how-to-implement-type-converter/
+	 * https://www.thoughts-on-java.org/jpa-21-type-converter-better-way-to/
+	 * https://dzone.com/articles/mapping-enums-done-right
+	 * 
+	 * NOTE:
+	 * Can't do inner classes of "RepositoryMemberRole" and 
+	 * "RepositoryMemberRoleConventer". Failed to load ApplicationContext.
+	 */
 	@Column(name="role")
 	@Convert(converter = RepositoryMemberRoleConventer.class)
 	private RepositoryMemberRole role;
-	
-//	public enum Role {
-//		
-//		READER,
-//		REVIEWER,
-//		EDITOR,
-//		PROJECT_LEADER;
-//	}
-//	
-//	/*
-//	 * Refer to:
-//	 * https://stackoverflow.com/questions/2751733/map-enum-in-jpa-with-fixed-values
-//	 * https://www.thoughts-on-java.org/jpa-21-how-to-implement-type-converter/
-//	 * https://www.thoughts-on-java.org/jpa-21-type-converter-better-way-to/
-//	 * https://dzone.com/articles/mapping-enums-done-right
-//	 */
-//	@Converter(autoApply = true)
-//	public class RoleConverter implements AttributeConverter<Role,Integer>{
-//		
-//		@Override
-//		public Integer convertToDatabaseColumn (Role attribute) {
-//			switch (attribute) {
-//			case READER:
-//				return 1;
-//			case REVIEWER:
-//				return 2;
-//			case EDITOR:
-//				return 3;
-//			case PROJECT_LEADER:
-//				return 4;
-//			default:
-//				throw new IllegalArgumentException("Unknown RepositoryMemberMapBean.Role: "+attribute);
-//			}
-//		}
-//		
-//		@Override
-//		public Role convertToEntityAttribute (Integer dbData) {
-//			switch (dbData) {
-//			case 1:
-//				return Role.READER;
-//			case 2:
-//				return Role.REVIEWER;
-//			case 3:
-//				return Role.EDITOR;
-//			case 4:
-//				return Role.PROJECT_LEADER;
-//			default:
-//				throw new IllegalArgumentException("Unknown RepositoryMemberMapBean.Role database column value: "+dbData);
-//			}
-//		}
-//	}
 }

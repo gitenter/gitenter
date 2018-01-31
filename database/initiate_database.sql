@@ -54,17 +54,6 @@ CREATE TABLE config.repository (
 	UNIQUE (organization_id, name)
 );
 
-CREATE TABLE setting.repository_member_roll (
-	id serial PRIMARY KEY,
-	name text NOT NULL UNIQUE
-);
-
-INSERT INTO setting.repository_member_role VALUES
-	(1, 'reader'),
-	(2, 'reviewer'),
-	(3, 'editor'),
-	(4, 'project lead');
-
 CREATE TABLE config.repository_member_map (
 	id serial PRIMARY KEY,
 
@@ -72,9 +61,21 @@ CREATE TABLE config.repository_member_map (
 	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
 	UNIQUE (repository_id, member_id),
 
-	role text NOT NULL
---	role integer NOT NULL
---	role_id serial REFERENCES setting.repository_member_roll (id) ON DELETE RESTRICT --DEFAULT 3
+	/*
+	 * Rather than a lookup table in SQL, we define the enum types
+	 * in the persistent layer. A "shortName" is used, as (1) the 
+	 * ordinal of an Enum depends on the ordering of its values 
+	 * and can create problems, if we need to add new ones, and
+	 * (2) the String representation of an Enum is often quite 
+	 * verbose and renaming a value will break the database mapping.
+	 *
+	 * Currently we have "role" to have values
+	 * R for READER
+	 * V for REVIEWER
+	 * E for EDITOR
+	 * L for PROJECT_LEADER
+	 */
+	role char(1) NOT NULL CHECK (role='R' OR role='V' OR role='E' OR role='L')
 );
 
 --------------------------------------------------------------------------------

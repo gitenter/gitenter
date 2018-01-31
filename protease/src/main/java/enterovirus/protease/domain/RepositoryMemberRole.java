@@ -5,27 +5,27 @@ import lombok.Getter;
 @Getter
 public enum RepositoryMemberRole {
 
-	READER("R"),
-	REVIEWER("V"),
-	EDITOR("E"),
-	PROJECT_LEADER("L");
+	READER('R'),
+	REVIEWER('V'),
+	EDITOR('E'),
+	PROJECT_LEADER('L');
 	
-	private String shortName;
+	private Character shortName;
 
-	private RepositoryMemberRole(String shortName) {
+	private RepositoryMemberRole(Character shortName) {
 		this.shortName = shortName;
 	}
 
-	public static RepositoryMemberRole fromShortName(String shortName) {
+	public static RepositoryMemberRole fromShortName(Character shortName) {
 		System.out.println("shortName: "+shortName);
 		switch (shortName) {
-		case "R":
+		case 'R':
 			return READER;
-		case "V":
+		case 'V':
 			return REVIEWER;
-		case "E":
+		case 'E':
 			return EDITOR;
-		case "L":
+		case 'L':
 			return PROJECT_LEADER;
 		
 		default:
