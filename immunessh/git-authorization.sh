@@ -47,3 +47,8 @@ echo $SSH_ORIGINAL_COMMAND >> /tmp/stdout.txt
 tr_command=$(echo $SSH_ORIGINAL_COMMAND | tr -d "'")
 echo $tr_command >> /tmp/stdout.txt
 $tr_command
+
+# TODO:
+# Add username as the input parameter of the forced command.
+# In the forced command, run the java script to check whether
+# the user has the authorization to edit the repository.
