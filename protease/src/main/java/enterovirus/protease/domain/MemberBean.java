@@ -69,6 +69,9 @@ public class MemberBean {
 	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private List<OrganizationBean> organizations;
 	
+	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
+	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	
 	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<SshKeyBean> sshKeys = new ArrayList<SshKeyBean>();
 }

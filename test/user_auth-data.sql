@@ -22,3 +22,16 @@ INSERT INTO config.repository VALUES
 	(2, 1, 'repo2', 'REPO2'),
 	(3, 2, 'repo1', 'REPO1');
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 4;
+
+INSERT INTO config.repository_member_map VALUES
+	(1, 1, 1, 'L'),
+	(2, 1, 2, 'E'),
+	(3, 1, 3, 'V'),
+	(4, 2, 1, 'L'),
+	(5, 3, 1, 'E');
+--	(1, 1, 1, 4),
+--	(2, 1, 2, 3),
+--	(3, 1, 3, 2),
+--	(4, 2, 1, 4),
+--	(5, 3, 1, 3);
+ALTER SEQUENCE config.repository_member_map_id_seq RESTART WITH 6;

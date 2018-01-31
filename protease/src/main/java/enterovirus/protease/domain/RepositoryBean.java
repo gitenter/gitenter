@@ -48,6 +48,9 @@ public class RepositoryBean {
 
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
+
+	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	/*
 	 * Lazy loaded by calling

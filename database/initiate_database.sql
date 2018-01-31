@@ -59,7 +59,7 @@ CREATE TABLE setting.repository_member_roll (
 	name text NOT NULL UNIQUE
 );
 
-INSERT INTO setting.repository_member_roll VALUES
+INSERT INTO setting.repository_member_role VALUES
 	(1, 'reader'),
 	(2, 'reviewer'),
 	(3, 'editor'),
@@ -72,7 +72,9 @@ CREATE TABLE config.repository_member_map (
 	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
 	UNIQUE (repository_id, member_id),
 
-	roll serial REFERENCES setting.repository_member_roll (id) ON DELETE RESTRICT --DEFAULT 3
+	role text NOT NULL
+--	role integer NOT NULL
+--	role_id serial REFERENCES setting.repository_member_roll (id) ON DELETE RESTRICT --DEFAULT 3
 );
 
 --------------------------------------------------------------------------------
