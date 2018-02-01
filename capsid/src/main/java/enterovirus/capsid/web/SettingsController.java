@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
-import enterovirus.capsid.web.util.OneFieldBean;
+import enterovirus.capsid.web.validation.SshKeyFieldBean;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -129,22 +129,37 @@ public class SettingsController {
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)
 	public String showSshKeyForm (Model model) {
 		
-		model.addAttribute("oneFieldBean", new OneFieldBean());
+		model.addAttribute("sshKeyFieldBean", new SshKeyFieldBean());
 		return "settings/ssh";
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.POST)
-	public String processAddASshKey (@Valid OneFieldBean returnOneField, Errors errors, 
+	public String processAddASshKey (@Valid SshKeyFieldBean returnValue, Errors errors, 
 			Model model, Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
-			model.addAttribute("OneFieldBean", returnOneField); 
+			model.addAttribute("sshKeyFieldBean", returnValue); 
 			return "settings/ssh";
 		}
 		
 		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		
-		SshKeyBean sshKey = new SshKeyBean(returnOneField.getValue());
+		SshKeyBean sshKey;
+		try {
+			/*
+			 * The "errors" in java validation only checked the key type (by
+			 * regular expression). Here gives a complete check.
+			 * 
+			 * For case it raises "IOException" or "GeneralSecurityException",
+			 * that means the key submitted is not valid.  
+			 */
+			sshKey = new SshKeyBean(returnValue.getValue());
+		}
+		catch (Exception e) {
+			model.addAttribute("errorMessage", "The SSH key does not have a valid format.");
+			model.addAttribute("sshKeyFieldBean", returnValue);
+			return "settings/ssh";
+		}
 		sshKey.setMember(member);
 		
 		sshKeyRepository.saveAndFlush(sshKey);

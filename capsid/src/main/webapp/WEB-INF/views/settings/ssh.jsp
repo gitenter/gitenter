@@ -10,17 +10,34 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="oneFieldBean" >
+      <sf:form method="POST" commandName="sshKeyFieldBean" >
         <table class="fill-in">
           <tr>
             <td class="form-intro">SSH public key</td>
-            <td><sf:textarea class="form-fill-in" path="value" />  <sf:errors class="form-error" path="value" /></td>
+            <td><sf:textarea class="form-fill-in-large" path="value" /></td>
           </tr>
           <tr>
             <td></td>
             <td>
-              The key should be found at <code>~/.ssh/id_rsa.pub</code> under 
-              your home folder. It begins with <code>ssh-rsa</code> (or ...).
+              <sf:errors class="form-error" path="value" />
+              <c:if test="${errorMessage != null}">
+                <p><span class="form-error">${errorMessage}</span></p>
+              </c:if>             
+              <p>The key should be named
+              <code>id_rsa.pub</code>,
+              <code>id_dsa.pub</code>,
+              <code>identity.pub</code>,
+              <code>id_ecdsa.pub</code>,
+              or <code>id_ed25519.pub</code>,
+              found under the <code>~/.ssh/</code> folder of your 
+              home directory. It begins with the key type
+              <code>ssh-rsa</code>,
+              <code>ssh-dss</code>,
+              <code>ssh-ed25519</code>,
+              <code>ecdsa-sha2-nistp521</code>,
+              <code>ecdsa-sha2-nistp384</code>,
+              or <code>ecdsa-sha2-nistp256</code>,
+              followed by the base64-encoded key and (optionally) the comment.</p>
             </td>
           </tr>
           <tr>

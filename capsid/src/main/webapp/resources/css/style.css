@@ -402,6 +402,11 @@ article input[type=text].form-fill-in, input[type=password].form-fill-in, input[
 	width: 400px;
 }
 
+article textarea.form-fill-in-large {
+	width: 600px;
+	height: 150px;
+}
+
 /* *************************************************************************
  * Information tables
  * ************************************************************************* */
