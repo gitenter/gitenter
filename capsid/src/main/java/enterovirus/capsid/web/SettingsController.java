@@ -142,12 +142,15 @@ public class SettingsController {
 	public String processAddASshKey (@Valid SshKeyFieldBean returnValue, Errors errors, 
 			Model model, Authentication authentication) throws Exception {
 		
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
+		Hibernate.initialize(member.getSshKeys());
+		model.addAttribute("member", member);
+		
 		if (errors.hasErrors()) {
+			
 			model.addAttribute("sshKeyFieldBean", returnValue); 
 			return "settings/ssh";
 		}
-		
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
 		
 		SshKeyBean sshKey;
 		try {
@@ -161,6 +164,7 @@ public class SettingsController {
 			sshKey = new SshKeyBean(returnValue.getValue());
 		}
 		catch (Exception e) {
+			
 			model.addAttribute("errorMessage", "The SSH key does not have a valid format.");
 			model.addAttribute("sshKeyFieldBean", returnValue);
 			return "settings/ssh";
