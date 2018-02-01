@@ -370,10 +370,14 @@ article table.fill-in td:nth-child(1).form-intro {
 	width: 250px;
 }
 
-article table.fill-in td.form-pre-fill {
-	
+article table.fill-in td {
 	border: 1px;
 	margin: 0px;
+	padding: 1px 0px 1px 0px;
+}
+
+article table.fill-in td.form-pre-fill {
+	
 	padding: 5px;
 	
 	color: #666666;
@@ -385,8 +389,6 @@ article table.fill-in td.form-pre-fill {
 }
 
 article table.fill-in td.form-button {
-	border: 1px;
-	margin: 0px;
 	padding: 10px 0px 10px 0px;
 }
 

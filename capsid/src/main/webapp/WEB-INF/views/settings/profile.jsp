@@ -16,7 +16,7 @@
             <td class="form-intro">Username</td>
             <td class="form-pre-fill">
               ${memberBean.username}
-              <sf:hidden path="username" value="${memberBean.username}" />
+              <sf:hidden path="username" />
             </td>
           </tr>
           <tr>
@@ -26,6 +26,10 @@
           <tr>
             <td class="form-intro">Email address</td>
             <td><sf:input class="form-fill-in" path="email" type="email" />  <sf:errors class="form-error" path="email" /></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
               <c:if test="${successfulMessage != null}">
                 <span class="form-successful-message">${successfulMessage}</span>
               </c:if>

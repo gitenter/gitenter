@@ -28,5 +28,7 @@ public class RepositoryMemberMapRepositoryTest {
 		for (RepositoryMemberMapBean map : maps) {
 			System.out.println(map.getRole());
 		}
+		
+//		repository.deleteById(2);
 	}
 }

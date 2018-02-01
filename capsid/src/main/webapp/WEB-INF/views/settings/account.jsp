@@ -16,7 +16,7 @@
             <td class="form-intro">Username</td>
             <td class="form-pre-fill">
               ${memberBean.username}
-              <sf:hidden path="username" value="${memberBean.username}" />
+              <sf:hidden path="username" />
             </td>
           </tr>
           <tr>

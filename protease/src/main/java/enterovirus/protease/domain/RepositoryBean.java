@@ -1,6 +1,7 @@
 package enterovirus.protease.domain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,19 +76,37 @@ public class RepositoryBean {
 		commits.add(commit);
 	}
 	
+	public void addMember (MemberBean member, RepositoryMemberRole role) {
+		RepositoryMemberMapBean map = new RepositoryMemberMapBean(this, member, role);
+		repositoryMemberMaps.add(map);
+	}
+	
 	/*
-	 * TODO:
-	 * Should have a JOIN query to have this. Should have
-	 * better performance.
+	 * Not working, because repositoryRepository.saveAndFlush() cannot 
+	 * really follow this change. Need to go with RepositoryMemberMapRepository.delete().
 	 */
-	public RepositoryMemberRole getMemberRole(Integer memberId) {
+	public boolean removeMember (Integer memberId) {
 		
-		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+		Iterator<RepositoryMemberMapBean> i = repositoryMemberMaps.iterator();
+		while (i.hasNext()) {
+			RepositoryMemberMapBean map = i.next();
+			System.out.println(memberId+":"+map.getMember().getId());
 			if (map.getMember().getId().equals(memberId)) {
-				return map.getRole();
+				System.out.println("bingo");
+				i.remove();
+				return true;
 			}
 		}
 		
+		return false;
+	}
+	
+	public RepositoryMemberMapBean getRepositoryMemberMap (Integer memberId) {
+		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+			if (map.getMember().getId().equals(memberId)) {
+				return map;
+			}
+		}
 		return null;
 	}
 }

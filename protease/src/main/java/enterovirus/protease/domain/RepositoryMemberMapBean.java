@@ -47,4 +47,14 @@ public class RepositoryMemberMapBean {
 	@Column(name="role")
 	@Convert(converter = RepositoryMemberRoleConventer.class)
 	private RepositoryMemberRole role;
+	
+	public RepositoryMemberMapBean () {
+		
+	}
+
+	public RepositoryMemberMapBean(RepositoryBean repository, MemberBean member, RepositoryMemberRole role) {
+		this.repository = repository;
+		this.member = member;
+		this.role = role;
+	}
 }

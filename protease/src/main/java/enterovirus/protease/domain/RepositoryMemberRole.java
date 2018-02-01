@@ -5,15 +5,17 @@ import lombok.Getter;
 @Getter
 public enum RepositoryMemberRole {
 
-	READER('R'),
-	REVIEWER('V'),
-	EDITOR('E'),
-	PROJECT_LEADER('L');
+	READER('R', "Reader"),
+	REVIEWER('V', "Reviewer"),
+	EDITOR('E', "Editor"),
+	PROJECT_LEADER('L', "Project Leader");
 	
 	private Character shortName;
+	private String displayName;
 
-	private RepositoryMemberRole(Character shortName) {
+	private RepositoryMemberRole(Character shortName, String displayName) {
 		this.shortName = shortName;
+		this.displayName = displayName;
 	}
 
 	public static RepositoryMemberRole fromShortName(Character shortName) {

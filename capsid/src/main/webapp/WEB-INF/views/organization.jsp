@@ -8,7 +8,10 @@
     <article>
       <h2>Repositories (<a href="<s:url value="/organizations/${organization.id}/repositories/create" />">+</a>):</h2>
       <c:forEach var="repository" items="${organization.repositories}">
-        <h3><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a></h3>
+        <h3>
+          <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
+          (<a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />">Collaborators</a>)
+        </h3>
       </c:forEach>
       
       <h2>Managers: (<a href="<s:url value="/organizations/${organization.id}/managers" />">settings</a>)</h2>

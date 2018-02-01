@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -31,6 +32,7 @@ public class AdminController {
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private OrganizationRepository organizationRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
+	@Autowired private RepositoryMemberMapRepository repositoryMemberMapRepository;
 	
 	/*
 	 * TODO:
@@ -42,6 +44,10 @@ public class AdminController {
 	/*
 	 * If the user is not the manager of this repository,
 	 * then this cannot be done.
+	 * 
+	 * This is generally not needed for POST requests,
+	 * as they all comes from GET request of forms with
+	 * CSRF key included.
 	 */
 	private void isManagerCheck (Authentication authentication, OrganizationBean organization) throws IOException {
 		MemberBean member = memberRepository.findByUsername(authentication.getName());
@@ -158,6 +164,10 @@ public class AdminController {
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		Hibernate.initialize(organization.getManagers());
 		
+		/*
+		 * Only need to be in here. No need for the corresponding POST
+		 * requests, as CSRF key is included.
+		 */
 		isManagerCheck(authentication, organization);
 		
 		model.addAttribute("organization", organization);
@@ -167,16 +177,20 @@ public class AdminController {
 	@RequestMapping(value="/organizations/{organizationId}/managers/add", method=RequestMethod.POST)
 	public String addAOrganizationManager (
 			@PathVariable Integer organizationId,
-			String managerName,
+			String username,
 			Authentication authentication) throws Exception {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		Hibernate.initialize(organization.getManagers());
 		
-		isManagerCheck(authentication, organization);
-		
-		MemberBean newManager = memberRepository.findByUsername(managerName);
+		MemberBean newManager = memberRepository.findByUsername(username);
 		organization.addManager(newManager);
+		
+		/*
+		 * TODO:
+		 * Raise errors and redirect to the original page,
+		 * if the manager username is invalid.
+		 */
 		
 		organizationRepository.saveAndFlush(organization);
 		
@@ -184,20 +198,100 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/managers/{memberId}/remove", method=RequestMethod.POST)
-	public String addAOrganizationManager (
+	public String removeAOrganizationManager (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer memberId,
-			Model model,
 			Authentication authentication) throws Exception {
 		
+		/*
+		 * TODO:
+		 * Should not be able to remove somebody herself.
+		 */
+		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
+		
 		Hibernate.initialize(organization.getManagers());
-		
-		isManagerCheck(authentication, organization);
-		
 		organization.removeManager(memberId);
+		
 		organizationRepository.saveAndFlush(organization);
 		
 		return "redirect:/organizations/"+organizationId+"/managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/collaborators", method=RequestMethod.GET)
+	public String manageRepositoryCollaborators (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		/*
+		 * Only need to be in here. No need for the corresponding POST
+		 * requests, as CSRF key is included.
+		 */
+		isManagerCheck(authentication, organization);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		
+		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
+		
+		return "admin/repository-collaborators";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/collaborators/add", method=RequestMethod.POST)
+	public String addARepositoryCollaborator (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			String username,
+			String role) throws Exception {
+		
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		
+		MemberBean newCollaborator = memberRepository.findByUsername(username);
+		repository.addMember(newCollaborator, RepositoryMemberRole.valueOf(role));
+		
+		/*
+		 * TODO:
+		 * Raise errors and redirect to the original page,
+		 * if the collaborator manager username is invalid.
+		 */
+		
+		repositoryRepository.saveAndFlush(repository);
+		
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/collaborators";
+	}
+	
+	@Transactional
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/collaborators/{mapId}/remove", method=RequestMethod.POST)
+	public String removeARepositoryCollaborator (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			/*
+			 * NOTE: 
+			 * Here is mapId rather than memberId. See explanation
+			 * below why that's the case.
+			 */
+			@PathVariable Integer mapId,
+			Authentication authentication) throws Exception {
+
+		/*
+		 * Delete the corresponding map in RepositoryBean and 
+		 * repositoryRepository.saveAndFlush(repository)
+		 * does not working, because repositoryRepository.saveAndFlush() cannot 
+		 * really follow this change of another table (with is not the @ManyToMany
+		 * case).
+		 * 
+		 * Delete from "memberId" and fine "mapId" from it is
+		 * (1) need more SQL queries, (2) seems have consistency problem with Hibernate
+		 * when first we "Hibernate.initialize(repository.getRepositoryMemberMaps());".
+		 * Therefore, we make it easy to just delete by map Id.
+		 */
+		repositoryMemberMapRepository.deleteById(mapId);
+
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/collaborators";
 	}
 }

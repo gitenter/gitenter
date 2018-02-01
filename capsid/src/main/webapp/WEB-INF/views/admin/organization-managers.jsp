@@ -10,22 +10,22 @@
     </nav>
     <article>
       <div>
-        <h2>Managers:</h2>
+        <h3>Managers:</h3>
         <c:forEach var="member" items="${organization.managers}">
-          <h3>
+          <h5>
             ${member.displayName}
             <s:url var="remove_manager_url" value="/organizations/${organization.id}/managers/${member.id}/remove" />
             <sf:form method="POST" action="${remove_manager_url}">
               <input class="delete" type="submit" value="x" />
             </sf:form>
-          </h3>
+          </h5>
         </c:forEach>
         <s:url var="add_manager_url" value="/organizations/${organization.id}/managers/add" />
         <sf:form method="POST" action="${add_manager_url}">
           <table class="fill-in">
             <tr>
               <td class="form-intro">Username</td>
-              <td><input class="form-fill-in" name="managerName" /></td>
+              <td><input type="text" class="form-fill-in" name="username" /></td>
             </tr>
             <tr>
               <td></td>
