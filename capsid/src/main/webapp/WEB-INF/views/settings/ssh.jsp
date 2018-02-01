@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page session="false" %>
 
     <nav>
@@ -10,10 +11,18 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="sshKeyFieldBean" >
+        <sf:form method="POST" commandName="sshKeyFieldBean" >
         <table class="fill-in">
           <tr>
-            <td class="form-intro">SSH public key</td>
+            <td class="form-intro">Previous keys</td>
+            <td class="form-pre-fill">
+              <c:forEach var="sshKey" items="${member.sshKeys}">
+              <p><code>${fn:substring(sshKey, 0, 40)} ...</code></p>
+              </c:forEach>
+            </td>
+          </tr>
+          <tr>
+            <td class="form-intro">New key</td>
             <td><sf:textarea class="form-fill-in-large" path="value" /></td>
           </tr>
           <tr>

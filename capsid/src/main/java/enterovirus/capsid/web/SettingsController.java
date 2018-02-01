@@ -2,6 +2,7 @@ package enterovirus.capsid.web;
 
 import javax.validation.Valid;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -127,7 +128,11 @@ public class SettingsController {
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)
-	public String showSshKeyForm (Model model) {
+	public String showSshKeyForm (Model model, Authentication authentication) throws Exception {
+		
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
+		Hibernate.initialize(member.getSshKeys());
+		model.addAttribute("member", member);
 		
 		model.addAttribute("sshKeyFieldBean", new SshKeyFieldBean());
 		return "settings/ssh";
