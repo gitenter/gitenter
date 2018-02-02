@@ -177,19 +177,10 @@ article select {
 	color: #444444;
 }
 
-article input[type=text].inline, 
-article select.inline {
-	font-size: 28px;
-	width: 250px;
-}
-
 article input[type=submit], 
 article input[type=button] {
 
-	background-color: #e6e472;
-	color: #444444;
-	
-	border: 1px solid #e6e472; 
+	border: 1px solid; 
 	margin: 0px;
 	padding: 5px 10px 5px 10px;
 	border-radius: 10px;
@@ -202,27 +193,6 @@ article input[type=button] {
 	cursor: pointer;
 
 	transition-duration: 0.4s;
-}
-
-article input[type=submit]:hover, 
-article input[type=button]:hover {
-	background-color: #ffffff;
-	color: #e6e472;
-	border: 1px solid #e6e472;
-}
-
-article input[type=submit].menu {
-
-	background-color: #2fc8a8;
-	color: #212121;
-	border: 1px solid #2fc8a8; 
-}
-
-article input[type=submit].menu:hover {
-
-	background-color: #ffffff;
-	color: #2fc8a8;
-	border: 1px solid #2fc8a8;
 }
 
 article input[type=submit].delete {
@@ -340,7 +310,7 @@ article table.fill-in td:nth-child(2) {
 }
 
 article table.fill-in td:nth-child(2).pre-fill, 
-article table.fill-in td:nth-child(2).message, 
+article table.fill-in td:nth-child(2).word, 
 article table.fill-in td:nth-child(2).error, 
 article table.fill-in td:nth-child(2).success {
 	
@@ -387,6 +357,20 @@ article table.fill-in textarea {
 	height: 150px;
 }
 
+article table.fill-in input[type=submit], 
+article table.fill-in input[type=button] {
+	background-color: #e6e472;
+	color: #444444;
+	border-color: #e6e472; 
+}
+
+article table.fill-in input[type=submit]:hover, 
+article table.fill-in input[type=button]:hover {
+	background-color: #ffffff;
+	color: #e6e472;
+	border: 1px solid #e6e472;
+}
+
 /******************************** Log in ***********************************/
 
 article div.login {
@@ -405,20 +389,16 @@ article div.login table.fill-in td input[type=password] {
 	width: 400px;
 }
 
-article div.login table.fill-in td.checkbox {
-
-	padding-top: 5px;
-	padding-bottom: 5px;
-
+article div.login table.fill-in td.word {
 	font-size: 20px;
 }
 
 /* This style seems doesn't work. I don't know why. */
-article div.login table.fill-in td.checkbox input[type=checkbox] {
+article div.login table.fill-in td.word input[type=checkbox] {
 	display: inline-block;
 }
 
-article div.login table.fill-in td.checkbox label {
+article div.login table.fill-in td.word label {
 	display: inline-block;
 }
 
@@ -448,6 +428,28 @@ article div.login table.fill-in td.button input[type=submit]:hover {
 	background-color: #ffffff;
 	color: #2fc8a8;
 	border: 1px solid #2fc8a8;
+}
+
+/******************************** Inline ***********************************/
+
+article input[type=text].inline, 
+article select.inline {
+	font-size: 28px;
+	width: 250px;
+}
+
+article input[type=submit].menu {
+
+	background-color: #2fc8a8;
+	color: #212121;
+	border-color: #2fc8a8; 
+}
+
+article input[type=submit].menu:hover {
+
+	background-color: #ffffff;
+	color: #2fc8a8;
+	border-color: #2fc8a8;
 }
 
 /* *************************************************************************
@@ -530,7 +532,7 @@ article li.traceable-item {
 	list-style-type: none;
 }
 
-article li.traceable-item input {
+article li.traceable-item input[type=submit] {
 
 	border: 1px;
 	margin: 3px 2px 3px 2px;
@@ -547,47 +549,47 @@ article li.traceable-item input {
 	transition-duration: 0.3s;
 }
 
-article li.traceable-item input:hover {
+article li.traceable-item input[type=submit]:hover {
 
 	border: 1px;
 }
 
-article li.traceable-item input.original {
+article li.traceable-item input[type=submit].original {
 
 	border: 1px solid #444444;
  	background-color: #444444;
 	color: #ffffff;
 }
 
-article li.traceable-item input.original:hover {
+article li.traceable-item input[type=submit].original:hover {
 
 	border: 1px solid #444444;
 	background-color: #ffffff;
 	color: #444444;
 }
 
-article li.traceable-item input.upstream {
+article li.traceable-item input[type=submit].upstream {
 
 	border: 1px solid #2fc8a8;
  	background-color: #2fc8a8;
 	color: #ffffff;
 }
 
-article li.traceable-item input.upstream:hover {
+article li.traceable-item input[type=submit].upstream:hover {
 
 	border: 1px solid #2fc8a8;
 	background-color: #ffffff;
 	color: #2fc8a8;
 }
 
-article li.traceable-item input.downstream {
+article li.traceable-item input[type=submit].downstream {
 
 	border: 1px solid #e6e472;
  	background-color: #e6e472;
 	color: #ffffff;
 }
 
-article li.traceable-item input.downstream:hover {
+article li.traceable-item input[type=submit].downstream:hover {
 
 	border: 1px solid #e6e472;
 	background-color: #ffffff;

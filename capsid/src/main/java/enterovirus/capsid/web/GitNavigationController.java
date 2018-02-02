@@ -148,7 +148,23 @@ public class GitNavigationController {
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
-			HttpServletRequest request) {
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		
+		/*
+		 * The repository has not been initialized yet.
+		 * The corresponding folder is empty.
+		 */
+		if (repository.getCommits().size() == 0) {
+		
+			model.addAttribute("rootUrl", rootUrl);
+			
+			model.addAttribute("organization", repository.getOrganization());
+			model.addAttribute("repository", repository);
+			
+			return "git-navigation/setup-a-new-repository";
+		}
 		
 		BranchName branchName = getDefaultBranchName(branch);
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName();

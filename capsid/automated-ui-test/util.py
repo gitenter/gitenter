@@ -99,7 +99,7 @@ def add_manager (root, client, org_id, manager_username):
     url = root+'/organizations/'+str(org_id)+'/managers'
 
     data = {
-        "managerName" : manager_username,
+        "username" : manager_username,
         "_csrf" : get_csrf(client, url)
         }
     r = client.post(url+'/add', data=data, headers=dict(Referer=url))

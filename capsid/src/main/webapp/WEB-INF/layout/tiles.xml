@@ -40,7 +40,10 @@
   <definition name="organization" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization.jsp" />
   </definition>
-  
+
+  <definition name="git-navigation/setup-a-new-repository" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/git-navigation/setup-a-new-repository.jsp" />
+  </definition>  
   <definition name="git-navigation/commit" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/commit.jsp" />
   </definition>

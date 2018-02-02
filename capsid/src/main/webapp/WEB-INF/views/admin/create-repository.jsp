@@ -25,6 +25,13 @@
             </td>
           </tr>
           <tr>
+            <td>Include setup files?</td>
+            <td class="word">
+              <input type="radio" name="include_setup_files" value="true" checked> Yes
+              <input type="radio" name="include_setup_files" value="false"> No
+            </td>
+          </tr>
+          <tr>
             <td></td>
             <td class="button"><input type="submit" value="Create Repository" /></td>
           </tr>

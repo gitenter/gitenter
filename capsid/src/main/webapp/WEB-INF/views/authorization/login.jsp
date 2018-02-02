@@ -20,7 +20,7 @@
           </tr>
           <tr>
             <td></td>
-            <td class="checkbox">
+            <td class="word">
               <input id="remember_me" name="remember-me" type="checkbox"/>
               <label for="remember_me">Remember me</label>
             </td>

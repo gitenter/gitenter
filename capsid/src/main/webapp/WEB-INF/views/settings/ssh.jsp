@@ -24,7 +24,7 @@
           </tr>
           <tr>
             <td></td>
-            <td class="message">       
+            <td class="word">       
               <p>The key should be named
               <code>id_rsa.pub</code>,
               <code>id_dsa.pub</code>,

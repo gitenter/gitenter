@@ -108,10 +108,12 @@ public class AdminController {
 	public String processCreationOfRepository (
 			@PathVariable Integer organizationId,
 			@Valid RepositoryBean repository, 
+			@RequestParam(value="include_setup_files") Boolean includeSetupFiles,
 			Errors errors, 
 			Model model,
 			Authentication authentication) throws GitAPIException, IOException {
 		
+		System.out.println("X"+includeSetupFiles);
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		
 		isManagerCheck(authentication, organization);
@@ -124,35 +126,30 @@ public class AdminController {
 		
 		repository.setOrganization(organization);
 		
+		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
+		
 		/*
-		 * TODO:
-		 * 
 		 * Here makes a bare repository with one commit (include the
 		 * configuration file) in it.
-		 * 
-		 * The other possibility is (in the client side) to add the 
-		 * configuration file into an existing git repository.
-		 * Then in here we just want to "mkdir" but do not need to
-		 * "git init". 
-		 * 
-		 * Should give the user the choices in the UI.
 		 */
-		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
-		
-		ClassLoader classLoader = getClass().getClassLoader();
-		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
-		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
-
-		GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
-		
-		/*
-		 * Dirty but this part can only be done in here. See comments under GitRepository.
-		 */
-		GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);
-		CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
-		CommitBean commit = new CommitValidBean(repository, commitSha);
-		repository.addCommit(commit);
+		if (includeSetupFiles.equals(Boolean.TRUE)) {
+			
+			File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
+			
+			ClassLoader classLoader = getClass().getClassLoader();
+			File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+			File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
+	
+			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
+			
+			/*
+			 * Dirty but this part can only be done in here. See comments under GitRepository.
+			 */
+			GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);
+			CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
+			CommitBean commit = new CommitValidBean(repository, commitSha);
+			repository.addCommit(commit);
+		}
 		
 		repositoryRepository.saveAndFlush(repository);
 		return "redirect:/organizations/"+organizationId;
