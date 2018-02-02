@@ -17,8 +17,9 @@
             <c:if test="${map.role == role}">
               <h5>
                 ${map.member.displayName}
-                <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators/${map.id}/remove" />
+                <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators/remove" />
                 <sf:form method="POST" action="${remove_member_url}">
+                  <input type="hidden" name="repository_member_map_id" value="${map.id}" />
                   <input class="delete" type="submit" value="x" />
                 </sf:form>
               </h5>
@@ -31,11 +32,11 @@
         <sf:form method="POST" action="${add_collaborator_url}">
           <table class="fill-in">
             <tr>
-              <td class="form-intro">Username</td>
-              <td><input type="text" class="form-fill-in" name="username" /></td>
+              <td>Username</td>
+              <td><input type="text" name="username" /></td>
             </tr>
             <tr>
-              <td class="form-intro">Role</td>
+              <td>Role</td>
               <td>
                 <select name="role">
                   <c:forEach var="role" items="${repositoryMemberRoleValues}">
@@ -46,7 +47,7 @@
             </tr>
             <tr>
               <td></td>
-              <td class="form-button"><input type="submit" value="Add a new Collaborator" /></td>
+              <td class="button"><input type="submit" value="Add a new Collaborator" /></td>
             </tr>
           </table>
         </sf:form>

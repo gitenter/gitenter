@@ -12,24 +12,36 @@
       <sf:form method="POST" commandName="memberBean" >
         <table class="fill-in">
           <tr>
-            <td class="form-intro">Username</td>
-            <td><sf:input class="form-fill-in" path="username" /> <sf:errors class="form-error" path="username" /></td>
+            <td>Username</td>
+            <td>
+              <sf:input path="username" /> 
+              <sf:errors class="error" path="username" />
+            </td>
           </tr>
           <tr>
-            <td class="form-intro">Password</td>
-            <td><sf:password class="form-fill-in" path="password" /> <sf:errors class="form-error" path="password" /></td>
+            <td>Password</td>
+            <td>
+              <sf:password path="password" /> 
+              <sf:errors class="error" path="password" />
+            </td>
           </tr>
           <tr>
-            <td class="form-intro">Display Name</td>
-            <td><sf:input class="form-fill-in" path="displayName" />  <sf:errors class="form-error" path="displayName" /></td>
+            <td>Display Name</td>
+            <td>
+              <sf:input path="displayName" />
+              <sf:errors class="error" path="displayName" />
+            </td>
           </tr>
           <tr>
-            <td class="form-intro">Email address</td>
-            <td><sf:input class="form-fill-in" path="email" type="email" />  <sf:errors class="form-error" path="email" /></td>
+            <td>Email address</td>
+            <td>
+              <sf:input path="email" type="email" />
+              <sf:errors class="error" path="email" />
+            </td>
           </tr>
           <tr>
             <td></td>
-            <td class="form-button"><input type="submit" value="Register" /></td>
+            <td class="button"><input type="submit" value="Register" /></td>
           </tr>
         </table>
       </sf:form>

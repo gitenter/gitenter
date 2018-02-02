@@ -6,6 +6,15 @@ import javax.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+/*
+ * This class is used for validation only. Persistent is
+ * irrelevant.
+ * 
+ * Spring doesn't fully support the validation beans to
+ * be inner classes (Tiles/JSP raises errors for not getting
+ * the bean value properly). Therefore, We takes them out
+ * as independent outer classes.
+ */
 @Getter
 @Setter
 public class SshKeyFieldBean {
@@ -17,6 +26,6 @@ public class SshKeyFieldBean {
 	@NotNull
 	@Pattern(
 		regexp="^(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519) .*$",
-		message="The SSH key does not have a valid format.")
+		message="Wrong format")
 	private String value;
 }

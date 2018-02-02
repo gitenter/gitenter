@@ -13,31 +13,38 @@
       <sf:form method="POST" commandName="memberBean" >
         <table class="fill-in">
           <tr>
-            <td class="form-intro">Username</td>
-            <td class="form-pre-fill">
+            <td>Username</td>
+            <td class="pre-fill">
               ${memberBean.username}
               <sf:hidden path="username" />
             </td>
           </tr>
           <tr>
-            <td class="form-intro">Old password</td>
-            <td><input class="form-fill-in" type="password" name="old_password" /></td>
+            <td>Old password</td>
+            <td><input type="password" name="old_password" /></td>
           </tr>
           <tr>
-            <td class="form-intro">New password</td>
+            <td>New password</td>
             <td>
-              <sf:password class="form-fill-in" path="password" /> <sf:errors class="form-error" path="password" />
-              <c:if test="${errorMessage != null}">
-                <span class="form-error">${errorMessage}</span>
-              </c:if>
-              <c:if test="${successfulMessage != null}">
-                <span class="form-successful-message">${successfulMessage}</span>
-              </c:if>
+              <sf:password path="password" /> 
+              <sf:errors class="error" path="password" />
             </td>
           </tr>
+          <c:if test="${errorMessage != null}">
           <tr>
             <td></td>
-            <td class="form-button"><input type="submit" value="Update password" /></td>
+            <td class="error">${errorMessage}</td>
+          </tr>
+          </c:if>
+          <c:if test="${successfulMessage != null}">
+          <tr>
+            <td></td>
+            <td class="success">${successfulMessage}</td>
+          </tr>
+          </c:if>
+          <tr>
+            <td></td>
+            <td class="button"><input type="submit" value="Update password" /></td>
           </tr>
         </table>
       </sf:form>

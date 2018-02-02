@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
@@ -49,11 +50,13 @@ public class AdminController {
 	 * as they all comes from GET request of forms with
 	 * CSRF key included.
 	 */
-	private void isManagerCheck (Authentication authentication, OrganizationBean organization) throws IOException {
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
-		if (!organization.isManagedBy(member.getId())) {
+	private MemberBean isManagerCheck (Authentication authentication, OrganizationBean organization) throws IOException {
+		MemberBean self = memberRepository.findByUsername(authentication.getName());
+		if (!organization.isManagedBy(self.getId())) {
 			throw new AccessDeniedException("You are not authorized as a manager of this organization.");
 		}
+		
+		return self;
 	}
 	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
@@ -168,16 +171,22 @@ public class AdminController {
 		 * Only need to be in here. No need for the corresponding POST
 		 * requests, as CSRF key is included.
 		 */
-		isManagerCheck(authentication, organization);
+		MemberBean self = isManagerCheck(authentication, organization);
 		
+		/*
+		 * This "self" is used to check if the user want to remove himself/herself
+		 * as a manager. If yes, then the remove link will not be shown.
+		 */
+		model.addAttribute("self", self);
 		model.addAttribute("organization", organization);
+		
 		return "admin/organization-managers";
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/managers/add", method=RequestMethod.POST)
 	public String addAOrganizationManager (
 			@PathVariable Integer organizationId,
-			String username,
+			@RequestParam(value="username") String username,
 			Authentication authentication) throws Exception {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
@@ -197,22 +206,32 @@ public class AdminController {
 		return "redirect:/organizations/"+organizationId+"/managers";
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/managers/{memberId}/remove", method=RequestMethod.POST)
+	@RequestMapping(value="/organizations/{organizationId}/managers/remove", method=RequestMethod.POST)
 	public String removeAOrganizationManager (
 			@PathVariable Integer organizationId,
-			@PathVariable Integer memberId,
-			Authentication authentication) throws Exception {
-		
-		/*
-		 * TODO:
-		 * Should not be able to remove somebody herself.
-		 */
+			@RequestParam(value="member_id") Integer memberId,
+			Authentication authentication,
+			Model model) throws Exception {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
-		
 		Hibernate.initialize(organization.getManagers());
-		organization.removeManager(memberId);
 		
+		/*
+		 * It is kind of double check, as manageOrganizationManagers()
+		 * doesn't really show the link to remove the user himself/herself.
+		 * But it is a safe choice. As all forms in the same page share the
+		 * same CSRF key, the user may actually hack the system.
+		 */
+		MemberBean self = memberRepository.findByUsername(authentication.getName());
+		if (self.getId().equals(memberId)) {
+			
+			model.addAttribute("organization", organization);
+			model.addAttribute("errorMessage", "Could not remove yourself as a manager.");
+			
+			return "admin/organization-managers";
+		}
+		
+		organization.removeManager(memberId);
 		organizationRepository.saveAndFlush(organization);
 		
 		return "redirect:/organizations/"+organizationId+"/managers";
@@ -246,7 +265,7 @@ public class AdminController {
 	public String addARepositoryCollaborator (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			String username,
+			@RequestParam(value="username") String username,
 			String role) throws Exception {
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
@@ -266,7 +285,7 @@ public class AdminController {
 	}
 	
 	@Transactional
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/collaborators/{mapId}/remove", method=RequestMethod.POST)
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/collaborators/remove", method=RequestMethod.POST)
 	public String removeARepositoryCollaborator (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
@@ -275,7 +294,7 @@ public class AdminController {
 			 * Here is mapId rather than memberId. See explanation
 			 * below why that's the case.
 			 */
-			@PathVariable Integer mapId,
+			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId,
 			Authentication authentication) throws Exception {
 
 		/*
@@ -290,7 +309,7 @@ public class AdminController {
 		 * when first we "Hibernate.initialize(repository.getRepositoryMemberMaps());".
 		 * Therefore, we make it easy to just delete by map Id.
 		 */
-		repositoryMemberMapRepository.deleteById(mapId);
+		repositoryMemberMapRepository.deleteById(repositoryMemberMapId);
 
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/collaborators";
 	}

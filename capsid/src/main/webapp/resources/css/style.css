@@ -3,6 +3,7 @@
  * ************************************************************************* */
 
 body, img, form, table, tr, td, div, p, a {
+
 	border: 0px;
 	margin: 0px;
 	padding: 0px;
@@ -52,52 +53,16 @@ canvas {
  * ************************************************************************* */
 
 body {
-
-	color: #444444;
-	background-color: #ffffff;
-	
 	font-family: "Open Sans", Sans, sans-serif, Arial;
 }
 
-a:link { color: #444444; text-decoration: none; }
-a:visited { color: #444444; text-decoration: none; }
-a:hover { color: #aaaaaa; text-decoration: none; }
-a:active { color: #444444; text-decoration: none; }
+
+/***************************** Header details *********************************/
 
 header {
 	background-color: #bbbbbb;
 	height:48px;
 }
-
-nav {
-
-	color: #888888;
-	background-color: #dddddd;
-	
-	font-size: 14px;
-	font-weight: bold;
-
-	padding: 23px 27px 18px 27px;
-}
-
-article {
-
-	width: calc(100% - 27px*2);
-	padding: 20px 27px 20px 27px;
-
-	font-size: 20px;
-}
-
-footer {
-
-	width: 100%;
-	color: #bbbbbb;
-	
-	font-size: 16px;
-	text-align: center;
-}
-
-/***************************** Header details *********************************/
 
 header img.logo {
 	float: left;
@@ -148,6 +113,17 @@ header input[type=submit]:hover {
 
 /*************************** Navigator details *******************************/
 
+nav {
+
+	color: #888888;
+	background-color: #dddddd;
+	
+	font-size: 14px;
+	font-weight: bold;
+
+	padding: 23px 27px 18px 27px;
+}
+
 nav span.nav-current {
 	color: #c53bce;
 	padding-bottom: 15px;
@@ -161,6 +137,22 @@ nav a:active { color: #aaaaaa; text-decoration: none;}
 
 /**************************** Article details ********************************/
 
+article {
+
+	color: #444444;
+	background-color: #ffffff;
+
+	width: calc(100% - 27px*2);
+	padding: 20px 27px 20px 27px;
+
+	font-size: 20px;
+}
+
+article a:link { color: #444444; text-decoration: none; }
+article a:visited { color: #444444; text-decoration: none; }
+article a:hover { color: #aaaaaa; text-decoration: none; }
+article a:active { color: #444444; text-decoration: none; }
+
 article div {
 	/*
 	 * Margin in bottom. So things will not look like next to each 
@@ -169,58 +161,12 @@ article div {
 	padding-bottom: 5px;
 }
 
-article table.hidden {
-	width: 100%;
-
-	/*
-	 * If a column has a width set, then no matter what the content is, 
-	 * it will be the specified width. Columns without a width set will 
-	 * divide whatever room is left over among themselves.
-	 */
-	table-layout: fixed;
-}
-
-article table.hidden td {
-	width: 0%;
-	/*border: 1px solid #ffffff;*/
-}
-
-article table.hidden td.expand {
-	width: 100%;
-}
-
-article table.hidden td.left {
-	padding-right: 5px;
-	text-align: left;
-}
-
-article table.hidden td.center {
-	text-align: center;
-}
-
-article table.hidden td.right {
-	padding-left: 5px;
-	text-align: right;
-}
-
-article table.fill-in {
-
-	/* I want to put this table to the center. But it seems doesn't work? */
-	margin: 0px auto;
-	float: center;
-}
-
-article table.fill-in td:nth-child(1) {
-
-	border: 1px;
-	margin: 0px;
-	padding: 5px;
-	
-	text-align: right;
-	vertical-align: top;
-}
-
-article input[type=checkbox], article input[type=text], article input[type=password], article input[type=email], article textarea, article select {
+article input[type=checkbox], 
+article input[type=text], 
+article input[type=password], 
+article input[type=email], 
+article textarea, 
+article select {
 
 	border: 1px solid #bbbbbb;
 	margin: 0px;
@@ -231,12 +177,14 @@ article input[type=checkbox], article input[type=text], article input[type=passw
 	color: #444444;
 }
 
-article input[type=text].inline, article select.inline {
+article input[type=text].inline, 
+article select.inline {
 	font-size: 28px;
 	width: 250px;
 }
 
-article input[type=submit], article input[type=button] {
+article input[type=submit], 
+article input[type=button] {
 
 	background-color: #e6e472;
 	color: #444444;
@@ -256,7 +204,8 @@ article input[type=submit], article input[type=button] {
 	transition-duration: 0.4s;
 }
 
-article input[type=submit]:hover, article input[type=button]:hover {
+article input[type=submit]:hover, 
+article input[type=button]:hover {
 	background-color: #ffffff;
 	color: #e6e472;
 	border: 1px solid #e6e472;
@@ -295,53 +244,197 @@ article input[type=submit].delete:hover {
 	border: 0px;
 }
 
+article table.hidden {
+	width: 100%;
+
+	/*
+	 * If a column has a width set, then no matter what the content is, 
+	 * it will be the specified width. Columns without a width set will 
+	 * divide whatever room is left over among themselves.
+	 */
+	table-layout: fixed;
+}
+
+article table.hidden td {
+	width: 0%;
+	/*border: 1px solid #ffffff;*/
+}
+
+article table.hidden td.expand {
+	width: 100%;
+}
+
+article table.hidden td.left {
+	padding-right: 5px;
+	text-align: left;
+}
+
+article table.hidden td.center {
+	text-align: center;
+}
+
+article table.hidden td.right {
+	padding-left: 5px;
+	text-align: right;
+}
+
+/***************************** Footer details ********************************/
+
+footer {
+
+	width: 100%;
+
+	color: #bbbbbb;
+	background-color: #ffffff;
+	
+	font-size: 16px;
+	text-align: center;
+}
+
 /* *************************************************************************
- * Log in
+ * Tabled form
  * ************************************************************************* */
 
+article table.fill-in {
+
+	/*
+	 * I want to put this table to the center. But it seems 
+	 * doesn't work? 
+	 */
+	margin: 0px auto;
+	float: center;
+}
+
+article table.fill-in td {
+
+	border: 1px;
+	padding-left: 3px;
+	padding-right: 3px;
+	margin: 0px;
+
+	vertical-align: top;
+}
+
+article table.fill-in td:nth-child(1) {
+	
+	width: 250px;
+
+	/*
+	 * Padding equals the second column (1px) plus the
+	 * form padding (5px).
+	 */
+	padding-top: 6px;
+	padding-bottom: 6px;
+	
+	text-align: right;
+}
+
+article table.fill-in td:nth-child(2) {
+	
+	width: 600px;
+	
+	padding-top: 1px;
+	padding-bottom: 1px;
+	
+	text-align: left;
+}
+
+article table.fill-in td:nth-child(2).pre-fill, 
+article table.fill-in td:nth-child(2).message, 
+article table.fill-in td:nth-child(2).error, 
+article table.fill-in td:nth-child(2).success {
+	
+	/*
+	 * Padding equals the second column (3px) plus the
+	 * form padding (5px).
+	 */
+	padding-top: 6px;
+	padding-bottom: 6px;
+
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+article table.fill-in td:nth-child(2).pre-fill {
+	color: #999999;
+}
+
+article table.fill-in td:nth-child(2).error {
+	color: #ff0000;
+}
+
+article table.fill-in td:nth-child(2).success {
+	color: #00ff00;
+}
+
+article table.fill-in td span.error {
+	color: #ff0000;
+}
+
+article table.fill-in td.button {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+article table.fill-in input[type=text], 
+article table.fill-in input[type=password], 
+article table.fill-in input[type=email] {	
+	width: 400px;
+}
+
+article table.fill-in textarea {
+	width: 600px;
+	height: 150px;
+}
+
+/******************************** Log in ***********************************/
+
 article div.login {
-	width: 560px;
+	width: 850px;
 	margin: 0 auto;
 	padding: 100px 0px 100px 0px;
 }
 
-article table.fill-in td:nth-child(1).login-intro {
+article div.login table.fill-in td {
 	font-size: 32px;
-	width: 150px;
 }
 
-/* This style seems doesn't work. I don't know why. */
-article input[type=checkbox].login-remember-me {
-	display: inline-block;
-}
-
-article label.login-remember-me {
-	
-	padding: 5px;
-	
-	font-size: 20px;
-	text-align: left;
-	
-	display: inline-block;
-}
-
-article td.login-button {
-	border: 1px;
-	margin: 0px;
-	padding: 10px 0px 10px 0px;
-}
-
-article span.login-error {
-	font-size: 20px;
-	color: #ff0000;
-}
-
-article input[type=text].login-fill-in, input[type=password].login-fill-in {
+article div.login table.fill-in td input[type=text], 
+article div.login table.fill-in td input[type=password] {
 	font-size: 32px;
 	width: 400px;
 }
 
-article input[type=submit].login {
+article div.login table.fill-in td.checkbox {
+
+	padding-top: 5px;
+	padding-bottom: 5px;
+
+	font-size: 20px;
+}
+
+/* This style seems doesn't work. I don't know why. */
+article div.login table.fill-in td.checkbox input[type=checkbox] {
+	display: inline-block;
+}
+
+article div.login table.fill-in td.checkbox label {
+	display: inline-block;
+}
+
+article div.login table.fill-in td.error {
+	font-size:20px;
+}
+
+article div.login table.fill-in td span.error {
+	font-size:20px;
+}
+
+article div.login table.fill-in td.button input[type=button] {
+	font-size: 40px;
+}
+
+article div.login table.fill-in td.button input[type=submit] {
 
 	background-color: #2fc8a8;
 	color: #444444;
@@ -350,63 +443,11 @@ article input[type=submit].login {
 	font-size: 40px;
 }
 
-article input[type=submit].login:hover {
+article div.login table.fill-in td.button input[type=submit]:hover {
 
 	background-color: #ffffff;
 	color: #2fc8a8;
 	border: 1px solid #2fc8a8;
-}
-
-input[type=button].signup {
-	font-size: 40px;
-}
-
-/* *************************************************************************
- * Various form settings
- * ************************************************************************* */
-
-article table.fill-in td:nth-child(1).form-intro {
-	font-size: 20px;
-	width: 250px;
-}
-
-article table.fill-in td {
-	border: 1px;
-	margin: 0px;
-	padding: 1px 0px 1px 0px;
-}
-
-article table.fill-in td.form-pre-fill {
-	
-	padding: 5px;
-	
-	color: #666666;
-	font-size: 20px;
-	text-align: left;
-	vertical-align: top;
-	
-	width: 400px;
-}
-
-article table.fill-in td.form-button {
-	padding: 10px 0px 10px 0px;
-}
-
-article span.form-error {
-	color: #ff0000;
-}
-
-article span.form-successful-message {
-	color: #00ff00;
-}
-
-article input[type=text].form-fill-in, input[type=password].form-fill-in, input[type=email].form-fill-in, textarea.form-fill-in {	
-	width: 400px;
-}
-
-article textarea.form-fill-in-large {
-	width: 600px;
-	height: 150px;
 }
 
 /* *************************************************************************

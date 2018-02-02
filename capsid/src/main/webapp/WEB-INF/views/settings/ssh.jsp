@@ -14,24 +14,17 @@
         <sf:form method="POST" commandName="sshKeyFieldBean" >
         <table class="fill-in">
           <tr>
-            <td class="form-intro">Previous keys</td>
-            <td class="form-pre-fill">
+            <td>Previous keys</td>
+            <td class="pre-fill">
+              <c:if test="${member.sshKeys.size()==0}">N/A</c:if>
               <c:forEach var="sshKey" items="${member.sshKeys}">
-              <p><code>${fn:substring(sshKey, 0, 40)} ...</code></p>
+                <p><code>${fn:substring(sshKey, 0, 40)} ...</code></p>
               </c:forEach>
             </td>
           </tr>
           <tr>
-            <td class="form-intro">New key</td>
-            <td><sf:textarea class="form-fill-in-large" path="value" /></td>
-          </tr>
-          <tr>
             <td></td>
-            <td>
-              <sf:errors class="form-error" path="value" />
-              <c:if test="${errorMessage != null}">
-                <p><span class="form-error">${errorMessage}</span></p>
-              </c:if>             
+            <td class="message">       
               <p>The key should be named
               <code>id_rsa.pub</code>,
               <code>id_dsa.pub</code>,
@@ -50,8 +43,21 @@
             </td>
           </tr>
           <tr>
+            <td>New key</td>
+            <td>
+              <sf:textarea path="value" />
+              <sf:errors class="error" path="value" />
+            </td>
+          </tr>
+          <c:if test="${errorMessage != null}">
+            <tr>
+              <td></td>
+              <td class="error">${errorMessage}</td>
+            </tr>
+          </c:if>
+          <tr>
             <td></td>
-            <td class="form-button"><input type="submit" value="Add a new SSH key" /></td>
+            <td class="button"><input type="submit" value="Add a new SSH key" /></td>
           </tr>
         </table>
       </sf:form>

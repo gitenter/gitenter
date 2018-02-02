@@ -13,31 +13,35 @@
       <sf:form method="POST" commandName="memberBean" >
         <table class="fill-in">
           <tr>
-            <td class="form-intro">Username</td>
-            <td class="form-pre-fill">
+            <td>Username</td>
+            <td class="pre-fill">
               ${memberBean.username}
               <sf:hidden path="username" />
             </td>
           </tr>
           <tr>
-            <td class="form-intro">Display name</td>
-            <td><sf:input class="form-fill-in" path="displayName" />  <sf:errors class="form-error" path="displayName" /></td>
-          </tr>
-          <tr>
-            <td class="form-intro">Email address</td>
-            <td><sf:input class="form-fill-in" path="email" type="email" />  <sf:errors class="form-error" path="email" /></td>
-          </tr>
-          <tr>
-            <td></td>
+            <td>Display name</td>
             <td>
-              <c:if test="${successfulMessage != null}">
-                <span class="form-successful-message">${successfulMessage}</span>
-              </c:if>
+              <sf:input path="displayName" />
+              <sf:errors class="error" path="displayName" />
             </td>
           </tr>
           <tr>
+            <td>Email address</td>
+            <td>
+              <sf:input path="email" type="email" />
+              <sf:errors class="error" path="email" />
+            </td>
+          </tr>
+          <c:if test="${successfulMessage != null}">
+          <tr>
             <td></td>
-            <td class="form-button"><input type="submit" value="Update profile" /></td>
+            <td class="success">${successfulMessage}</td>
+          </tr>
+          </c:if>
+          <tr>
+            <td></td>
+            <td class="button"><input type="submit" value="Update profile" /></td>
           </tr>
         </table>
       </sf:form>

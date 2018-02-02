@@ -7,29 +7,35 @@
       <sf:form method="POST" commandName="memberLoginBean" >
         <table class="fill-in">
           <tr>
-            <td class="login-intro">Username</td>
-            <td><sf:input class="login-fill-in" path="username" /></td>
+            <td>Username</td>
+            <td>
+              <sf:input path="username" />
+            </td>
           </tr>
           <tr>
-            <td class="login-intro">Password</td>
+            <td>Password</td>
             <td>
-              <sf:password class="login-fill-in" path="password" />
-              <c:if test="${message != null}">
-                <span class="login-error">${message}</span>
-              </c:if>
+              <sf:password path="password" />
             </td>
           </tr>
           <tr>
             <td></td>
-            <td>
-              <input class="login-remember-me" id="remember_me" name="remember-me" type="checkbox"/>
-              <label class="login-remember-me" for="remember_me">Remember me</label>
+            <td class="checkbox">
+              <input id="remember_me" name="remember-me" type="checkbox"/>
+              <label for="remember_me">Remember me</label>
             </td>
+          </tr>
+          <c:if test="${message != null}">
+            <tr>
+              <td></td>
+              <td class="error">${message}</td>
+            </tr>
+          </c:if>
           <tr>
             <td></td>
-            <td class="login-button">
-              <input class="login" type="submit" value="Log in" />
-              <input class="signup" type="button" onclick="location.href='<s:url value="/register" />';" value="Sign up" />
+            <td class="button">
+              <input type="submit" value="Log in" />
+              <input type="button" onclick="location.href='<s:url value="/register" />';" value="Sign up" />
             </td>
           </tr>
         </table>

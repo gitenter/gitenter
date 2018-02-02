@@ -12,16 +12,21 @@
       <sf:form method="POST" commandName="repositoryBean" >
         <table class="fill-in">
           <tr>
-            <td class="form-intro">Name</td>
-            <td><sf:input class="form-fill-in" path="name" /> <sf:errors class="form-error" path="name" /></td>
+            <td>Name</td>
+            <td>
+              <sf:input path="name" />
+              <sf:errors class="error" path="name" /></td>
           </tr>
           <tr>
-            <td class="form-intro">Display Name</td>
-            <td><sf:input class="form-fill-in" path="displayName" />  <sf:errors class="form-error" path="displayName" /></td>
+            <td>Display Name</td>
+            <td>
+              <sf:input path="displayName" />
+              <sf:errors class="error" path="displayName" />
+            </td>
           </tr>
           <tr>
             <td></td>
-            <td class="form-button"><input type="submit" value="Create Repository" /></td>
+            <td class="button"><input type="submit" value="Create Repository" /></td>
           </tr>
         </table>
       </sf:form>
