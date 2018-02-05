@@ -59,6 +59,50 @@ public class AdminController {
 		return self;
 	}
 	
+	@RequestMapping("/")
+	public String main(Model model, Authentication authentication) throws Exception {
+		
+		/*
+		 * The organizations the member acts as a manager.
+		 */
+		MemberBean member = memberRepository.findByUsername(authentication.getName());
+		List<OrganizationBean> organizations = member.getOrganizations();
+		model.addAttribute("organizations", organizations);
+		
+		/*
+		 * TODO:
+		 * Should also add repositories the member has (some
+		 * kind of) access to.
+		 */
+		
+		return "main";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}", method=RequestMethod.GET)
+	public String showOrganization (
+			@PathVariable Integer organizationId,
+			Authentication authentication,
+			Model model) throws IOException {
+	
+		/*
+		 * TODO:
+		 * For private contents, only users who belong to that
+		 * organization can see the materials.
+		 */
+		
+		OrganizationBean organization = organizationRepository.findById(organizationId);
+		MemberBean self = memberRepository.findByUsername(authentication.getName());
+		
+		if (organization.isManagedBy(self.getId())) {
+			model.addAttribute("isManager", true);
+		}
+		
+		Hibernate.initialize(organization.getManagers());
+		model.addAttribute("organization", organization);
+		
+		return "organization";
+	}
+	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
 	public String createOrganization (Model model) {
 

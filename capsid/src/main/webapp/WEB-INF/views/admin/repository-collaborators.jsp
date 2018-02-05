@@ -10,24 +10,26 @@
       <span class="nav-current">Collaborators</span>
     </nav>
     <article>
-      <div>
+      <div class="left-narrow">
         <c:forEach var="role" items="${repositoryMemberRoleValues}">
-        <h3>${role.displayName}</h3>
-          <c:forEach var="map" items="${repository.repositoryMemberMaps}">
-            <c:if test="${map.role == role}">
-              <h5>
-                ${map.member.displayName}
-                <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators/remove" />
-                <sf:form method="POST" action="${remove_member_url}">
-                  <input type="hidden" name="repository_member_map_id" value="${map.id}" />
-                  <input class="delete" type="submit" value="x" />
-                </sf:form>
-              </h5>
-            </c:if> 
-          </c:forEach>
+        <h2>${role.displayName}</h2>
+          <ul class="user-list">
+            <c:forEach var="map" items="${repository.repositoryMemberMaps}">
+              <c:if test="${map.role == role}">
+                <li>
+                  <span class="user-deletable">${map.member.displayName}</span>
+                  <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators/remove" />
+                  <sf:form method="POST" action="${remove_member_url}">
+                    <input type="hidden" name="repository_member_map_id" value="${map.id}" />
+                    <input class="delete" type="submit" value="x" />
+                  </sf:form>
+                </li>
+              </c:if> 
+            </c:forEach>
+          </ul>
         </c:forEach>
       </div>
-      <div>
+      <div class="right-wide">
         <s:url var="add_collaborator_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators/add" />
         <sf:form method="POST" action="${add_collaborator_url}">
           <table class="fill-in">
@@ -52,4 +54,5 @@
           </table>
         </sf:form>
       </div>
+      <div style="clear:both"></div>
     </article>
