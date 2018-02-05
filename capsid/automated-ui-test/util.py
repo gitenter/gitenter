@@ -107,6 +107,22 @@ def add_manager (root, client, org_id, manager_username):
     print("add manager "+manager_username+" for organization "+str(org_id)+" return code "+str(r.status_code))
 
 '''
+REMOVE MANAGER
+'''
+
+def remove_manager (root, client, org_id, member_id):
+
+    url = root+'/organizations/'+str(org_id)+'/managers'
+
+    data = {
+        "member_id" : member_id,
+        "_csrf" : get_csrf(client, url)
+        }
+    r = client.post(url+'/remove', data=data, headers=dict(Referer=url))
+
+    print("remove manager id "+str(member_id)+" for organization "+str(org_id)+" return code "+str(r.status_code))
+
+'''
 CREATE REPOSITORY
 '''
 
@@ -119,8 +135,45 @@ def create_repository (root, client, org_id, repo_name):
     data = {
         "name" : repo_name,
         "displayName" : repo_name.upper(),
+        "include_setup_files" : "true",
         "_csrf" : get_csrf(client, url)
         }
     r = client.post(url, data=data, headers=dict(Referer=url))
 
     print("create repository "+repo_name+" for organization "+str(org_id)+" return code "+str(r.status_code))
+
+'''
+ADD COLLABORATOR
+'''
+
+def add_collaborator (root, client, org_id, repo_id, collaborator_username, collaborator_role):
+
+    url = root+'/organizations/'+str(org_id)+'/repositories/'+str(repo_id)+"/collaborators"
+
+    data = {
+        "username" : collaborator_username,
+        "role" : collaborator_role,
+        "_csrf" : get_csrf(client, url)
+        }
+    r = client.post(url+'/add', data=data, headers=dict(Referer=url))
+
+    print("add collaborator "+collaborator_username+" as a "+collaborator_role+" for org "+str(org_id)+" repo "+str(repo_id)+" return code "+str(r.status_code))
+
+'''
+REMOVE COLLABORATOR
+'''
+
+# Here uses repository_user_map_id with is hard to guess/remember.
+# More complicated unit test need to parse the url to get the values.
+def remove_collaborator (root, client, org_id, repo_id, repository_user_map_id):
+
+    url = root+'/organizations/'+str(org_id)+'/repositories/'+str(repo_id)+"/collaborators"
+
+    data = {
+        "repository_member_map_id" : repository_user_map_id,
+        "_csrf" : get_csrf(client, url)
+        }
+    r = client.post(url+'/remove', data=data, headers=dict(Referer=url))
+
+    print("remove collaborator with map id "+str(repository_user_map_id)+" for org "+str(org_id)+" return code "+str(r.status_code))
+
