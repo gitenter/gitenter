@@ -15,9 +15,7 @@
       </c:if>
     </nav>
     <article>
-      <div>
-        <jsp:include page="components/commit-menu.jsp"/>
-      </div>
+      <jsp:include page="components/commit-menu.jsp"/>
       <div>
         <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
         <jsp:include page="components/commit-folder-structure.jsp"/>

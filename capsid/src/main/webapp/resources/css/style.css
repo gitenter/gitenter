@@ -206,7 +206,6 @@ article input[type=button] {
 	padding: 5px 10px 5px 10px;
 	border-radius: 10px;
 	
-	font-size: 28px;
 	font-weight: normal;
 	text-align: center;
 	text-decoration: none;
@@ -361,9 +360,12 @@ article table.fill-in textarea {
 
 article table.fill-in input[type=submit], 
 article table.fill-in input[type=button] {
+
 	background-color: #e6e472;
 	color: #444444;
 	border-color: #e6e472; 
+
+	font-size: 28px;
 }
 
 article table.fill-in input[type=submit]:hover, 
@@ -432,26 +434,64 @@ article div.login table.fill-in td.button input[type=submit]:hover {
 	border: 1px solid #2fc8a8;
 }
 
-/******************************** Inline ***********************************/
+/********************************* Menu ************************************/
 
-article input[type=text].inline, 
-article select.inline {
+article div.menu input[type=text], 
+article select {
+
+	/*
+	 * In the same line. So the font-size is the same as the submit table.
+	 */
 	font-size: 28px;
 	width: 250px;
 }
 
-article input[type=submit].menu {
+article div.menu input[type=submit] {
 
-	background-color: #2fc8a8;
-	color: #212121;
-	border-color: #2fc8a8; 
+	background-color: #ffffff;
+	color: #c53bce;
+	border-color: #c53bce; 
+
+	font-size: 28px;
 }
 
-article input[type=submit].menu:hover {
+article div.menu input[type=submit]:hover {
+
+	background-color: #c53bce;
+	color: #ffffff;
+	border-color: #c53bce;
+
+	font-size: 28px;
+}
+
+/****************************** In title setups ******************************/
+
+article h2 input[type=submit],
+article h3 input[type=submit] {
+
+	padding: 3px 7px 3px 7px;
+	border-radius: 5px;
 
 	background-color: #ffffff;
 	color: #2fc8a8;
+	border-color: #2fc8a8; 
+
+	vertical-align: middle;
+	font-size: 16px;
+}
+
+article h2 input[type=submit]:hover,
+article h3 input[type=submit]:hover {
+
+	background-color: #2fc8a8;
+	color: #ffffff;
 	border-color: #2fc8a8;
+}
+
+article h3 span.explanation {
+
+	font-weight: normal;
+	color: #e6e472;
 }
 
 /* *************************************************************************
@@ -482,6 +522,30 @@ article table.info th {
 
 article table.info th.left, table.info td.left {
 	text-align: left;
+}
+
+/*
+ * For show links inside of a table, e.g. commit SHA to jump
+ * to the corresponding commit, ...
+ */
+article table.info td input[type=submit] {
+
+ 	background-color: #e6e472;
+	color: #ffffff;
+	border-color: #e6e472;
+
+	font-size: 28px;
+}
+
+article table.info td input[type=submit]:hover {
+
+	background-color: #ffffff;
+	color: #e6e472;
+	border-color: #e6e472;
+}
+
+article table.info td p.minor {
+	font-size: 16px;
 }
 
 article a.paging {

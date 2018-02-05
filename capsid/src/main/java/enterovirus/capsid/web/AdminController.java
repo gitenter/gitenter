@@ -70,11 +70,11 @@ public class AdminController {
 		model.addAttribute("organizations", organizations);
 		
 		/*
-		 * TODO:
-		 * Should also add repositories the member has (some
-		 * kind of) access to.
+		 * Repositories the member has involved in.
 		 */
-		
+		List<RepositoryMemberMapBean> repositoryMemberMaps = member.getRepositoryMemberMaps();
+		model.addAttribute("repositoryMemberMaps", repositoryMemberMaps);
+
 		return "main";
 	}
 	
