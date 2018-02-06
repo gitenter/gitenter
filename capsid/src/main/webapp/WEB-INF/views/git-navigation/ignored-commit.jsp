@@ -21,4 +21,5 @@
       <div>
         <h2>The system is turned off for this commit.</h2>
       </div>
+      <jsp:include page="components/repository-collaboration.jsp"/>
     </article>

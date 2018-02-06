@@ -15,12 +15,12 @@
       </c:if>
     </nav>
     <article>
-      <jsp:include page="components/commit-menu.jsp"/>
-      <div>
+      <jsp:include page="components/commit-menu.jsp" />
+      <div class="folder-structure">
+        <ul>
         <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
         <jsp:include page="components/commit-folder-structure.jsp"/>
+        </ul>
       </div>
-      <div>
-        <p>Clone with SSH: <code>git clone git@${rootUrl}:${organization.name}/${repository.name}</code></p>
-      </div>
+      <jsp:include page="components/repository-collaboration.jsp"/>
     </article>

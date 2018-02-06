@@ -43,11 +43,11 @@ remove_manager(root, user1_session, 1, 3)
 remove_manager(root, user1_session, 1, 4) 
 # So should only user1 and user2 left as a manager
 
-create_repository(root, user1_session, 1, 'repo1')
-create_repository(root, user1_session, 1, 'repo2')
-create_repository(root, user1_session, 2, 'repo1')
-create_repository(root, user1_session, 2, 'repo2')
-create_repository(root, user1_session, 2, 'repo3')
+create_repository(root, user1_session, 1, 'repo1', "true")
+create_repository(root, user1_session, 1, 'repo2', "false")
+create_repository(root, user1_session, 2, 'repo1', "true")
+create_repository(root, user1_session, 2, 'repo2', "true")
+create_repository(root, user1_session, 2, 'repo3', "false")
 
 add_collaborator(root, user1_session, 1, 1, 'user1', 'PROJECT_LEADER')
 add_collaborator(root, user1_session, 1, 1, 'user2', 'EDITOR')

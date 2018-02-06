@@ -22,4 +22,5 @@
         <h2>Trace Analyzer error</h2>
         <p>${errorMessage}</p>
       </div>
+      <jsp:include page="components/repository-collaboration.jsp"/>
     </article>

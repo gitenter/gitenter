@@ -215,6 +215,51 @@ article input[type=button] {
 	transition-duration: 0.4s;
 }
 
+article pre {
+
+	/*
+	 * Seems not working??
+	 */
+	overflow: auto;
+	width: 100%;
+
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+article span.intro,
+article code {
+
+	/*
+	 * TODO:
+	 * Colors for different programming languates.
+	 */
+	border: 1px solid;
+	border-radius: 5px;
+ 	padding: 0px 5px 0px 5px;
+	
+	font-size: 20px;
+	font-weight: normal;
+	text-align: left;
+	text-decoration: none;
+	display: inline-block;
+}
+
+article span.intro {
+	border-color: #2fc8a8;
+ 	background-color: #2fc8a8;
+	color: #ffffff;
+}
+
+article code {
+	border-color: #eeeeee;
+ 	background-color: #eeeeee;
+	color: #444444;
+}
+
 article table.hidden {
 	width: 100%;
 
@@ -227,6 +272,7 @@ article table.hidden {
 }
 
 article table.hidden td {
+	vertical-align: top;
 	width: 0%;
 	/*border: 1px solid #ffffff;*/
 }
@@ -577,17 +623,54 @@ article a.paging:hover {
  * Folder structure
  * ************************************************************************* */
 
-article p.folder {
-	background-color: #dddddd;
+article div.folder-structure ul {
+
+	/*
+	 * TODO: 
+	 * Change to the customized "L" or image.
+	 * > list-style-image: url('sqpurple.gif');
+	 * seems not working for relative path.
+	 */
+	list-style-type: circle;
+}
+
+article div.folder-structure ul li span.folder,
+article div.folder-structure ul li span.non-document-file,
+article div.folder-structure ul li span.document-file {
+
+	/*
+	 * TODO:
+	 * Colors for different programming languates.
+	 */
+	border: 1px solid;
+	border-radius: 5px;
+	margin: 3px 5px 3px 5px;
+ 	padding: 0px 5px 0px 5px;
+	
+	font-size: 28px;
+	font-weight: normal;
+	display: inline-block;
+	text-align: left;
+	text-decoration: none;
+}
+
+article div.folder-structure ul li span.folder {
+	border-color: #dddddd;
+ 	background-color: #dddddd;
+	color: #000000;
 }
 
 
-article p.non-document-file {
-	background-color: #bbbbbb;
+article div.folder-structure ul li span.non-document-file {
+	border-color: #bbbbbb;
+ 	background-color: #bbbbbb;
+	color: #000000;
 }
 
-article p.document-file {
-	background-color: #e6e472;
+article div.folder-structure ul li span.document-file {
+	border-color: #e6e472;
+ 	background-color: #e6e472;
+	color: #000000;
 }
 
 /* *************************************************************************

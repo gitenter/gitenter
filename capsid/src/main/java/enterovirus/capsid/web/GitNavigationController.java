@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
+import enterovirus.capsid.config.WebSource;
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
@@ -28,12 +29,6 @@ import enterovirus.protease.source.GitSource;
 
 @Controller
 public class GitNavigationController {	
-
-	/*
-	 * TODO:
-	 * Make it depend on profiles.
-	 */
-	private static final String rootUrl = "localhost";
 	
 	@Autowired private BlobGitDAO blobGitDAO;
 	@Autowired private RepositoryRepository repositoryRepository;
@@ -42,6 +37,7 @@ public class GitNavigationController {
 	@Autowired private CommitGitDAO commitGitDAO;
 	@Autowired private DocumentRepository documentRepository;
 	@Autowired private GitSource gitSource;
+	@Autowired private WebSource webSource;
 	
 	private String getWildcardValue (HttpServletRequest request) {
 		
@@ -158,7 +154,7 @@ public class GitNavigationController {
 		 */
 		if (repository.getCommits().size() == 0) {
 		
-			model.addAttribute("rootUrl", rootUrl);
+			model.addAttribute("rootUrl", webSource.getDomainName());
 			
 			model.addAttribute("organization", repository.getOrganization());
 			model.addAttribute("repository", repository);
@@ -175,16 +171,19 @@ public class GitNavigationController {
 			HttpServletRequest request, 
 			Model model) throws Exception {
 
-		model.addAttribute("rootUrl", rootUrl);
+		model.addAttribute("rootUrl", webSource.getDomainName());
 		
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
 		
 		RepositoryBean repository = commit.getRepository();
+		Hibernate.initialize(repository.getRepositoryMemberMaps());
 		repositoryGitDAO.loadBranchNames(repository);
 		
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
+		
+		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 		
 		if (commit instanceof CommitValidBean) {
 			

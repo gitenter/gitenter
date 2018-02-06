@@ -285,6 +285,7 @@ public class AdminController {
 			Authentication authentication) throws Exception {
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		Hibernate.initialize(repository.getRepositoryMemberMaps());
 		OrganizationBean organization = repository.getOrganization();
 		
 		/*

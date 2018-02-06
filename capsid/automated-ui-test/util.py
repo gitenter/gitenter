@@ -135,14 +135,14 @@ CREATE REPOSITORY
 
 # So it need to secretly know the org_id that is
 # managed by the logged in user.
-def create_repository (root, client, org_id, repo_name):
+def create_repository (root, client, org_id, repo_name, include_setup_files):
 
     url = root+'/organizations/'+str(org_id)+'/repositories/create'
 
     data = {
         "name" : repo_name,
         "displayName" : repo_name.upper(),
-        "include_setup_files" : "true",
+        "include_setup_files" : include_setup_files,
         "_csrf" : get_csrf(client, url)
         }
     r = client.post(url, data=data, headers=dict(Referer=url))
