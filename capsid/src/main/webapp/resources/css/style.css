@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 /* *************************************************************************
  * General replacement 
  * ************************************************************************* */
@@ -643,7 +645,8 @@ article div.folder-structure ul {
 
 	/*
 	 * Any safer way rather than simply copy the UTF-8 character in
-	 * here? As there is no way to say this file is UTF-8's.
+	 * here? Although I set the encoding of this css file to be UTF-8,
+	 * I feel if there's a way to use special notations it should be better.
 	 *
 	 * List of special characters:
 	 * https://en.wikipedia.org/wiki/List_of_Unicode_characters
