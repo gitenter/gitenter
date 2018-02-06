@@ -6,5 +6,5 @@ import enterovirus.protease.domain.*;
 
 public interface SshKeyRepository {
 
-	public SshKeyBean saveAndFlush(SshKeyBean sshKey) throws IOException;
+	public SshKeyBean saveAndFlush(SshKeyBean sshKey, String username) throws IOException;
 }

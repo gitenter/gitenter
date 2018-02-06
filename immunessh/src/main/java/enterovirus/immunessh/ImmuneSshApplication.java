@@ -34,7 +34,7 @@ public class ImmuneSshApplication {
 	private boolean run (String username, String organizationName, String repositoryName) {
 		
 		List<RepositoryMemberMapBean> maps = repository.findByUsernameAndOrganizationNameAndRepositoryName(username, organizationName, repositoryName);
-		
+
 		/*
 		 * It should be at most one element in map, but we write in 
 		 * here in a general way.

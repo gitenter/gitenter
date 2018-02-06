@@ -17,7 +17,7 @@ class SshKeyImpl implements SshKeyRepository {
 	@Autowired private SshKeyDatabaseRepository sshKeyDbRepository;
 	@Autowired private SshSource sshSource;
 	
-	public SshKeyBean saveAndFlush(SshKeyBean sshKey) throws IOException {
+	public SshKeyBean saveAndFlush(SshKeyBean sshKey, String username) throws IOException {
 
 		sshKeyDbRepository.saveAndFlush(sshKey);
 		/*
@@ -41,7 +41,7 @@ class SshKeyImpl implements SshKeyRepository {
 		
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(authorizedKeys, true))) {
 			
-			bw.write("command=\"./git-authorization.sh\",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty");
+			bw.write("command=\"./git-authorization.sh "+username+"\",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty");
 			bw.write(" ");
 			bw.write(sshKey.toString());
 			bw.newLine();

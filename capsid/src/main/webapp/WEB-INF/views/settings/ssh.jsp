@@ -25,14 +25,14 @@
           <tr>
             <td></td>
             <td class="word">       
-              <p>The key should be named
+              <p>The key should be saved in a file named
               <code>id_rsa.pub</code>,
               <code>id_dsa.pub</code>,
               <code>identity.pub</code>,
               <code>id_ecdsa.pub</code>,
               or <code>id_ed25519.pub</code>,
               found under the <code>~/.ssh/</code> folder of your 
-              home directory. It begins with the key type
+              home directory. It is a single line begins with the key type
               <code>ssh-rsa</code>,
               <code>ssh-dss</code>,
               <code>ssh-ed25519</code>,

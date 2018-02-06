@@ -5,6 +5,12 @@ from lxml import html
 import requests
 from bs4 import BeautifulSoup
 
+# TODO:
+# For a lot of pages with form validation involved, failed commands actually
+# returns 200 (as they redirect to the original page and ask the user to refill
+# it).
+# Any way to show in there that something has gone wrong??
+
 def get_csrf (client, url):
 
     form = client.get(url)
@@ -65,8 +71,9 @@ def add_ssh_key (root, client):
 	url = root+'/settings/ssh'
 
 	f = open("/home/beta/.ssh/id_rsa.pub", "r")
+
 	data = {
-		"value" : f.read(),
+		"value" : f.read().rstrip(), # Here has a "\n" at the very end. That is allowed for the system.
         "_csrf" : get_csrf(client, url)
 		}
 	r = client.post(url, data=data, headers=dict(Referer=url))

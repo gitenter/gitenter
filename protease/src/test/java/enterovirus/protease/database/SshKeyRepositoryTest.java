@@ -1,11 +1,9 @@
 package enterovirus.protease.database;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,6 +27,8 @@ public class SshKeyRepositoryTest {
 	/*
 	 * Ignored, because otherwise the database complains error:
 	 * > ERROR: duplicate key value violates unique constraint "ssh_key_key_key"
+	 * 
+	 * P.S Currently unique key is not setup yet.
 	 */
 	@Test
 	public void test() throws Exception {
@@ -45,7 +45,7 @@ public class SshKeyRepositoryTest {
 		SshKeyBean sshKey = new SshKeyBean(publicKeyLine);
 		sshKey.setMember(member);
 		
-		sshKeyRepository.saveAndFlush(sshKey);
+		sshKeyRepository.saveAndFlush(sshKey, "user1");
 	}
 	
 	@Test

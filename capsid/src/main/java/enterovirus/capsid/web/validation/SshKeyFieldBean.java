@@ -22,10 +22,13 @@ public class SshKeyFieldBean {
 	/*
 	 * See "AUTHORIZED_KEYS FILE FORMAT" section of sshd(8)
 	 * https://www.freebsd.org/cgi/man.cgi?sshd(8)#end
+	 * 
+	 * Here allows "\n" on the right, as it will later be removed 
+	 * while parsing.
 	 */
 	@NotNull
 	@Pattern(
-		regexp="^(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519) .*$",
+		regexp="^(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519) .*\\s*$",
 		message="Wrong format")
 	private String value;
 }

@@ -171,7 +171,7 @@ public class SettingsController {
 		}
 		sshKey.setMember(member);
 		
-		sshKeyRepository.saveAndFlush(sshKey);
-		return "redirect:/";
+		sshKeyRepository.saveAndFlush(sshKey, member.getUsername());
+		return "redirect:/settings/ssh";
 	}
 }

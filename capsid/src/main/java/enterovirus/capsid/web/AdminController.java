@@ -156,8 +156,7 @@ public class AdminController {
 			Errors errors, 
 			Model model,
 			Authentication authentication) throws GitAPIException, IOException {
-		
-		System.out.println("X"+includeSetupFiles);
+
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		
 		isManagerCheck(authentication, organization);
