@@ -7,22 +7,22 @@
     </nav>
     <article>
       <div>
-        <h2>
+        <h3>
           Managed organizations
           <s:url var="create_org_url" value="/organizations/create" />
           <sf:form method="GET" action="${create_org_url}">
             <input class="delete" type="submit" value="+" />
           </sf:form>
-        </h2>
+        </h3>
         <c:forEach var="organization" items="${organizations}">
-          <h3><a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a></h3>
+          <h5><a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a></h5>
         </c:forEach>
       </div>
       <div>
-        <h2>Involved repositories</h2>
+        <h3>Involved repositories</h3>
         <c:forEach var="map" items="${repositoryMemberMaps}">
           <c:set var="repository" value="${map.repository}" />
-          <h3><a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> <span class="explanation">: ${map.role.displayName}</span></h3>
+          <h5><a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> <span class="explanation">: ${map.role.displayName}</span></h5>
         </c:forEach>
       </div>
     </article>

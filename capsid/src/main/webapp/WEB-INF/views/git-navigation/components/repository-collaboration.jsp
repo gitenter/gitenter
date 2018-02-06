@@ -3,14 +3,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
 
       <div>
-        <p><span class="intro">Clone with SSH</span> <code>git clone git@${rootUrl}:${organization.name}/${repository.name}</code></p>
-      </div>
-      <div>
+        <h3>Collaboration</h3>
         <table class="hidden">
           <tr>
             <c:forEach var="role" items="${repositoryMemberRoleValues}">
             <td>
-              <h3>${role.displayName}</h3>
+              <h6>${role.displayName}</h6>
               <ul class="user-list">
                 <c:forEach var="map" items="${repository.repositoryMemberMaps}">
                   <c:if test="${map.role == role}">
@@ -24,4 +22,7 @@
           </c:forEach>
           </tr>
         </table>
+      </div>
+      <div>
+        <p><span class="intro">Clone with SSH</span> <code>git clone git@${rootUrl}:${organization.name}/${repository.name}</code></p>
       </div>

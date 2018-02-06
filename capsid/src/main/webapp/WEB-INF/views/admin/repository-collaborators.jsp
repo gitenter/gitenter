@@ -12,7 +12,7 @@
     <article>
       <div class="left-narrow">
         <c:forEach var="role" items="${repositoryMemberRoleValues}">
-        <h2>${role.displayName}</h2>
+        <h5>${role.displayName}</h5>
           <ul class="user-list">
             <c:forEach var="map" items="${repository.repositoryMemberMaps}">
               <c:if test="${map.role == role}">

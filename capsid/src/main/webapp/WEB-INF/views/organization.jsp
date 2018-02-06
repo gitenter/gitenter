@@ -8,15 +8,15 @@
     </nav>
     <article>
       <div class="left-wide">
-        <h2>
+        <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
           <sf:form method="GET" action="${create_repo_url}">
             <input class="delete" type="submit" value="+" />
           </sf:form>
-        </h2>
+        </h3>
         <c:forEach var="repository" items="${organization.repositories}">
-          <h3>
+          <h5>
             <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
             <c:if test="${isManager == true}">
               <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
@@ -24,11 +24,11 @@
                 <input class="delete" type="submit" value="Collaborators" />
               </sf:form>
             </c:if>
-          </h3>
+          </h5>
         </c:forEach>
       </div>
       <div class="right-narrow">
-        <h2>
+        <h3>
           Managers
           <c:if test="${isManager == true}">
             <s:url var="manager_url" value="/organizations/${organization.id}/managers" />
@@ -36,7 +36,7 @@
               <input class="delete" type="submit" value="Settings" />
             </sf:form>
           </c:if>
-        </h2>
+        </h3>
         <ul class="user-list">
           <c:forEach var="member" items="${organization.managers}">
             <li><span class="user">${member.displayName}</span></li>

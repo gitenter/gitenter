@@ -17,9 +17,12 @@
     <article>
       <jsp:include page="components/commit-menu.jsp" />
       <div class="folder-structure">
+        <h3>Browse files and folders</h3>
         <ul>
-        <c:set var="folderStructure" value="${folderStructure}" scope="request"/>
-        <jsp:include page="components/commit-folder-structure.jsp"/>
+          <c:forEach var="i" items="${folderStructure.childrenList()}">
+            <c:set var="folderOrFile" value="${i}" scope="request"/>
+            <jsp:include page="components/commit-folder-structure.jsp"/>
+          </c:forEach>
         </ul>
       </div>
       <jsp:include page="components/repository-collaboration.jsp"/>

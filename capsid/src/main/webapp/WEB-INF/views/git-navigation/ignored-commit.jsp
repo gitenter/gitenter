@@ -18,8 +18,9 @@
       <div>
         <jsp:include page="components/commit-menu.jsp"/>
       </div>
-      <div>
-        <h2>The system is turned off for this commit.</h2>
+      <div class="error">
+        <h3>N/A</h3>
+        <p>This system is turned off for this commit.</p>
       </div>
       <jsp:include page="components/repository-collaboration.jsp"/>
     </article>

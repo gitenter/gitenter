@@ -18,8 +18,8 @@
       <div>
         <jsp:include page="components/commit-menu.jsp"/>
       </div>
-      <div>
-        <h2>Trace Analyzer error</h2>
+      <div class="error">
+        <h3>Trace Analyzer error</h3>
         <p>${errorMessage}</p>
       </div>
       <jsp:include page="components/repository-collaboration.jsp"/>

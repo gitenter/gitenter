@@ -10,7 +10,7 @@
     </nav>
     <article>
       <div class="left-narrow">
-        <h2>Managers</h2>
+        <h5>Managers</h5>
         <ul class="user-list">
         <c:forEach var="member" items="${organization.managers}">
           <li>

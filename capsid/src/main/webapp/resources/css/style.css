@@ -23,13 +23,12 @@ h1, h2, h3, h4, h5, h6 {
 	padding: 0px;
 }
 
-h2 {
-	font-size: 28px;
-}
-
-h3 {
-	font-size: 20px;
-}
+h1 { font-size: 40px; }
+h2 { font-size: 36px; }
+h3 { font-size: 32px; }
+h4 { font-size: 28px; }
+h5 { font-size: 24px; }
+h6 { font-size: 20px; }
 
 img.center {
 	display: block;
@@ -180,6 +179,10 @@ article div.left-wide {
 article div.right-narrow {
 	float: right;
 	width: calc(41.4% - 13px);
+}
+
+div.error {
+	color: #ff0000;
 }
 
 article input[type=checkbox], 
@@ -512,8 +515,12 @@ article div.menu input[type=submit]:hover {
 
 /****************************** In title setups ******************************/
 
+article h1 input[type=submit],
 article h2 input[type=submit],
-article h3 input[type=submit] {
+article h3 input[type=submit],
+article h4 input[type=submit],
+article h5 input[type=submit],
+article h6 input[type=submit] {
 
 	padding: 3px 7px 3px 7px;
 	border-radius: 5px;
@@ -526,15 +533,24 @@ article h3 input[type=submit] {
 	font-size: 16px;
 }
 
+article h1 input[type=submit]:hover,
 article h2 input[type=submit]:hover,
-article h3 input[type=submit]:hover {
+article h3 input[type=submit]:hover,
+article h4 input[type=submit]:hover,
+article h5 input[type=submit]:hover,
+article h6 input[type=submit]:hover {
 
 	background-color: #2fc8a8;
 	color: #ffffff;
 	border-color: #2fc8a8;
 }
 
-article h3 span.explanation {
+article h1 span.explanation,
+article h2 span.explanation,
+article h3 span.explanation,
+article h4 span.explanation,
+article h5 span.explanation,
+article h6 span.explanation {
 
 	font-weight: normal;
 	color: #e6e472;
@@ -626,17 +642,19 @@ article a.paging:hover {
 article div.folder-structure ul {
 
 	/*
-	 * TODO: 
-	 * Change to the customized "L" or image.
-	 * > list-style-image: url('sqpurple.gif');
-	 * seems not working for relative path.
+	 * Any safer way rather than simply copy the UTF-8 character in
+	 * here? As there is no way to say this file is UTF-8's.
+	 *
+	 * List of special characters:
+	 * https://en.wikipedia.org/wiki/List_of_Unicode_characters
 	 */
-	list-style-type: circle;
+	list-style-type: "┗ ";
+	color: #bbbbbb;
 }
 
 article div.folder-structure ul li span.folder,
 article div.folder-structure ul li span.non-document-file,
-article div.folder-structure ul li span.document-file {
+article div.folder-structure ul li input[type=submit] {
 
 	/*
 	 * TODO:
@@ -657,20 +675,26 @@ article div.folder-structure ul li span.document-file {
 article div.folder-structure ul li span.folder {
 	border-color: #dddddd;
  	background-color: #dddddd;
-	color: #000000;
+	color: #444444;
 }
 
 
 article div.folder-structure ul li span.non-document-file {
 	border-color: #bbbbbb;
  	background-color: #bbbbbb;
-	color: #000000;
+	color: #444444;
 }
 
-article div.folder-structure ul li span.document-file {
+article div.folder-structure ul li input[type=submit] {
 	border-color: #e6e472;
  	background-color: #e6e472;
-	color: #000000;
+	color: #444444;
+}
+
+article div.folder-structure ul li input[type=submit]:hover {
+	border-color: #e6e472;
+ 	background-color: #ffffff;
+	color: #e6e472;
 }
 
 /* *************************************************************************
@@ -752,10 +776,10 @@ article li.traceable-item {
 
 article li.traceable-item input[type=submit] {
 
-	border: 1px;
+	border: 1px solid;
+	border-radius: 5px;
 	margin: 3px 2px 3px 2px;
 	padding: 0px 5px 0px 5px;
-	border-radius: 5px;
 
 	font-size: 20px;
 	font-weight: normal;
@@ -767,49 +791,44 @@ article li.traceable-item input[type=submit] {
 	transition-duration: 0.3s;
 }
 
-article li.traceable-item input[type=submit]:hover {
-
-	border: 1px;
-}
-
 article li.traceable-item input[type=submit].original {
 
-	border: 1px solid #444444;
+	border-color: #444444;
  	background-color: #444444;
 	color: #ffffff;
 }
 
 article li.traceable-item input[type=submit].original:hover {
 
-	border: 1px solid #444444;
+	border-color: #444444;
 	background-color: #ffffff;
 	color: #444444;
 }
 
 article li.traceable-item input[type=submit].upstream {
 
-	border: 1px solid #2fc8a8;
+	border-color: #2fc8a8;
  	background-color: #2fc8a8;
 	color: #ffffff;
 }
 
 article li.traceable-item input[type=submit].upstream:hover {
 
-	border: 1px solid #2fc8a8;
+	border-color: #2fc8a8;
 	background-color: #ffffff;
 	color: #2fc8a8;
 }
 
 article li.traceable-item input[type=submit].downstream {
 
-	border: 1px solid #e6e472;
+	border-color: #e6e472;
  	background-color: #e6e472;
 	color: #ffffff;
 }
 
 article li.traceable-item input[type=submit].downstream:hover {
 
-	border: 1px solid #e6e472;
+	border-color: #e6e472;
 	background-color: #ffffff;
 	color: #e6e472;
 }
