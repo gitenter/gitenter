@@ -46,3 +46,13 @@ Notes:
 
 1. There are multiple virtual machines located in multiple places. You need to remember where your instances are, or they'll tell you no instance in that location (my current ones are in U.S. Oregon).
 1. After connection, the terminal exactly likes an normal virtual machine. (For Ubuntu case) then you can either use their pre-installed packages, or use `sudo apt-get install` to set up the environment as you desired.
+
+## Domain name and DNS setup
+
+In case of buying a domain name from GoDaddy.
+
+1. Get Elastic IP.
+2. Go to [Route 53](https://console.aws.amazon.com/route53/), create hosted zone and record set.
+3. Go to [GoDaddy DNS management](https://dcc.godaddy.com/manage/gitenter.com/dns) and change the nameservers to the ones provided by Route 53.
+
+Mostly by following [this page](http://www.littlebigextra.com/map-domain-name-amazon-aws-ec2-instance/#Map-domain-name-from-GoDaddy-to-Amazon-EC2-instance).

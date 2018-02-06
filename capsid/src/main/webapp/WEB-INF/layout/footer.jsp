@@ -1,4 +1,4 @@
 
     <footer>
-      Copyright &copy; 2017 enterovirus
+      Copyright &copy; 2017 GitEnter
     </footer>

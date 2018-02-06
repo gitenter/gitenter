@@ -31,7 +31,7 @@ public class WebConfig {
 	public WebSource productionWebSource() {
 		
 		WebSource webSource = new WebSource();
-		webSource.setDomainName("52.41.66.37");
+		webSource.setDomainName("gitenter.com");
 		return webSource;
 	}
 }
