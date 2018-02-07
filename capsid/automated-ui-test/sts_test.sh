@@ -32,4 +32,4 @@ cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
 python3 ui_init.py http://localhost:8888
 
 # "git clone" by local protocol
-sh git_init.sh /home/beta/Workspace/enterovirus-test/fake_server/org1/repo1.git
+#sh git_init.sh /home/beta/Workspace/enterovirus-test/fake_server/org1/repo1.git

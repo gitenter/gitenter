@@ -1,4 +1,4 @@
-package enterovirus.capsid.web.validation;
+package enterovirus.capsid.dto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -17,7 +17,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SshKeyFieldBean {
+public class SshKeyFieldDTO {
 
 	/*
 	 * See "AUTHORIZED_KEYS FILE FORMAT" section of sshd(8)

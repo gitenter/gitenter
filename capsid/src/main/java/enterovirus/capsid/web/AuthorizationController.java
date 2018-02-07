@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import enterovirus.capsid.web.validation.MemberLoginBean;
-import enterovirus.protease.database.*;
-import enterovirus.protease.domain.*;
+import enterovirus.capsid.dto.*;
+import enterovirus.capsid.service.*;
 
 @Controller
 public class AuthorizationController {
 
-	@Autowired private MemberRepository memberRepository;
+	@Autowired private MemberService memberService;
 
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	public String registerUser (Model model) {
@@ -26,20 +25,20 @@ public class AuthorizationController {
 		 * The commandName NEED to be the same as the class name,
 		 * otherwise the <sf:errors> will not render. 
 		 */
-		model.addAttribute("memberBean", new MemberBean());
+		model.addAttribute("memberDTO", new MemberDTO());
 		return "authorization/register";
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
-	public String processRegistration (@Valid MemberBean member, Errors errors, Model model) {
+	public String processRegistration (@Valid MemberDTO member, Errors errors, Model model) {
 		
 		if (errors.hasErrors()) {
 			/* So <sf:> will render the values in object "member" to the form. */
-			model.addAttribute("memberBean", member); 
+			model.addAttribute("memberDTO", member); 
 			return "authorization/register";
 		}
 		
-		memberRepository.saveAndFlush(member);
+		memberService.registerNewMember(member);
 		return "redirect:/";
 	}
 	
@@ -52,7 +51,7 @@ public class AuthorizationController {
 			model.addAttribute("message", "Invalid username and password!");
 		}
 
-		model.addAttribute("memberLoginBean", new MemberLoginBean());
+		model.addAttribute("memberLoginBean", new MemberLoginDTO());
 		return "authorization/login";
 	}
 }

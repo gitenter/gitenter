@@ -1,4 +1,4 @@
-package enterovirus.capsid.web.validation;
+package enterovirus.capsid.dto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberLoginBean {
+public class MemberLoginDTO {
 
 	/* 
 	 * NOTE:
