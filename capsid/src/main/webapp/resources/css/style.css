@@ -226,21 +226,6 @@ article input[type=button] {
 	transition-duration: 0.4s;
 }
 
-article pre {
-
-	/*
-	 * Seems not working??
-	 */
-	overflow: auto;
-	width: 100%;
-
-	white-space: pre-wrap;       /* css-3 */
-	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-	white-space: -pre-wrap;      /* Opera 4-6 */
-	white-space: -o-pre-wrap;    /* Opera 7 */
-	word-wrap: break-word;       /* Internet Explorer 5.5+ */
-}
-
 article span.intro,
 article code {
 
@@ -250,13 +235,13 @@ article code {
 	 */
 	border: 1px solid;
 	border-radius: 5px;
+	margin: 0px;
  	padding: 0px 5px 0px 5px;
 	
 	font-size: 20px;
 	font-weight: normal;
 	text-align: left;
 	text-decoration: none;
-	display: inline-block;
 }
 
 article span.intro {
@@ -269,6 +254,29 @@ article code {
 	border-color: #eeeeee;
  	background-color: #eeeeee;
 	color: #444444;
+}
+
+article pre {
+
+	overflow: auto;
+	width: 100%;
+
+	border-radius: 5px;
+	padding: 5px 10px 5px 10px;
+
+	background-color: #eeeeee;
+
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+article pre code {
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
 }
 
 article table.hidden {
