@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
@@ -277,8 +278,62 @@ public class AdminController {
 		return "redirect:/organizations/"+organizationId+"/managers";
 	}
 	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.GET)
+	public String showRepositorySettings (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		/*
+		 * Only need to be in here. No need for the corresponding POST
+		 * requests, as CSRF key is included.
+		 */
+		isManagerCheck(authentication, organization);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		model.addAttribute("repositoryBean", repository);
+		
+		return "admin/repository-settings";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.POST)
+	public String processRepositorySettings (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@Valid RepositoryBean repositoryAfterChange, 
+			Errors errors, 
+			RedirectAttributes model, 
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryRepository.findById(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		if (errors.hasErrors()) {
+			
+			model.addAttribute("organization", organization);
+			model.addAttribute("repository", repository);
+			model.addAttribute("repositoryBean", repositoryAfterChange);
+			
+			return "settings/profile";
+		}
+		
+		assert (repository.getName().equals(repositoryAfterChange.getName()));
+		
+		repository.setDisplayName(repositoryAfterChange.getDisplayName());
+		repository.setDescription(repositoryAfterChange.getDescription());
+		repositoryRepository.saveAndFlush(repository);
+		
+		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings";
+	}
+	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/collaborators", method=RequestMethod.GET)
-	public String manageRepositoryCollaborators (
+	public String showRepositoryCollaborators (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model,

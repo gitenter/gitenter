@@ -30,6 +30,7 @@ public class MemberDTO {
 	private String password;
 
 	@NotNull
+	@Size(min=2, max=64)
 	private String displayName;
 	
 	/*

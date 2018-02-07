@@ -45,6 +45,7 @@ public class RepositoryBean {
 	private String name;
 
 	@NotNull
+	@Size(min=2, max=64)
 	@Column(name="display_name")
 	private String displayName;
 

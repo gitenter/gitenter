@@ -16,7 +16,15 @@
           </sf:form>
         </h3>
         <c:forEach var="repository" items="${organization.repositories}">
-          <h5><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a></h5>
+          <h5>
+            <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
+            <c:if test="${isManager == true}">
+            <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
+            <sf:form method="GET" action="${repo_settings_url}">
+              <input type="submit" value="Settings" />
+            </sf:form>
+          </c:if>
+          </h5>
           <p>${repository.description}</p>
         </c:forEach>
       </div>

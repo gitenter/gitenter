@@ -26,4 +26,5 @@
           <h5><a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a></h5>
         </c:forEach>
       </div>
+      <div style="clear:both"></div>
     </article>

@@ -69,6 +69,9 @@
   <definition name="admin/organization-managers" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/admin/organization-managers.jsp" />
   </definition>
+  <definition name="admin/repository-settings" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/admin/repository-settings.jsp" />
+  </definition>
   <definition name="admin/repository-collaborators" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/admin/repository-collaborators.jsp" />
   </definition>

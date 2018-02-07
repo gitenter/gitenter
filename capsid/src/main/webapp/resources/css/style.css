@@ -415,6 +415,11 @@ article table.fill-in input[type=email] {
 }
 
 article table.fill-in textarea {
+	width: 400px;
+	height: 100px;
+}
+
+article table.fill-in textarea.bigger {
 	width: 600px;
 	height: 150px;
 }

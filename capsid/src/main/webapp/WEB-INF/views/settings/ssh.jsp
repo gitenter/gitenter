@@ -45,7 +45,7 @@
           <tr>
             <td>New key</td>
             <td>
-              <sf:textarea path="value" />
+              <sf:textarea class="bigger" path="value" />
               <sf:errors class="error" path="value" />
             </td>
           </tr>

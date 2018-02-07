@@ -56,8 +56,10 @@ public class SettingsController {
 	
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
 	public String processUpdateProfile (
-			@Valid MemberBean memberAfterChange, Errors errors, 
-			RedirectAttributes model, Authentication authentication) throws Exception {
+			@Valid MemberBean memberAfterChange, 
+			Errors errors, 
+			RedirectAttributes model, 
+			Authentication authentication) throws Exception {
 		
 		/* Because an null password field is for sure causes errors, here we need 
 		 * skip these associated errors. */

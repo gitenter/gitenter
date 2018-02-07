@@ -1,24 +1,27 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
+<%@ page session="false" %>
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
-      <span class="nav-current">Create a New Repository</span>
+      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr;
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
+      <span class="nav-current">Settings</span>
     </nav>
     <article>
       <div>
       <sf:form method="POST" commandName="repositoryBean" >
         <table class="fill-in">
           <tr>
-            <td>Name</td>
-            <td>
-              <sf:input path="name" />
-              <sf:errors class="error" path="name" /></td>
+            <td>Username</td>
+            <td class="pre-fill">
+              ${repositoryBean.name}
+              <sf:hidden path="name" />
+            </td>
           </tr>
           <tr>
-            <td>Display Name</td>
+            <td>Display name</td>
             <td>
               <sf:input path="displayName" />
               <sf:errors class="error" path="displayName" />
@@ -31,16 +34,15 @@
               <sf:errors class="error" path="description" />
             </td>
           </tr>
-          <tr>
-            <td>Include setup files?</td>
-            <td class="word">
-              <input type="radio" name="include_setup_files" value="true" checked> Yes
-              <input type="radio" name="include_setup_files" value="false"> No
-            </td>
-          </tr>
+          <c:if test="${successfulMessage != null}">
           <tr>
             <td></td>
-            <td class="button"><input type="submit" value="Create Repository" /></td>
+            <td class="success">${successfulMessage}</td>
+          </tr>
+          </c:if>
+          <tr>
+            <td></td>
+            <td class="button"><input type="submit" value="Update settings" /></td>
           </tr>
         </table>
       </sf:form>
