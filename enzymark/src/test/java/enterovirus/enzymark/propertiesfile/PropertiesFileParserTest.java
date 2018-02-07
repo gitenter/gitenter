@@ -21,7 +21,7 @@ public class PropertiesFileParserTest {
 	@Test
 	public void test1() throws Exception {
 		
-		File confFile = testFolder.newFile("enterovirus.properties");
+		File confFile = testFolder.newFile("gitenter.properties");
 		FileUtils.writeStringToFile(confFile,
 				 "# lalala\n" // comment is okay
 				+"\n" // blank line is okay
@@ -37,7 +37,7 @@ public class PropertiesFileParserTest {
 	@Test
 	public void test2() throws Exception {
 		
-		File confFile = testFolder.newFile("enterovirus.properties");
+		File confFile = testFolder.newFile("gitenter.properties");
 		FileUtils.writeStringToFile(confFile,
 				 "# lalala\n" // comment is okay
 				+"\n" // blank line is okay
@@ -55,7 +55,7 @@ public class PropertiesFileParserTest {
 	@Test
 	public void testNoIncludePath() throws Exception {
 		
-		File confFile = testFolder.newFile("enterovirus.properties");
+		File confFile = testFolder.newFile("gitenter.properties");
 		FileUtils.writeStringToFile(confFile,
 				"enable_systemwide = on",
 				"UTF-8");
@@ -75,7 +75,7 @@ public class PropertiesFileParserTest {
 	@Test(expected = PropertiesFileFormatException.class)
 	public void testWrongPropName() throws Exception {
 		
-		File confFile = testFolder.newFile("enterovirus.conf");
+		File confFile = testFolder.newFile("gitenter.properties");
 		FileUtils.writeStringToFile(confFile,
 				"enable_systemwideeeeee = on",
 				"UTF-8");
@@ -87,7 +87,7 @@ public class PropertiesFileParserTest {
 	@Test(expected = PropertiesFileFormatException.class)
 	public void testWrongPropValue() throws Exception {
 		
-		File confFile = testFolder.newFile("enterovirus.properties");
+		File confFile = testFolder.newFile("gitenter.properties");
 		FileUtils.writeStringToFile(confFile,
 				"enable_systemwide = onnnnnnn",
 				"UTF-8");
@@ -100,7 +100,7 @@ public class PropertiesFileParserTest {
 	public void testFromGit() throws Exception {
 		
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
-		String relativeFilepath = "enterovirus.properties";
+		String relativeFilepath = "gitenter.properties";
 		
 		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);

@@ -220,7 +220,7 @@ public class GitNavigationController {
 			
 			PropertiesFileParser propertiesFileParser;
 			try {
-				propertiesFileParser = new PropertiesFileParser(repositoryDirectory, commitSha, "enterovirus.properties"); 
+				propertiesFileParser = new PropertiesFileParser(repositoryDirectory, commitSha, "gitenter.properties"); 
 			}
 			catch (PropertiesFileFormatException e) {
 				/*

@@ -14,7 +14,7 @@ mkdir design
 
 # Commit:
 # Turn off the entire system. Expect an ignored commit.
-sed -i "s/enable_systemwide = on/enable_systemwide = off/g" $clientroot/repo1/enterovirus.properties
+sed -i "s/enable_systemwide = on/enable_systemwide = off/g" $clientroot/repo1/gitenter.properties
 
 git add -A
 git commit -m "Turn off the entire system. Expect an ignored commit."
@@ -22,7 +22,7 @@ git push origin master
 
 # Commit:
 # Turn the system back on. Add a markdown template file (which include no traceable item).
-sed -i "s/enable_systemwide = off/enable_systemwide = on/g" $clientroot/repo1/enterovirus.properties
+sed -i "s/enable_systemwide = off/enable_systemwide = on/g" $clientroot/repo1/gitenter.properties
 
 cp /home/beta/Workspace/enterovirus/test/files/sample.jpg $clientroot/repo1/doc
 

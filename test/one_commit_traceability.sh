@@ -13,10 +13,10 @@ cd $gitclientfilepath
 mkdir requirement
 mkdir design
 
-cat > enterovirus.properties <<- EOM
-# ------------------------------
-# Enterovirus configuration file
-# ------------------------------
+cat > gitenter.properties <<- EOM
+# ---------------------------
+# GitEnter configuration file
+# ---------------------------
 
 enable_systemwide = on
 include_paths = requirement

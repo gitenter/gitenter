@@ -59,7 +59,7 @@ public class UpdateDatabaseFromGit {
 		
 		PropertiesFileParser propertiesFileParser;
 		try {
-			propertiesFileParser = new PropertiesFileParser(status.getRepositoryDirectory(), commitInfo.getCommitSha(), "enterovirus.properties"); 
+			propertiesFileParser = new PropertiesFileParser(status.getRepositoryDirectory(), commitInfo.getCommitSha(), "gitenter.properties"); 
 		}
 		catch (PropertiesFileFormatException e) {
 

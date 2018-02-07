@@ -12,11 +12,11 @@
     <article>
       <div>
         <p>This repository has not been initialized yet.</p>
-        <p>To initialize it, you want to add the following file with name <code>enterovirus.properties</code> 
+        <p>To initialize it, you want to add the following file with name <code>gitenter.properties</code> 
         at the root folder of your repository,</p>
-        <pre><code># ------------------------------
-# Enterovirus configuration file
-# ------------------------------
+        <pre><code># ---------------------------
+# GitEnter configuration file
+# ---------------------------
 
 # Value on/off. Set it as off will overwrite all further setups.
 enable_systemwide = on
