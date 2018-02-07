@@ -8,7 +8,7 @@ CREATE TABLE config.member (
 	id serial PRIMARY KEY,
 	username text NOT NULL UNIQUE,
 	password text NOT NULL,
-	display_name text,
+	display_name text NOT NULL,
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)')
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE config.ssh_key (
 CREATE TABLE config.organization (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE,
-	display_name text
+	display_name text NOT NULL
 );
 
 CREATE TABLE config.organization_manager_map (
@@ -50,7 +50,8 @@ CREATE TABLE config.repository (
 
 	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
 	name text NOT NULL,
-	display_name text,
+	display_name text NOT NULL,
+	description text,
 	UNIQUE (organization_id, name)
 );
 

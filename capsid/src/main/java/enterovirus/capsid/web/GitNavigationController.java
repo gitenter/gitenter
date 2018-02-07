@@ -1,6 +1,7 @@
 package enterovirus.capsid.web;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.AntPathMatcher;
@@ -30,12 +33,13 @@ import enterovirus.protease.source.GitSource;
 @Controller
 public class GitNavigationController {	
 	
-	@Autowired private BlobGitDAO blobGitDAO;
+	@Autowired private MemberRepository memberRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private RepositoryGitDAO repositoryGitDAO;
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private CommitGitDAO commitGitDAO;
 	@Autowired private DocumentRepository documentRepository;
+	@Autowired private BlobGitDAO blobGitDAO;
 	@Autowired private GitSource gitSource;
 	@Autowired private WebSource webSource;
 	
@@ -112,35 +116,37 @@ public class GitNavigationController {
 	/*************************************************************************/
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}", method=RequestMethod.GET)
-	public String showFolderStructureByCommit (
+	public String showCommitByCommit (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable CommitSha commitSha,
 			HttpServletRequest request,
+			Authentication authentication,
 			Model model) throws Exception {
 		
 		model.addAttribute("shaChecksumHash", commitSha.getShaChecksumHash());
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndCommitSha(repositoryId, commitSha);
-		return showFolderStructure(commit, request, model);
+		return showCommit(commit, request, authentication, model);
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
-	public String showFolderStructureByBranch (
+	public String showCommitByBranch (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
+			Authentication authentication,
 			Model model) throws Exception {
 		
 		model.addAttribute("branch", branchName.getName());
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
-		return showFolderStructure(commit, request, model);
+		return showCommit(commit, request, authentication, model);
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
-	public String showFolderStructureDefault (
+	public String showCommitDefault (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
@@ -166,9 +172,10 @@ public class GitNavigationController {
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName.getName();
 	}
 	
-	private String showFolderStructure (
+	private String showCommit (
 			CommitBean commit, 
 			HttpServletRequest request, 
+			Authentication authentication,
 			Model model) throws Exception {
 
 		model.addAttribute("rootUrl", webSource.getDomainName());
@@ -177,11 +184,20 @@ public class GitNavigationController {
 		model.addAttribute("currentUrl", currentUrl);
 		
 		RepositoryBean repository = commit.getRepository();
+		OrganizationBean organization = repository.getOrganization();
 		Hibernate.initialize(repository.getRepositoryMemberMaps());
 		repositoryGitDAO.loadBranchNames(repository);
 		
-		model.addAttribute("organization", repository.getOrganization());
+		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
+		
+		/*
+		 * This is for show the links of various settings (if applicable).
+		 */
+		MemberBean self = memberRepository.findByUsername(authentication.getName());
+		if (organization.isManagedBy(self.getId())) {
+			model.addAttribute("isManager", true);
+		}
 		
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 		

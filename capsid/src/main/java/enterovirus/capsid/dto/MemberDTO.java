@@ -29,6 +29,7 @@ public class MemberDTO {
 	@Size(min=2, max=16)
 	private String password;
 
+	@NotNull
 	private String displayName;
 	
 	/*

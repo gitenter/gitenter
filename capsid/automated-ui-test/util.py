@@ -4,6 +4,7 @@ from datetime import datetime
 from lxml import html
 import requests
 from bs4 import BeautifulSoup
+from random import randint
 
 # TODO:
 # For a lot of pages with form validation involved, failed commands actually
@@ -142,6 +143,7 @@ def create_repository (root, client, org_id, repo_name, include_setup_files):
     data = {
         "name" : repo_name,
         "displayName" : repo_name.upper(),
+		"description" : " ".join("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".split(" ")[:randint(0,30)]),
         "include_setup_files" : include_setup_files,
         "_csrf" : get_csrf(client, url)
         }

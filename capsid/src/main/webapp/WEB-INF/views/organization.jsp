@@ -12,19 +12,12 @@
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
           <sf:form method="GET" action="${create_repo_url}">
-            <input class="delete" type="submit" value="+" />
+            <input type="submit" value="+" />
           </sf:form>
         </h3>
         <c:forEach var="repository" items="${organization.repositories}">
-          <h5>
-            <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
-            <c:if test="${isManager == true}">
-              <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
-              <sf:form method="GET" action="${collaborators_url}">
-                <input class="delete" type="submit" value="Collaborators" />
-              </sf:form>
-            </c:if>
-          </h5>
+          <h5><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a></h5>
+          <p>${repository.description}</p>
         </c:forEach>
       </div>
       <div class="right-narrow">
@@ -33,7 +26,7 @@
           <c:if test="${isManager == true}">
             <s:url var="manager_url" value="/organizations/${organization.id}/managers" />
             <sf:form method="GET" action="${manager_url}">
-              <input class="delete" type="submit" value="Settings" />
+              <input type="submit" value="Settings" />
             </sf:form>
           </c:if>
         </h3>

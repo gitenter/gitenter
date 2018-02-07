@@ -3,7 +3,15 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
 
       <div>
-        <h3>Collaboration</h3>
+        <h3>
+          Collaboration
+          <c:if test="${isManager == true}">
+            <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
+            <sf:form method="GET" action="${collaborators_url}">
+              <input type="submit" value="Settings" />
+            </sf:form>
+          </c:if>
+        </h3>
         <table class="hidden">
           <tr>
             <c:forEach var="role" items="${repositoryMemberRoleValues}">

@@ -4,7 +4,7 @@
  * General replacement 
  * ************************************************************************* */
 
-body, img, form, table, tr, td, div, p, a {
+body, img, form, table, tr, td, div, a {
 
 	border: 0px;
 	margin: 0px;
@@ -21,15 +21,21 @@ table {
 
 h1, h2, h3, h4, h5, h6 {
 	border: 0px;
-	margin: 0px 0px 10px 0px;
+	margin: 10px 0px 5px 0px;
 	padding: 0px;
 }
 
-h1 { font-size: 40px; }
-h2 { font-size: 36px; }
-h3 { font-size: 32px; }
-h4 { font-size: 28px; }
-h5 { font-size: 24px; }
+p {
+	border: 0px;
+	margin: 0px 0px 5px 0px;
+	padding: 0px;	
+}
+
+h1 { font-size: 30px; }
+h2 { font-size: 28px; }
+h3 { font-size: 26px; }
+h4 { font-size: 24px; }
+h5 { font-size: 22px; }
 h6 { font-size: 20px; }
 
 img.center {
@@ -320,10 +326,14 @@ footer {
 article table.fill-in {
 
 	/*
+	 * Match with the margin of headings.
+	 */
+	margin: 10px 0px 5px 0px;
+
+	/*
 	 * I want to put this table to the center. But it seems 
 	 * doesn't work? 
 	 */
-	margin: 0px auto;
 	float: center;
 }
 

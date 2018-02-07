@@ -37,6 +37,7 @@ public class OrganizationBean {
 	@Column(name="name")
 	private String name;
 
+	@NotNull
 	@Column(name="display_name")
 	private String displayName;
 
