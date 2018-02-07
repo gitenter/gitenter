@@ -34,6 +34,11 @@ public class DesignDocumentHtmlGeneratorTest {
 		showHtml(document);
 	}
 	
+	@Test
+	public void test2() {
+		
+	}
+	
 	private void showHtml (DocumentBean document) {
 		
 		DesignDocumentHtmlGenerator parser = new DesignDocumentHtmlGenerator(document);

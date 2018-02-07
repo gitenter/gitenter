@@ -1,6 +1,5 @@
 package enterovirus.enzymark.htmlgenerator;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
