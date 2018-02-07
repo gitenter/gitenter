@@ -60,7 +60,7 @@ public class MemberBean {
 	private String displayName;
 	
 	/*
-	 * Will @Email annotation, this column is not nullable.
+	 * With @Email annotation, this column is not nullable.
 	 */
 	@Email
 	@Column(name="email")
