@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
-import enterovirus.capsid.web.validation.SshKeyFieldBean;
+import enterovirus.capsid.dto.*;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -134,12 +134,12 @@ public class SettingsController {
 		Hibernate.initialize(member.getSshKeys());
 		model.addAttribute("member", member);
 		
-		model.addAttribute("sshKeyFieldBean", new SshKeyFieldBean());
+		model.addAttribute("sshKeyFieldBean", new SshKeyFieldDTO());
 		return "settings/ssh";
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.POST)
-	public String processAddASshKey (@Valid SshKeyFieldBean returnValue, Errors errors, 
+	public String processAddASshKey (@Valid SshKeyFieldDTO returnValue, Errors errors, 
 			Model model, Authentication authentication) throws Exception {
 		
 		MemberBean member = memberRepository.findByUsername(authentication.getName());

@@ -9,7 +9,7 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="memberBean" >
+      <sf:form method="POST" commandName="memberDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>

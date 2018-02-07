@@ -20,16 +20,18 @@ import enterovirus.protease.domain.MemberBean;
 
 @Service
 @Transactional
-public class MemberServiceImpl {
+public class MemberServiceImpl implements MemberService {
 
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private PasswordEncoder passwordEncoder;
 	
-	public MemberBean registerNewUserAccount(MemberDTO memberDTO) {// throws EmailExistsException {
-//		if (emailExist(memberDTO.getEmail())) {
-//			throw new EmailExistsException(
-//			  "There is an account with that email adress:" + memberDTO.getEmail());
-//		}
+	public MemberBean registerNewMember(MemberDTO memberDTO) {
+		
+		/*
+		 * TODO:
+		 * Check if the email address has already been used throughout 
+		 * the system.
+		 */
 		
 		MemberBean member = new MemberBean();
 		
@@ -37,7 +39,12 @@ public class MemberServiceImpl {
 		member.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
 		member.setDisplayName(memberDTO.getDisplayName());
 		member.setEmail(memberDTO.getEmail());
-
+		
 		return memberRepository.saveAndFlush(member);
+		
+		/*
+		 * TODO:
+		 * Send confirmation email, ...
+		 */
 	}
 }

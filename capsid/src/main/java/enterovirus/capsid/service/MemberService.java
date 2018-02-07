@@ -5,5 +5,5 @@ import enterovirus.protease.domain.MemberBean;
 
 public interface MemberService {
 
-	public MemberBean registerNewUserAccount(MemberDTO memberDTO); //throws EmailExistsException;
+	public MemberBean registerNewMember(MemberDTO memberDTO); //throws EmailExistsException;
 }

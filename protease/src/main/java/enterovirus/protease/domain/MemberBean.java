@@ -13,9 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.Email;
 import lombok.*;
 
 @Getter
@@ -43,26 +40,15 @@ public class MemberBean {
 	@Column(name="id", updatable=false)
 	private Integer id;
 
-	@NotNull
-	@Size(min=2, max=16)
 	@Column(name="username")
 	private String username;
 	
-	/*
-	 * Here cannot go with @JsonIgnore since the password need to be saved.
-	 */
-	@NotNull
-	@Size(min=2, max=16)
 	@Column(name="password")
 	private String password;
 
 	@Column(name="display_name")
 	private String displayName;
 	
-	/*
-	 * With @Email annotation, this column is not nullable.
-	 */
-	@Email
 	@Column(name="email")
 	private String email;
 	
