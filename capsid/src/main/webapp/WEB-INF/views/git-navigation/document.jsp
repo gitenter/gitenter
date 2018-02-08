@@ -32,7 +32,7 @@
           </tr>
         </table>
       </div>
-      <div>
+      <div class="markdown">
         ${content}
       </div>
     </article>
