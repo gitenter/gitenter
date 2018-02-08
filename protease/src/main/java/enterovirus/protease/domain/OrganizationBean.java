@@ -52,6 +52,10 @@ public class OrganizationBean {
 			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
 	private List<MemberBean> managers;
 	
+	/*
+	 * TODO:
+	 * Consider to have a JOIN query to get that.
+	 */
 	public boolean isManagedBy (Integer memberId) {
 		for (MemberBean manager : managers) {
 			if (manager.getId().equals(memberId)) {

@@ -28,16 +28,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			/* All the listed packages below needs user authorization. */
+			/* 
+			 * All the listed packages below needs user authorization.
+			 * 
+			 * Order: 
+			 * Configure the most specific request path patterns 
+			 * first and the least specific ones last.
+			 * 
+			 * Refer to the following link for pattern-related access control:
+			 * https://docs.spring.io/spring-security/site/docs/current/reference/html/el-access.html#el-access-web-path-variables
+			 */
 			.authorizeRequests()
 				.antMatchers("/").authenticated()
-				.antMatchers("/preference/**").authenticated()
 				.antMatchers("/settings/**").authenticated()
 				/*
 				 * TODO:
 				 * Need authorization that only people in that organization
 				 * can access the related materials.
 				 */
+				.antMatchers("/organizations/create").authenticated()
+				.antMatchers("/organizations/{organizationId}/managers").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 				.antMatchers("/organizations/**").authenticated()
 				.anyRequest().permitAll()
 			/* 
