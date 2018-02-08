@@ -1,34 +1,27 @@
 package enterovirus.capsid.config;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired private DataSource dataSource;
+	@Autowired UserDetailsService userDetailsService;
 	
-	/*
-	 * TODO:
-	 * It is kind of ugly/non-uniform here that the login query 
-	 * is not gone from the persistent layer.
-	 * Find a better way to do it.
-	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.jdbcAuthentication().dataSource(dataSource)
-			.usersByUsernameQuery("SELECT username, password, true FROM config.member WHERE username=?")
-			.authoritiesByUsernameQuery("SELECT username, 'ROLE_USER' FROM config.member where username=?")
+		auth
+			.userDetailsService(userDetailsService)
 			.passwordEncoder(encoder());
 	}
 	
