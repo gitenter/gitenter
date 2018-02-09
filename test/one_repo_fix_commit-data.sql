@@ -10,12 +10,12 @@ INSERT INTO config.organization_manager_map VALUES
 	(1, 1);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo', 'REPO');
+	(1, 1, 'repo', 'REPO', NULL, TRUE);
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES
-	(1, 1, 'f54e8808a2c4ed677b77576481f03ca026b955ee'),
-	(2, 1, 'f3701f5d13711905db635cfed71fc97e4086b5eb');
+	(1, 1, '9ddd25b0a5737818afd391eb97fd643548779280'),
+	(2, 1, '34b0a90cb2e3865122af81c9b6a94226d7335699');
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
 INSERT INTO git.git_commit_valid VALUES

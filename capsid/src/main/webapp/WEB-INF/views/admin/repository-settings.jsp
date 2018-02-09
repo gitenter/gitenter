@@ -34,6 +34,14 @@
               <sf:errors class="error" path="description" />
             </td>
           </tr>
+          <tr>
+            <td>Privacy</td>
+            <td class="word">
+              <sf:radiobutton path="isPublic" value="true" label="Public" />
+              <sf:radiobutton path="isPublic" value="false" label="Private" />
+              <sf:errors class="error" path="isPublic" />
+            </td>
+          </tr>
           <c:if test="${successfulMessage != null}">
           <tr>
             <td></td>

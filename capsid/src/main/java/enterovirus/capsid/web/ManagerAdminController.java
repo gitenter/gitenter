@@ -243,6 +243,7 @@ public class ManagerAdminController {
 		
 		repository.setDisplayName(repositoryAfterChange.getDisplayName());
 		repository.setDescription(repositoryAfterChange.getDescription());
+		repository.setIsPublic(repositoryAfterChange.getIsPublic());
 		repositoryRepository.saveAndFlush(repository);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");

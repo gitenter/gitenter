@@ -18,9 +18,9 @@ INSERT INTO config.organization_manager_map VALUES
 	(3, 3);
 
 INSERT INTO config.repository VALUES
-	(1, 1, 'repo1', 'REPO1'),
-	(2, 1, 'repo2', 'REPO2'),
-	(3, 2, 'repo1', 'REPO1');
+	(1, 1, 'repo1', 'REPO1', NULL, TRUE),
+	(2, 1, 'repo2', 'REPO2', NULL, TRUE),
+	(3, 2, 'repo1', 'REPO1', NULL, TRUE);
 ALTER SEQUENCE config.repository_id_seq RESTART WITH 4;
 
 INSERT INTO config.repository_member_map VALUES

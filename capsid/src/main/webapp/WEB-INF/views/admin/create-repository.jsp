@@ -32,10 +32,18 @@
             </td>
           </tr>
           <tr>
-            <td>Include setup files?</td>
+            <td>Privacy</td>
             <td class="word">
-              <input type="radio" name="include_setup_files" value="true" checked> Yes
-              <input type="radio" name="include_setup_files" value="false"> No
+              <sf:radiobutton path="isPublic" value="true" label="Public" checked="checked" />
+              <sf:radiobutton path="isPublic" value="false" label="Private" />
+              <sf:errors class="error" path="isPublic" />
+            </td>
+          </tr>
+          <tr>
+            <td>Initialization with setup files?</td>
+            <td class="word">
+              <input type="radio" name="include_setup_files" id="include_setup_files_yes" value="true" checked /><label for="include_setup_files_yes">Yes</label>
+              <input type="radio" name="include_setup_files" id="include_setup_files_no" value="false" /><label for="include_setup_files_no">No</label>
             </td>
           </tr>
           <tr>

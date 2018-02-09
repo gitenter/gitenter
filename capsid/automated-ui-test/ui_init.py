@@ -78,12 +78,12 @@ REPOSITORY
 
 # Create repository:
 # User1 and user2 are managers of org1
-create_repository(root, user1_session, 1, 'repo1', "true", 200)
-create_repository(root, user2_session, 1, 'repo2', "false", 200)
+create_repository(root, user1_session, 1, 'repo1', "true", "true", 200)
+create_repository(root, user2_session, 1, 'repo2', "false", "false", 200)
 # User3 and user4 are managers of org2
-create_repository(root, user3_session, 2, 'repo1', "true", 200)
-create_repository(root, user3_session, 2, 'repo2', "true", 200)
-create_repository(root, user4_session, 2, 'repo3', "false", 200)
+create_repository(root, user3_session, 2, 'repo1', "true", "false", 200)
+create_repository(root, user3_session, 2, 'repo2', "true", "false", 200)
+create_repository(root, user4_session, 2, 'repo3', "true", "false", 200)
 
 # Since only user1 and user2 are managers of org1, user3 and
 # user4 should not have authorization to set collaborators.

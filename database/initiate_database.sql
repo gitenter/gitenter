@@ -52,7 +52,9 @@ CREATE TABLE config.repository (
 	name text NOT NULL,
 	display_name text NOT NULL,
 	description text,
-	UNIQUE (organization_id, name)
+	UNIQUE (organization_id, name),
+
+	is_public boolean NOT NULL
 );
 
 CREATE TABLE config.repository_member_map (

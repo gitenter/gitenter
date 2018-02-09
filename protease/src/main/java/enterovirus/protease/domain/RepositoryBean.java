@@ -52,6 +52,10 @@ public class RepositoryBean {
 	@Column(name="description")
 	private String description;
 	
+	@NotNull
+	@Column(name="is_public")
+	private Boolean isPublic;
+	
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 

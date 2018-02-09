@@ -159,7 +159,7 @@ def load_create_repository_page (root, client, org_id, expect_status_code):
 
 # So it need to secretly know the org_id that is
 # managed by the logged in user.
-def create_repository (root, client, org_id, repo_name, include_setup_files, expect_status_code):
+def create_repository (root, client, org_id, repo_name, is_public, include_setup_files, expect_status_code):
 
     url = root+'/organizations/'+str(org_id)+'/repositories/create'
 
@@ -167,6 +167,7 @@ def create_repository (root, client, org_id, repo_name, include_setup_files, exp
         "name" : repo_name,
         "displayName" : repo_name.upper(),
 		"description" : " ".join("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".split(" ")[:randint(0,30)]),
+        "isPublic" : is_public,
         "include_setup_files" : include_setup_files,
         "_csrf" : get_csrf(client, url)
         }
