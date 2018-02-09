@@ -11,53 +11,93 @@ root = sys.argv[1]
 CREATE USER
 '''
 
-create_user(root, 'user1')
-create_user(root, 'user2')
-create_user(root, 'user3')
-create_user(root, 'user4')
-create_user(root, 'user5')
-create_user(root, 'user6')
-create_user(root, 'user7')
-create_user(root, 'user8')
+create_user(root, 'user1', 200)
+create_user(root, 'user2', 200)
+create_user(root, 'user3', 200)
+create_user(root, 'user4', 200)
+create_user(root, 'user5', 200)
+create_user(root, 'user6', 200)
+create_user(root, 'user7', 200)
+create_user(root, 'user8', 200)
 
 '''
-CREATE ORGANIZATION & REPOSITORY
+ORGANIZATION
 '''
 
-user1_session = log_in(root, 'user1')
-user2_session = log_in(root, 'user2')
-user3_session = log_in(root, 'user3')
-user4_session = log_in(root, 'user4')
+user1_session = log_in(root, 'user1', 200)
+user2_session = log_in(root, 'user2', 200)
+user3_session = log_in(root, 'user3', 200)
+user4_session = log_in(root, 'user4', 200)
 
-# since I am using the SSH key myself (the current Linux user),
+# Since I am using the SSH key myself (the current Linux user),
 # at most one user can have this key.
-add_ssh_key(root, user1_session)
+add_ssh_key(root, user1_session, 200)
 
-create_organization(root, user1_session, 'org1')
-create_organization(root, user1_session, 'org2')
+create_organization(root, user1_session, 'org1', 200)
+create_organization(root, user1_session, 'org2', 200)
 
-add_manager(root, user1_session, 1, 'user2')
-add_manager(root, user1_session, 1, 'user3')
-add_manager(root, user1_session, 1, 'user4')
-remove_manager(root, user1_session, 1, 3)
-remove_manager(root, user1_session, 1, 4) 
-# So should only user1 and user2 left as a manager
+# Since user1 create the org1, up to now only
+# user1 is the manager of it. After the setting
+# both user1 and user2 are managers of org1
+add_manager(root, user1_session, 1, 'user2', 200)
+add_manager(root, user1_session, 1, 'user3', 200)
+add_manager(root, user1_session, 1, 'user4', 200)
+remove_manager(root, user1_session, 1, 3, 200)
+remove_manager(root, user1_session, 1, 4, 200)
 
-create_repository(root, user1_session, 1, 'repo1', "true")
-create_repository(root, user1_session, 1, 'repo2', "false")
-create_repository(root, user1_session, 2, 'repo1', "true")
-create_repository(root, user1_session, 2, 'repo2', "true")
-create_repository(root, user1_session, 2, 'repo3', "false")
+# At the beginning user1 is the manager of org1.
+# After the settings, user3 and user4 are left
+# as manager.
+add_manager(root, user1_session, 2, 'user3', 200)
+remove_manager(root, user3_session, 2, 1, 200)
+add_manager(root, user3_session, 2, 'user4', 200)
 
-add_collaborator(root, user1_session, 1, 1, 'user1', 'PROJECT_LEADER')
-add_collaborator(root, user1_session, 1, 1, 'user2', 'EDITOR')
-add_collaborator(root, user1_session, 1, 1, 'user3', 'REVIEWER')
-add_collaborator(root, user1_session, 1, 1, 'user4', 'READER')
-add_collaborator(root, user2_session, 1, 1, 'user5', 'READER')
-add_collaborator(root, user2_session, 1, 1, 'user6', 'READER')
-add_collaborator(root, user2_session, 1, 1, 'user7', 'READER')
-add_collaborator(root, user2_session, 1, 1, 'user8', 'READER')
-remove_collaborator(root, user1_session, 1, 1, 6)
-remove_collaborator(root, user1_session, 1, 1, 7)
-remove_collaborator(root, user1_session, 1, 1, 8)
+# Check that indeed user1 and user2 are manager of org1
+load_manager_setting_page(root, user1_session, 1, 200)
+load_manager_setting_page(root, user2_session, 1, 200)
+load_manager_setting_page(root, user3_session, 1, 403)
+load_manager_setting_page(root, user4_session, 1, 403)
+load_create_repository_page(root, user1_session, 1, 200)
+load_create_repository_page(root, user2_session, 1, 200)
+load_create_repository_page(root, user3_session, 1, 403)
+load_create_repository_page(root, user4_session, 1, 403)
+
+# Check that indeed user3 and user4 are manager of org2
+load_manager_setting_page(root, user1_session, 2, 403)
+load_manager_setting_page(root, user2_session, 2, 403)
+load_manager_setting_page(root, user3_session, 2, 200)
+load_manager_setting_page(root, user4_session, 2, 200)
+load_create_repository_page(root, user1_session, 2, 403)
+load_create_repository_page(root, user2_session, 2, 403)
+load_create_repository_page(root, user3_session, 2, 200)
+load_create_repository_page(root, user4_session, 2, 200)
+
+# Create repository:
+# User1 and user2 are managers of org1
+create_repository(root, user1_session, 1, 'repo1', "true", 200)
+create_repository(root, user2_session, 1, 'repo2', "false", 200)
+# User3 and user4 are managers of org2
+create_repository(root, user3_session, 2, 'repo1', "true", 200)
+create_repository(root, user3_session, 2, 'repo2', "true", 200)
+create_repository(root, user4_session, 2, 'repo3', "false", 200)
+
+# Since only user1 and user2 are managers of org1, user3 and
+# user4 should not have authorization to set collaborators.
+load_collaborator_setting_page(root, user2_session, 1, 1, 200)
+load_collaborator_setting_page(root, user2_session, 1, 2, 200)
+load_collaborator_setting_page(root, user3_session, 1, 1, 403)
+load_collaborator_setting_page(root, user4_session, 1, 2, 403)
+
+# Add and remove collaborators of repo1 by both user1 and user2
+add_collaborator(root, user1_session, 1, 1, 'user1', 'PROJECT_LEADER', 200)
+add_collaborator(root, user1_session, 1, 1, 'user2', 'EDITOR', 200)
+add_collaborator(root, user1_session, 1, 1, 'user3', 'REVIEWER', 200)
+add_collaborator(root, user1_session, 1, 1, 'user4', 'READER', 200)
+add_collaborator(root, user2_session, 1, 1, 'user5', 'READER', 200)
+add_collaborator(root, user2_session, 1, 1, 'user6', 'READER', 200)
+add_collaborator(root, user2_session, 1, 1, 'user7', 'READER', 200)
+add_collaborator(root, user2_session, 1, 1, 'user8', 'READER', 200)
+remove_collaborator(root, user1_session, 1, 1, 6, 200)
+remove_collaborator(root, user1_session, 1, 1, 7, 200)
+remove_collaborator(root, user1_session, 1, 1, 8, 200)
 # Should then user 1,2,3,4,5 left.
