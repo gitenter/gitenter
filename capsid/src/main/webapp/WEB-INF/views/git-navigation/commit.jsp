@@ -17,7 +17,13 @@
     <article>
       <jsp:include page="components/commit-menu.jsp" />
       <div class="folder-structure">
-        <h3>Browse files and folders</h3>
+        <h3>
+          Browse files and folders
+          <span class="explanation">: 
+            <c:if test="${repository.isPublic.equals(true)}">Public</c:if>
+            <c:if test="${repository.isPublic.equals(false)}">Private</c:if>
+          </span>
+        </h3>
         <ul>
           <c:forEach var="i" items="${folderStructure.childrenList()}">
             <c:set var="folderOrFile" value="${i}" scope="request"/>

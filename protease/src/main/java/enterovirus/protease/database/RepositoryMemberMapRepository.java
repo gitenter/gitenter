@@ -16,6 +16,14 @@ public interface RepositoryMemberMapRepository extends CrudRepository<Repository
 			+ "from RepositoryMemberMapBean rm "
 			+ "join rm.repository rp "
 			+ "join rm.member mb "
+			+ "where mb.username = :username and rp.id = :repositoryId")
+	public List<RepositoryMemberMapBean> findByUsernameAndRepositoryId (
+			@Param("username") String username,  
+			@Param("repositoryId") Integer repositoryId);
+	@Query("select rm "
+			+ "from RepositoryMemberMapBean rm "
+			+ "join rm.repository rp "
+			+ "join rm.member mb "
 			+ "join rp.organization og "
 			+ "where mb.username = :username and rp.name = :repositoryName and og.name = :organizationName")
 	public List<RepositoryMemberMapBean> findByUsernameAndOrganizationNameAndRepositoryName (

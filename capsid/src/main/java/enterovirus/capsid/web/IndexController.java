@@ -36,7 +36,7 @@ public class IndexController {
 		List<RepositoryMemberMapBean> repositoryMemberMaps = member.getRepositoryMemberMaps();
 		model.addAttribute("repositoryMemberMaps", repositoryMemberMaps);
 
-		return "main";
+		return "index/main";
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}", method=RequestMethod.GET)
@@ -54,6 +54,6 @@ public class IndexController {
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		model.addAttribute("organization", organization);
 		
-		return "organization";
+		return "index/organization";
 	}
 }

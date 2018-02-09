@@ -21,10 +21,18 @@
         <c:forEach var="repository" items="${organization.repositories}">
           <h5>
             <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
+            <span class="explanation">: 
+              <c:if test="${repository.isPublic.equals(true)}">Public</c:if>
+              <c:if test="${repository.isPublic.equals(false)}">Private</c:if>
+            </span>
             <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
               <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
               <sf:form method="GET" action="${repo_settings_url}">
                 <input type="submit" value="Settings" />
+              </sf:form>
+              <s:url var="repo_collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
+              <sf:form method="GET" action="${repo_collaborators_url}">
+                <input type="submit" value="Collaborators" />
               </sf:form>
           	</security:authorize>
           </h5>

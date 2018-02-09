@@ -53,6 +53,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/settings").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/collaborators/**").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 				/*
+				 * URL pattern of "GitNavigationController"
+				 * 
+				 * NOTE:
+				 * For users who's just the manager of an organization (but not 
+				 * any kind of collaborator of the corresponding repository),
+				 * s/he can still access the repository settings/collaborators
+				 * pages (as they are set above).
+				 */
+				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/**").access("@securityService.checkRepositoryReadability(authentication,#repositoryId)")
+				/*
 				 * TODO:
 				 * Need authorization that only people in that organization
 				 * can access the related materials.

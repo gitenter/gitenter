@@ -34,11 +34,11 @@
     <put-attribute name="body" value="/WEB-INF/views/settings/ssh.jsp" />
   </definition>
 
-  <definition name="main" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/main.jsp" />
+  <definition name="index/main" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/index/main.jsp" />
   </definition>
-  <definition name="organization" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/organization.jsp" />
+  <definition name="index/organization" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/index/organization.jsp" />
   </definition>
 
   <definition name="git-navigation/setup-a-new-repository" extends="auth-base">

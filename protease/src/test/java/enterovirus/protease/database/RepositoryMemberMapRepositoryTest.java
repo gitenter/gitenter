@@ -21,14 +21,22 @@ public class RepositoryMemberMapRepositoryTest {
 	@Autowired RepositoryMemberMapRepository repository;
 	
 	@Test
-	public void test() throws IOException {
+	public void test1() throws IOException {
+		
+		List<RepositoryMemberMapBean> maps = repository.findByUsernameAndRepositoryId("user1", 1);
+
+		for (RepositoryMemberMapBean map : maps) {
+			System.out.println(map.getRole());
+		}
+	}
+	
+	@Test
+	public void test2() throws IOException {
 		
 		List<RepositoryMemberMapBean> maps = repository.findByUsernameAndOrganizationNameAndRepositoryName("user1", "org1", "repo1");
 
 		for (RepositoryMemberMapBean map : maps) {
 			System.out.println(map.getRole());
 		}
-		
-//		repository.deleteById(2);
 	}
 }

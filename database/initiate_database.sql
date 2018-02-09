@@ -62,6 +62,9 @@ CREATE TABLE config.repository_member_map (
 
 	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
 	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
+	/*
+	 * With this constrain, a user can at most have one role.
+	 */
 	UNIQUE (repository_id, member_id),
 
 	/*

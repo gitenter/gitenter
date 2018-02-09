@@ -176,6 +176,14 @@ def create_repository (root, client, org_id, repo_name, is_public, include_setup
     if (r.status_code != expect_status_code):
         print("create repository "+repo_name+" for organization "+str(org_id)+" return code "+str(r.status_code))
 
+def load_repository_page (root, client, org_id, repo_id, expect_status_code):
+
+    url = root+'/organizations/'+str(org_id)+'/repositories/'+str(repo_id)
+    r = client.get(url)
+
+    if (r.status_code != expect_status_code):
+        print("load repository page for organization "+str(org_id)+" repo "+str(repo_id)+" return code "+str(r.status_code))
+
 '''
 COLLABORATOR
 '''
