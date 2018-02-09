@@ -40,17 +40,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			 */
 			.authorizeRequests()
 				.antMatchers("/").authenticated()
+				/*
+				 * URL patterns in "SettingsController".
+				 */
 				.antMatchers("/settings/**").authenticated()
 				/*
-				 * TODO:
-				 * Need authorization that only people in that organization
-				 * can access the related materials.
+				 * URL patterns in "ManagerAdminController".
 				 */
 				.antMatchers("/organizations/create").authenticated()
 				.antMatchers("/organizations/{organizationId}/managers/**").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 				.antMatchers("/organizations/{organizationId}/repositories/create").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/settings").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/collaborators/**").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
+				/*
+				 * TODO:
+				 * Need authorization that only people in that organization
+				 * can access the related materials.
+				 */
 				.antMatchers("/organizations/**").authenticated()
 				.anyRequest().permitAll()
 			/* 

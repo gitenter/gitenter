@@ -30,10 +30,15 @@ public class AuthorizationController {
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
-	public String processRegistration (@Valid MemberDTO member, Errors errors, Model model) {
+	public String processRegistration (
+			@Valid MemberDTO member, 
+			Errors errors, 
+			Model model) {
 		
 		if (errors.hasErrors()) {
-			/* So <sf:> will render the values in object "member" to the form. */
+			/* 
+			 * So <sf:> will render the values in object "member" to the form.
+			 */
 			model.addAttribute("memberDTO", member); 
 			return "authorization/register";
 		}

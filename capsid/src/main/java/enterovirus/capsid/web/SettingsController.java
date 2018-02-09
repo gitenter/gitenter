@@ -99,9 +99,18 @@ public class SettingsController {
 	
 	@RequestMapping(value="/account", method=RequestMethod.POST)
 	public String processUpdateAccount (
-			@Valid MemberBean memberAfterChange, Errors errors, 
+			/*
+			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
+			 * attributes, otherwise Spring will directly give 400 error with
+			 * message:
+			 * > Validation failed for object='XXX'. Error count: XXX
+			 * rather than write that information into the "Error" class.
+			 */
+			@Valid MemberBean memberAfterChange, 
+			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
-			RedirectAttributes model, Authentication authentication) throws Exception {
+			RedirectAttributes model, 
+			Authentication authentication) throws Exception {
 		
 		int expectErrorCount = 0;
 		expectErrorCount += errors.getFieldErrorCount("displayName");

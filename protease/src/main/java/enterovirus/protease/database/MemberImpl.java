@@ -14,6 +14,20 @@ public class MemberImpl implements MemberRepository {
 
 	@Autowired private MemberDatabaseRepository memberDbRepository;
 	
+	/*
+	 * TODO:
+	 * Consider throw other exception better than "IOException".
+	 * 
+	 * (1) Maybe something in "org.springframework.beans" such as
+	 * "BeanCreationException" or "NoSuchBeanDefinitionException".
+	 * But those exceptions seems not design for that.
+	 * 
+	 * (2) Or to define own classes such as "MemberNotFoundException".
+	 * However, the way to use it is together with "@ResponseStatus(value=HttpStatus.NOT_FOUND)",
+	 * but "@ResponseStatus" is a Spring Web annotation, and here is
+	 * just about the persistent layer, so it is weird to have it
+	 * define in here.
+	 */
 	public MemberBean findById(Integer id) throws IOException {
 		
 		Optional<MemberBean> members = memberDbRepository.findById(id);

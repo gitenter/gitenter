@@ -27,7 +27,7 @@ import enterovirus.gitar.*;
 import enterovirus.gitar.wrap.*;
 
 @Controller
-public class ManagerAdministrationController {
+public class ManagerAdminController {
 
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private OrganizationRepository organizationRepository;
@@ -152,9 +152,16 @@ public class ManagerAdministrationController {
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.POST)
 	public String processCreationOfRepository (
 			@PathVariable Integer organizationId,
+			/*
+			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
+			 * attributes, otherwise Spring will directly give 400 error with
+			 * message:
+			 * > Validation failed for object='XXX'. Error count: XXX
+			 * rather than write that information into the "Error" class.
+			 */
 			@Valid RepositoryBean repository, 
-			@RequestParam(value="include_setup_files") Boolean includeSetupFiles,
 			Errors errors, 
+			@RequestParam(value="include_setup_files") Boolean includeSetupFiles,
 			Model model) throws Exception {
 
 		OrganizationBean organization = organizationRepository.findById(organizationId);
