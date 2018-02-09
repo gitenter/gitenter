@@ -8,7 +8,7 @@ import sys
 root = sys.argv[1]
 
 '''
-CREATE USER
+USER
 '''
 
 create_user(root, 'user1', 200)
@@ -71,6 +71,10 @@ load_create_repository_page(root, user1_session, 2, 403)
 load_create_repository_page(root, user2_session, 2, 403)
 load_create_repository_page(root, user3_session, 2, 200)
 load_create_repository_page(root, user4_session, 2, 200)
+
+'''
+REPOSITORY
+'''
 
 # Create repository:
 # User1 and user2 are managers of org1

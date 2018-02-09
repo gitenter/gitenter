@@ -27,7 +27,7 @@ import enterovirus.gitar.*;
 import enterovirus.gitar.wrap.*;
 
 @Controller
-public class AdminController {
+public class ManagerAdministrationController {
 
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private OrganizationRepository organizationRepository;
@@ -40,43 +40,6 @@ public class AdminController {
 	 * rather than from gitSource?
 	 */
 	@Autowired private GitSource gitSource;
-	
-	@RequestMapping("/")
-	public String main(Model model, Authentication authentication) throws Exception {
-		
-		/*
-		 * The organizations the member acts as a manager.
-		 */
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
-		List<OrganizationBean> organizations = member.getOrganizations();
-		model.addAttribute("organizations", organizations);
-		
-		/*
-		 * Repositories the member has involved in.
-		 */
-		List<RepositoryMemberMapBean> repositoryMemberMaps = member.getRepositoryMemberMaps();
-		model.addAttribute("repositoryMemberMaps", repositoryMemberMaps);
-
-		return "main";
-	}
-	
-	@RequestMapping(value="/organizations/{organizationId}", method=RequestMethod.GET)
-	public String showOrganization (
-			@PathVariable Integer organizationId,
-			Authentication authentication,
-			Model model) throws IOException {
-	
-		/*
-		 * TODO:
-		 * For private contents, only users who belong to that
-		 * organization can see the materials.
-		 */
-		
-		OrganizationBean organization = organizationRepository.findById(organizationId);
-		model.addAttribute("organization", organization);
-		
-		return "organization";
-	}
 	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
 	public String createOrganization (Model model) {
@@ -106,66 +69,6 @@ public class AdminController {
 		
 		organizationRepository.saveAndFlush(organization);
 		return "redirect:/";
-	}
-	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
-	public String createRepository (
-			@PathVariable Integer organizationId,
-			Model model) throws Exception {
-
-		OrganizationBean organization = organizationRepository.findById(organizationId);
-		model.addAttribute("organization", organization);
-		
-		model.addAttribute("repositoryBean", new RepositoryBean());
-		
-		return "admin/create-repository";
-	}
-	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.POST)
-	public String processCreationOfRepository (
-			@PathVariable Integer organizationId,
-			@Valid RepositoryBean repository, 
-			@RequestParam(value="include_setup_files") Boolean includeSetupFiles,
-			Errors errors, 
-			Model model) throws Exception {
-
-		OrganizationBean organization = organizationRepository.findById(organizationId);
-		
-		if (errors.hasErrors()) {
-			model.addAttribute("repositoryBean", repository); 
-			model.addAttribute("organization", organization);
-			return "admin/create-repository";
-		}
-		
-		repository.setOrganization(organization);
-		
-		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
-		
-		/*
-		 * Here makes a bare repository with one commit (include the
-		 * configuration file) in it.
-		 */
-		if (includeSetupFiles.equals(Boolean.TRUE)) {
-			
-			File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
-			
-			ClassLoader classLoader = getClass().getClassLoader();
-			File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
-			File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
-	
-			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
-			
-			/*
-			 * Dirty but this part can only be done in here. See comments under GitRepository.
-			 */
-			GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);
-			CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
-			CommitBean commit = new CommitValidBean(repository, commitSha);
-			repository.addCommit(commit);
-		}
-		
-		repositoryRepository.saveAndFlush(repository);
-		return "redirect:/organizations/"+organizationId;
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/managers", method=RequestMethod.GET)
@@ -231,6 +134,66 @@ public class AdminController {
 		organizationRepository.saveAndFlush(organization);
 		
 		return "redirect:/organizations/"+organizationId+"/managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
+	public String createRepository (
+			@PathVariable Integer organizationId,
+			Model model) throws Exception {
+
+		OrganizationBean organization = organizationRepository.findById(organizationId);
+		model.addAttribute("organization", organization);
+		
+		model.addAttribute("repositoryBean", new RepositoryBean());
+		
+		return "admin/create-repository";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.POST)
+	public String processCreationOfRepository (
+			@PathVariable Integer organizationId,
+			@Valid RepositoryBean repository, 
+			@RequestParam(value="include_setup_files") Boolean includeSetupFiles,
+			Errors errors, 
+			Model model) throws Exception {
+
+		OrganizationBean organization = organizationRepository.findById(organizationId);
+		
+		if (errors.hasErrors()) {
+			model.addAttribute("repositoryBean", repository); 
+			model.addAttribute("organization", organization);
+			return "admin/create-repository";
+		}
+		
+		repository.setOrganization(organization);
+		
+		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
+		
+		/*
+		 * Here makes a bare repository with one commit (include the
+		 * configuration file) in it.
+		 */
+		if (includeSetupFiles.equals(Boolean.TRUE)) {
+			
+			File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
+			
+			ClassLoader classLoader = getClass().getClassLoader();
+			File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+			File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
+	
+			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
+			
+			/*
+			 * Dirty but this part can only be done in here. See comments under GitRepository.
+			 */
+			GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);
+			CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
+			CommitBean commit = new CommitValidBean(repository, commitSha);
+			repository.addCommit(commit);
+		}
+		
+		repositoryRepository.saveAndFlush(repository);
+		return "redirect:/organizations/"+organizationId;
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.GET)
