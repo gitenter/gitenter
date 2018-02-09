@@ -17,6 +17,28 @@ public class SecurityService {
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private OrganizationRepository organizationRepository;
 
+	/*
+	 * TODO:
+	 * Is there are way to do this one using Spring Security JSP
+	 * forms such as 
+	 * <security:authentication property="principal.username" />
+	 * with JSTL "if"?
+	 */
+	@Transactional
+	public boolean checkIsMember (Authentication authentication, Integer memberId) {
+		try {
+			MemberBean member = memberRepository.findByUsername(authentication.getName());
+			
+			if (member.getId().equals(memberId)) {
+				return true;
+			}
+			return false;
+		}
+		catch (IOException e) {
+			return false;
+		}
+	}
+	
 	@Transactional
 	public boolean checkManagerOfAnOrganization (Authentication authentication, Integer organizationId) {
 		

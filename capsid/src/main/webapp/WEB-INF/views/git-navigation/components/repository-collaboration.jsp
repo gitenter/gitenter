@@ -1,16 +1,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
 
       <div>
         <h3>
           Collaboration
-          <c:if test="${isManager == true}">
+          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
             <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
             <sf:form method="GET" action="${collaborators_url}">
               <input type="submit" value="Settings" />
             </sf:form>
-          </c:if>
+          </security:authorize>
         </h3>
         <table class="hidden">
           <tr>

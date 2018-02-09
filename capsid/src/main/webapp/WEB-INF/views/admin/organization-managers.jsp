@@ -2,6 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
@@ -14,17 +15,17 @@
         <ul class="user-list">
         <c:forEach var="member" items="${organization.managers}">
           <li>
-            <c:if test="${!member.id.equals(self.id)}" >
+            <security:authorize access="!@securityService.checkIsMember(authentication,#member.id)">
               <span class="user-deletable">${member.displayName}</span>
               <s:url var="remove_manager_url" value="/organizations/${organization.id}/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
                 <input type="hidden" name="member_id" value="${member.id}" /> 
                 <input class="delete" type="submit" value="x" />
               </sf:form>
-            </c:if>
-            <c:if test="${member.id.equals(self.id)}" >
+            </security:authorize>
+            <security:authorize access="@securityService.checkIsMember(authentication,#member.id)">
               <span class="user">${member.displayName}</span>
-            </c:if>
+            </security:authorize>
           </li>
         </c:forEach>
         </ul>

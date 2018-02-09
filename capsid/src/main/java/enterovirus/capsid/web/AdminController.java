@@ -8,10 +8,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,23 +40,6 @@ public class AdminController {
 	 * rather than from gitSource?
 	 */
 	@Autowired private GitSource gitSource;
-	
-	/*
-	 * If the user is not the manager of this repository,
-	 * then this cannot be done.
-	 * 
-	 * This is generally not needed for POST requests,
-	 * as they all comes from GET request of forms with
-	 * CSRF key included.
-	 */
-	private MemberBean isManagerCheck (Authentication authentication, OrganizationBean organization) throws IOException {
-		MemberBean self = memberRepository.findByUsername(authentication.getName());
-		if (!organization.isManagedBy(self.getId())) {
-			throw new AccessDeniedException("You are not authorized as a manager of this organization.");
-		}
-		
-		return self;
-	}
 	
 	@RequestMapping("/")
 	public String main(Model model, Authentication authentication) throws Exception {
@@ -92,13 +73,6 @@ public class AdminController {
 		 */
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
-		MemberBean self = memberRepository.findByUsername(authentication.getName());
-		
-		if (organization.isManagedBy(self.getId())) {
-			model.addAttribute("isManager", true);
-		}
-		
-		Hibernate.initialize(organization.getManagers());
 		model.addAttribute("organization", organization);
 		
 		return "organization";
@@ -137,15 +111,13 @@ public class AdminController {
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
 	public String createRepository (
 			@PathVariable Integer organizationId,
-			Model model,
-			Authentication authentication) throws Exception {
+			Model model) throws Exception {
 
 		OrganizationBean organization = organizationRepository.findById(organizationId);
-		
-		isManagerCheck(authentication, organization);
-		
 		model.addAttribute("organization", organization);
+		
 		model.addAttribute("repositoryBean", new RepositoryBean());
+		
 		return "admin/create-repository";
 	}
 	
@@ -155,12 +127,9 @@ public class AdminController {
 			@Valid RepositoryBean repository, 
 			@RequestParam(value="include_setup_files") Boolean includeSetupFiles,
 			Errors errors, 
-			Model model,
-			Authentication authentication) throws GitAPIException, IOException {
+			Model model) throws Exception {
 
 		OrganizationBean organization = organizationRepository.findById(organizationId);
-		
-		isManagerCheck(authentication, organization);
 		
 		if (errors.hasErrors()) {
 			model.addAttribute("repositoryBean", repository); 
@@ -202,23 +171,10 @@ public class AdminController {
 	@RequestMapping(value="/organizations/{organizationId}/managers", method=RequestMethod.GET)
 	public String manageOrganizationManagers (
 			@PathVariable Integer organizationId,
-			Model model,
-			Authentication authentication) throws IOException {
+			Model model) throws IOException {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		Hibernate.initialize(organization.getManagers());
-		
-		/*
-		 * Only need to be in here. No need for the corresponding POST
-		 * requests, as CSRF key is included.
-		 */
-		MemberBean self = isManagerCheck(authentication, organization);
-		
-		/*
-		 * This "self" is used to check if the user want to remove himself/herself
-		 * as a manager. If yes, then the remove link will not be shown.
-		 */
-		model.addAttribute("self", self);
 		model.addAttribute("organization", organization);
 		
 		return "admin/organization-managers";
@@ -227,8 +183,7 @@ public class AdminController {
 	@RequestMapping(value="/organizations/{organizationId}/managers/add", method=RequestMethod.POST)
 	public String addAOrganizationManager (
 			@PathVariable Integer organizationId,
-			@RequestParam(value="username") String username,
-			Authentication authentication) throws Exception {
+			@RequestParam(value="username") String username) throws Exception {
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId);
 		Hibernate.initialize(organization.getManagers());
@@ -282,17 +237,10 @@ public class AdminController {
 	public String showRepositorySettings (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			Model model,
-			Authentication authentication) throws Exception {
+			Model model) throws Exception {
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
 		OrganizationBean organization = repository.getOrganization();
-		
-		/*
-		 * Only need to be in here. No need for the corresponding POST
-		 * requests, as CSRF key is included.
-		 */
-		isManagerCheck(authentication, organization);
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
@@ -307,8 +255,7 @@ public class AdminController {
 			@PathVariable Integer repositoryId,
 			@Valid RepositoryBean repositoryAfterChange, 
 			Errors errors, 
-			RedirectAttributes model, 
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
 		OrganizationBean organization = repository.getOrganization();
@@ -336,18 +283,11 @@ public class AdminController {
 	public String showRepositoryCollaborators (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			Model model,
-			Authentication authentication) throws Exception {
+			Model model) throws Exception {
 		
 		RepositoryBean repository = repositoryRepository.findById(repositoryId);
 		Hibernate.initialize(repository.getRepositoryMemberMaps());
 		OrganizationBean organization = repository.getOrganization();
-		
-		/*
-		 * Only need to be in here. No need for the corresponding POST
-		 * requests, as CSRF key is included.
-		 */
-		isManagerCheck(authentication, organization);
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
@@ -376,7 +316,6 @@ public class AdminController {
 		 */
 		
 		repositoryRepository.saveAndFlush(repository);
-		
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/collaborators";
 	}
 	
@@ -390,8 +329,7 @@ public class AdminController {
 			 * Here is mapId rather than memberId. See explanation
 			 * below why that's the case.
 			 */
-			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId,
-			Authentication authentication) throws Exception {
+			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId) throws Exception {
 
 		/*
 		 * Delete the corresponding map in RepositoryBean and 

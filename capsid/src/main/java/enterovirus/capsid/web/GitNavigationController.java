@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.AntPathMatcher;
@@ -31,7 +30,6 @@ import enterovirus.protease.source.GitSource;
 @Controller
 public class GitNavigationController {	
 	
-	@Autowired private MemberRepository memberRepository;
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private RepositoryGitDAO repositoryGitDAO;
 	@Autowired private CommitRepository commitRepository;
@@ -119,13 +117,12 @@ public class GitNavigationController {
 			@PathVariable Integer repositoryId,
 			@PathVariable CommitSha commitSha,
 			HttpServletRequest request,
-			Authentication authentication,
 			Model model) throws Exception {
 		
 		model.addAttribute("shaChecksumHash", commitSha.getShaChecksumHash());
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndCommitSha(repositoryId, commitSha);
-		return showCommit(commit, request, authentication, model);
+		return showCommit(commit, request, model);
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
@@ -134,13 +131,12 @@ public class GitNavigationController {
 			@PathVariable Integer repositoryId,
 			@PathVariable BranchName branchName,
 			HttpServletRequest request,
-			Authentication authentication,
 			Model model) throws Exception {
 		
 		model.addAttribute("branch", branchName.getName());
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
-		return showCommit(commit, request, authentication, model);
+		return showCommit(commit, request, model);
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
@@ -173,7 +169,6 @@ public class GitNavigationController {
 	private String showCommit (
 			CommitBean commit, 
 			HttpServletRequest request, 
-			Authentication authentication,
 			Model model) throws Exception {
 
 		model.addAttribute("rootUrl", webSource.getDomainName());
@@ -188,14 +183,6 @@ public class GitNavigationController {
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
-		
-		/*
-		 * This is for show the links of various settings (if applicable).
-		 */
-		MemberBean self = memberRepository.findByUsername(authentication.getName());
-		if (organization.isManagedBy(self.getId())) {
-			model.addAttribute("isManager", true);
-		}
 		
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 		

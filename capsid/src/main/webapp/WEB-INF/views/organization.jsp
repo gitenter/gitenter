@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
@@ -11,19 +12,21 @@
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
-          <sf:form method="GET" action="${create_repo_url}">
-            <input type="submit" value="+" />
-          </sf:form>
+          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
+            <sf:form method="GET" action="${create_repo_url}">
+              <input type="submit" value="+" />
+            </sf:form>
+          </security:authorize>
         </h3>
         <c:forEach var="repository" items="${organization.repositories}">
           <h5>
             <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
-            <c:if test="${isManager == true}">
-            <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
-            <sf:form method="GET" action="${repo_settings_url}">
-              <input type="submit" value="Settings" />
-            </sf:form>
-          </c:if>
+            <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
+              <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
+              <sf:form method="GET" action="${repo_settings_url}">
+                <input type="submit" value="Settings" />
+              </sf:form>
+          	</security:authorize>
           </h5>
           <p>${repository.description}</p>
         </c:forEach>
@@ -31,12 +34,12 @@
       <div class="right-narrow">
         <h3>
           Managers
-          <c:if test="${isManager == true}">
+          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
             <s:url var="manager_url" value="/organizations/${organization.id}/managers" />
             <sf:form method="GET" action="${manager_url}">
               <input type="submit" value="Settings" />
             </sf:form>
-          </c:if>
+          </security:authorize>
         </h3>
         <ul class="user-list">
           <c:forEach var="member" items="${organization.managers}">
