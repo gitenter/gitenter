@@ -36,6 +36,18 @@ Need to update the git home folder in `enterovirus.capsid.config.GitConfig.java`
 
 Shell scripts in `capsid/src/main/resources/git-server-side-hooks` need to be executable. Make it works by e.g., `chmod +x update`.
 
+### Remain problem
+
+Sometimes deploy `.war` file to tomcat8 gets `java.lang.OutOfMemoryError: Java heap space` error. In `catalina.20xx-xx-xx.log`:
+
+```
+09-Feb-2018 17:01:55.253 SEVERE [localhost-startStop-22] org.apache.catalina.core.ContainerBase.addChildInternal ContainerBase.addChild: start:
+ ...
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name '...': ... Invocation of init method failed; nested exception is java.lang.OutOfMemoryError: Java heap space
+```
+
+Right now it seems `sudo /etc/init.d/tomcat8 restart` and deploy again solve the problem. But we may want to double check later what is the real cause for that.
+
 ## Testing
 
 ### Spring authorization
@@ -49,7 +61,7 @@ http://localhost:8888 is requesting your username and password. The site says: â
 If that happens, use user `user` and password printed in the console. E.g.
 
 ```
-[main] INFO org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration - 
+[main] INFO org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration -
 
 Using default security password: c543b70b-7aa5-4dcf-ab0b-eea37e792363
 ```
@@ -60,4 +72,3 @@ Using default security password: c543b70b-7aa5-4dcf-ab0b-eea37e792363
 http://localhost:8888/api/users/ann/
 http://localhost:8888/api/organizations/gov
 ```
-

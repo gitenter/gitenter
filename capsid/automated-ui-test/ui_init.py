@@ -105,15 +105,15 @@ add_collaborator(root, user2_session, 1, 1, 'user5', 'PROJECT_LEADER', 200)
 add_collaborator(root, user2_session, 1, 1, 'user6', 'EDITOR', 200)
 add_collaborator(root, user2_session, 1, 1, 'user7', 'REVIEWER', 200)
 add_collaborator(root, user2_session, 1, 1, 'user8', 'READER', 200)
-remove_collaborator(root, user1_session, 1, 1, 1, 200)
 remove_collaborator(root, user1_session, 1, 1, 2, 200)
-# Should then user 3,4,5,6,7,8 left.
+remove_collaborator(root, user1_session, 1, 1, 3, 200)
+# Should then user 1,4,5,6,7,8 left.
 
-# Check that user 1,2 cannot access repo1, while 
-# user 3,4 can.
-load_repository_page(root, user1_session, 1, 1, 403)
+# Check that user 2,3 cannot access repo1, while 
+# user 1,4 can.
+load_repository_page(root, user1_session, 1, 1, 200)
 load_repository_page(root, user2_session, 1, 1, 403)
-load_repository_page(root, user3_session, 1, 1, 200)
+load_repository_page(root, user3_session, 1, 1, 403)
 load_repository_page(root, user4_session, 1, 1, 200)
 
 # Since repo2 is public, everybody (although no collaborator
