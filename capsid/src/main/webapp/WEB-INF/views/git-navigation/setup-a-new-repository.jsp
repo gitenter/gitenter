@@ -35,4 +35,10 @@ include_paths = doc</code></pre>
         <pre><code>git remote add origin git@${rootUrl}:${organization.name}/${repository.name}
 git push origin master</code></pre>
       </div>
+      <%--
+        TODO:
+        Since this repository has not been initialized yet,
+        in the collaborator list, the clone link shouldn't appear. 
+      --%>
+      <jsp:include page="components/repository-collaboration.jsp"/>
     </article>

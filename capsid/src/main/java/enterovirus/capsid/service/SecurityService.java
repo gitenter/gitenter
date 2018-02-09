@@ -95,6 +95,17 @@ public class SecurityService {
 		return !Collections.disjoint(roles, expectRoles);
 	}
 	
+	public boolean checkRepositoryEditability (Authentication authentication, Integer repositoryId) {
+
+		Collection<RepositoryMemberRole> roles = getRepositoryRole(authentication, repositoryId);
+
+		Collection<RepositoryMemberRole> expectRoles = new HashSet<RepositoryMemberRole>();
+		expectRoles.add(RepositoryMemberRole.EDITOR);
+		expectRoles.add(RepositoryMemberRole.PROJECT_LEADER);
+
+		return !Collections.disjoint(roles, expectRoles);
+	}
+	
 	private Collection<RepositoryMemberRole> getRepositoryRole (Authentication authentication, Integer repositoryId) {
 		
 		/*

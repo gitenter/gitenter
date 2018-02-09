@@ -32,6 +32,15 @@
           </tr>
         </table>
       </div>
+      <%--
+        Unlike GitHub ... everybody who has the reading access can
+        clone an repository, in this site only people who can edit
+        can clone it. Note that git "fork" and "pull request" is not
+        what a review system want to do, people contribute by being a
+        good reviewer. 
+      --%>
+      <security:authorize access="@securityService.checkRepositoryEditability(authentication,#repository.id)">
       <div>
         <p><span class="intro">Clone with SSH</span> <code>git clone git@${rootUrl}:${organization.name}/${repository.name}</code></p>
       </div>
+      </security:authorize>

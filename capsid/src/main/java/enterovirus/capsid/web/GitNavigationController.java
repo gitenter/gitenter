@@ -159,6 +159,8 @@ public class GitNavigationController {
 			model.addAttribute("organization", repository.getOrganization());
 			model.addAttribute("repository", repository);
 			
+			model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
+			
 			return "git-navigation/setup-a-new-repository";
 		}
 		
