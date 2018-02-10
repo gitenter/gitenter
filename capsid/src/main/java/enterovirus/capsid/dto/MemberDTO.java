@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
+import enterovirus.protease.domain.MemberBean;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,4 +40,23 @@ public class MemberDTO {
 	@Email
 	private String email;
 
+//	public MemberDTO () {
+//		
+//	}
+//	
+//	public MemberDTO (MemberBean member) {
+//		
+//		/*
+//		 * Since password cannot be reversely analyzed,
+//		 * the corresponding item is just list as blank.
+//		 */
+//		this.username = member.getUsername();
+//		this.displayName = member.getDisplayName();
+//		this.email = member.getEmail();
+//	}
+//	/*
+//	 * The inverse "getBean()" is not defined in here,
+//	 * as it includes the autowired password encoder, which
+//	 * break the POJO rule of this class. 
+//	 */
 }

@@ -1,5 +1,7 @@
 package enterovirus.capsid.service;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,38 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private PasswordEncoder passwordEncoder;
 	
-	public MemberBean registerNewMember(MemberDTO memberDTO) {
+	public MemberDTO findDTOById (Integer id) throws IOException {
+		/*
+		 * Note:
+		 * The MemberDTO constructor doesn't copy the password part.
+		 */
+		MemberBean memberBean = memberRepository.findById(id);
+		return memberDTOFromMemberBean(memberBean);
+//		return new MemberDTO(memberBean);
+	}
+
+	public MemberDTO findDTOByUsername (String username) throws IOException {
+		MemberBean memberBean = memberRepository.findByUsername(username);
+		return memberDTOFromMemberBean(memberBean);
+//		return new MemberDTO(memberBean);
+	}
+	
+	private MemberDTO memberDTOFromMemberBean (MemberBean memberBean) {
+		
+		MemberDTO memberDTO = new MemberDTO();
+		
+		/*
+		 * Since password cannot be reversely analyzed,
+		 * the corresponding item is just list as blank.
+		 */
+		memberDTO.setUsername(memberBean.getUsername());
+		memberDTO.setDisplayName(memberBean.getDisplayName());
+		memberDTO.setEmail(memberBean.getEmail());
+		
+		return memberDTO;
+	}
+	
+	public MemberBean saveAndFlushFromDTO (MemberDTO memberDTO) {
 		
 		/*
 		 * TODO:
@@ -33,14 +66,14 @@ public class MemberServiceImpl implements MemberService {
 		 * the system.
 		 */
 		
-		MemberBean member = new MemberBean();
+		MemberBean memberBean = new MemberBean();
 		
-		member.setUsername(memberDTO.getUsername());
-		member.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
-		member.setDisplayName(memberDTO.getDisplayName());
-		member.setEmail(memberDTO.getEmail());
+		memberBean.setUsername(memberDTO.getUsername());
+		memberBean.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
+		memberBean.setDisplayName(memberDTO.getDisplayName());
+		memberBean.setEmail(memberDTO.getEmail());
 		
-		return memberRepository.saveAndFlush(member);
+		return memberRepository.saveAndFlush(memberBean);
 		
 		/*
 		 * TODO:

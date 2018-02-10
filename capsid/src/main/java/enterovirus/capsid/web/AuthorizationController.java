@@ -43,7 +43,7 @@ public class AuthorizationController {
 			return "authorization/register";
 		}
 		
-		memberService.registerNewMember(member);
+		memberService.saveAndFlushFromDTO(member);
 		return "redirect:/";
 	}
 	

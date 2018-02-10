@@ -10,12 +10,12 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="memberBean" >
+      <sf:form method="POST" commandName="memberDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>
             <td class="pre-fill">
-              ${memberBean.username}
+              ${memberDTO.username}
               <sf:hidden path="username" />
             </td>
           </tr>

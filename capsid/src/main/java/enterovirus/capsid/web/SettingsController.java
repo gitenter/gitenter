@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
 import enterovirus.capsid.dto.*;
+import enterovirus.capsid.service.MemberService;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 
@@ -23,6 +25,8 @@ public class SettingsController {
 
 	@Autowired private MemberRepository memberRepository;
 	@Autowired private SshKeyRepository sshKeyRepository;
+	@Autowired private MemberService memberService;
+	@Autowired private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(method=RequestMethod.GET)
 	public String showSettings (Model model) {
@@ -48,15 +52,15 @@ public class SettingsController {
 	@RequestMapping(value="/profile", method=RequestMethod.GET)
 	public String showUpdateProfileForm (Model model, Authentication authentication) throws Exception {
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
-		model.addAttribute("memberBean", member);
+		MemberDTO memberDTO = memberService.findDTOByUsername(authentication.getName());
+		model.addAttribute("memberDTO", memberDTO);
 		
 		return "settings/profile";
 	}
 	
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
 	public String processUpdateProfile (
-			@Valid MemberBean memberAfterChange, 
+			@Valid MemberDTO memberDTOAfterChange, 
 			Errors errors, 
 			RedirectAttributes model, 
 			Authentication authentication) throws Exception {
@@ -67,22 +71,39 @@ public class SettingsController {
 		expectErrorCount += errors.getFieldErrorCount("password");
 		
 		if (errors.getErrorCount() > expectErrorCount) {
-			model.addAttribute("memberBean", memberAfterChange); 
+			/*
+			 * TODO:
+			 * Currently cannot map the old values in the redirect page.
+			 * With error message (validation in registration works):
+			 * > Failed to convert value of type 'enterovirus.capsid.dto.MemberDTO' 
+			 * > to required type 'java.lang.String'; nested exception is 
+			 * > java.lang.IllegalStateException: Cannot convert value of 
+			 * > type 'enterovirus.capsid.dto.MemberDTO' to required type 
+			 * > 'java.lang.String': no matching editors or conversion strategy found
+			 * 
+			 * I don't understand why.
+			 * 
+			 * TODO:
+			 * Even if you don't add the attribute, it still displayed
+			 * in the redirect page. Need to figure out whether that
+			 * addAttribute() is actually needed or not in Spring.
+			 */
+//			model.addAttribute("memberDTO", memberDTOAfterChange); 
 			return "settings/profile";
 		}
 
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
+		MemberBean memberBean = memberRepository.findByUsername(authentication.getName());
 		
 		/* Since "saveAndFlush()" will decide by itself whether the operation is
 		 * INSERT or UPDATE, the bean being actually modified and refreshed should 
 		 * be the bean queried from the database, rather than the bean user just
 		 * produced. 
 		 */
-		assert (member.getUsername().equals(memberAfterChange.getUsername()));
+		assert (memberBean.getUsername().equals(memberDTOAfterChange.getUsername()));
 		
-		member.setDisplayName(memberAfterChange.getDisplayName());
-		member.setEmail(memberAfterChange.getEmail());
-		memberRepository.saveAndFlush(member);
+		memberBean.setDisplayName(memberDTOAfterChange.getDisplayName());
+		memberBean.setEmail(memberDTOAfterChange.getEmail());
+		memberRepository.saveAndFlush(memberBean);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/settings/profile";
@@ -91,8 +112,8 @@ public class SettingsController {
 	@RequestMapping(value="/account", method=RequestMethod.GET)
 	public String showUpdateAccountForm (Model model, Authentication authentication) throws Exception {
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
-		model.addAttribute("memberBean", member);
+		MemberDTO memberDTO = memberService.findDTOByUsername(authentication.getName());
+		model.addAttribute("memberDTO", memberDTO);
 		
 		return "settings/account";
 	}
@@ -106,33 +127,62 @@ public class SettingsController {
 			 * > Validation failed for object='XXX'. Error count: XXX
 			 * rather than write that information into the "Error" class.
 			 */
-			@Valid MemberBean memberAfterChange, 
+			@Valid MemberDTO memberDTOAfterChange, 
 			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
 			RedirectAttributes model, 
 			Authentication authentication) throws Exception {
 		
+		/*
+		 * TODO:
+		 * Consider move part of here into MemberService?
+		 * It is not straight forward, as it also related to error handling.
+		 */
 		int expectErrorCount = 0;
 		expectErrorCount += errors.getFieldErrorCount("displayName");
 		expectErrorCount += errors.getFieldErrorCount("email");
 		
 		if (errors.getErrorCount() > expectErrorCount) {
-			model.addAttribute("memberBean", memberAfterChange);
+			/*
+			 * TODO:
+			 * Currently cannot map the old values in the redirect page.
+			 * With error message (validation in registration works):
+			 * > Failed to convert value of type 'enterovirus.capsid.dto.MemberDTO' 
+			 * > to required type 'java.lang.String'; nested exception is 
+			 * > java.lang.IllegalStateException: Cannot convert value of 
+			 * > type 'enterovirus.capsid.dto.MemberDTO' to required type 
+			 * > 'java.lang.String': no matching editors or conversion strategy found
+			 * 
+			 * I don't understand why.
+			 */
+//			model.addAttribute("memberDTO", memberDTOAfterChange);
 			return "settings/account";
 		}
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName());
+		MemberBean memberBean = memberRepository.findByUsername(authentication.getName());
 		
-		if (!member.getPassword().equals(oldPassword)) {
-			model.addAttribute("memberBean", memberAfterChange);
+		if (!passwordEncoder.matches(oldPassword, memberBean.getPassword())) {
+			/*
+			 * TODO:
+			 * Currently cannot map the old values in the redirect page.
+			 * With error message (validation in registration works):
+			 * > Failed to convert value of type 'enterovirus.capsid.dto.MemberDTO' 
+			 * > to required type 'java.lang.String'; nested exception is 
+			 * > java.lang.IllegalStateException: Cannot convert value of 
+			 * > type 'enterovirus.capsid.dto.MemberDTO' to required type 
+			 * > 'java.lang.String': no matching editors or conversion strategy found
+			 * 
+			 * I don't understand why.
+			 */
+//			model.addAttribute("memberDTO", memberDTOAfterChange);
 			model.addFlashAttribute("errorMessage", "Old password doesn't match!");
 			return "redirect:/settings/account";
 		}
 		
-		assert (member.getUsername().equals(memberAfterChange.getUsername()));
+		assert (memberBean.getUsername().equals(memberDTOAfterChange.getUsername()));
 		
-		member.setPassword(memberAfterChange.getPassword());
-		memberRepository.saveAndFlush(member);
+		memberBean.setPassword(passwordEncoder.encode(memberDTOAfterChange.getPassword()));
+		memberRepository.saveAndFlush(memberBean);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/settings/account";
