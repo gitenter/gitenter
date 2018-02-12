@@ -1,5 +1,9 @@
 # GitHub API Notes
 
+I created a sandbox user `enterovirus-sandbox` to install my OAuth and GitHub Apps.
+
+---
+
 GitHub has two active APIs, [v3](https://developer.github.com/v3/) (REST) and [v4](https://developer.github.com/) (GraphGL). Currently only API v3 is fully integrated with GitHub Apps.
 
 My App can integrate with GitHub in 3 different ways:
@@ -12,6 +16,28 @@ My App can integrate with GitHub in 3 different ways:
             + Travis CI
 1. Using GitHub Apps
     + Act on a single repository user selected
+
+## OAuth Apps
+
+List of parameters in [here](https://developer.github.com/apps/building-oauth-apps/authorization-options-for-oauth-apps/#web-application-flow). `client_id` and `redirect_uri` are by common protocol. Other ones are GitHub specific.
+
+`client_id`: known from `https://github.com/organizations/{orgName}/settings/applications/{appId}`. Note: while GitHub Apps have public link, OAuth Apps don't. So they can share the same name.
+
+`redirect_uri` *(Seems not useful to be specified in here?? GitHub OAuth Apps need a "Authorization callback URL" and it seems just redirect to there.)*
+
+`scope`: List of scopes in [here](https://developer.github.com/apps/building-oauth-apps/scopes-for-oauth-apps/). Currently chosen `read:user` and `user:email` only.
+
+`state`: State is currently fake. The CSRF one should be generated later by, e.g., Spring Security.
+
+`allow_signup`: For GitHub user development. Not quite of my business.
+
+[Common protocol](https://www.tutorialspoint.com/oauth2.0/oauth2.0_obtaining_an_access_token.htm) should also have one called `response_type` (value `code` or `token`). But it is not in GitHub's document
+
+```
+https://github.com/login/oauth/authorize?client_id=bfaf1ea99a9b7d4d10e0&redirect_uri=http%3A%2F%2Flocalhost&response_type=code&scope=read%3Auser%20user%3Aemail&state=012345
+```
+
+*(TODO: The current setup is incorrect. If users haven't login GitHub, it can indeed redirect him/her to a GitHub signup page. But if they've already logged in, it simply redirect to the "Authorization callback URL" without ask for authorization!!??)*
 
 ## GitHub Apps
 
@@ -139,3 +165,8 @@ Also, by using the installation token we may have git access using HTTP method. 
 ```
 git clone https://x-access-token:<token>@github.com/owner/repo.git
 ```
+
+## References
+
+1. GitHub [Building Apps](https://developer.github.com/apps/): Mostly references about authorization, and basic instruction.
+1. GitHub [API v3](https://developer.github.com/v3/): Mostly a dictionary of various queries to make.
