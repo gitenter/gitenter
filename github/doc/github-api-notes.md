@@ -15,6 +15,27 @@ My App can integrate with GitHub in 3 different ways:
 
 ## GitHub Apps
 
+### Public/Private
+
+Setup when creating the app.
+
++ Public = user install it from a public link of the App page `https://github.com/apps/{appName}`
++ Private = only the owner herself can install it
+
+### Permissions
+
+GitHub Apps can be set up a list of fine-grained permissions, from the link `https://github.com/organizations/{orgName}/settings/apps/{appName}/permissions`. For each item, you can choose access level in the list of
+
++ No access
++ Read-only
++ Read and write
+
+The permissions can be changed later.
+
+The permissions are shown to the user when they try to install your app. The user can decide yes/no to install it based on your permission list. They may also choose which repository/repositories they want to install this app. The user may *review* the permission list, change the repositories involved, or decide to leave. *(Will the user get a writing notice on any change of the permission level?)*
+
+### Authentication
+
 There are two level of authentications:
 
 1. Authenticating as a GitHub App
@@ -47,6 +68,13 @@ So each GitHub App has several installations by different users.
     + Input
         + Privious generated JWT token
         + Installation ID
+
+##### Perform
+
++ A GitHub App: act on behalf of the application.
+    + Using JWT token to identify which application it is.
++ An installation: act on behalf of the user.
+    + Using installation token to identify which user it is.
 
 ##### Expiration time
 
@@ -104,4 +132,10 @@ $ curl -H "Authorization: token v1.a4f68dadf6e1e1a0127b73573abe4de99efd7bcf" -H 
 {
   ...
 }
+```
+
+Also, by using the installation token we may have git access using HTTP method. There's no corresponding thing for the JWT token.
+
+```
+git clone https://x-access-token:<token>@github.com/owner/repo.git
 ```
