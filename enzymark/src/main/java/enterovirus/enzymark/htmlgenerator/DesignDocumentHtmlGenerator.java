@@ -15,14 +15,14 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import enterovirus.protease.domain.*;
 
-public class DesignDocumentHtmlGenerator {
+public class DesignDocumentHtmlGenerator implements HtmlGenerator {
 
 	private DocumentBean document;
-	private String content;
+	private String markdownContent;
 	
 	public DesignDocumentHtmlGenerator(DocumentBean document) {
 		this.document = document;
-		this.content = document.getContent();
+		this.markdownContent = document.getContent();
 	}
 	
 	public String getHtml() {
@@ -48,7 +48,7 @@ public class DesignDocumentHtmlGenerator {
 		        })
 		        .build();
 		
-		Node node = parser.parse(content);
+		Node node = parser.parse(markdownContent);
 		String html = renderer.render(node);
 		
 		return html;

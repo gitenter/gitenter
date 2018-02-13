@@ -76,4 +76,8 @@
     <put-attribute name="body" value="/WEB-INF/views/admin/repository-collaborators.jsp" />
   </definition>
 
+  <definition name="documentation/template" extends="unauth-base">
+    <put-attribute name="body" value="/WEB-INF/views/documentation/template.jsp" />
+  </definition>
+
 </tiles-definitions>

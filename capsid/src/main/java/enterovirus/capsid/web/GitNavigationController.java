@@ -20,6 +20,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import enterovirus.capsid.config.WebSource;
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
+import enterovirus.enzymark.htmlgenerator.HtmlGenerator;
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
 import enterovirus.gitar.wrap.*;
@@ -359,8 +360,8 @@ public class GitNavigationController {
 		model.addAttribute("organization", repository.getOrganization());
 		model.addAttribute("repository", repository);
 		
-		DesignDocumentHtmlGenerator contentParser = new DesignDocumentHtmlGenerator(document);
-		model.addAttribute("content", contentParser.getHtml());
+		HtmlGenerator htmlGenerator = new DesignDocumentHtmlGenerator(document);
+		model.addAttribute("content", htmlGenerator.getHtml());
 			
 		return "git-navigation/document";
 	}
