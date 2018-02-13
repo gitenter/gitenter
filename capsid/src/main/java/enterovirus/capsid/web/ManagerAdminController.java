@@ -173,21 +173,21 @@ public class ManagerAdminController {
 		}
 		
 		repository.setOrganization(organization);
+
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		
-		gitSource.mkdirBareRepositoryDirectory(organization.getName(), repository.getName());
+		ClassLoader classLoader = getClass().getClassLoader();
+		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
 		
 		/*
 		 * Here makes a bare repository with one commit (include the
 		 * configuration file) in it.
 		 */
-		if (includeSetupFiles.equals(Boolean.TRUE)) {
-			
-			File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
-			
-			ClassLoader classLoader = getClass().getClassLoader();
-			File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
-			File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
-	
+		if (includeSetupFiles.equals(Boolean.FALSE)) {
+			GitRepository.initBare(repositoryDirectory, sampleHooksDirectory);
+		}
+		else {
 			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
 			
 			/*

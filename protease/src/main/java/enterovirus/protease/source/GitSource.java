@@ -37,13 +37,13 @@ public class GitSource {
 		return new File(new File(rootFolderPath, ownerName), repositoryName+".git");
 	}
 	
-	public boolean mkdirBareRepositoryDirectory (String ownerName, String repositoryName) throws IOException {
-		
-		File directory = new File(new File(rootFolderPath, ownerName), repositoryName+".git");
-		boolean result = directory.mkdir();
-		
-		return result;
-	}
+//	public boolean mkdirBareRepositoryDirectory (String ownerName, String repositoryName) throws IOException {
+//		
+//		File directory = new File(new File(rootFolderPath, ownerName), repositoryName+".git");
+//		boolean result = directory.mkdir();
+//		
+//		return result;
+//	}
 	
 	public static String getBareRepositoryOrganizationName (File bareRepositoryDirectory) {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");

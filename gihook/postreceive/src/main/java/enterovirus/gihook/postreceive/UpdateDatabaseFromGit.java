@@ -27,7 +27,6 @@ public class UpdateDatabaseFromGit {
 
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private CommitRepository commitRepository;
-	@Autowired private DocumentRepository documentRepository;
 	
 	/*
 	 * TODO:

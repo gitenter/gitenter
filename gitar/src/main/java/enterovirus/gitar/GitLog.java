@@ -58,21 +58,36 @@ public class GitLog {
 	/*
 	 * The log of "newCommitSha" is inclusive, while it is of 
 	 * "oldCommitSha" is exclusive.
-	 * 
 	 */
 	public GitLog(File repositoryDirectory, BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) throws IOException, GitAPIException {
 		
 		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			
-			ObjectId oldObjectId = ObjectId.fromString(oldCommitSha.getShaChecksumHash());
-			ObjectId newObjectId = ObjectId.fromString(newCommitSha.getShaChecksumHash());
-			
-			Iterable<RevCommit> logs = git.log()
-					.add(repository.resolve(branchName.getName()))
-					.addRange(oldObjectId, newObjectId)
-					.call();
-			buildCommitShas(logs);
+			if (oldCommitSha.isNull()) {
+				/*
+				 * This is for the case that when the "update"/"post-receive" hooks
+				 * are triggered, but it is the very first commit with no previous
+				 * commit exists.
+				 * 
+				 * Unfortunately, JGit doesn't have a method for that, so I need to
+				 * iterate it by myself.
+				 */
+				Iterable<RevCommit> logs = git.log()
+						.add(repository.resolve(branchName.getName()))
+						.call();
+				buildCommitShas(logs, newCommitSha);
+			}
+			else {
+				ObjectId oldObjectId = ObjectId.fromString(oldCommitSha.getShaChecksumHash());
+				ObjectId newObjectId = ObjectId.fromString(newCommitSha.getShaChecksumHash());
+				
+				Iterable<RevCommit> logs = git.log()
+						.add(repository.resolve(branchName.getName()))
+						.addRange(oldObjectId, newObjectId)
+						.call();
+				buildCommitShas(logs);
+			}
 		}
 	}
 	
@@ -80,6 +95,21 @@ public class GitLog {
 		
 		for (RevCommit rev : logs) {
 			commitInfos.add(new CommitInfo(rev));
+		}
+	}
+	
+	private void buildCommitShas (Iterable<RevCommit> logs, CommitSha newCommitSha) {
+		boolean find = false;
+		for (RevCommit rev : logs) {			
+			if (find == false && newCommitSha.getShaChecksumHash().equals(rev.getName())) {
+				find = true;
+			}
+			if (find == true) {
+				/*
+				 * So the "newCommitSha" is inclusive.
+				 */
+				commitInfos.add(new CommitInfo(rev));
+			}
 		}
 	}
 

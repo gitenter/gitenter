@@ -31,4 +31,5 @@ cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
 python3 ui_init.py http://gitenter.com
 
 # "git clone" by SSH protocol
-sh git_init.sh git@gitenter.com:org1/repo1.git
+sh git_init_repo1.sh git@gitenter.com:org1/repo1.git
+sh git_init_repo2.sh git@gitenter.com:org1/repo2.git

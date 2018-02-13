@@ -89,12 +89,16 @@ create_repository(root, user3_session, 2, 'repo1', "true", "false", 200)
 create_repository(root, user3_session, 2, 'repo2', "true", "false", 200)
 create_repository(root, user4_session, 2, 'repo3', "true", "false", 200)
 
+'''
+ORG 1 REPO 1
+'''
+
 # Since only user1 and user2 are managers of org1, user3 and
 # user4 should not have authorization to set collaborators.
+load_collaborator_setting_page(root, user1_session, 1, 1, 200)
 load_collaborator_setting_page(root, user2_session, 1, 1, 200)
-load_collaborator_setting_page(root, user2_session, 1, 2, 200)
 load_collaborator_setting_page(root, user3_session, 1, 1, 403)
-load_collaborator_setting_page(root, user4_session, 1, 2, 403)
+load_collaborator_setting_page(root, user4_session, 1, 1, 403)
 
 # Add and remove collaborators of repo1 by both user1 and user2
 add_collaborator(root, user1_session, 1, 1, 'user1', 'PROJECT_LEADER', 200)
@@ -122,3 +126,18 @@ load_repository_page(root, user1_session, 1, 2, 200)
 load_repository_page(root, user2_session, 1, 2, 200)
 load_repository_page(root, user3_session, 1, 2, 200)
 load_repository_page(root, user4_session, 1, 2, 200)
+
+'''
+ORG 1 REPO 2
+'''
+
+# (The same as org1 repo1)
+# Since only user1 and user2 are managers of org1, user3 and
+# user4 should not have authorization to set collaborators.
+load_collaborator_setting_page(root, user1_session, 1, 2, 200)
+load_collaborator_setting_page(root, user2_session, 1, 2, 200)
+load_collaborator_setting_page(root, user3_session, 1, 2, 403)
+load_collaborator_setting_page(root, user4_session, 1, 2, 403)
+
+# So "git push" can work.
+add_collaborator(root, user1_session, 1, 2, 'user1', 'EDITOR', 200)

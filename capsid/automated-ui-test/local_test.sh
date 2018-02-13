@@ -38,4 +38,5 @@ python3 ui_init.py http://localhost:8080/capsid-0.0.1-prototype
 
 # Git automatic test
 # "git clone" by SSH protocol
-sh git_init.sh git@localhost:org1/repo1.git
+sh git_init_repo1.sh git@localhost:org1/repo1.git
+sh git_init_repo2.sh git@localhost:org1/repo2.git

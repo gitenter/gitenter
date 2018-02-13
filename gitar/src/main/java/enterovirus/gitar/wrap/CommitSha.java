@@ -46,4 +46,15 @@ public class CommitSha {
 	public String getShaChecksumHash () {
 		return shaChecksumHash;
 	}
+	
+	/*
+	 * This is the value of the old commit SHA git "update"/"post-receive" hooks
+	 * gives, when it is the first push with no previous commit.
+	 */
+	public boolean isNull () {
+		if (shaChecksumHash.equals("0000000000000000000000000000000000000000")) {
+			return true;
+		}
+		return false;
+	}
 }
