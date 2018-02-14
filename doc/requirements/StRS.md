@@ -129,9 +129,9 @@ These parties are equally important for the success of the product. But in this 
 *(Market trends)*
 
 - [StRS-0026]{} The software shall aim to provide services that does not exist, for unfulfilled user needs.
-- [StRS-0019]{StRS-0020,StRS-0026]} The software shall not provide duplicated functions of an (on-line or local) word processor, such as Microsoft Office, Google Doc, Emacs, Vim, or Atom.
-- [StRS-0025]{StRS-0026]} With the aim of handling multiple files in a documentation system, the software shall not provide tools for multiple users to edit the same file simultaneously, such as Google Drive.
-- [StRS-0012]{StRS-0004,StRS-0026]} The software shall not provide duplicated functions of a code revision control platform, such as GitHub or BitBucket.
+- [StRS-0019]{StRS-0020,StRS-0026} The software shall not provide duplicated functions of an (on-line or local) word processor, such as Microsoft Office, Google Doc, Emacs, Vim, or Atom.
+- [StRS-0025]{StRS-0026} With the aim of handling multiple files in a documentation system, the software shall not provide tools for multiple users to edit the same file simultaneously, such as Google Drive.
+- [StRS-0012]{StRS-0004,StRS-0026} The software shall not provide duplicated functions of a code revision control platform, such as GitHub or BitBucket.
 
 *(Laws and regulations)*
 
