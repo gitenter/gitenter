@@ -5,15 +5,15 @@
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr;
+      <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a> &rarr;
       <c:if test="${branch != null}">
-        <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch: ${branch}</a> &rarr; 
+        <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch: <c:out value="${branch}" /></a> &rarr; 
       </c:if>
       <c:if test="${shaChecksumHash != null}">
         <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${shaChecksumHash}" />">Commit: ${fn:substring(shaChecksumHash, 0, 6)}</a> &rarr; 
       </c:if> 
-      <span class="nav-current">${document.relativeFilepath}</span>
+      <span class="nav-current"><c:out value="${document.relativeFilepath}" /></span>
     </nav>
     <article>
       <div class="menu">
@@ -33,6 +33,12 @@
         </table>
       </div>
       <div class="markdown">
+        <%--
+          TODO:
+          No way to escape HTML special characters in here, as the markdown
+          are transferred to these characters. Then what happens if user 
+          write something malicious in their markdown?
+        --%>
         ${content}
       </div>
     </article>

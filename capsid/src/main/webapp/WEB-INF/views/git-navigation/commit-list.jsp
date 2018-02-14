@@ -6,9 +6,9 @@
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch: ${branch}</a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch: <c:out value="${branch}" /></a> &rarr; 
       <span class="nav-current">Commits</span>
     </nav>
     <article>
@@ -56,8 +56,8 @@
               </form>
             </td>
             <td class="left">
-              <p>${commitLog.key.fullMessage}</p>
-              <p class="minor">By ${commitLog.key.gitUserInfo.name}, at <fmt:formatDate type = "both" dateStyle = "medium" timeStyle = "short" value = "${commitLog.key.getCommitDate()}" /></p>
+              <p><c:out value="${commitLog.key.fullMessage}" /></p>
+              <p class="minor">By <c:out value="${commitLog.key.gitUserInfo.name}" />, at <fmt:formatDate type="both" dateStyle="medium" timeStyle="short" value="${commitLog.key.getCommitDate()}" /></p>
             </td>
             <td><img src="<s:url value="/resources/image/status_icons/${commitLog.value.getClass().simpleName}.png" />" alt="${commitLog.value.getClass().simpleName}"></td>
           </tr>

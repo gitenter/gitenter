@@ -16,11 +16,11 @@
     </li>
   </c:if>
   <c:if test="${!documentMap.containsKey(folderOrFile.toString())}">
-    <li><span class="non-document-file">${name}</span></li>
+    <li><span class="non-document-file"><c:out value="${name}" /></span></li>
   </c:if>
 </c:when>
 <c:otherwise>
-  <li><span class="folder">${name}</span></li>
+  <li><span class="folder"><c:out value="${name}" /></span></li>
   <ul>
     <c:forEach var="i" items="${folderOrFile.childrenList()}">
       <c:set var="folderOrFile" value="${i}" scope="request"/>

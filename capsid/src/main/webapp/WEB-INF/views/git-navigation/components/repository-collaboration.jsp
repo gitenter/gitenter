@@ -17,12 +17,12 @@
           <tr>
             <c:forEach var="role" items="${repositoryMemberRoleValues}">
             <td>
-              <h6>${role.displayName}</h6>
+              <h6><c:out value="${role.displayName}" /></h6>
               <ul class="user-list">
                 <c:forEach var="map" items="${repository.repositoryMemberMaps}">
                   <c:if test="${map.role == role}">
                     <li>
-                      <span class="user">${map.member.displayName}</span>
+                      <span class="user"><c:out value="${map.member.displayName}" /></span>
                     </li>
                   </c:if> 
                 </c:forEach>
@@ -41,6 +41,6 @@
       --%>
       <security:authorize access="@securityService.checkRepositoryEditability(authentication,#repository.id)">
       <div>
-        <p><span class="intro">Clone with SSH</span> <code>git clone git@${rootUrl}:${organization.name}/${repository.name}</code></p>
+        <p><span class="intro">Clone with SSH</span> <code>git clone git@<c:out value="${rootUrl}"/>:<c:out value="${organization.name}" />/<c:out value="${repository.name}" /></code></p>
       </div>
       </security:authorize>

@@ -6,7 +6,7 @@
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr;
+      <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <span class="nav-current">Managers</span>
     </nav>
     <article>
@@ -16,7 +16,7 @@
         <c:forEach var="member" items="${organization.managers}">
           <li>
             <security:authorize access="!@securityService.checkIsMember(authentication,#member.id)">
-              <span class="user-deletable">${member.displayName}</span>
+              <span class="user-deletable"><c:out value="${member.displayName}" /></span>
               <s:url var="remove_manager_url" value="/organizations/${organization.id}/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
                 <input type="hidden" name="member_id" value="${member.id}" /> 
@@ -24,7 +24,7 @@
               </sf:form>
             </security:authorize>
             <security:authorize access="@securityService.checkIsMember(authentication,#member.id)">
-              <span class="user">${member.displayName}</span>
+              <span class="user"><c:out value="${member.displayName}" /></span>
             </security:authorize>
           </li>
         </c:forEach>

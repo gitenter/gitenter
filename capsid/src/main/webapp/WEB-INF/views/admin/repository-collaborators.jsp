@@ -5,14 +5,14 @@
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a> &rarr;
+      <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
       <span class="nav-current">Collaborators</span>
     </nav>
     <article>
       <div class="left-narrow">
         <c:forEach var="role" items="${repositoryMemberRoleValues}">
-        <h5>${role.displayName}</h5>
+        <h5><c:out value="${role.displayName}" /></h5>
           <ul class="user-list">
             <c:forEach var="map" items="${repository.repositoryMemberMaps}">
               <c:if test="${map.role == role}">

@@ -11,10 +11,10 @@
         <c:forEach var="map" items="${repositoryMemberMaps}">
           <c:set var="repository" value="${map.repository}" />
           <h5>
-            <a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
-            <span class="explanation">: ${map.role.displayName}</span>
+            <a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a>
+            <span class="explanation">: <c:out value="${map.role.displayName}" /></span>
           </h5>
-          <p>${repository.description}</p>
+          <p><c:out value="${repository.description}" /></p>
         </c:forEach>
       </div>
       <div class="right-narrow">

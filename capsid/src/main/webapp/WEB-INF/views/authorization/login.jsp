@@ -28,7 +28,7 @@
           <c:if test="${message != null}">
             <tr>
               <td></td>
-              <td class="error">${message}</td>
+              <td class="error"><c:out value="${message}" /></td>
             </tr>
           </c:if>
           <tr>

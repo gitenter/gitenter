@@ -5,7 +5,7 @@
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
-      <span class="nav-current">${organization.displayName}</span>
+      <span class="nav-current"><c:out value="${organization.displayName}" /></span>
     </nav>
     <article>
       <div class="left-wide">
@@ -20,7 +20,7 @@
         </h3>
         <c:forEach var="repository" items="${organization.repositories}">
           <h5>
-            <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a>
+            <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a>
             <span class="explanation">: 
               <c:if test="${repository.isPublic.equals(true)}">Public</c:if>
               <c:if test="${repository.isPublic.equals(false)}">Private</c:if>
@@ -36,7 +36,7 @@
               </sf:form>
           	</security:authorize>
           </h5>
-          <p>${repository.description}</p>
+          <p><c:out value="${repository.description}" /></p>
         </c:forEach>
       </div>
       <div class="right-narrow">
@@ -51,7 +51,7 @@
         </h3>
         <ul class="user-list">
           <c:forEach var="member" items="${organization.managers}">
-            <li><span class="user">${member.displayName}</span></li>
+            <li><span class="user"><c:out value="${member.displayName}" /></span></li>
           </c:forEach>
         </ul>
       </div>
