@@ -52,12 +52,20 @@ public class TraceableItemParser {
 			/*
 			 * The pattern this class currently supporting:
 			 * (2) - [itemTag]{0-or-more-upstreamItemTags} content
+			 * 
+			 * It is "(\\S*)\\" rather than (\\S+)\\
+			 * for cases with no reference like "- [tag]{}"
 			 */
 			catch (IllegalStateException e) {
-				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} ([ \\t\\S]*)");
+				s.findInLine("\\[(\\S+)\\]\\{(\\S*)\\} ([ \\t\\S]*)");
 				MatchResult result = s.match();
 				tag = result.group(1);
-				upstreamItemTags = result.group(2).split(",");
+				if (result.group(2).length() != 0) {
+					upstreamItemTags = result.group(2).split(",");
+				}
+				else {
+					upstreamItemTags = new String[] {};
+				}
 				content = result.group(3);			
 			}
 		}

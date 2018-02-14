@@ -136,7 +136,7 @@ cat > $clientroot/repo1/doc/requirement/R1.md <<- EOM
 
 - [R1T1] Content of R1T1 with **bold** and *italic*.
 - [R1T2] **Bold** started content of R1T2.
-- [R1T3] Content of R1T3.
+- [R1T3]{} Content of R1T3.
 EOM
 
 cat > $clientroot/repo1/doc/requirement/R2.md <<- EOM
@@ -144,7 +144,7 @@ cat > $clientroot/repo1/doc/requirement/R2.md <<- EOM
 
 - [R2T1] Content of R2T1.
 - [R2T2]{R1T1} Content of R2T2.
-- [R2T3]{R1T1,R1T2} Content of R2T3.
+- [R2T3]{R1T1,R1T2,R1T3} Content of R2T3.
 - [R2T4]{R2T1} Content of R2T4.
 - [R2T5]{R1T1,R2T1} Content of R2T5
 EOM
