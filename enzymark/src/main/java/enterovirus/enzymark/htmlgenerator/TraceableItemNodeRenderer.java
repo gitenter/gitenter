@@ -12,6 +12,7 @@ import org.commonmark.node.Paragraph;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 
 import enterovirus.enzymark.TraceableItemParser;
@@ -21,6 +22,8 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 	
 	private final HtmlWriter html;
 	private DocumentBean document;
+	
+	private final HtmlRenderer defaultRenderer;
 
 	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentBean document) {
 		
@@ -28,6 +31,8 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 		
 		this.document = document;
 		document.buildTraceableItemIndex();
+		
+		defaultRenderer = HtmlRenderer.builder().build();
 	}
 
 	@Override
@@ -67,50 +72,69 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 				
 				if (listContent instanceof Paragraph) {
 					
-					String text = ((Text)(listContent.getFirstChild())).getLiteral();
-					TraceableItemParser parser = new TraceableItemParser(text);
-					
-					if (parser.isTraceableItem() == false) {
+					/*
+					 * May be "Text", "StrongEmphasis", ... depend on e.g.
+					 * 
+					 * > - normal list item
+					 * > - **bold** list item
+					 * > - *italic* list item
+					 */
+					if (listContent.getFirstChild() instanceof Text) {
 						
-						/*
-						 * Here just shows the normal bubble item.
-						 */
-						html.tag("li");
-						html.text(text);
-						html.tag("/li");
-						html.line();
+						String text = ((Text)(listContent.getFirstChild())).getLiteral();
+						TraceableItemParser parsingResult = new TraceableItemParser(text);
+						
+						if (parsingResult.isTraceableItem() == false) {
+							
+							html.tag("li");
+							html.raw(defaultRenderer.render(listContent));
+							html.tag("/li");
+							html.line();
+						}
+						else {
+
+							/*
+							 * Handle the special condition that the bullet item is the special
+							 * traceable item.
+							 */
+							String itemTag =  parsingResult.getTag();
+							TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
+							
+							html.tag("li id=\""+itemTag+"\" class=\"traceable-item\"");
+							
+							html.tag("form method=\"GET\" action=\"#"+itemTag+"\"");
+							html.tag("input class=\"original\" type=\"submit\" value=\""+itemTag+"\"");
+							html.tag("/form");
+							
+							for (TraceableItemBean upstreamItem : traceableItem.getUpstreamItems()) {
+								
+								html.tag("form method=\"GET\" action=\""+getRelativeFilepath(upstreamItem)+"#"+upstreamItem.getItemTag()+"\"");
+								html.tag("input class=\"upstream\" type=\"submit\" value=\""+upstreamItem.getItemTag()+"\"");
+								html.tag("/form");
+							}
+							
+							for (TraceableItemBean downstreamItem : traceableItem.getDownstreamItems()) {
+								
+								html.tag("form method=\"GET\" action=\""+getRelativeFilepath(downstreamItem)+"#"+downstreamItem.getItemTag()+"\"");
+								html.tag("input class=\"downstream\" type=\"submit\" value=\""+downstreamItem.getItemTag()+"\"");
+								html.tag("/form");
+							}
+							
+							html.text(parsingResult.getContent());
+							
+							Node others = listContent.getFirstChild();
+							others = others.getNext(); /* Skip the first one which already been writen to HTML */
+							for (; others != null; others = others.getNext()) {
+								html.raw(defaultRenderer.render(others));
+							}
+							
+							html.tag("/li");
+							html.line();
+						}
 					}
 					else {
-
-						/*
-						 * Handle the special condition that the bullet item is the special
-						 * traceable item.
-						 */
-						String itemTag =  parser.getTag();
-						TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
-						
-						html.tag("li id=\""+itemTag+"\" class=\"traceable-item\"");
-						
-						html.tag("form method=\"GET\" action=\"#"+itemTag+"\"");
-						html.tag("input class=\"original\" type=\"submit\" value=\""+itemTag+"\"");
-						html.tag("/form");
-						
-						for (TraceableItemBean upstreamItem : traceableItem.getUpstreamItems()) {
-							
-							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(upstreamItem)+"#"+upstreamItem.getItemTag()+"\"");
-							html.tag("input class=\"upstream\" type=\"submit\" value=\""+upstreamItem.getItemTag()+"\"");
-							html.tag("/form");
-						}
-						
-						for (TraceableItemBean downstreamItem : traceableItem.getDownstreamItems()) {
-							
-							html.tag("form method=\"GET\" action=\""+getRelativeFilepath(downstreamItem)+"#"+downstreamItem.getItemTag()+"\"");
-							html.tag("input class=\"downstream\" type=\"submit\" value=\""+downstreamItem.getItemTag()+"\"");
-							html.tag("/form");
-						}
-						
-						html.text(traceableItem.getContent());
-						
+						html.tag("li");
+						html.raw(defaultRenderer.render(listContent));
 						html.tag("/li");
 						html.line();
 					}
@@ -119,7 +143,7 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 					/*
 					 * Recursively render the nested cases.
 					 */
-					render(listContent);
+					html.raw(defaultRenderer.render(listContent));
 				}
 			}
 		}

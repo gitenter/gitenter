@@ -15,10 +15,14 @@ public class DesignDocumentHtmlGeneratorTest {
 		DocumentBean document = new DocumentBean(commit, relativeFilepath);
 		
 		String content = 
-				  "- [tag-1] content-1\n"
-				+ "- [tag-2]{tag-1} content-2\n"
-				+ "  - nested text\n"
+				  "- [tag-1] **Bold started** content of tag-1\n"
+				+ "- [tag-2]{tag-1} content of tag-2 with **bold** and *italic*.\n"
+				+ "  - nested text 1\n"
+				+ "  - nested text 2 with **bold** and *italic*.\n"
 				+ "- this line is not a traceable text\n"
+				+ "- **bold** started list item\n"
+				+ "- *italic* started list item\n"
+				+ "- paragraph with **bold** and *italic*.\n"
 				+ "\n"
 				+ "![alt text](sample.png \"title text\")\n";
 		document.setContent(content);
@@ -32,11 +36,6 @@ public class DesignDocumentHtmlGeneratorTest {
 		traceableItem2.addUpstreamItem(traceableItem1);
 
 		showHtml(document);
-	}
-	
-	@Test
-	public void test2() {
-		
 	}
 	
 	private void showHtml (DocumentBean document) {

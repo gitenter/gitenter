@@ -9,6 +9,7 @@ import org.commonmark.node.ListItem;
 import org.commonmark.node.Node;
 import org.commonmark.node.Paragraph;
 import org.commonmark.node.Text;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import enterovirus.enzymark.TraceableItemParser;
 
@@ -17,8 +18,12 @@ class TraceableItemVisitor extends AbstractVisitor {
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	private TraceableDocument document;
 	
+	private final HtmlRenderer defaultRenderer;
+	
 	TraceableItemVisitor (TraceableDocument document) {
 		this.document = document;
+		
+		defaultRenderer = HtmlRenderer.builder().build();
 	}
 	
 	/*
@@ -46,13 +51,36 @@ class TraceableItemVisitor extends AbstractVisitor {
 				
 				if (listContent instanceof Paragraph) {
 					
-					String text = ((Text)(listContent.getFirstChild())).getLiteral();
-					TraceableItemParser parsingResult = new TraceableItemParser(text);
+//					System.out.println(listContent.getFirstChild().toString());
 					
-					if (parsingResult.isTraceableItem() == true) {
+					/*
+					 * May be "Text", "StrongEmphasis", ... depend on e.g.
+					 * 
+					 * > - normal list item
+					 * > - **bold** list item
+					 * > - *italic* list item
+					 */
+					if (listContent.getFirstChild() instanceof Text) {
 					
-						TraceableItem item = new TraceableItem(parsingResult, document);
-						traceableItems.add(item);
+						String text = ((Text)(listContent.getFirstChild())).getLiteral();
+						TraceableItemParser parsingResult = new TraceableItemParser(text);
+						
+						if (parsingResult.isTraceableItem() == true) {
+						
+							String tag = parsingResult.getTag();
+							String content = parsingResult.getContent();
+							String[] upstreamItemTags = parsingResult.getUpstreamItemTags();
+							
+//							System.out.println(content);
+							Node others = listContent.getFirstChild();
+							others = others.getNext(); /* Skip the first one which already been writen to HTML */
+							for (; others != null; others = others.getNext()) {
+								content += defaultRenderer.render(others);
+							}
+							
+							TraceableItem item = new TraceableItem(tag, content, document, upstreamItemTags);
+							traceableItems.add(item);
+						}
 					}
 				}
 			}

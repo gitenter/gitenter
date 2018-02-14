@@ -56,7 +56,14 @@ This [linked to google](http://www.google.com).
 #### Bubble items
 
 - Item 1.
+	- nested text 1.
+	- nested text 2.
 - Item 2.
+	1. nested ordered item
+	2. nested ordered item
+- **bold** started list item
+- *italic* started list item
+- paragraph with **bold** and *italic*
 
 #### Ordered items
 
@@ -127,8 +134,8 @@ rm $clientroot/repo1/doc/wrong.md
 cat > $clientroot/repo1/doc/requirement/R1.md <<- EOM
 # Requirement-1
 
-- [R1T1] Content of R1T1.
-- [R1T2] Content of R1T2.
+- [R1T1] Content of R1T1 with **bold** and *italic*.
+- [R1T2] **Bold** started content of R1T2.
 - [R1T3] Content of R1T3.
 EOM
 

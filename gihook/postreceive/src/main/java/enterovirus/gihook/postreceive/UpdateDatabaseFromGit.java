@@ -54,6 +54,13 @@ public class UpdateDatabaseFromGit {
 		}
 	}
 	
+	/*
+	 * TODO:
+	 * 
+	 * User may want to redo the pushed commit
+	 * (e.g. https://stackoverflow.com/questions/22682870/git-undo-pushed-commits),
+	 * then the database should be cleaned up.
+	 */
 	private void updateGitCommit (CommitStatus status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
 		
 		PropertiesFileParser propertiesFileParser;

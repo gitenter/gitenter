@@ -37,9 +37,14 @@ public class TraceableItemParser {
 			/*
 			 * The pattern this class currently supporting:
 			 * (1) - [itemTag] content
+			 * 
+			 * Note:
+			 * ([ \\t\\S]*) rather than ([ \\t\\S]+)
+			 * Because maybe for cases like "- [itemTag] **Bold**..." after
+			 * the parser the input is really just only "- [itemTag] "
 			 */
 			try {
-				s.findInLine("\\[(\\S+)\\] ([ \\t\\S]+)");
+				s.findInLine("\\[(\\S+)\\] ([ \\t\\S]*)");
 				MatchResult result = s.match();
 				tag = result.group(1);
 				content = result.group(2);
@@ -49,7 +54,7 @@ public class TraceableItemParser {
 			 * (2) - [itemTag]{0-or-more-upstreamItemTags} content
 			 */
 			catch (IllegalStateException e) {
-				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} ([ \\t\\S]+)");
+				s.findInLine("\\[(\\S+)\\]\\{(\\S+)\\} ([ \\t\\S]*)");
 				MatchResult result = s.match();
 				tag = result.group(1);
 				upstreamItemTags = result.group(2).split(",");

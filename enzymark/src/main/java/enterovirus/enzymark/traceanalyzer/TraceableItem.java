@@ -3,7 +3,6 @@ package enterovirus.enzymark.traceanalyzer;
 import java.util.ArrayList;
 import java.util.List;
 
-import enterovirus.enzymark.TraceableItemParser;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(exclude={"upstreamItems", "downstreamItems"})
@@ -24,13 +23,6 @@ public class TraceableItem {
 	 * this attribute has no use.
 	 */
 	String[] upstreamItemTags;
-
-	public TraceableItem(TraceableItemParser parsingResult, TraceableDocument document) {
-		this.tag = parsingResult.getTag();
-		this.content = parsingResult.getContent();
-		this.document = document;
-		this.upstreamItemTags = parsingResult.getUpstreamItemTags();
-	}
 	
 	TraceableItem(String tag, String content, TraceableDocument document, String[] upstreamItemTags) {
 		this.tag = tag;

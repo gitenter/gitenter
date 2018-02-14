@@ -31,10 +31,13 @@ public class TraceableItemVisitorTest {
 				+ "- normal list item 1\n"
 				+ "- normal list item 2\n"
 				+ "\n"
+				+ "- **bold** list item\n"
+				+ "- *italic* list item\n"
+				+ "\n"
 				+ "more text\n"
 				+ "\n"
-				+ "- [tag]{refer} a traceable item.\n"
-				+ "- [another-tag] another traceable item.\n";
+				+ "- [tag]{refer} **bold** started traceable item.\n"
+				+ "- [another-tag] another traceable item with **bold** and *italic*.\n";
 		
 		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
 		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path", content);
@@ -45,8 +48,8 @@ public class TraceableItemVisitorTest {
 		node.accept(visitor);
 		
 		List<TraceableItem> resultItems = new ArrayList<TraceableItem>(); 
-		resultItems.add(new TraceableItem("tag", "a traceable item.", document, new String[] {"refer"}));
-		resultItems.add(new TraceableItem("another-tag", "another traceable item.", document, new String[] {} ));
+		resultItems.add(new TraceableItem("tag", "<strong>bold</strong> started traceable item.", document, new String[] {"refer"}));
+		resultItems.add(new TraceableItem("another-tag", "another traceable item with <strong>bold</strong> and <em>italic</em>.", document, new String[] {} ));
 		assertEquals(visitor.getTraceableItems(), resultItems);
 	}
 }
