@@ -60,6 +60,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				 * any kind of collaborator of the corresponding repository),
 				 * s/he can still access the repository settings/collaborators
 				 * pages (as they are set above).
+				 * 
+				 * TODO:
+				 * Currently this page needs "auth-header". So if user never login,
+				 * can it be redirect to a better header?
 				 */
 				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/**").access("@securityService.checkRepositoryReadability(authentication,#repositoryId)")
 				/*
