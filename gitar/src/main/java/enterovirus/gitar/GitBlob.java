@@ -3,6 +3,7 @@ package enterovirus.gitar;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -82,8 +83,18 @@ public class GitBlob implements AutoCloseable {
 				treeWalk.setRecursive(true);
 				treeWalk.setFilter(PathFilter.create(relativeFilepath));
 				if (!treeWalk.next()) {
-					/*if not do next(), always only get the first file. */
-					throw new IllegalStateException("Did not find expected file with relative path \""+relativeFilepath+"\".");
+					/*
+					 * If not do next(), always only get the first file.
+					 * 
+					 * Another note:
+					 * 
+					 * Previously use a runtime exception "IllegalStateException" 
+					 * rather than "FileNotFoundException extends IOException".
+					 * It is not working because it indeed sometimes want to query a
+					 * file which may not exist (e.g., the configuration file 
+					 * "gitenter.properties"). 
+					 */
+					throw new FileNotFoundException("Did not find expected file with relative path \""+relativeFilepath+"\".");
 				}
 				ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
 				blobContent = loader.getBytes();

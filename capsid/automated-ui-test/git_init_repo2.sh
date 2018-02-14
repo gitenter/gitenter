@@ -8,6 +8,18 @@ cd repo2
 git init
 git remote add origin $1
 
+cd $clientroot/repo2
+mkdir doc
+cat > $clientroot/repo2/doc/test.md <<- EOM
+# Test
+
+- [tag] content
+EOM
+
+git add -A
+git commit -m "add a document file but with no setup file"
+git push origin master
+
 cat > $clientroot/repo2/gitenter.properties <<- EOM
 # ---------------------------
 # GitEnter configuration file
@@ -30,16 +42,4 @@ EOM
 
 git add -A
 git commit -m "add setup file"
-git push origin master
-
-cd $clientroot/repo2
-mkdir doc
-cat > $clientroot/repo2/doc/test.md <<- EOM
-# Test
-
-- [tag] content
-EOM
-
-git add -A
-git commit -m "add a document file"
 git push origin master

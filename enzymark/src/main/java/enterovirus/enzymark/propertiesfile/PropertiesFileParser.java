@@ -76,6 +76,18 @@ public class PropertiesFileParser {
 			parseData(config);
 		}
 		catch (IOException e) {
+			/*
+			 * TODO:
+			 * 
+			 * That includes the case 
+			 * (1) The properties file doesn't exist (FileNotFoundException).
+			 * (2) Several JGit raises exceptions of ".git" folder related,
+			 * see e.g. http://download.eclipse.org/jgit/docs/jgit-2.0.0.201206130900-r/apidocs/org/eclipse/jgit/revwalk/RevWalk.html#parseCommit(org.eclipse.jgit.lib.AnyObjectId)
+			 * 
+			 * Actually only the first case (FileNotFoundException) I want
+			 * to turn off the system, but for other cases I should raise other
+			 * exceptions.
+			 */
 			enableSystemwide = false;
 		}
 		catch (ConfigurationException e) {
