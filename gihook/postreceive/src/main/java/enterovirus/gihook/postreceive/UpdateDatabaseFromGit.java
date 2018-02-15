@@ -102,6 +102,14 @@ public class UpdateDatabaseFromGit {
 		}
 		catch (TraceAnalyzerException e) {
 			
+			/*
+			 * TODO:
+			 * Can it show all the parsing exceptions at the same time?
+			 * Or a better way is to have a client-side hook to handle that?
+			 * 
+			 * Probably need to recover from the "TraceAnalyzerException"
+			 * and continue append the error messages. 
+			 */
 			CommitBean commit = new CommitInvalidBean(repository, commitInfo.getCommitSha(), e.getMessage());
 			repository.addCommit(commit);
 			

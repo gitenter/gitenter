@@ -120,6 +120,11 @@ public class GitNavigationController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
+		/*
+		 * TODO:
+		 * Default show not the most recent commit, rather than the most recent
+		 * valid commit.
+		 */
 		model.addAttribute("shaChecksumHash", commitSha.getShaChecksumHash());
 		
 		CommitBean commit = commitRepository.findByRepositoryIdAndCommitSha(repositoryId, commitSha);
@@ -230,6 +235,11 @@ public class GitNavigationController {
 			return "git-navigation/commit";
 		}
 		else if (commit instanceof CommitInvalidBean) {
+			/*
+			 * TODO:
+			 * Can it show all the parsing exceptions at the same time?
+			 * Or a better way is to have a client-side hook to handle that?
+			 */
 			model.addAttribute("errorMessage", ((CommitInvalidBean)commit).getErrorMessage());
 			return "git-navigation/invalid-commit";
 		}

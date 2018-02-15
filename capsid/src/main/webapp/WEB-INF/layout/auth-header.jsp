@@ -6,6 +6,12 @@
     <header>
       <a href="<c:url value="/" />"><img class="logo" src="<s:url value="/resources/image/logo.png" />" alt="enterovirus" height="48" width="192"></a>
       
+      <%--
+        the "url=" part should be meaningless. What I want is
+        any page which the current user is logged in.
+        Read carefully how "security:authorize" works, and its
+        possible options. 
+       --%>
       <security:authorize url="/">
         <s:url var="logout_url" value="/logout" />
         <sf:form method="POST" action="${logout_url}">
@@ -19,7 +25,7 @@
         <div class="text">Logged in as <security:authentication property="principal.username" /></div>
       </security:authorize>
       <%--
-      TODO:
-      Otherwise show login and signup?
+        TODO:
+        Otherwise show login and signup links?
        --%>
     </header>
