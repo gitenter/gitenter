@@ -4,7 +4,7 @@
 
 	<groupId>enterovirus</groupId>
 	<artifactId>enzymark</artifactId>
-	<version>0.0.1-prototype</version>
+	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
 
 	<name>enzymark</name>
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.1-prototype</version>
+			<version>0.0.2-prototype</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.1-prototype</version>
+			<version>0.0.2-prototype</version>
 			<exclusions>
 				<exclusion> <!-- Just want to use the beans. Nothing else. -->
 					<groupId>*</groupId>

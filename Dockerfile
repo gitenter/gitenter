@@ -91,7 +91,7 @@ RUN apt-get update && \
 RUN apt-get update && \
 	apt-get -y install tomcat8
 
-ADD capsid/target/capsid-0.0.1-prototype.war /var/lib/tomcat8/webapps
+ADD capsid/target/capsid-0.0.2-prototype.war /var/lib/tomcat8/webapps
 
 ENV CATALINA_HOME /usr/share/tomcat8
 ENV CATALINA_BASE /var/lib/tomcat8

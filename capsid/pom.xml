@@ -5,7 +5,7 @@
 
 	<groupId>enterovirus</groupId>
 	<artifactId>capsid</artifactId>
-	<version>0.0.1-prototype</version>
+	<version>0.0.2-prototype</version>
 	<packaging>war</packaging>
 
 	<name>capsid</name>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.1-prototype</version>
+			<version>0.0.2-prototype</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.1-prototype</version>
+			<version>0.0.2-prototype</version>
 			<!-- 
 				Exclude everything, because "protease" is a Spring application,
 				and "capsid" is a Spring Boot application. They only share the

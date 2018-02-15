@@ -4,7 +4,7 @@
 
 	<groupId>enterovirus</groupId>
 	<artifactId>immunessh</artifactId>
-	<version>0.0.1-prototype</version>
+	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
 
 	<name>immunessh</name>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.1-prototype</version>
+			<version>0.0.2-prototype</version>
 		</dependency>
 
 		<!-- Compile -->

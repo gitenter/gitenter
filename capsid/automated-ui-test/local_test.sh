@@ -1,8 +1,8 @@
 # After change the tomcat user to be "git",
 # tomcat sometimes (not sure yet) cannot do auto-deployment. 
 # So we need to manually
-# rm /var/lib/tomcat8/webapps/capsid-0.0.1-prototype.war
-# rm -rf /var/lib/tomcat8/webapps/capsid-0.0.1-prototype
+# rm /var/lib/tomcat8/webapps/capsid-0.0.2-prototype.war
+# rm -rf /var/lib/tomcat8/webapps/capsid-0.0.2-prototype
 # before copy the war in.
 
 echo "\n"
@@ -34,7 +34,7 @@ cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
 
 # UI automatic test.
 # URL without the "/" at the end of it
-python3 ui_init.py http://localhost:8080/capsid-0.0.1-prototype
+python3 ui_init.py http://localhost:8080/capsid-0.0.2-prototype
 
 # Git automatic test
 # "git clone" by SSH protocol
