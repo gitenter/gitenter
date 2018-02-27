@@ -26,6 +26,14 @@ public class MemberDTO {
 	@Size(min=2, max=16)
 	private String username;
 	
+	/*
+	 * TODO:
+	 * For safety concern, consider save it in a character array
+	 * rather than an array, and blank it once you are done with it.
+	 * Reason: String is immutable and are stored in the Java String 
+	 * pool, so it stays in there for an indeterminate period of
+	 * time until being garbage collected.
+	 */
 	@NotNull
 	@Size(min=2, max=16)
 	private String password;

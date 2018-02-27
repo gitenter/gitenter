@@ -35,6 +35,13 @@ public class DocumentationController {
 		return "documentation/template";
 	}
 	
+	/*
+	 * This one is a "inner class" rather than "static nested class",
+	 * as it is only used for "DocumentationController", so the nodes
+	 * are really belongs to this DocumentController instance.
+	 * 
+	 * However, it cannot be private, because JSTL is using it.
+	 */
 	@Getter
 	public class NavigationNode {
 		

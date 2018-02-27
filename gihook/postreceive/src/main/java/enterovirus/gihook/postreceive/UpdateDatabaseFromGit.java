@@ -181,6 +181,9 @@ public class UpdateDatabaseFromGit {
 	/*
 	 * This class is to link the results of methods
 	 * "buildDocumentsAndTraceableItems()" and "buildTraceabilityMaps()"
+	 * 
+	 * Note: Non-static inner class only used for one particular 
+	 * instance of the outer one.
 	 */
 	private class TraceabilityBuildHelper {
 		private Map<TraceableItem,TraceableItemBean> traceabilityIterateMap = new HashMap<TraceableItem,TraceableItemBean>();
@@ -233,6 +236,12 @@ public class UpdateDatabaseFromGit {
 			 * TraceableRepository.refreshUpstreamAndDownstreamItems()
 			 * useless.
 			 * Consider delete that one, or rewrite this one smarter? 
+			 * 
+			 * TODO:
+			 * May try to build some "backed by" collection (through 
+			 * "Collection.retainAll()") so the collections of 
+			 * "TraceableItem" and "TraceableItemBean" can be handled
+			 * together.
 			 */
 			for (TraceableItem upstreamItem : traceableItem.getUpstreamItems()) {
 			

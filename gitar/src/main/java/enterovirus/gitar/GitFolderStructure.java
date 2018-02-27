@@ -214,6 +214,9 @@ public class GitFolderStructure {
 	 * JGit's "TreeWalk" only has a "next()" walk to the next 
 	 * relevant entry but also return whether there's a next entry 
 	 * but no "hasNext()".
+	 * 
+	 * Note: Non-static inner class only used for one particular 
+	 * instance of the outer one.
 	 */
 	private class GenerateTreeReturnValue {
 
@@ -283,7 +286,11 @@ public class GitFolderStructure {
 	private interface ListableMutableTreeNode extends MutableTreeNode, ListableTreeNode {
 	}
 	
-	private class DefaultListableMutableTreeNode extends DefaultMutableTreeNode implements ListableMutableTreeNode {
+	/*
+	 * This is a "static nested class", because it is a general class
+	 * not related to the particular instance of a GitFolderStructure instance.
+	 */
+	private static class DefaultListableMutableTreeNode extends DefaultMutableTreeNode implements ListableMutableTreeNode {
 
 		static final long serialVersionUID = 1L; 
 

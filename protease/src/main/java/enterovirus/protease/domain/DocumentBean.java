@@ -110,9 +110,14 @@ public class DocumentBean extends BlobBean {
 		return lineContents;
 	}
 	
+	/*
+	 * "static" because otherwise there may be potential memory 
+	 * leaking (when "DocumentBean" is discarded after "LineContent" 
+	 * is created). 
+	 */
 	@Getter
 	@Setter
-	public class LineContent {
+	public static class LineContent {
 
 		private Integer lineNumber;
 		private String content;

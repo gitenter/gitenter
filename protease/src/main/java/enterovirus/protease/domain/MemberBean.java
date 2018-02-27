@@ -52,6 +52,7 @@ public class MemberBean {
 	
 	/*
 	 * Since this is the encoded one, there's no length constrain.
+	 * Also, there is no need to use character array to make it safer.
 	 */
 	@NotNull
 	@Column(name="password")
