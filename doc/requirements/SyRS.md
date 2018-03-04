@@ -67,10 +67,16 @@ in each group, and the nature of their use of the system.)*
 - [SyRS-0009]{StRS-0002,SyRS-0005} The software shall support IEEE 1233: IEEE Guide for Developing System Requirements Specifications.
 - [SyRS-0012]{StRS-0008,SyRS-0005} The software shall support IEEE 1016: IEEE Recommended Practice for Software Design Descriptions.
 - [SyRS-0016]{SyRS-0005} The software shall support IEEE 1028: IEEE Standard for Software Reviews and Audits.
-- [SyRS-0003]{StRS-0015,StRS-0010} The software shall support standards for medical device development.
-- [SyRS-0013]{SyRS-0003} The software shall support ISO 13485: Medical devices -- Quality management systems -- Requirements for regulatory purposes.
-- [SyRS-0014]{SyRS-0003} The software shall support FDA's Design Control Guidance for Medical Device Industry.
-- [SyRS-0015]{SyRS-0002,SyRS-0003} The software shall support FDA's General Principles of Software Validation; Final Guidance for Industry and FDA Staff.
+- [SyRS-0003]{StRS-0015,StRS-0010} The software shall support various standards for medical device development, includes:
+    - ISO 13485: Medical devices -- Quality management systems -- Requirements for regulatory purposes.
+    - FDA's 21 CFR 820.30: Design Control Guidance for Medical Device Industry.
+    - FDA's General Principles of Software Validation; Final Guidance for Industry and FDA Staff.
+    - IEC 62304: Medical device software -- Software life cycle processes.
+- [SyRS-0032]{StRS-0034,StRS-0010} The software shall support various standards for automotive development, includes:
+    - ISO 26262. *(Should be only part 3-7 of it is relevant. Check later.)*
+    - IEC 61508: Functional Safety of Electrical/Electronic/Programmable Electronic Safety-related Systems. *(This one seems quite general. It is not only used for the automotive industry.)*
+- [SyRS-0033]{StRS-0016,StRS-0010} The software shall support various standards for nuclear power development, includes:
+    - IEC 61839: Nuclear power plants - Design of control rooms - Functional analysis and assignment.
 - [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a revision control system, to (1) monitor the evolution of the targeting documents, and (2) integrate the works of multiple users.
 - [SyRS-0019]{StRS-0001,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are quality control documents.
 - [SyRS-0031]{StRS-0001,StRS-0010} The software shall provide templates of the documents based on the regulatory requirements.

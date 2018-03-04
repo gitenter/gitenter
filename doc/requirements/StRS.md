@@ -91,7 +91,8 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
 - [StRS-0013]{StRS-0001} The software may be used for software development.
 - [StRS-0014]{StRS-0001} The software may be used for development of quality sensitive products.
-- [StRS-0015]{StRS-0014} The software may be used for medical device development.
+- [StRS-0015]{StRS-0014} The software may be used for medical device industry.
+- [StRS-0035]{StRS-0014} The software may be used for automotive industry.
 - [StRS-0016]{StRS-0014} The software may be used in energy related industries.
 - [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
 - [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
