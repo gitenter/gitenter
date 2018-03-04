@@ -3,12 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>enterovirus.gihook</groupId>
-	<artifactId>update</artifactId>
+	<artifactId>precommit</artifactId>
 	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
 
-	<name>gihook update</name>
-	<url>the update module of git hook</url>
+	<name>gihook precommit</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,7 +31,6 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -48,6 +46,11 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>protease</artifactId>
+			<version>0.0.2-prototype</version>
+		</dependency>
+		<dependency>
+			<groupId>enterovirus</groupId>
+			<artifactId>enzymark</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
 
@@ -66,6 +69,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
 		</dependency>
 
 		<!-- Test -->

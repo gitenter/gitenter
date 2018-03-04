@@ -84,8 +84,6 @@ public class UpdateDatabaseFromGit {
 			commitRepository.saveAndFlush(commit);
 			return;
 		}
-		
-		String[] includePaths = propertiesFileParser.getIncludePaths();
 			
 		/*
 		 * Communicate with git to get the useful information needed
@@ -98,6 +96,7 @@ public class UpdateDatabaseFromGit {
 		TraceableRepository traceableRepository;
 		
 		try {
+			String[] includePaths = propertiesFileParser.getIncludePaths();
 			traceableRepository = getTraceableRepository(status, commitInfo, includePaths);
 		}
 		catch (TraceAnalyzerException e) {
