@@ -1,19 +1,11 @@
 package enterovirus.gihook.precommit;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,18 +70,16 @@ public class CheckGitStatus {
 			
 			for (File includeFile : includeFiles) {
 				
+				TraceableDocument traceableDocument = new TraceableDocument(traceableRepository, includeFile);
+				
 				/*
 				 * TODO:
-				 * Should move this part to the "TraceableDocument" class.
+				 * Should this part be done in "TraceableDocument" constructor?
 				 */
-				String relativeFilepath = repositoryDirectory.toURI().relativize(includeFile.toURI()).getPath();
-				
-				List<String> lines = Files.readAllLines(includeFile.toPath(), Charsets.UTF_8);
-				String textContent = String.join("\n", lines);
-				
-				TraceableDocument traceableDocument = new TraceableDocument(traceableRepository, relativeFilepath, textContent);
 				traceableRepository.addTraceableDocument(traceableDocument);
 			}
+			
+			traceableRepository.refreshUpstreamAndDownstreamItems();	
 		}
 		catch (TraceAnalyzerException e) {
 			return e.getMessage();

@@ -25,7 +25,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>enterovirus.gihook.update.UpdateApplication</mainClass>
+							<mainClass>enterovirus.gihook.precommit.PreCommitApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

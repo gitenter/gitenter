@@ -26,7 +26,6 @@ public class PreCommitApplication {
 	private void run (File repositoryDirectory) throws IOException, GitAPIException {
 		
 		String returnMessage = checkGitStatus.apply(repositoryDirectory);
-		
-		System.out.println("Return message: "+returnMessage);
+		System.out.println(returnMessage);
 	}
 }

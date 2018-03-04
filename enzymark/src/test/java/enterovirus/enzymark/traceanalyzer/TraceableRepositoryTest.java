@@ -4,9 +4,14 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import enterovirus.enzymark.traceanalyzer.TraceableDocument;
 import enterovirus.enzymark.traceanalyzer.TraceableItem;
@@ -14,38 +19,60 @@ import enterovirus.enzymark.traceanalyzer.TraceableRepository;
 
 public class TraceableRepositoryTest {
 	
-	@Test
-	public void test1() throws Exception {
+	/*
+	 * Test with valid input
+	 */
+	@Rule public TemporaryFolder validRepositoryFolder = new TemporaryFolder();
+	TraceableRepository validRepository;
+	String validContent1;
+	String validContent2;
+	
+	@Before
+	public void initValidRepository() throws Exception {
 		
-		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
-		
-		String content1 = "normal text\n"
+		validContent1 = "normal text\n"
 				+ "\n"
 				+ "- [tag1] a traceable item.\n"
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
-		TraceableDocument document1 = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content1);
-		repository.addTraceableDocument(document1);
-		
-		String content2 = "normal text\n"
+		validContent2 = "normal text\n"
 				+ "\n"
 				+ "- [tag3]{tag1} a traceable item with cross-document reference.";
-		TraceableDocument document2 = new TraceableDocument(repository, "/fake/relative/file/path/for/document2", content2);
-		repository.addTraceableDocument(document2);
 		
-		repository.refreshUpstreamAndDownstreamItems();
+		File file1 = validRepositoryFolder.newFile("file1.md");
+		FileUtils.writeStringToFile(file1, validContent1, "UTF-8");
 		
-		List<String> tag1Downstream = new ArrayList<String>();
-		for (TraceableItem item : document1.getTraceableItems().get(0).getDownstreamItems()) {
-			tag1Downstream.add(item.getTag());
+		File file2 = validRepositoryFolder.newFile("file2.md");
+		FileUtils.writeStringToFile(file2, validContent2, "UTF-8");
+		
+		validRepository = new TraceableRepository(validRepositoryFolder.getRoot());
+	}
+	
+	@Test
+	public void testValidRepositoryFromContent() throws Exception {
+		
+		TraceableDocument document1 = new TraceableDocument(validRepository, "/fake/relative/file/path/for/document1", validContent1);
+		validRepository.addTraceableDocument(document1);
+		
+		TraceableDocument document2 = new TraceableDocument(validRepository, "/fake/relative/file/path/for/document2", validContent2);
+		validRepository.addTraceableDocument(document2);
+		
+		validRepository.refreshUpstreamAndDownstreamItems();
+		display(validRepository);
+		
+	}
+	
+	@Test
+	public void testValidRepositoryFromFile() throws Exception {
+		
+		Collection<File> includeFiles = FileUtils.listFiles(validRepositoryFolder.getRoot(), new String[]{"md"}, true);
+		
+		for (File file : includeFiles) {
+			TraceableDocument document = new TraceableDocument(validRepository, file);
+			validRepository.addTraceableDocument(document);
 		}
 		
-		List<String> tag1DownstreamExpect = new ArrayList<String>();
-		tag1DownstreamExpect.add("tag2");
-		tag1DownstreamExpect.add("tag3");
-		
-		assertEquals(tag1Downstream, tag1DownstreamExpect);
-		
-		display(repository);
+		validRepository.refreshUpstreamAndDownstreamItems();		
+		display(validRepository);
 	}
 	
 	private void display (TraceableRepository repository) {
@@ -70,17 +97,41 @@ public class TraceableRepositoryTest {
 		}
 	}
 	
-	@Test(expected = ItemTagNotUniqueException.class)
-	public void test2() throws Exception {
+	/*
+	 * Test with invalid input: same file with non-unique tag
+	 */
+	@Rule public TemporaryFolder sameFileTagNotUniqueRepositoryFolder = new TemporaryFolder();
+	TraceableRepository sameFileTagNotUniqueRepository;
+	String sameFileTagNotUniqueContent;
+	
+	@Before
+	public void initSameFileTagNotUniqueRepository() throws Exception {
 		
-		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
-		
-		String content = "- [tag] a traceable item.\n"
+		sameFileTagNotUniqueContent = "- [tag] a traceable item.\n"
 				+ "- [tag] another traceable item with tag conflict.";
-		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content);
-		repository.addTraceableDocument(document);
 		
-		repository.refreshUpstreamAndDownstreamItems();	
+		File file = sameFileTagNotUniqueRepositoryFolder.newFile("file.md");
+		FileUtils.writeStringToFile(file, sameFileTagNotUniqueContent, "UTF-8");
+		
+		sameFileTagNotUniqueRepository = new TraceableRepository(sameFileTagNotUniqueRepositoryFolder.getRoot());
+	}
+	
+	@Test(expected = ItemTagNotUniqueException.class)
+	public void testSameFileTagNotUniqueFromContent() throws Exception {
+		
+		TraceableDocument document = new TraceableDocument(sameFileTagNotUniqueRepository, "/fake/relative/file/path/for/document1", sameFileTagNotUniqueContent);
+		sameFileTagNotUniqueRepository.addTraceableDocument(document);
+		
+		sameFileTagNotUniqueRepository.refreshUpstreamAndDownstreamItems();	
+	}
+	
+	@Test(expected = ItemTagNotUniqueException.class)
+	public void testSameFileTagNotUniqueFromFile() throws Exception {
+		
+		TraceableDocument document = new TraceableDocument(sameFileTagNotUniqueRepository, sameFileTagNotUniqueRepositoryFolder.getRoot().toPath().resolve("file.md").toFile());
+		sameFileTagNotUniqueRepository.addTraceableDocument(document);
+		
+		sameFileTagNotUniqueRepository.refreshUpstreamAndDownstreamItems();	
 	}
 	
 	@Test(expected = ItemTagNotUniqueException.class)

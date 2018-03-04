@@ -16,7 +16,7 @@ import enterovirus.gitar.wrap.CommitSha;
 public class PropertiesFileParserTest {
 	
 	@Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+	public TemporaryFolder testFolder = new TemporaryFolder();
 
 	@Test
 	public void test1() throws Exception {
