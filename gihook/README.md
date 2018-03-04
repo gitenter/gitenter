@@ -21,9 +21,11 @@ Add a file names `pre-commit` in the `.git/hooks` folder of the corresponding re
 ```
 #!/bin/bash
 
-output=$(java -jar precommit-0.0.2-prototype-jar-with-dependencies.jar)
+output=$(java -jar .git/hooks/precommit-0.0.2-prototype-jar-with-dependencies.jar)
 
 if [ "$output" != "null" ]; then
+	echo $output
+	echo "ERROR: commit is ignored!"
     exit 1
 fi
 ```
