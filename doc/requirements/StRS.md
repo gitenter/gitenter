@@ -143,6 +143,8 @@ Fields of usage:
 Features:
 
 - [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processor to edit the documents.
+- [StRS-0036]{} The software shall support basic document formatting.
+- [StRS-0037]{} The software shall separate the content and the presentation of the documents.
 - [StRS-0004]{StRS-0001} The software shall help recording and monitoring the evolution history and versions of official documents.
 
 ### Operational scenarios
