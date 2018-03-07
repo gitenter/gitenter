@@ -821,6 +821,27 @@ article div.markdown a:active { color: #2fc8a8; text-decoration: none; }
 
 /*************************** Traceable item tag ******************************/
 
+article div.markdown h1,
+article div.markdown h2,
+article div.markdown h3,
+article div.markdown h4,
+article div.markdown h5,
+article div.markdown h6 {
+	margin: 15px 0px 10px 0px;
+}
+
+article div.markdown p {
+	margin: 5px 0px 10px 0px;
+}
+
+article div.markdown table {
+	margin: 10px 0px 15px 0px;	
+}
+
+article div.markdown li {
+	margin: 5px 0px 5px 0px;
+}
+
 /*
  * It is a property of "li" rather than "ul", because there may be
  * a mixing of traceable bubble items and normal bubble items
