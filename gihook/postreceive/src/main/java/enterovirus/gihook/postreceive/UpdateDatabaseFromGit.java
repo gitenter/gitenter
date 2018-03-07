@@ -42,9 +42,45 @@ public class UpdateDatabaseFromGit {
 		GitLog gitLog = new GitLog(status.getRepositoryDirectory(), status.getBranchName(), status.getOldCommitSha(), status.getNewCommitSha());
 	
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(status.getOrganizationName(), status.getRepositoryName());
-		Hibernate.initialize(repository.getCommits());
+
+		/*
+		 * Since all commits need to write to the database are new (no update),
+		 * there is no need to load the privous commits.
+		 */
+//		Hibernate.initialize(repository.getCommits());
+		
+		/*
+		 * This happens because for a new branch, although it starts from an existing
+		 * commit, the "oldCommitSha" "update"/"post-receive" hooks provided
+		 * is still a null value. So if we don't manually find these commit out,
+		 * they'll be try to rewrite to the database again, and that raises SQL
+		 * error 
+		 * > ERROR: duplicate key value violates unique constraint
+		 * 
+		 * The other method is to change the implementation in "GitLog", but it is also
+		 * now easy so we don't go to that direction.
+		 */
+		List<CommitBean> alreadyInDbCommit = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), gitLog.getCommitShas());
 		
 		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
+			
+			/*
+			 * Since "gitLog" commits are in reverse time order, when we met
+			 * the first one which is in "alreadyInDbCommit", all the follow up
+			 * ones are in it. So the loop can be terminated immediately.
+			 * 
+			 * TODO:
+			 * 
+			 * We still need to run the loop every single time the commit has
+			 * not exist yet. The performance of the current method is not good.
+			 * 
+			 * Improve the code by finding out the commits in "gitLog" but
+			 * not in "alreadyInDbCommit" (set absolute complement), and only 
+			 * iterate for those elements.
+			 */
+			if (CommitBean.inCommitList(commitInfo.getCommitSha().getShaChecksumHash(), alreadyInDbCommit)) {
+				break;
+			}
 			
 			/*
 			 * Update every single git commit which is under the

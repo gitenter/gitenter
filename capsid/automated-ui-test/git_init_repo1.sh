@@ -153,9 +153,23 @@ cat > $clientroot/repo1/doc/design/D1.md <<- EOM
 # Design-1
 
 - [D1T1]{R1T1,R2T1} Content of D1T1
-- [D2T2] Content of D2T2.
+- [D1T2] Content of D1T2.
 EOM
 
 git add -A
 git commit -m "Add some valid traceable files."
 git push origin master
+
+git branch another-branch
+git checkout another-branch
+
+cat > $clientroot/repo1/doc/design/D2.md <<- EOM
+# Design-2
+
+- [D2T1]{R1T1,R2T1} Content of D2T1
+- [D2T2] Content of D2T2.
+EOM
+
+git add -A
+git commit -m "Add design-2 in another branch"
+git push origin another-branch

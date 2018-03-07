@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>enterovirus</groupId>
 			<artifactId>enzymark</artifactId>
-			<version>0.0.1-prototype</version>
+			<version>0.0.2-prototype</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>

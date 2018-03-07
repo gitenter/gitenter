@@ -72,6 +72,20 @@ public class GitLog {
 				 * 
 				 * Unfortunately, JGit doesn't have a method for that, so I need to
 				 * iterate it by myself.
+				 * 
+				 * NOTE:
+				 * 
+				 * The problem is, for a new branch, although it starts from an existing
+				 * commit, the "oldCommitSha" "update"/"post-receive" hooks provided
+				 * is still a null value, so this log may contain several commits which
+				 * shouldn't belong to this branch. However, there is no easy way to handle
+				 * that in here (as "git log" itself has no knowledge on the knowledge
+				 * of other branches, and/or the topology of commits. Methods includes 
+				 * (1) Use "git log --graph" or JGit's "RevWalk"
+				 * (2) Handle this problem somewhere else.
+				 * 
+				 * I am currently using the second method (in 
+				 * "enterovirus.gihook.postreceive.UpdateDatabaseFromGit")
 				 */
 				Iterable<RevCommit> logs = git.log()
 						.add(repository.resolve(branchName.getName()))
@@ -115,5 +129,15 @@ public class GitLog {
 
 	public List<CommitInfo> getCommitInfos() {
 		return commitInfos;
+	}
+	
+	public List<CommitSha> getCommitShas() {
+		
+		List<CommitSha> commitShas = new ArrayList<CommitSha>();
+		for (CommitInfo commitInfo : commitInfos) {
+			commitShas.add(commitInfo.getCommitSha());
+		}
+		
+		return commitShas;
 	}
 }

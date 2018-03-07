@@ -31,5 +31,3 @@ echo "arg3:" $3
 #echo "oldrev:" $oldrev
 #echo "newrev:" $newrev
 
-#java -jar hooks/update-0.0.1-prototype-jar-with-dependencies.jar $1 $2 $3
-

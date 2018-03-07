@@ -102,14 +102,3 @@ http://0.0.0.0:58080/capsid-0.0.1-alpha
 	+ The words crown together.
 	+ Margin in between traced items.
 + If only one single upstream item is provided, and it is in the same document/paragraph, should the item be just `tab` of the upstream one, rather than list separately with "hard to understand" link?
-
-## Bugs
-
-Push to a new branch, and
-
-```
-remote: ERROR [main] (SqlExceptionHelper.java:131) - ERROR: duplicate key value violates unique constraint "git_commit_repository_id_sha_checksum_hash_key"
-remote:   Detail: Key (repository_id, sha_checksum_hash)=(1, 69548e8f344cd60c752845de785d6bd427d8bb76) already exists.
-```
-
-Should be bug for analyzing the commits in post-receive hooks??

@@ -1,5 +1,7 @@
 package enterovirus.protease.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,5 +54,15 @@ public class CommitBean {
 	public CommitBean (RepositoryBean repository, CommitSha commitSha) {
 		this.repository = repository;
 		this.shaChecksumHash = commitSha.getShaChecksumHash();
+	}
+	
+	public static boolean inCommitList (String shaChecksumHash, List<CommitBean> commits) {
+		
+		for (CommitBean commit : commits) {
+			if (commit.shaChecksumHash.equals(shaChecksumHash)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

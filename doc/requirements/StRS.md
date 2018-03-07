@@ -57,6 +57,11 @@ However, while there are various different tools for source code revision contro
         + Links between documents are in a less official and anarchical way.
         + Version control only based on one single document.
         + Collaboration is not specific for serious SDLC.
++ Greenlight Guru:
+	+ Cons:
+		+ No version control. 
+		+ Workflow is too specific for particular purposes.
+		+ Not scaleable to large projects.
 + Naive and simple version numbers.
 
 We are going to make a tool which provide the flexibility and complicity of a source code revision control system, but fits better to document collaboration.

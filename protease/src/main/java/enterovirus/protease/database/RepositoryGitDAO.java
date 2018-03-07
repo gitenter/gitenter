@@ -44,17 +44,11 @@ public class RepositoryGitDAO {
 		 */
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
 		GitLog gitLog = new GitLog(repositoryDirectory, branchName, maxCount, skip);
-		List<CommitInfo> commitInfos = gitLog.getCommitInfos();
-		
-		List<CommitSha> commitShas = new ArrayList<CommitSha>();
-		for (CommitInfo commitInfo : commitInfos) {
-			commitShas.add(commitInfo.getCommitSha());
-		}
-		
+
 		/*
 		 * Do it in one single SQL query by performance concerns.
 		 */
-		List<CommitBean> commits = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), commitShas);
+		List<CommitBean> commits = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), gitLog.getCommitShas());
 		Map<String,CommitBean> commitMap = new HashMap<String,CommitBean>();
 		for (CommitBean commit : commits) {
 			commitMap.put(commit.getShaChecksumHash(), commit);
@@ -64,7 +58,7 @@ public class RepositoryGitDAO {
 		 * LinkedHashMap to maintain key's order.
 		 */
 		Map<CommitInfo,CommitBean> commitLogMap = new LinkedHashMap<CommitInfo,CommitBean>();
-		for (CommitInfo commitInfo : commitInfos) {
+		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
 			commitLogMap.put(commitInfo, commitMap.get(commitInfo.getCommitSha().getShaChecksumHash()));
 		}
 		
