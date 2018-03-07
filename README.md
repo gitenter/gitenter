@@ -95,3 +95,10 @@ Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the 
 ```
 http://0.0.0.0:58080/capsid-0.0.1-alpha
 ```
+
+## Unclassified TODOs and features
+
++ [ ] A better CSS. 
+	+ The words crown together.
+	+ Margin in between traced items.
++ If only one single upstream item is provided, and it is in the same document/paragraph, should the item be just `tab` of the upstream one, rather than list separately with "hard to understand" link?

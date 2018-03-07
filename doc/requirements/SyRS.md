@@ -58,40 +58,59 @@ in each group, and the nature of their use of the system.)*
 ### Functional requirements
 
 - [SyRS-0002]{StRS-0013,StRS-0010} The software shall support standards of software development.
+
+Regulatory:
+
 - [SyRS-0004]{StRS-0003,SyRS-0002} The software shall support CMMI.
 - [SyRS-0005]{SyRS-0002} The software shall support various ISO/IEC/IEEE standards of software development.
-- [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support ISO/IEC/IEEE 12207: Systems and software engineering -- Software life cycle processes.
-- [SyRS-0007]{StRS-0003,SyRS-0005} The software shall support ISO/IEC/IEEE 15288: Systems and software engineering -- System life cycle processes.
-- [SyRS-0008]{StRS-0002,SyRS-0005} The software shall support ISO/IEC/IEEE 29148: Systems and software engineering -- Life cycle processes -- Requirements engineering.
-- [SyRS-0011]{StRS-0002,SyRS-0005} The software shall support IEEE 830: IEEE Recommended Practice for Software Requirements Specifications.
-- [SyRS-0009]{StRS-0002,SyRS-0005} The software shall support IEEE 1233: IEEE Guide for Developing System Requirements Specifications.
-- [SyRS-0012]{StRS-0008,SyRS-0005} The software shall support IEEE 1016: IEEE Recommended Practice for Software Design Descriptions.
+- [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support general SDLC standards, include:
+    - ISO/IEC/IEEE 12207: Systems and software engineering -- Software life cycle processes.
+    - ISO/IEC/IEEE 15288: Systems and software engineering -- System life cycle processes.
+- [SyRS-0008]{StRS-0002,SyRS-0005} The software shall support various requirement engineering standards, include:
+    - ISO/IEC/IEEE 29148: Systems and software engineering -- Life cycle processes -- Requirements engineering.
+    - IEEE 830: IEEE Recommended Practice for Software Requirements Specifications.
+    - IEEE 1233: IEEE Guide for Developing System Requirements Specifications.
+- [SyRS-0012]{StRS-0008,SyRS-0005} The software shall support various design control standards, include:
+    - IEEE 1016: IEEE Recommended Practice for Software Design Descriptions.
 - [SyRS-0016]{SyRS-0005} The software shall support IEEE 1028: IEEE Standard for Software Reviews and Audits.
 - [SyRS-0003]{StRS-0015,StRS-0010} The software shall support various standards for medical device development, includes:
     - ISO 13485: Medical devices -- Quality management systems -- Requirements for regulatory purposes.
     - FDA's 21 CFR 820.30: Design Control Guidance for Medical Device Industry.
     - FDA's General Principles of Software Validation; Final Guidance for Industry and FDA Staff.
     - IEC 62304: Medical device software -- Software life cycle processes.
-- [SyRS-0032]{StRS-0034,StRS-0010} The software shall support various standards for automotive development, includes:
+- [SyRS-0032]{StRS-0035,StRS-0010} The software shall support various standards for automotive development, includes:
     - ISO 26262. *(Should be only part 3-7 of it is relevant. Check later.)*
     - IEC 61508: Functional Safety of Electrical/Electronic/Programmable Electronic Safety-related Systems. *(This one seems quite general. It is not only used for the automotive industry.)*
 - [SyRS-0033]{StRS-0016,StRS-0010} The software shall support various standards for nuclear power development, includes:
     - IEC 61839: Nuclear power plants - Design of control rooms - Functional analysis and assignment.
-- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a revision control system, to (1) monitor the evolution of the targeting documents, and (2) integrate the works of multiple users.
+
+Features:
+
+- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a revision control system.
 - [SyRS-0019]{StRS-0001,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are quality control documents.
 - [SyRS-0031]{StRS-0001,StRS-0010} The software shall provide templates of the documents based on the regulatory requirements.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide APIs with code revision control platforms.
-- [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level: regular backups by authors, pending changes/different opinions, changes approved as a group decision, ...
-- [SyRS-0010]{StRS-0018,SyRS-0006,SyRS-0007} The software shall provide tools related to the traceability of requirement/design items.
-- [SyRS-0029]{StRS-0002,StRS-0018} The software shall provide tools to analyze the (1) stakeholder priority, (2) risk, (3) rationale, and (4) difficulty of each requirement.
+- [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level:
+    - Regular backups by authors.
+    - Pending changes/different opinions.
+    - Changes approved as a group decision.
+    - ...
+- [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can edit/approval changes of the documents.
+- [SyRS-0010]{StRS-0018,SyRS-0006} The software shall provide tools related to the traceability of requirement/design items.
+- [SyRS-0029]{StRS-0002,StRS-0018} The software shall provide tools to analyze various properties of requirement items, includes:
+    - Stakeholder priority.
+    - Risk.
+    - Rationale.
+    - Difficulty.
 - [SyRS-0030]{StRS-0002,StRS-0008,StRS-0018} The software shall provide tools to help tracking whether a requirement/design has been implemented and/or tested.
-- [SyRS-0024]{StRS-0018,SyRS-0016} The software shall provide a flexible way of various review activities, which can be either a formal review meeting, or discussions on top of a web service.
+- [SyRS-0024]{StRS-0018,SyRS-0016} The software shall provide a flexible way of various review activities, includes:
+    - A formal review meeting.
+    - Discussions on top of a web service.
 - [SyRS-0018]{StRS-0011,SyRS-0016} The software shall support authorized user to setup some frozen time stamp as a milestone of the development life cycle.
-- [SyRS-0025]{SyRS-0018,SyRS-0024} Formal review activities can only be based on the a frozen time stamp.
+- [SyRS-0025]{SyRS-0018,SyRS-0024} Formal review activities can only be based on the a frozen time stamp/milestone.
 - [SyRS-0023]{SyRS-0024} The software shall support recoding the meeting moments of the formal review meetings.
 - [SyRS-0017]{SyRS-0024,SyRS-0018} The software shall support various different users to submit comments, which will be gathered and later discussed in a review meeting.
 - [SyRS-0027]{SyRS-0024} The software shall support users to make discussions on documents and changes.
-- [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can edit/approval changes of the documents.
 
 ### Usability requirements
 

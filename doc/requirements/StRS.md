@@ -20,13 +20,43 @@
 
 *(Describe the reason and background for pursuing new business or changing the current business.)*
 
-Revision control is needed for serious documentation system which includes multiple related documents and/or collaborate between multiple people. Examples includes: (1) enterprise rules/regulations and requirement/design documents, (2) enactment of legal system/laws *(Better word?)* *(It seems only Civil law fits. Common law fits better to a database/search engine?)*, (3) research/knowledge management notes and papers, ...
+Revision control is needed for serious documentation system which includes multiple related documents and/or collaborate between multiple people. Examples includes:
+
++ Enterprise rules/regulations and requirement/design documents.
++ Enactment of legal system/laws *(Better word?)* *(It seems only Civil law fits. Common law fits better to a database/search engine?)*
++ Research/knowledge management notes and papers, ...
 
 However, while there are various different tools for source code revision control and collaboration, similar tool does not exist for documents. Alternative solutions includes:
 
-+ Google Drive or similar services: multiple users can collaborate and edit **one single** document simultaneously.
-+ Atlassian Confluence or similar services: mostly an on-line word processor of a project with multiple documents, without providing advanced tools for collaboration.
-+ Wiki: can build relations between different items, but in a really less official and anarchical way.
++ Google Drive or similar services:
+    + Pros:
+        + On-line word processor.
+        + Support collaborations, includes:
+            + Multiple users can collaborate and edit one single document *simultaneously*.
+            + Comments.
+            + Bookmarks.
+        + Version control.
+    + Cons:
+        + Content is not separated from presentation.
+        + Major functions only support activities of *one single* document.
+        + Can't support larger projects with multiple document files involved.
+        + Collaboration is not specific for serious SDLC.
++ Atlassian Confluence or similar services:
+    + Pros:
+        + On-line word processor.
+        + Support a project with multiple documents.
+        + Support collaboration for SDLC.
+    + Cons:
+        + Content is not separated from presentation.
++ Wiki:
+    + Pros:
+        + Support a project with multiple documents by CamelCase names and "link pattern".
+        + Content is separated from presentation.
+        + Version control.
+    + Cons:
+        + Links between documents are in a less official and anarchical way.
+        + Version control only based on one single document.
+        + Collaboration is not specific for serious SDLC.
 + Naive and simple version numbers.
 
 We are going to make a tool which provide the flexibility and complicity of a source code revision control system, but fits better to document collaboration.
@@ -54,6 +84,8 @@ Currently, we only aim on serving enterprise requirement/design documents.
 + **Word processor:** A computer software application, that performs the task of composing, editing, formatting, and printing of documents.
 
 ### Acronyms and abbreviations
+
++ **SLDC**: Systems development life cycle
 
 ## Stakeholders
 
@@ -90,17 +122,28 @@ These parties are equally important for the success of the product. But in this 
 - [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
 - [StRS-0013]{StRS-0001} The software may be used for software development.
+- [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
+- [StRS-0018]{StRS-0001} The software shall assist various activities to establish the documentation system.
+
+Kind of documents to work with:
+
+- [StRS-0002]{StRS-0001} The software shall be used for the documents of requirement engineering.
+- [StRS-0008]{StRS-0001} The software shall be used for the documents of design control.
+
+*(So right now doesn't support activities further to design control, e.g., integrate to implementation and test cases. Later it may try to integrate to e.g., test cases in TDD...)*
+
+Fields of usage:
+
 - [StRS-0014]{StRS-0001} The software may be used for development of quality sensitive products.
 - [StRS-0015]{StRS-0014} The software may be used for medical device industry.
 - [StRS-0035]{StRS-0014} The software may be used for automotive industry.
 - [StRS-0016]{StRS-0014} The software may be used in energy related industries.
 - [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
-- [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
-- [StRS-0002]{StRS-0001} The software shall be used for the documents of requirement engineering.
-- [StRS-0008]{StRS-0001} The software shall be used for the documents of design control.
+
+Features:
+
 - [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processor to edit the documents.
-- [StRS-0004]{StRS-0001} The software shall help recording the evolution history and versions of official documents.
-- [StRS-0018]{StRS-0001} The software shall assist various activities to establish the documentation system.
+- [StRS-0004]{StRS-0001} The software shall help recording and monitoring the evolution history and versions of official documents.
 
 ### Operational scenarios
 
@@ -150,8 +193,13 @@ These parties are equally important for the success of the product. But in this 
 
 ### Business model
 
+Target customer:
+
 - [StRS-0033]{StRS-0006} The software may be sold as a web service, charged per user per period of time, with the data saved centralized for all users in the cloud.
 - [StRS-0034]{StRS-0006} The software may be sold as a product with maintenance services, for the infrastructure setup locally in the user's place.
+
+Team building:
+
 - [StRS-0021]{} The software shall become an independent service for quality control documentation system in the short term.
 - [StRS-0030]{} The development of this software shall be kept in a small R&D team in the beginning to keep largest flexibility.
 - [StRS-0031]{} The software shall first includes primary functions, and provide them to the beta user as soon as possible.
