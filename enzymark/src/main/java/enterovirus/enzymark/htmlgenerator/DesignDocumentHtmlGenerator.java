@@ -36,17 +36,17 @@ public class DesignDocumentHtmlGenerator implements HtmlGenerator {
 				.build();
 		HtmlRenderer renderer = HtmlRenderer.builder()
 				.extensions(extensions)
-		        .nodeRendererFactory(new HtmlNodeRendererFactory() {
-		            public NodeRenderer create(HtmlNodeRendererContext context) {
-		                return new TraceableItemNodeRenderer(context, document);
-		            }
-		        })
-		        .nodeRendererFactory(new HtmlNodeRendererFactory() {
-		            public NodeRenderer create(HtmlNodeRendererContext context) {
-		                return new ImageNodeRenderer(context, document);
-		            }
-		        })
-		        .build();
+				.nodeRendererFactory(new HtmlNodeRendererFactory() {
+					public NodeRenderer create(HtmlNodeRendererContext context) {
+						return new TraceableItemNodeRenderer(context, document);
+					}
+				})
+				.nodeRendererFactory(new HtmlNodeRendererFactory() {
+					public NodeRenderer create(HtmlNodeRendererContext context) {
+						return new ImageNodeRenderer(context, document);
+					}
+				})
+				.build();
 		
 		Node node = parser.parse(markdownContent);
 		String html = renderer.render(node);
