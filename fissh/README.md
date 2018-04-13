@@ -5,11 +5,12 @@
 Django:
 
 ```
-pip3 install Django==2.0.4
+pip3 install Django==2.0.
+pip3 install psycopg2
 ```
 
 ## Run
 
 ```
-python3 manage.py check_i
+python3 manage.py check_in
 ```
