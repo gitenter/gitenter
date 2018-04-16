@@ -1,4 +1,5 @@
 from django.db import models
+from .managers import *
 
 class Member(models.Model):
 
@@ -29,6 +30,8 @@ class Repository(models.Model):
 	
 	is_public = models.BooleanField()
 
+	objects = RepositoryManager()
+
 	class Meta:
 		db_table = 'config\".\"repository'
 
@@ -38,7 +41,11 @@ class RepositoryMemberMap:
 	repository = models.ForeignKey(Repository, on_delete=models.CASCADE)
 	member = models.ForeignKey(Member, on_delete=models.CASCADE)
 
-	role = models.CharField(max_length=1)
+	role = models.CharField(max_length=1, choices=(
+		('R', 'Reader'), 
+		('V', 'Reader'),
+		('E', 'Editor'),
+		('L', 'Project Leader')))
 
 	class Meta:
 		db_table = 'config\".\"repository_member_map'

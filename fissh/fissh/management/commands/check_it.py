@@ -13,7 +13,13 @@ class Command(BaseCommand):
         #org.save()
         org = Organization.objects.get(name="aka")
         print(org.name)
-        repo = Repository(organization=org, name="fff", is_public=True)
-        repo.save()
+        #repo = Repository(organization=org, name="ggg", is_public=True)
+        #repo.save()
         for x in org.repository_set.all():
         	print(x.name)
+
+        z = Repository.objects.get(name="fff", organization__name="aka")
+        print(z.name)
+
+        zz = Repository.objects.get_by_name_and_organization_name("fff", "aka")
+        print(zz.name)
