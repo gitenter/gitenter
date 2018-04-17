@@ -12,5 +12,5 @@ pip3 install psycopg2
 ## Run
 
 ```
-python3 manage.py check_in
+python3 manage.py user_auth
 ```

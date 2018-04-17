@@ -1,5 +1,5 @@
 from django.db import models
-from .managers import *
+from orm.managers import *
 
 class Member(models.Model):
 
@@ -46,6 +46,8 @@ class RepositoryMemberMap:
 		('V', 'Reader'),
 		('E', 'Editor'),
 		('L', 'Project Leader')))
+
+	objects = RepositoryMemberMap()
 
 	class Meta:
 		db_table = 'config\".\"repository_member_map'

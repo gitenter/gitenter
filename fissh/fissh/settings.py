@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fissh'
+    'orm',
+    'user_auth'
 ]
 
 MIDDLEWARE = [
