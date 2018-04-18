@@ -1,53 +1,54 @@
 from django.db import models
 from orm.managers import *
 
+
 class Member(models.Model):
 
-	username = models.TextField()
-	password = models.TextField()
-	display_name = models.TextField()
-	email = models.TextField()
+    username = models.TextField()
+    password = models.TextField()
+    display_name = models.TextField()
+    email = models.TextField()
 
-	class Meta:
-		db_table = 'config\".\"member'
+    class Meta:
+        db_table = 'config\".\"member'
 
 
 class Organization(models.Model):
 
-	name = models.TextField()
-	display_name = models.TextField()
+    name = models.TextField()
+    display_name = models.TextField()
 
-	class Meta:
-		db_table = 'config\".\"organization'
+    class Meta:
+        db_table = 'config\".\"organization'
 
 
 class Repository(models.Model):
 
-	organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-	name = models.TextField()
-	display_name = models.TextField()
-	description = models.TextField()
-	
-	is_public = models.BooleanField()
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    name = models.TextField()
+    display_name = models.TextField()
+    description = models.TextField()
 
-	objects = RepositoryManager()
+    is_public = models.BooleanField()
 
-	class Meta:
-		db_table = 'config\".\"repository'
+    objects = RepositoryManager()
+
+    class Meta:
+        db_table = 'config\".\"repository'
 
 
 class RepositoryMemberMap:
 
-	repository = models.ForeignKey(Repository, on_delete=models.CASCADE)
-	member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
 
-	role = models.CharField(max_length=1, choices=(
-		('R', 'Reader'), 
-		('V', 'Reader'),
-		('E', 'Editor'),
-		('L', 'Project Leader')))
+    role = models.CharField(max_length=1, choices=(
+        ('R', 'Reader'),
+        ('V', 'Reader'),
+        ('E', 'Editor'),
+        ('L', 'Project Leader')))
 
-	objects = RepositoryMemberMap()
+    objects = RepositoryMemberMap()
 
-	class Meta:
-		db_table = 'config\".\"repository_member_map'
+    class Meta:
+        db_table = 'config\".\"repository_member_map'
