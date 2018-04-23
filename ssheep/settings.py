@@ -15,6 +15,6 @@ def postgres_engine():
         .format(
             username=DATABASE['username'],
             password=DATABASE['password'],
-            dbname=DATABASE['dbname']))
+            dbname=DATABASE['dbname']), echo=False)
 
     return engine

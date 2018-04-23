@@ -8,7 +8,7 @@ class RepositoryManager(models.Manager):
         return super().get(name=name, organization__name=org_name)
 
 
-class RepositoryMemberMap(models.Manager):
+class RepositoryMemberMapManager(models.Manager):
 
     def __get_by_user_and_organization_and_repository_name(
             self, username, org_name, repo_name):
