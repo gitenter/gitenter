@@ -48,7 +48,7 @@ class RepositoryMemberMap:
         ('E', 'Editor'),
         ('L', 'Project Leader')))
 
-    objects = RepositoryMemberMap()
+    objects = RepositoryMemberMapManager()
 
     class Meta:
         db_table = 'config\".\"repository_member_map'
