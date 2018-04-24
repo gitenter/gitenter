@@ -88,14 +88,14 @@ Features:
 
 - [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a revision control system.
 - [SyRS-0034]{StRS-0036,StRS-0037} The document shall be using some kind of markup languages.
-- [SyRS-0019]{StRS-0001,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are quality control documents.
-- [SyRS-0031]{StRS-0001,StRS-0010} The software shall provide templates of the documents based on the regulatory requirements.
+- [SyRS-0019]{StRS-0013,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are documents.
+- [SyRS-0031]{StRS-0010} The software shall provide templates of the documents based on the regulatory requirements.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide APIs with code revision control platforms.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level:
     - Regular backups by authors.
     - Pending changes/different opinions.
     - Changes approved as a group decision.
-    - Separate code and document changes. 
+    - Separate code and document changes.
     - ...
 - [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can edit/approval changes of the documents.
 - [SyRS-0010]{StRS-0018,SyRS-0006} The software shall provide tools related to the traceability of requirement/design items.
@@ -116,7 +116,7 @@ Features:
 
 ### Usability requirements
 
-- [SyRS-0020]{StRS-0001,StRS-0006,SyRS-0017} Web services shall be sufficient for user to (1) view and (2) comment on documents.
+- [SyRS-0020]{StRS-0006,SyRS-0017} Web services shall be sufficient for user to (1) view and (2) comment on documents.
 - [SyRS-0021]{StRS-0020,StRS-0006} Local applications provide advanced tools for user to edit the documents.
 
 ### Performance requirements

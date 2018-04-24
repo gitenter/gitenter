@@ -48,7 +48,14 @@ However, while there are various different tools for source code revision contro
         + Support collaboration for SDLC.
     + Cons:
         + Content is not separated from presentation.
-+ [Read the Docs](https://readthedocs.org)
++ Read the Docs
+    + Pros:
+        + Support a project with multiple documents.
+        + Content is separated from presentation.
+        + Version control of the project as a whole.
+    + Cons:
+        + No way to setup traceable links between document items.
+        + Collaboration is not specific for serious SDLC.
 + Wiki:
     + Pros:
         + Support a project with multiple documents by CamelCase names and "link pattern".
@@ -60,18 +67,28 @@ However, while there are various different tools for source code revision contro
         + Collaboration is not specific for serious SDLC.
 + Greenlight Guru:
 	+ Cons:
-		+ No version control. 
+		+ No version control.
 		+ Workflow is too specific for particular purposes.
 		+ Not scaleable to large projects.
 + Naive and simple version numbers.
 
 We are going to make a tool which provide the flexibility and complicity of a source code revision control system, but fits better to document collaboration.
 
+*(TODO: consider rewrite this list to a table of supported/not supported of each feature for each product.)*
+
 ### Business scope
 
 *(Identifying the business domain by name.)*
 
++ Enterprise software
++ Business tool
+
 *(Defining the range of business activities included in the business domain concerned.)*
+
++ Requirement engineering
++ Design control
++ Reviewing
++ SDLC management
 
 *(Describing the scope of the system being developed or changed.)*
 
@@ -107,8 +124,8 @@ Customer:
 
 Technical:
 
-- Developers.
-- Operational engineers.
+- Developers (of this product).
+- Operational engineers (of this product).
 - Infrastructure provider.
 
 Business:
@@ -124,38 +141,41 @@ These parties are equally important for the success of the product. But in this 
 
 ### User needs
 
-- [StRS-0001]{} The software shall provide tools to help establishing various official documents used in quality control procedure for R&D activities of a future product.
-- [StRS-0003]{StRS-0001} The software shall support waterfall life cycle model.
-- [StRS-0005]{StRS-0001} The software shall support Agile life cycle model.
-- [StRS-0013]{StRS-0001} The software may be used for software development.
-- [StRS-0010]{StRS-0001} The software shall be provide procedures which follow common standards of various regulatory departments.
-- [StRS-0018]{StRS-0001} The software shall assist various activities to establish the documentation system.
+Features:
+
+- [StRS-0001]{} The software is a document editing tool.
+- [StRS-0036]{} The software shall support basic document formatting.
+- [StRS-0037]{} The software shall separate the content and the presentation of the documents.
+- [StRS-0020]{} The software shall give flexible for user to use their familiar word processors.
+- [StRS-0043]{} The software shall be used for official documents.
+- [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history and versions of documents.
+- [StRS-0041]{} The software shall be used while executing the quality control procedure.
+- [StRS-0010]{StRS-0041} The software shall be provide supports of common standards of various regulatory departments.
+- [StRS-0042]{} The software shall be used for R&D activities of a future product.
+- [StRS-0040]{StRS-0010,StRS-0042} The software shall support collaboration under various SDLC procedures.
+- [StRS-0003]{StRS-0040} The software shall support waterfall life cycle model.
+- [StRS-0005]{StRS-0040} The software shall support Agile life cycle model.
 
 Kind of documents to work with:
 
-- [StRS-0002]{StRS-0001} The software shall be used for the documents of requirement engineering.
-- [StRS-0008]{StRS-0001} The software shall be used for the documents of design control.
-
-*(So right now doesn't support activities further to design control, e.g., integrate to implementation and test cases. Later it may try to integrate to e.g., test cases in TDD...)*
+- [StRS-0018]{StRS-0040} The software shall assist various activities to establish, maintain, and use of the documentation system.
+- [StRS-0002]{StRS-0018} The software shall be used for the documents of requirement engineering.
+- [StRS-0008]{StRS-0018} The software shall be used for the documents of design control.
+- [StRS-0039]{StRS-0018} The software shall be used to trace the origins of product code pieces.
+- [StRS-0038]{StRS-0018} The software shall be used to manage and trace test cases.
 
 Fields of usage:
 
-- [StRS-0014]{StRS-0001} The software may be used for development of quality sensitive products.
+- [StRS-0014]{StRS-0010} The software may be used for development of quality sensitive products.
 - [StRS-0015]{StRS-0014} The software may be used for medical device industry.
 - [StRS-0035]{StRS-0014} The software may be used for automotive industry.
 - [StRS-0016]{StRS-0014} The software may be used in energy related industries.
 - [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
-
-Features:
-
-- [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processor to edit the documents.
-- [StRS-0036]{} The software shall support basic document formatting.
-- [StRS-0037]{} The software shall separate the content and the presentation of the documents.
-- [StRS-0004]{StRS-0001} The software shall help recording and monitoring the evolution history and versions of official documents.
+- [StRS-0013]{StRS-0043} The software may be used for software development.
 
 ### Operational scenarios
 
-- [StRS-0009]{StRS-0001} The software shall support multiple users working together for a single product.
+- [StRS-0009]{StRS-0040} The software shall support multiple users working together for a single product.
 - [StRS-0011]{StRS-0009} The software shall support users of various different roles: project manager, technical manager, business analyzer, architect, developer, tester/QA engineer, ...
 
 ### Operational environment
