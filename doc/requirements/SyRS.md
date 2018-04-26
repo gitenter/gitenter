@@ -57,25 +57,29 @@ in each group, and the nature of their use of the system.)*
 
 ### Functional requirements
 
-- [SyRS-0002]{StRS-0013,StRS-0010} The software shall support standards of software development.
-
 Regulatory:
 
+General features (both in stakeholder requirement and in here) are includes as the soul of these standards. The reason to list these standards is to (1) provide templates, and (2) fine-tune the procedure to make this product more regulatory-certification friendly.
+
+In general, there's no need to trace the key procedures such as requirement engineer or design into the items of these standards. There are exceptions for features that has the origin of some special regulatory requirement.
+
+- [SyRS-0002]{StRS-0013,StRS-0010} The software shall support standards of software development.
 - [SyRS-0004]{StRS-0003,SyRS-0002} The software shall support CMMI.
-- [SyRS-0005]{SyRS-0002} The software shall support various ISO/IEC/IEEE standards of software development.
+- [SyRS-0005]{SyRS-0002} The software shall support ISO/IEC/IEEE standards of software development.
 - [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support general SDLC standards, include:
     - ISO/IEC/IEEE 12207: Systems and software engineering -- Software life cycle processes.
     - ISO/IEC/IEEE 15288: Systems and software engineering -- System life cycle processes.
-- [SyRS-0008]{StRS-0002,SyRS-0005} The software shall support various requirement engineering standards, include:
+- [SyRS-0008]{StRS-0002,SyRS-0005} The software shall support requirement engineering standards, include:
     - ISO/IEC/IEEE 29148: Systems and software engineering -- Life cycle processes -- Requirements engineering.
     - IEEE 830: IEEE Recommended Practice for Software Requirements Specifications.
     - IEEE 1233: IEEE Guide for Developing System Requirements Specifications.
-- [SyRS-0012]{StRS-0008,SyRS-0005} The software shall support various design control standards, include:
+- [SyRS-0012]{StRS-0008,SyRS-0005} The software shall support design control standards, include:
     - IEEE 1016: IEEE Recommended Practice for Software Design Descriptions.
 - [SyRS-0016]{SyRS-0005} The software shall support IEEE 1028: IEEE Standard for Software Reviews and Audits.
-- [SyRS-0003]{StRS-0015,StRS-0010} The software shall support various standards for medical device development, includes:
+- [SyRS-0003]{StRS-0015} The software shall support medical device standards, include:
     - ISO 13485: Medical devices -- Quality management systems -- Requirements for regulatory purposes.
     - FDA's 21 CFR 820.30: Design Control Guidance for Medical Device Industry.
+- [SyRS-0035]{StRS-0015,StRS-0010} The software shall support medical device software standards, include:
     - FDA's General Principles of Software Validation; Final Guidance for Industry and FDA Staff.
     - IEC 62304: Medical device software -- Software life cycle processes.
 - [SyRS-0032]{StRS-0035,StRS-0010} The software shall support various standards for automotive development, includes:
@@ -86,17 +90,24 @@ Regulatory:
 
 Features:
 
-- [SyRS-0001]{StRS-0004,StRS-0009} The software shall be built on top of a revision control system.
-- [SyRS-0034]{StRS-0036,StRS-0037} The document shall be using some kind of markup languages.
-- [SyRS-0019]{StRS-0013,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are documents.
-- [SyRS-0031]{StRS-0010} The software shall provide templates of the documents based on the regulatory requirements.
-- [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide APIs with code revision control platforms.
-- [SyRS-0026]{SyRS-0001} The software shall distinguish document changes of various level:
+- [SyRS-0034]{StRS-0036,StRS-0037} The documents shall be written using a markup language.
+- [SyRS-0031]{StRS-0010} The software shall provide document templates based on the regulatory standards. *(Or should we go the other direction to "compile" the documents to regulatory standards?)*
+- [SyRS-0036]{StRS-0044,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
+- [SyRS-0037]{SyRS-0036} Both upstream and downstream system shall be navigated through this software.
+
+- [SyRS-0001]{StRS-0046,StRS-0004,StRS-0009,StRS-0045} The software shall be built on top of a revision control system, which helps:
+    - Provide benchmark/version of documents.
+    - Recording and monitoring the evolution history of documents.
+    - Provide a platform for coordinating works among multiple people.
+    - Provide a comparison between versions to facilitate document reviewing.
+- [SyRS-0026]{SyRS-0001} The software shall distinguish document changes/commits of various level:
     - Regular backups by authors.
     - Pending changes/different opinions.
-    - Changes approved as a group decision.
-    - Separate code and document changes.
+    - Benchmark/version approved as a group/management decision.
     - ...
+- [SyRS-0019]{StRS-0013,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are documents.
+- [SyRS-0038]{SyRS-0019} The software shall be able to separate document and code-only changes.
+- [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide APIs with code revision control platforms.
 - [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can edit/approval changes of the documents.
 - [SyRS-0010]{StRS-0018,SyRS-0006} The software shall provide tools related to the traceability of requirement/design items.
 - [SyRS-0029]{StRS-0002,StRS-0018} The software shall provide tools to analyze various properties of requirement items, includes:

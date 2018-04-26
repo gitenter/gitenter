@@ -143,29 +143,18 @@ These parties are equally important for the success of the product. But in this 
 
 Features:
 
-- [StRS-0001]{} The software is a document editing tool.
-- [StRS-0036]{} The software shall support basic document formatting.
-- [StRS-0037]{} The software shall separate the content and the presentation of the documents.
-- [StRS-0020]{} The software shall give flexible for user to use their familiar word processors.
+- [StRS-0001]{} The software is a tool to assist editing document.
+- [StRS-0036]{StRS-0001} The software shall support basic document formatting.
+- [StRS-0037]{StRS-0001} The software shall separate the content and the presentation of the documents.
+- [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
 - [StRS-0043]{} The software shall be used for official documents.
-- [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history and versions of documents.
+- [StRS-0046]{StRS-0043} The software shall support be used to track benchmark/version of documents.
+- [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history of documents.
+
+Regulatory/field of usage:
+
 - [StRS-0041]{} The software shall be used while executing the quality control procedure.
-- [StRS-0010]{StRS-0041} The software shall be provide supports of common standards of various regulatory departments.
-- [StRS-0042]{} The software shall be used for R&D activities of a future product.
-- [StRS-0040]{StRS-0010,StRS-0042} The software shall support collaboration under various SDLC procedures.
-- [StRS-0003]{StRS-0040} The software shall support waterfall life cycle model.
-- [StRS-0005]{StRS-0040} The software shall support Agile life cycle model.
-
-Kind of documents to work with:
-
-- [StRS-0018]{StRS-0040} The software shall assist various activities to establish, maintain, and use of the documentation system.
-- [StRS-0002]{StRS-0018} The software shall be used for the documents of requirement engineering.
-- [StRS-0008]{StRS-0018} The software shall be used for the documents of design control.
-- [StRS-0039]{StRS-0018} The software shall be used to trace the origins of product code pieces.
-- [StRS-0038]{StRS-0018} The software shall be used to manage and trace test cases.
-
-Fields of usage:
-
+- [StRS-0010]{StRS-0041} The software shall be provide supports of common regulatory standards.
 - [StRS-0014]{StRS-0010} The software may be used for development of quality sensitive products.
 - [StRS-0015]{StRS-0014} The software may be used for medical device industry.
 - [StRS-0035]{StRS-0014} The software may be used for automotive industry.
@@ -173,10 +162,24 @@ Fields of usage:
 - [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
 - [StRS-0013]{StRS-0043} The software may be used for software development.
 
+Procedure:
+
+- [StRS-0042]{} The software shall be used for R&D activities of a future product.
+- [StRS-0040]{StRS-0010,StRS-0042} The software shall support collaboration under various SDLC procedures.
+- [StRS-0003]{StRS-0040} The software shall support waterfall life cycle model.
+- [StRS-0005]{StRS-0040} The software shall support Agile life cycle model.
+- [StRS-0018]{StRS-0040} The software shall assist various activities to establish, maintain, and use of the documentation system.
+- [StRS-0002]{StRS-0018} The software shall be used for requirement engineering documents.
+- [StRS-0008]{StRS-0018} The software shall be used for design control documents.
+- [StRS-0039]{StRS-0018,StRS-0013} The software shall be used to trace the origins of product code pieces.
+- [StRS-0038]{StRS-0018} The software shall be used to manage test cases.
+- [StRS-0044]{StRS-0018} The software shall be able to manage traceability in/between different layers.
+- [StRS-0045]{StRS-0018} The software shall be used for document reviewing.
+
 ### Operational scenarios
 
 - [StRS-0009]{StRS-0040} The software shall support multiple users working together for a single product.
-- [StRS-0011]{StRS-0009} The software shall support users of various different roles: project manager, technical manager, business analyzer, architect, developer, tester/QA engineer, ...
+- [StRS-0011]{StRS-0009} The software shall support users of various different roles: project manager, technical manager, business analyzer, product manager, architect, developer/engineer, tester/QA engineer, ...
 
 ### Operational environment
 
