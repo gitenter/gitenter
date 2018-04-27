@@ -179,7 +179,7 @@ Procedure:
 ### Operational scenarios
 
 - [StRS-0009]{StRS-0040} The software shall support multiple users working together for a single product.
-- [StRS-0011]{StRS-0009} The software shall support users of various different roles: project manager, technical manager, business analyzer, product manager, architect, developer/engineer, tester/QA engineer, ...
+- [StRS-0011]{StRS-0009} The software shall support various different users roles: project manager, technical manager, business analyzer, product manager, architect, developer/engineer, tester/QA engineer, ... *(TODO: Consider move the detailed rows to the design document)*
 
 ### Operational environment
 
