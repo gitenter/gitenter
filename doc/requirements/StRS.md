@@ -153,6 +153,8 @@ Procedure:
 
 - [StRS-0042]{} The software shall be used for R&D activities of a future product.
 - [StRS-0040]{StRS-0010,StRS-0042} The software shall support collaboration under various SDLC procedures.
+- [StRS-0009]{StRS-0040} The software shall support multiple users working together for a single product.
+- [StRS-0048]{StRS-0009} The software shall support multiple teams to work on different parts of the document.
 - [StRS-0003]{StRS-0040} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0040} The software shall support Agile life cycle model.
 - [StRS-0018]{StRS-0040} The software shall assist various activities to establish, maintain, and use of the documentation system.
@@ -165,7 +167,6 @@ Procedure:
 
 ### Operational scenarios
 
-- [StRS-0009]{StRS-0040} The software shall support multiple users working together for a single product.
 - [StRS-0011]{StRS-0009} The software shall support various different users roles: project manager, technical manager, business analyzer, product manager, architect, developer/engineer, tester/QA engineer, ... *(TODO: Consider move the detailed rows to the design document)*
 
 ### Operational environment

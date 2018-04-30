@@ -74,11 +74,6 @@ In general, there's no need to trace the key procedures such as requirement engi
 - [SyRS-0033]{StRS-0016,StRS-0010} The software shall support various standards for nuclear power development, includes:
     - IEC 61839: Nuclear power plants - Design of control rooms - Functional analysis and assignment.
 
-Document formatting:
-
-- [SyRS-0034]{StRS-0036,StRS-0037} The documents shall be written using a markup language.
-- [SyRS-0031]{StRS-0010} The software shall provide document templates based on the regulatory standards. *(Or should we go the other direction to "compile" the documents to regulatory standards?)*
-
 Revision control:
 
 - [SyRS-0001]{StRS-0046,StRS-0004,StRS-0009,StRS-0045} The software shall be built on top of a revision control system, which helps:
@@ -87,8 +82,9 @@ Revision control:
     - Provide a platform for coordinating document editing jobs among multiple people.
     - (For document editors) provide a comparison between versions to facilitate document reviewing of a new/unapproved version.
     - (For document users) provide a comparison between different document benchmark versions.
-- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a version of on the whole set, and a version individually.
-    - The version of the whole set tends to be more important, as the documents are highly entangled to each other by traceable items.
+- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a global version, and a version individually.
+    - The global version tends to be more important, as the documents are highly entangled to each other by traceable items.
+    - Some global versions have corresponding review activities.
 - [SyRS-0067]{SyRS-0001} Author(s) with reverse time order of each document under certain commit of the revision control system shall be clearly marked.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes/commits of various level:
     - Regular backups by authors.
@@ -102,6 +98,11 @@ Revision control:
     - For document reviewer the to-be-reviewed commit should be returned.
     - For document user (e.g. software engineer) the newest benchmark version should be returned.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
+
+Document formatting:
+
+- [SyRS-0034]{StRS-0036,StRS-0037} The documents shall be written using a markup language.
+- [SyRS-0031]{StRS-0010} The software shall provide document templates based on the regulatory standards. *(Or should we go the other direction to "compile" the documents to regulatory standards?)*
 
 Traceability:
 
@@ -123,7 +124,7 @@ Traceability:
 Reviewing:
 
 - [SyRS-0018]{StRS-0045} Authorized user shall setup some particular to-be-reviewed commit.
-- [SyRS-0063]{StRS-0045} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Note: some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
+- [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Note: some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
 - [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
 - [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
@@ -145,10 +146,13 @@ Reviewing:
     - In review.
     - Approval.
     - Expired.
-- [SyRS-0065]{SyRS-0061,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a global version and (2) date of issues shall be provided. Note: even if there is a newly approved version of the whole document set, one particular document may not be actually included, so it should be in status draft.
+- [SyRS-0065]{SyRS-0061,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a version based on the corresponding review meeting, and (2) date of issues shall be provided.
+    - A version based on the associated review meeting corresponds to a global version, but only part of the documents are included in the review activity. Even if there is an approval reviewing of that particular commit, one particular document may not be actually included, so it should be in status draft.
 - [SyRS-0066]{SyRS-0064} For documents in status of approval or expired, the reviewer(s) and the pertinent manager(s) show be marked with it.
     - Reviewer(s) is per-document.
     - Pertinent manager(s) is per-reviewing activity.
+- [SyRS-0068]{SyRS-0064} All documents in draft or in reviewer status shall be linked to its newest approval version.
+    - The newest approval version of a particular document may be order then the last approval reviewing (even if it has been modified), as it may not be included in that reviewing.
 
 Requirement analysis:
 
