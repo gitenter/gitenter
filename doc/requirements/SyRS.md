@@ -1,4 +1,4 @@
-# System Requirements Specification
+SyRS-0024# System Requirements Specification
 
 ## Document identifier
 
@@ -101,6 +101,9 @@ Revision control:
     - Provide a platform for coordinating document editing jobs among multiple people.
     - (For document editors) provide a comparison between versions to facilitate document reviewing of a new/unapproved version.
     - (For document users) provide a comparison between different document benchmark versions.
+- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a version of on the whole set, and a version individually.
+    - The version of the whole set tends to be more important, as the documents are highly entangled to each other by traceable items.
+- [SyRS-0067]{SyRS-0001} Author(s) with reverse time order of each document under certain commit of the revision control system shall be clearly marked.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes/commits of various level:
     - Regular backups by authors.
     - Pending changes/different opinions.
@@ -108,8 +111,9 @@ Revision control:
     - Benchmark/version approved as a group/management decision.
 - [SyRS-0019]{StRS-0013,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are documents.
 - [SyRS-0038]{SyRS-0019} The software shall be able to separate document and code-only changes.
-- [SyRS-0041]{StRS-0011,SyRS-0026,SyRS-0038} The software shall provide different default version based on different user roles:
+- [SyRS-0041]{StRS-0011,SyRS-0026,SyRS-0038,SyRS-0018} The software shall provide different default version/commit based on different user roles:
     - For document editor the newest commit should be returned.
+    - For document reviewer the to-be-reviewed commit should be returned.
     - For document user (e.g. software engineer) the newest benchmark version should be returned.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
 
@@ -119,21 +123,46 @@ Traceability:
 - [SyRS-0049]{SyRS-0036} The upstream items shall be explicit marked in file using the plain-text-based tags. There's no need to do the downstream ones.
 - [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/links to both the upstream and downstream items of the current document item.
 - [SyRS-0037]{SyRS-0049,SyRS-0010} The software shall automatically analyze the upstream/downstream relationship based on the provided tags.
-- [SyRS-0055]{SyRS-0037} The software shall give error messages for invalid plain-text-based tags found while analyzing the traceability relationship.
+- [SyRS-0055]{SyRS-0037} The software shall raise errors while analyzing the traceability relationship, with errors include:
+    - Marked tag in relationship does not exit.
+    - Undistinguishable tags appear more than one times.
+    - Loops in relationship.
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
+- [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to mark the completeness of documented traceable items.
 - [SyRS-0050]{SyRS-0049} The upstream items may be prioritized. *(Should they?)*
 - [SyRS-0051]{SyRS-0049,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use non-virtualized tag links).
 
 Reviewing:
 
+- [SyRS-0018]{StRS-0045} Authorized user shall setup some particular to-be-reviewed commit.
+- [SyRS-0063]{StRS-0045} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Note: some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
+- [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
 - [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
-- [SyRS-0048]{SyRS-0047,SyRS-0026} Users shall be able to review and comment documents for commits in status to-be-reviewed.
+- [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018,SyRS-0056} Users shall be able to review and comment on the to-be-reviewed documents through a web interface in a certain amount of time. User shall also be able to comment on other user's comment.
+    - This is different to the GitHub code review workflow in several aspects: (1) Review comment is linked to a marked position of a frozen snapshot of document, rather than a marked position of document changes. (2) Reviewing is by default turned off, and is only turned on for special cases. The reason is that's the scenario provided reviewing and auditing regulatory. The other reason is design documents are in general in global scope, and have complicated internal relationship; on the other hand, code (a majority of bugs in code) is mostly local scope. It is really costly to sit down and discuss in among multiple stakeholders, and it is hard for people to follow these discussions all the time. Definitely this is a really waterfall approach which is contradict with the sprint of continuous-X. The possibility of a more Agile styled requirement and design review workflow can be discuss later.
 - [SyRS-0052]{SyRS-0046} The software shall provide tools for traditional review meetings.
-- [SyRS-0053]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the documents in status to-be-reviewed, with line numbers explicitly marked in it.
-- [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings.
+- [SyRS-0053]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents, with the following items explicitly marked.
+    - Author(s).
+    - Date.
+    - Status/version.
+    - Line numbers.
+- [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings, and link the result to the to-be-reviewed commit.
+- [SyRS-0058]{SyRS-0048,SyRS-0054} The software shall support a hybrid approach that the traditional review meeting is for the controversial discussions in the online system.
+- [SyRS-0059]{StRS-0045} The system shall record the authorized user approval event at the end of every reviewing process, include the information of:
+    - A list of reviewers, with each one has cleared issues (and hold the liability of the correctness of) which part.
+    - Approval signature of a pertinent manager.
+- [SyRS-0064]{} Each document under certain commit of the revision control system, shall be in one of the following status:
+    - Draft.
+    - In review.
+    - Approval.
+    - Expired.
+- [SyRS-0065]{SyRS-0061,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a global version and (2) date of issues shall be provided. Note: even if there is a newly approved version of the whole document set, one particular document may not be actually included, so it should be in status draft.
+- [SyRS-0066]{SyRS-0064} For documents in status of approval or expired, the reviewer(s) and the pertinent manager(s) show be marked with it.
+    - Reviewer(s) is per-document.
+    - Pertinent manager(s) is per-reviewing activity.
 
 Requirement analysis:
 
@@ -142,25 +171,15 @@ Requirement analysis:
     - Risk.
     - Rationale.
     - Difficulty.
-- [SyRS-0030]{StRS-0002,StRS-0008,StRS-0018} The software shall provide tools to help tracking whether a requirement/design has been implemented and/or tested.
-- [SyRS-0024]{StRS-0018,SyRS-0016} The software shall provide a flexible way of various review activities, includes:
-    - A formal review meeting.
-    - Discussions on top of a web service.
-- [SyRS-0018]{StRS-0011,SyRS-0016} The software shall support authorized user to setup some frozen time stamp as a milestone of the development life cycle.
-- [SyRS-0025]{SyRS-0018,SyRS-0024} Formal review activities can only be based on the a frozen time stamp/milestone.
-- [SyRS-0023]{SyRS-0024} The software shall support recoding the meeting moments of the formal review meetings.
-- [SyRS-0017]{SyRS-0024,SyRS-0018} The software shall support various different users to submit comments, which will be gathered and later discussed in a review meeting.
-- [SyRS-0027]{SyRS-0024} The software shall support users to make discussions on documents and changes.
 
 Authorization:
 
-- [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can edit the documents.
+- [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can read, review, and/or edit the documents.
 - [SyRS-0040]{SyRS-0038,SyRS-0022} The software shall separate the edit authorization of document and code. *(This is challenging)*
-- [SyRS-0039]{StRS-0011} The software shall provide authorization control who can approve the benchmark of the document.
+- [SyRS-0039]{StRS-0011,SyRS-0059} The software shall provide authorization control who can approve the benchmark of the document.
 
 ### Usability requirements
 
-- [SyRS-0020]{StRS-0006,SyRS-0017} Web services shall be sufficient for user to (1) view and (2) comment on documents.
 - [SyRS-0021]{StRS-0020,StRS-0006} Local applications provide advanced tools for user to edit the documents.
 - [SyRS-0042]{} The software shall provide a public API.
 
