@@ -1,19 +1,5 @@
 # Stakeholder Requirements Specification
 
-## Document identifier
-
-**Date of issue:**
-
-**Issuing organization:**
-
-**Author(s):**
-
-**Approval signatures:**
-
-**Status/version:**
-
-**Reviewers/pertinent managers:**
-
 ## Introduction
 
 ### Business purpose
@@ -147,7 +133,7 @@ Features:
 - [StRS-0036]{StRS-0001} The software shall support basic document formatting.
 - [StRS-0037]{StRS-0001} The software shall separate the content and the presentation of the documents.
 - [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
-- [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it. 
+- [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it.
 - [StRS-0043]{} The software shall be used for official documents.
 - [StRS-0046]{StRS-0043} The software shall support be used to track benchmark/version of documents.
 - [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history of documents.

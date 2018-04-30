@@ -1,18 +1,4 @@
-SyRS-0024# System Requirements Specification
-
-## Document identifier
-
-**Date of issue:**
-
-**Issuing organization:**
-
-**Author(s):**
-
-**Approval signatures:**
-
-**Status/version:**
-
-**Reviewers/pertinent managers:**
+# System Requirements Specification
 
 ## Introduction
 
