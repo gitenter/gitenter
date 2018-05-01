@@ -134,6 +134,7 @@ Features:
 - [StRS-0037]{StRS-0001} The software shall separate the content and the presentation of the documents.
 - [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
 - [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it.
+- [StRS-0049]{StRS-0047} It should be possible that only part of the files in the working folder are documents. The other parts includes code, graphs, historical documents in other format ...
 - [StRS-0043]{} The software shall be used for official documents.
 - [StRS-0046]{StRS-0043} The software shall support be used to track benchmark/version of documents.
 - [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history of documents.

@@ -82,21 +82,21 @@ Revision control:
     - Provide a platform for coordinating document editing jobs among multiple people.
     - (For document editors) provide a comparison between versions to facilitate document reviewing of a new/unapproved version.
     - (For document users) provide a comparison between different document benchmark versions.
-- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a global version, and a version individually.
+- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a global version, and a document-wise version.
     - The global version tends to be more important, as the documents are highly entangled to each other by traceable items.
-    - Some global versions have corresponding review activities.
-- [SyRS-0067]{SyRS-0001} Author(s) with reverse time order of each document under certain commit of the revision control system shall be clearly marked.
+    - Some global versions may have corresponding review activities.
+- [SyRS-0067]{SyRS-0001} For each document, author(s) shall be clearly marked, with an option to show when and what parts they were editing.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes/commits of various level:
-    - Regular backups by authors.
+    - Regular backups by author(s).
     - Pending changes/different opinions.
     - To-be-reviewed draft.
     - Benchmark/version approved as a group/management decision.
-- [SyRS-0019]{StRS-0013,SyRS-0001} The software shall be flexible to the case that only part of files under revision control are documents.
-- [SyRS-0038]{SyRS-0019} The software shall be able to separate document and code-only changes.
+- [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents. 
+- [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document and code-only changes.
 - [SyRS-0041]{StRS-0011,SyRS-0026,SyRS-0038,SyRS-0018} The software shall provide different default version/commit based on different user roles:
-    - For document editor the newest commit should be returned.
-    - For document reviewer the to-be-reviewed commit should be returned.
-    - For document user (e.g. software engineer) the newest benchmark version should be returned.
+    - For document editor, the newest commit should be returned.
+    - For document reviewer, the to-be-reviewed commit should be returned.
+    - For document user (e.g. software engineer), the newest benchmark version should be returned.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
 
 Document formatting:
@@ -128,6 +128,7 @@ Reviewing:
 - [SyRS-0018]{StRS-0045} Authorized user shall setup some particular to-be-reviewed commit.
 - [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Note: some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
 - [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
+- [SyRS-0077]{StRS-0045} Authorized user shall setup a list of reviewers.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
 - [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
 - [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018,SyRS-0056} Users shall be able to review and comment on the to-be-reviewed documents through a web interface in a certain amount of time. User shall also be able to comment on other user's comment.

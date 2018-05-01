@@ -82,11 +82,20 @@ For a comparison with other markup languages, we listed the cons of the alternat
 - [SyAD-0002]{SyRS-0034} The document shall be written using a modified `markdown` format.
 - [SyAD-0005]{SyRS-0073,SyAD-0002} The traceable items are defined by extending the "bullet lists" item in markdown.
 
+### Configuration
+
+- [SyAD-0013]{} There shall be a configuration file.
+- [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
+    - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
+- [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
+- [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
+    - *(What about if the code and tests are mixed together?)*
+
 ### Tag and traceability
 
 - [SyAD-0006]{SyRS-0036} The plain-text-based tag shall be unique throughout the entire document system.
 - [SyAD-0009]{SyRS-0036} The upstream items shall be explicit marked in file using the plain-text-based tags. There's no need to do the downstream ones.
-- [SyAD-0007]{SyAD-0009,SyAD-0005,SyRS-0072,SyRS-0076} The tag and the upstream tag of a particular traceable item, shall be marked using the following format.
+- [SyAD-0007]{SyAD-0009,SyAD-0005,SyRS-0072,SyRS-0076} In document, the tag and the upstream tag of a particular traceable item, shall be marked using the following format.
 
 ```
 Optional block comments
@@ -98,20 +107,30 @@ Optional block comments
 
 - [SyAD-0008]{SyRS-0036} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
 - [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall automatically analyze the upstream/downstream relationship based on the provided upstream tags.
+- [SyAD-0012]{SyAD-0010,SyRS-0038} The traceability analysis shall be automatic triggered when there are document changes in the new commit.
 - [SyAD-0011]{SyAD-0010} The software shall raise errors while analyzing the traceability relationship, with errors include:
     - Marked tag in relationship does not exit.
     - Undistinguishable tags appear more than one times.
     - Loops in relationship.
 
+*(TODO: The tagging syntax for implementation code and test cases?)*
+
 ## Decomposition description
 
 ### Module decomposition
 
-- [SyAD-0003]{SyRS-0024} There shall be a centralized server.
+So from a direct interacting with the requirement, the software shall include the following components:
 
-- Git server/hosting service
-- Git client
-- Text editor add-ons
+- [SyAD-0017]{} Web service for reviewing and management.
+- [SyAD-0022]{SyAD-0010} Client-side traceability validator.
+- [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
+- [SyAD-0019]{SyAD-0006,SyRS-0031} Text editor plugin for:
+    - Generate unique tag.
+    - Provide template.
+- [SyAD-0020]{SyAD-0004} `git`
+- [SyAD-0021]{SyAD-0004} Database.
+
+![](decomposition.png "")
 
 ### Process decomposition
 
