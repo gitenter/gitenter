@@ -80,7 +80,28 @@ For a comparison with other markup languages, we listed the cons of the alternat
     + If needed, can be switched in between the two really easy.
 
 - [SyAD-0002]{SyRS-0034} The document shall be written using a modified `markdown` format.
-- [SyAD-0005]{SyRS-0036,SyAD-0002} The traceable items are defined by extending the "bullet lists" item in markdown.
+- [SyAD-0005]{SyRS-0073,SyAD-0002} The traceable items are defined by extending the "bullet lists" item in markdown.
+
+### Tag and traceability
+
+- [SyAD-0006]{SyRS-0036} The plain-text-based tag shall be unique throughout the entire document system.
+- [SyAD-0009]{SyRS-0036} The upstream items shall be explicit marked in file using the plain-text-based tags. There's no need to do the downstream ones.
+- [SyAD-0007]{SyAD-0009,SyAD-0005,SyRS-0072,SyRS-0076} The tag and the upstream tag of a particular traceable item, shall be marked using the following format.
+
+```
+Optional block comments
+
+- [currentItemTag]{upstreamTags,are,seperated,by,comma} Traceable item context.
+    - Enumerate items in the traceable item context.
+    + Optional inline comments
+```
+
+- [SyAD-0008]{SyRS-0036} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
+- [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall automatically analyze the upstream/downstream relationship based on the provided upstream tags.
+- [SyAD-0011]{SyAD-0010} The software shall raise errors while analyzing the traceability relationship, with errors include:
+    - Marked tag in relationship does not exit.
+    - Undistinguishable tags appear more than one times.
+    - Loops in relationship.
 
 ## Decomposition description
 

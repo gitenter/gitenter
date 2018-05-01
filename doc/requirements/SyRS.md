@@ -106,20 +106,22 @@ Document formatting:
 
 Traceability:
 
-- [SyRS-0036]{StRS-0044,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
-- [SyRS-0049]{SyRS-0036} The upstream items shall be explicit marked in file using the plain-text-based tags. There's no need to do the downstream ones.
+- [SyRS-0070]{StRS-0044} A traceable document item shall be either a requirement or a design decision.
+- [SyRS-0071]{SyRS-0070} A traceable document item is one (or two) short sentence, which may contains an enumerated list.
+- [SyRS-0072]{SyRS-0071} A traceable document may have associated comments (e.g. in deep explanation of concerns).
+- [SyRS-0074]{StRS-0044} A traceable item may have multiple upstream and multiple downstream items.
+- [SyRS-0050]{SyRS-0074} The upstream items may be prioritized. *(Should they?)*
+- [SyRS-0073]{SyRS-0074} Individual traceable items has no or loose order, for which the order comes from the constrain that the upstream items shall come first.
+- [SyRS-0075]{SyRS-0070} Related traceable items, or traceable items about a same aspect of the product, shall be grouped together.
+- [SyRS-0076]{SyRS-0070,SyRS-0031} A traceable document item may be surrounded by the descriptive parts of the document, which may follow some kind of document templates.
+- [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
+- [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag renaming.
 - [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/links to both the upstream and downstream items of the current document item.
-- [SyRS-0037]{SyRS-0049,SyRS-0010} The software shall automatically analyze the upstream/downstream relationship based on the provided tags.
-- [SyRS-0055]{SyRS-0037} The software shall raise errors while analyzing the traceability relationship, with errors include:
-    - Marked tag in relationship does not exit.
-    - Undistinguishable tags appear more than one times.
-    - Loops in relationship.
+- [SyRS-0051]{SyRS-0074,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use non-virtualized tag links).
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
 - [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to mark the completeness of documented traceable items.
-- [SyRS-0050]{SyRS-0049} The upstream items may be prioritized. *(Should they?)*
-- [SyRS-0051]{SyRS-0049,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use non-virtualized tag links).
 
 Reviewing:
 
