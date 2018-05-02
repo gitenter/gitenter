@@ -24,8 +24,9 @@
 
 Notice that there are several different kind of data to be saved/cached in this system.
 
-+ Documents themselves.
-+ Document metadata (version, date/time, author).
++ Document themselves.
++ Historical states of the documents.
++ Document metadata (author, date/time, version).
 + User and authorization.
 + Traceability caching (since only the upstream item is marked explicitly in the document).
 + Reviewing data (review metadata, comments).
@@ -49,18 +50,26 @@ Or they may be saved in a separated database (GitHub, BitBucket, GitLab, ... all
     + Some data may need to have duplicated storage.
 
 - [SyAD-0004]{} The system shall be build on top of a dual data storage system of (1) a revision control system, and (2) a database.
+- [SyAD-0026]{SyAD-0004} The revision control system shall in charge of saving:
+    - Document themselves.
+    - Historical states of the documents.
+    - Document metadata (author, date/time, version).
+- [SyAD-0027]{SyAD-0004} The database shall in charge of saving:
+    - User and authorization.
+    - Traceability caching (since only the upstream item is marked explicitly in the document).
+    - Reviewing data (review metadata, comments).
 
 ### Revision control system
 
-Comparison of version control platforms:
+Comparison of version control platforms for satisfying our targeting functional requirements:
 
-|            | Subversion | git        |
-| ---------- | ---------- | ---------- |
-| Regular backups by authors |  | Done in a separated branch locally |
-| Pending changes/different opinions |  | Different branch |
-| To-be-reviewed draft | | Pull request from a different branch |
-| Benchmark/version approved as a group/management decision |  | Merge in "Integration-Manager Workflow" |
-| Separate code and document changes |  | Different branch. A configuration file to indicate whether the current commit in a document change or not. |
+|            | Concurrent versions system (CVS) | Subversion (SVN) | git        |
+| ---------- | -------------------------------- | ---------------- | --- |
+| Regular backups by authors |  |  | Done in a separated branch locally |
+| Pending changes/different opinions |  |  | Different branch |
+| To-be-reviewed draft |  |  | Pull request from a different branch |
+| Benchmark/version approved as a group/management decision |  |  | Merge in "Integration-Manager Workflow" |
+| Separate code and document changes |  |  | Different branch. A configuration file to indicate whether the current commit in a document change or not. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
 
@@ -80,7 +89,7 @@ For a comparison with other markup languages, we listed the cons of the alternat
     + If needed, can be switched in between the two really easy.
 
 - [SyAD-0002]{SyRS-0034} The document shall be written using a modified `markdown` format.
-- [SyAD-0005]{SyRS-0073,SyAD-0002} The traceable items are defined by extending the "bullet lists" item in markdown.
+- [SyAD-0005]{SyRS-0073,SyAD-0002} The traceable items are defined by extending the (unordered) bullet list item in markdown.
 
 ### Configuration
 
@@ -90,6 +99,7 @@ For a comparison with other markup languages, we listed the cons of the alternat
 - [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
 - [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
     - *(What about if the code and tests are mixed together?)*
+- [SyAD-0023]{StRS-0050} There shall be an index page for which user can link to a set of documents with order/structure/relation between each other.
 
 ### Tag and traceability
 
@@ -102,18 +112,25 @@ Optional block comments
 
 - [currentItemTag]{upstreamTags,are,seperated,by,comma} Traceable item context.
     - Enumerate items in the traceable item context.
-    + Optional inline comments
+    + Optional inline comments.
+    * Controversy/different possibility?
 ```
 
+- [SyAD-0028]{SyAD-0007} Beside the traceable item extension, the software shall fully support the original `markdown` syntax.
+    - *(Should we further distinguish bubble list `-`, `+` and `star` for different purposes?)*
 - [SyAD-0008]{SyRS-0036} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
-- [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall automatically analyze the upstream/downstream relationship based on the provided upstream tags.
+- [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall analyze the upstream/downstream relationship based on the provided upstream tags.
 - [SyAD-0012]{SyAD-0010,SyRS-0038} The traceability analysis shall be automatic triggered when there are document changes in the new commit.
-- [SyAD-0011]{SyAD-0010} The software shall raise errors while analyzing the traceability relationship, with errors include:
+- [SyAD-0011]{SyAD-0010} The software shall raise errors if the traceability relationship contains errors:
     - Marked tag in relationship does not exit.
     - Undistinguishable tags appear more than one times.
     - Loops in relationship.
+- [SyAD-0024]{SyAD-0011} There shall be a client-side validator to raises traceability errors before the new changes are uploaded to the server.
+- [SyAD-0025]{SyAD-0010,SyAD-0011,SyAD-0027} There shall be a server-side analyzer which write the upstream/downstream relationship into the database.
 
 *(TODO: The tagging syntax for implementation code and test cases?)*
+
+### Reviewing and comment
 
 ## Decomposition description
 
@@ -122,13 +139,13 @@ Optional block comments
 So from a direct interacting with the requirement, the software shall include the following components:
 
 - [SyAD-0017]{} Web service for reviewing and management.
-- [SyAD-0022]{SyAD-0010} Client-side traceability validator.
+- [SyAD-0020]{SyAD-0026} `git` revision control system.
+- [SyAD-0021]{SyAD-0027} Database.
 - [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
+- [SyAD-0022]{SyAD-0010} Client-side traceability validator.
 - [SyAD-0019]{SyAD-0006,SyRS-0031} Text editor plugin for:
     - Generate unique tag.
     - Provide template.
-- [SyAD-0020]{SyAD-0004} `git`
-- [SyAD-0021]{SyAD-0004} Database.
 
 ![](decomposition.png "")
 

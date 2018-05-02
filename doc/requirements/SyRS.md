@@ -91,7 +91,7 @@ Revision control:
     - Pending changes/different opinions.
     - To-be-reviewed draft.
     - Benchmark/version approved as a group/management decision.
-- [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents. 
+- [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents.
 - [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document and code-only changes.
 - [SyRS-0041]{StRS-0011,SyRS-0026,SyRS-0038,SyRS-0018} The software shall provide different default version/commit based on different user roles:
     - For document editor, the newest commit should be returned.
@@ -115,9 +115,10 @@ Traceability:
 - [SyRS-0075]{SyRS-0070} Related traceable items, or traceable items about a same aspect of the product, shall be grouped together.
 - [SyRS-0076]{SyRS-0070,SyRS-0031} A traceable document item may be surrounded by the descriptive parts of the document, which may follow some kind of document templates.
 - [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
+    - *(Is there any possibility to trace graph items?)*
 - [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag renaming.
 - [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/links to both the upstream and downstream items of the current document item.
-- [SyRS-0051]{SyRS-0074,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use non-virtualized tag links).
+- [SyRS-0051]{SyRS-0074,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use the not-quite-virtualizable tag links).
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
@@ -126,21 +127,26 @@ Traceability:
 Reviewing:
 
 - [SyRS-0018]{StRS-0045} Authorized user shall setup some particular to-be-reviewed commit.
-- [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Note: some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
+- [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
 - [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
 - [SyRS-0077]{StRS-0045} Authorized user shall setup a list of reviewers.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
 - [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
-- [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018,SyRS-0056} Users shall be able to review and comment on the to-be-reviewed documents through a web interface in a certain amount of time. User shall also be able to comment on other user's comment.
+- [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018} Users shall be able to review and comment on the to-be-reviewed documents through a web interface.
     - This is different to the GitHub code review workflow in several aspects: (1) Review comment is linked to a marked position of a frozen snapshot of document, rather than a marked position of document changes. (2) Reviewing is by default turned off, and is only turned on for special cases. The reason is that's the scenario provided reviewing and auditing regulatory. The other reason is design documents are in general in global scope, and have complicated internal relationship; on the other hand, code (a majority of bugs in code) is mostly local scope. It is really costly to sit down and discuss in among multiple stakeholders, and it is hard for people to follow these discussions all the time. Definitely this is a really waterfall approach which is contradict with the sprint of continuous-X. The possibility of a more Agile styled requirement and design review workflow can be discuss later.
+- [SyRS-0079]{SyRS-0048} User comments shall be on some particular line of the document.
+    - *(Or on traceable item only?)*
+    - *(What about comments on graphs?)*
+- [SyRS-0078]{SyRS-0048} User shall also be able to comment on other user's comment.
 - [SyRS-0052]{SyRS-0046} The software shall provide tools for traditional review meetings.
 - [SyRS-0053]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents, with the following items explicitly marked.
     - Author(s).
     - Date.
     - Status/version.
     - Line numbers.
-- [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings, and link the result to the to-be-reviewed commit.
-- [SyRS-0058]{SyRS-0048,SyRS-0054} The software shall support a hybrid approach that the traditional review meeting is for the controversial discussions in the online system.
+- [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings.
+- [SyRS-0080]{SyRS-0054} The review meeting record shall be linked to the to-be-reviewed commit.
+- [SyRS-0058]{SyRS-0048,SyRS-0054} The software shall support a hybrid approach that the traditional review meeting after online reviewing for the controversial discussions.
 - [SyRS-0059]{StRS-0045} The system shall record the authorized user approval event at the end of every reviewing process, include the information of:
     - A list of reviewers, with each one has cleared issues (and hold the liability of the correctness of) which part.
     - Approval signature of a pertinent manager.
