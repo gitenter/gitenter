@@ -113,7 +113,7 @@ Optional block comments
 - [currentItemTag]{upstreamTags,are,seperated,by,comma} Traceable item context.
     - Enumerate items in the traceable item context.
     + Optional inline comments.
-    * Controversy/different possibility?
+    * Controversial issues/different approach?
 ```
 
 - [SyAD-0028]{SyAD-0007} Beside the traceable item extension, the software shall fully support the original `markdown` syntax.
@@ -147,9 +147,11 @@ So from a direct interacting with the requirement, the software shall include th
     - Generate unique tag.
     - Provide template.
 
-![](decomposition.png "")
+![](modole_decomposition.png "")
 
 ### Process decomposition
+
+![](process_decomposition.png "")
 
 ## Dependency description
 
