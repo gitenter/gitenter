@@ -147,7 +147,7 @@ So from a direct interacting with the requirement, the software shall include th
     - Generate unique tag.
     - Provide template.
 
-![](modole_decomposition.png "")
+![](module_decomposition.png "")
 
 ### Process decomposition
 
