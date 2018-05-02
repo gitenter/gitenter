@@ -1,18 +1,4 @@
-# Software Requirements Specification -- Git Connector
-
-## Document identifier
-
-**Date of issue:**
-
-**Issuing organization:**
-
-**Author(s):**
-
-**Approval signatures:**
-
-**Status/version:**
-
-**Reviewers/pertinent managers:**
+# Software Requirements Specification -- Text Editor Plugin
 
 ## Introduction
 

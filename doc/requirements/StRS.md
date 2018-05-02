@@ -140,6 +140,8 @@ Features:
 - [StRS-0046]{StRS-0043} The software shall support be used to track benchmark/version of documents.
 - [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history of documents.
 
+*(Do we want to track the progress of each editing document? How?)*
+
 Regulatory/field of usage:
 
 - [StRS-0041]{} The software shall be used while executing the quality control procedure.

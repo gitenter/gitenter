@@ -139,11 +139,12 @@ Reviewing:
     - *(What about comments on graphs?)*
 - [SyRS-0078]{SyRS-0048} User shall also be able to comment on other user's comment.
 - [SyRS-0052]{SyRS-0046} The software shall provide tools for traditional review meetings.
-- [SyRS-0053]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents, with the following items explicitly marked.
+- [SyRS-0053]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents in PDF version, with the following items explicitly marked.
     - Author(s).
     - Date.
     - Status/version.
     - Line numbers.
+    - *(Should the upstream/downstream items be hyperlinked in the PDF file?)*
 - [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings.
 - [SyRS-0080]{SyRS-0054} The review meeting record shall be linked to the to-be-reviewed commit.
 - [SyRS-0058]{SyRS-0048,SyRS-0054} The software shall support a hybrid approach that the traditional review meeting after online reviewing for the controversial discussions.

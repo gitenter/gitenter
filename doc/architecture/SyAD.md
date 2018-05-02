@@ -138,16 +138,49 @@ Optional block comments
 
 So from a direct interacting with the requirement, the software shall include the following components:
 
-- [SyAD-0017]{} Web service for reviewing and management.
-- [SyAD-0020]{SyAD-0026} `git` revision control system.
-- [SyAD-0021]{SyAD-0027} Database.
-- [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
-- [SyAD-0022]{SyAD-0010} Client-side traceability validator.
 - [SyAD-0019]{SyAD-0006,SyRS-0031} Text editor plugin for:
     - Generate unique tag.
     - Provide template.
+- [SyAD-0022]{SyAD-0010} Client-side traceability validator.
+- [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
+- [SyAD-0020]{SyAD-0026} `git` revision control system.
+- [SyAD-0021]{SyAD-0027} Database.
+- [SyAD-0017]{SyRS-0010,SyRS-0047} Web service(s) for:
+    - Document visualization.
+    - Reviewing.
+    - User management.
+
+We'll not provide a local application for document visualization at this moment, with the following concerns:
+
++ Several markdown preview tools can be used for a simple visualization of markdown files. And you can always download a pdf version of the document for local references.
++ Several git GUI clients (`gitg`, `gitkraken`) can be used for checking historical versions. And they are generally not useful unless you are the editor of the document.
++ The crucial part that the existing tools cannot provide, is the traceability items with links to upstream/downstream items. However, since a traceability analysis is needed before displaying, we need a local database (maybe a SQLite) to hold the result. That will involve further complication (and potential combination of part of the functions of the traceability validator), we will not implement it right now.
 
 ![](module_decomposition.png "")
+
+There are additional design decisions after the previous module decomposition.
+
+- [SyAD-0029]{SyAD-0022} The traceability validator shall be in form of client side git hook.
+- [SyAD-0030]{SyAD-0018} The traceability analyzer shall be in form of server side git hook.
+
+For the different kind of web services, there may be one or multiple web server(s) to do the job. For a comparison:
+
++ One web server:
+    + Pros:
+        + A highly decoupled implementation is to have lots of microservices (through a RESTful API). In that case it makes no sense to have more than one same/different web server/architecture.
+        + There are standard way to do load balancer later.
+    + Cons:
+        + The crashing/overload of one part will affect the other.
++ Multiple web servers:
+    + Pros:
+        + It can reduce the server load, since people coming for different reasons end up connecting to different servers.
+    + Cons:
+        + More complicit implementation. Further questions raise such as weather they should share a database or not, or simply how to split to different servers.
+        + Notice that document visualization and reviewing are highly related to each other (and they are also for the same group of people), these two probably cannot be separated. User management have relatively small traffic/load. So this strategy can't really help reduce server load.
+
+We'll not implement the microservices at this moment, but will choice the one server architecture to make things simple.
+
+- [SyAD-0031]{} All different web services shall be on a single web server.
 
 ### Process decomposition
 
