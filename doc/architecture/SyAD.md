@@ -123,7 +123,7 @@ Optional block comments
 ```
 
 - [SyAD-0028]{SyAD-0007} Beside the traceable item extension, the software shall fully support the original `markdown` syntax.
-    - *(Should we further distinguish bubble list `-`, `+` and `star` for different purposes?)*
+    - *(Should we further distinguish bubble list `-`, `+` and `star` for different purposes? E.g. to use the first order ones to distinguish todo/implemented/fully tested)*
 - [SyAD-0008]{SyRS-0036} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
 - [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall analyze the upstream/downstream relationship based on the provided upstream tags.
 - [SyAD-0012]{SyAD-0010,SyRS-0038} The traceability analysis shall be automatic triggered when there are document changes in the new commit.
@@ -131,12 +131,34 @@ Optional block comments
     - Marked tag in relationship does not exit.
     - Undistinguishable tags appear more than one times.
     - Loops in relationship.
-- [SyAD-0024]{SyAD-0011} There shall be a client-side validator to raises traceability errors before the new changes are uploaded to the server.
+- [SyAD-0024]{SyAD-0011} There shall be a client-side validator to raises traceability errors before the new changes are committed/uploaded to the server.
 - [SyAD-0025]{SyAD-0010,SyAD-0011,SyAD-0027} There shall be a server-side analyzer which write the upstream/downstream relationship into the database.
 
 *(TODO: The tagging syntax for implementation code and test cases?)*
 
-### Reviewing and comment
+### Reviewing
+
+### Authorization
+
+Since requirement engineering and design control is mostly for enterprise uses, it is less likely that individual user will do it in their hobby projects. And for reviewing, it by default cannot be done by a one-person project. Also, notice that individual user can always sign up an organization and put her projects there. Therefore, project always belongs to some particular organization (unlike in GitHub that project can either belong to an organization or a user).
+
+- [SyAD-0036]{} An organization can have multiple repositories, for which:
+    - An organization can be either an enterprise, a non-profit organization, a unofficial group, or some space some individual user registered.
+    - A repository is the output of a project. It is a computer folder and its content includes a set of documents.
+- [SyAD-0037]{} An organization can have multiple members. A user may be a member of more than one organizations.
+- [SyAD-0038]{SyAD-0037} A member of an organization can either be:
+    - A normal user.
+    - A manager:
+        - Create/delete repositories.
+        - Add/remove users into/from that organization.
+        - Authorize other members particular privilege of some particular repository.
+- [SyAD-0039]{SyAD-0038} A user may have the following privilege of a repository:
+    - Project leader: Organize the approval process of a review meeting.
+        - *(Should we need this person? Or it could be a simple system-based voting?)*
+    - Document editor.
+    - Document reviewer.
+    - Document reader.
+        - *(May be code editor?)*
 
 ## Decomposition description
 

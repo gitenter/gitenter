@@ -51,6 +51,20 @@ Document visualization:
 - [SRS-WS-0010]{SyAD-0023} The software shall provide an index page to:
     - Show the readers the relationship between documents.
     - Provide readers shortcuts to navigate to targeting documents.
+- [SRS-WS-0012]{SyAD-0028} The software shall show markdown format in a presentative way.
+- [SRS-WS-0015]{SRS-WS-0012} The software shall fully support internal and external hyperlinks defined in markdown format.
+- [SRS-WS-0013]{SRS-WS-0012} The software shall be able to display local images referred in markdown pages.
+- [SRS-WS-0014]{SRS-WS-0013} The software shall have a opinion to show files (images, ...) under particular commit version in their raw format.
+- [SRS-WS-0016]{SRS-WS-0012,SyAD-0007} The software shall parse the special syntax of traceable items, and provide a compatible way to represent them and normal markdown items.
+- [SRS-WS-0017]{SRS-WS-0016,SyRS-0074} The software shall display both upstream and downstream items of a traceable item in a styled way.
+- [SRS-WS-0021]{SRS-WS-0016} The software shall display the comments of traceable item in a styled way.
+- [SRS-WS-0018]{SRS-WS-0017,SyRS-0010} The software shall provide hyperlink for both upstream and downstream items, with the destination of the link point to the corresponding line of the targeting item.
+- [SRS-WS-0019]{SRS-WS-0017,SyRS-0051} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use the not-quite-virtualizable tag links).
+- [SRS-WS-0020]{SRS-WS-0016,SyRS-0044} The software shall provide hyperlink to the implementing code pieces.
+- [SRS-WS-0021]{SRS-WS-0016,SyRS-0044} The software shall provide hyperlink to the test cases.
+
+Versioning:
+
 - [SRS-WS-0011]{StRS-0011,SyRS-0026,SyRS-0038,SyRS-0018} The software shall provide different definition of default version based on different user roles:
     - For document editor, the newest commit edited by the current user should be returned.
     - For document reviewer, the to-be-reviewed commit should be returned.

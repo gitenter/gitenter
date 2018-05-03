@@ -113,7 +113,7 @@ Traceability:
 - [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
     - *(Is there any possibility to trace graph items?)*
 - [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag renaming.
-- [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/links to both the upstream and downstream items of the current document item.
+- [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/hyperlinks to both the upstream and downstream items of the current document item.
 - [SyRS-0051]{SyRS-0074,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use the not-quite-virtualizable tag links).
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
