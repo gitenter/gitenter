@@ -65,13 +65,17 @@ Comparison of version control platforms for satisfying our targeting functional 
 
 |            | Concurrent versions system (CVS) | Subversion (SVN) | git        |
 | ---------- | -------------------------------- | ---------------- | --- |
-| Regular backups by authors |  |  | Done in a separated branch locally |
+| Regular backups by authors |  |  | Done as a series of commits in a separated branch |
 | Pending changes/different opinions |  |  | Different branch |
 | To-be-reviewed draft |  |  | Pull request from a different branch |
-| Benchmark/version approved as a group/management decision |  |  | Merge in "Integration-Manager Workflow" |
+| Review meeting approval as a group/management decision |  |  | Merge in "Integration-Manager Workflow" |
 | Separate code and document changes |  |  | Different branch. A configuration file to indicate whether the current commit in a document change or not. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
+- [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by author(s by a series of `git` commits in a separated branch.
+- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a different `git` branch.
+- [SyAD-0034]{SyAD-0001,SyRS-0026} The software shall treat review meeting as a pull request from a `git` branch to master branch.
+- [SyAD-0035]{SyAD-0001,SyRS-0026} The software shall handle review meeting approval as a merge event in `git`'s "Integration-Manager Workflow", with an associated `git` tag on the particular commit.
 
 ### Document formatting
 
@@ -93,13 +97,15 @@ For a comparison with other markup languages, we listed the cons of the alternat
 
 ### Configuration
 
-- [SyAD-0013]{} There shall be a configuration file.
+- [SyAD-0013]{} There shall be a traceability analyzer configuration file.
 - [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
     - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
+    - *(Notice that the software can know whether the documents has been changed or not, by something similar to `git diff` of the included paths.)*
 - [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
 - [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
     - *(What about if the code and tests are mixed together?)*
-- [SyAD-0023]{StRS-0050} There shall be an index page for which user can link to a set of documents with order/structure/relation between each other.
+- [SyAD-0023]{StRS-0050} There shall be an index configuration file for which user can link to a set of documents with order/structure/relation between each other.
+    - *(Notice that the relationship can be build inside of (1) the "references" section of every document, (2) traceability markers, it shouldn't be need to mark manually in this configuration file.)*
 
 ### Tag and traceability
 

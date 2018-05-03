@@ -218,8 +218,12 @@ Procedure:
 
 Target customer:
 
-- [StRS-0033]{StRS-0006} The software may be sold as a web service, charged per user per period of time, with the data saved centralized for all users in the cloud.
-- [StRS-0034]{StRS-0006} The software may be sold as a product with maintenance services, for the infrastructure setup locally in the user's place.
+- [StRS-0054]{} The source code itself for this software, shall be open sourced.
+- [StRS-0033]{} The software may be provided as SaaS, built on top of the cloud.
+- [StRS-0051]{StRS-0033} For SaaS, the software shall be free for public repositories, while it is priced for private repositories.
+- [StRS-0034]{} The software may be provided as a standalone product, for the infrastructure hosted and setup in the user's place.
+- [StRS-0052]{StRS-0054,StRS-0034} The software shall be free for individual users who build from source code and hosted locally.
+- [StRS-0053]{StRS-0034} The software shall be priced for business users, for a cost of both (1) a required one time license fee, and (2) optional maintenance services.
 
 Team building:
 

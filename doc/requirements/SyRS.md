@@ -85,18 +85,14 @@ Revision control:
 - [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a global version, and a document-wise version.
     - The global version tends to be more important, as the documents are highly entangled to each other by traceable items.
     - Some global versions may have corresponding review activities.
-- [SyRS-0067]{SyRS-0001} For each document, author(s) shall be clearly marked, with an option to show when and what parts they were editing.
+- [SyRS-0087]{SyRS-0001} The evolution history of the documents shall be queryable from the software.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes/commits of various level:
     - Regular backups by author(s).
     - Pending changes/different opinions.
     - To-be-reviewed draft.
-    - Benchmark/version approved as a group/management decision.
+    - Review meeting approval as a group/management decision.
 - [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents.
 - [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document and code-only changes.
-- [SyRS-0041]{StRS-0011,SyRS-0026,SyRS-0038,SyRS-0018} The software shall provide different default version/commit based on different user roles:
-    - For document editor, the newest commit should be returned.
-    - For document reviewer, the to-be-reviewed commit should be returned.
-    - For document user (e.g. software engineer), the newest benchmark version should be returned.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
 
 Document formatting:
@@ -207,11 +203,23 @@ Authorization:
 
 ### Information management
 
+SaaS:
+
+- [SyRS-0084]{StRS-0033} The software shall be able to save/centralize operational data in the cloud.
+
 ### Policies and regulations
 
 ### System life cycle sustainment
 
 ### Packaging, handling, shipping and transportation
+
+SaaS:
+
+- [SyRS-0083]{StRS-0033} The software shall have a pipeline to be deployed to a cloud computing platform.
+
+Local hosting:
+
+- [SyRS-0085]{StRS-0034} The software shall include a (semi-)automatic installation pipeline.
 
 ## Appendices
 
