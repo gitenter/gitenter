@@ -163,6 +163,8 @@ Procedure:
 - [StRS-0005]{StRS-0040} The software shall support Agile life cycle model.
 - [StRS-0018]{StRS-0040} The software shall assist various activities to establish, maintain, and use of the documentation system.
 - [StRS-0002]{StRS-0018} The software shall be used for requirement engineering documents.
+    - *(Should the software also provide tools for brainstorming of requirements/features? -- The actually process may be similar to comments on the review meeting, but it happens BEFORE a document even exist.)*
+- [StRS-0055]{StRS-0002} The software shall be integrate to some feature list/pool, which may be used for e.g. the marketing research or customer support departments.
 - [StRS-0008]{StRS-0018} The software shall be used for design control documents.
 - [StRS-0039]{StRS-0018,StRS-0013} The software shall be used to trace the origins of product code pieces.
 - [StRS-0038]{StRS-0018} The software shall be used to manage test cases.
@@ -171,7 +173,7 @@ Procedure:
 
 ### Operational scenarios
 
-- [StRS-0011]{StRS-0009} The software shall support various different users roles: project manager, technical manager, business analyzer, product manager, architect, developer/engineer, tester/QA engineer, ... *(TODO: Consider move the detailed rows to the design document)*
+- [StRS-0011]{StRS-0009} The software shall support various different users roles.
 
 ### Operational environment
 
@@ -220,7 +222,8 @@ Target customer:
 
 - [StRS-0054]{} The source code itself for this software, shall be open sourced.
 - [StRS-0033]{} The software may be provided as SaaS, built on top of the cloud.
-- [StRS-0051]{StRS-0033} For SaaS, the software shall be free for public repositories, while it is priced for private repositories.
+- [StRS-0056]{StRS-0033} For SaaS, there shall be (1) public repositories that everybody can read the inside documents, and (2) private repositories that only authorized users have access to it.
+- [StRS-0051]{StRS-0056} For SaaS, the software shall be free for public repositories, while it is priced for private repositories.
 - [StRS-0034]{} The software may be provided as a standalone product, for the infrastructure hosted and setup in the user's place.
 - [StRS-0052]{StRS-0054,StRS-0034} The software shall be free for individual users who build from source code and hosted locally.
 - [StRS-0053]{StRS-0034} The software shall be priced for business users, for a cost of both (1) a required one time license fee, and (2) optional maintenance services.

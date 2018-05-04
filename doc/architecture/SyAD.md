@@ -140,25 +140,34 @@ Optional block comments
 
 ### Authorization
 
-Since requirement engineering and design control is mostly for enterprise uses, it is less likely that individual user will do it in their hobby projects. And for reviewing, it by default cannot be done by a one-person project. Also, notice that individual user can always sign up an organization and put her projects there. Therefore, project always belongs to some particular organization (unlike in GitHub that project can either belong to an organization or a user).
+- [SyAD-0040]{} There are multiple user management items related to this software.
+    - A user.
+    - An organization: it can be either an enterprise, a non-profit organization, a unofficial group, or some space some individual user registered.
+    - A repository: it is the output of a project. It is a computer folder and its content includes a set of documents.    
 
-- [SyAD-0036]{} An organization can have multiple repositories, for which:
-    - An organization can be either an enterprise, a non-profit organization, a unofficial group, or some space some individual user registered.
-    - A repository is the output of a project. It is a computer folder and its content includes a set of documents.
-- [SyAD-0037]{} An organization can have multiple members. A user may be a member of more than one organizations.
-- [SyAD-0038]{SyAD-0037} A member of an organization can either be:
-    - A normal user.
-    - A manager:
+Since requirement engineering and design control is mostly for enterprise uses, it is less likely that individual user will do it in their hobby projects. And for reviewing, it by-default cannot be done by a one-person project. Also, notice that individual user can always sign up an organization and put her projects there. Therefore, a project always belongs to some particular organization (unlike in GitHub that project can either belong to an organization or a user).
+
+- [SyAD-0037]{SyAD-0040} An organization can have multiple users as its members. A user may be a member of more than one organizations.
+- [SyAD-0038]{SyAD-0037} A member of an organization may have the following specific role:
+    - A non-professional manager:
         - Create/delete repositories.
-        - Add/remove users into/from that organization.
-        - Authorize other members particular privilege of some particular repository.
-- [SyAD-0039]{SyAD-0038} A user may have the following privilege of a repository:
-    - Project leader: Organize the approval process of a review meeting.
-        - *(Should we need this person? Or it could be a simple system-based voting?)*
+            - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
+        - Define members by add/remove users into/from that organization.
+        - Assign members as project organizer(s) of each repository.
+        - Billing (if applicable).
+- [SyAD-0036]{SyAD-0040} An organization can have multiple repositories. An repository can only belongs to one single organization.
+- [SyAD-0039]{SyAD-0040} A user may hold one of the following roles of a repository:
     - Document editor.
-    - Document reviewer.
+        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
     - Document reader.
-        - *(May be code editor?)*
+        - There is no particular role as reviewer, as anybody who can read can review.
+        - There is no need to have reader role for public repositories.
+        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
+- [SyAD-0041]{SyAD-0038,SyAD-0039} A project organizer of an repository is in charge of:
+    - Authorize members (include herself) particular privilege of the corresponding repository. It is not the job of the organization manager, because we want to keep that role non-professional.
+    - Setup a review meeting includes (1) the associate commit, (2) a set of to-be-reviewed documents, (3) timeframe, (4) suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness.
+    - Organize the approval process of a review meeting.
+        - *(Should we need this person? Or it could be a simple system-based voting?)*
 
 ## Decomposition description
 

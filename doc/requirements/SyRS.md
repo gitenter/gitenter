@@ -109,15 +109,21 @@ Traceability:
 - [SyRS-0050]{SyRS-0074} The upstream items may be prioritized. *(Should they?)*
 - [SyRS-0073]{SyRS-0074} Individual traceable items has no or loose order, for which the order comes from the constrain that the upstream items shall come first.
 - [SyRS-0075]{SyRS-0070} Related traceable items, or traceable items about a same aspect of the product, shall be grouped together.
+- [SyRS-0089]{SyRS-0074} As independent features may benefit (1) microservice architecture and (2) feature flags, the software shall distinguish/isolate independent traceable items.
+    - *(May be an easy check that two items do not have common downstream item?)*
+- [SyRS-0090]{SyRS-0089} The software shall provide systematic tools to resume couplings between traceable items.
+    - *(How?)*
+    - *(May show a squared matrix that both row and column are the same list of traceable items. One matrix item is the count of common downstream items of two items. Ideally all matrix items shall be zero. May be used for a single document/same level of items. Notice that traceable items in the same document may refer to each other, this may be acted as the upmost or down-most items of a single document.)*
 - [SyRS-0076]{SyRS-0070,SyRS-0031} A traceable document item may be surrounded by the descriptive parts of the document, which may follow some kind of document templates.
 - [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
     - *(Is there any possibility to trace graph items?)*
 - [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag renaming.
 - [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/hyperlinks to both the upstream and downstream items of the current document item.
-- [SyRS-0051]{SyRS-0074,SyRS-0010} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use the not-quite-virtualizable tag links).
+- [SyRS-0051]{StRS-0044,SyRS-0074} The software shall optimize traceable relationship if both upstream and downstream items are in the same document.
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
+- [SyRS-0091]{SyRS-0045} The (unit)test status from a continuous integration platform, shall be integrated into this system.
 - [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to mark the completeness of documented traceable items.
 
 Reviewing:
@@ -125,7 +131,8 @@ Reviewing:
 - [SyRS-0018]{StRS-0045} Authorized user shall setup some particular to-be-reviewed commit.
 - [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
 - [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
-- [SyRS-0077]{StRS-0045} Authorized user shall setup a list of reviewers.
+- [SyRS-0077]{StRS-0045} Authorized user shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
+- [SyRS-0088]{SyRS-0077} Anybody who have the reading authority can come an join the reviewing activity.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
 - [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
 - [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018} Users shall be able to review and comment on the to-be-reviewed documents through a web interface.
@@ -144,8 +151,9 @@ Reviewing:
 - [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings.
 - [SyRS-0080]{SyRS-0054} The review meeting record shall be linked to the to-be-reviewed commit.
 - [SyRS-0058]{SyRS-0048,SyRS-0054} The software shall support a hybrid approach that the traditional review meeting after online reviewing for the controversial discussions.
-- [SyRS-0059]{StRS-0045} The system shall record the authorized user approval event at the end of every reviewing process, include the information of:
-    - A list of reviewers, with each one has cleared issues (and hold the liability of the correctness of) which part.
+- [SyRS-0059]{StRS-0045,SyRS-0077,SyRS-0088} The system shall record the authorized user approval event at the end of every reviewing process, include the information of:
+    - A list of reviewers assigned by the authorized user, with each one has cleared issues (and hold the liability of the correctness of) which part.
+    - A list of volunteering reviewers.
     - Approval signature of a pertinent manager.
 - [SyRS-0064]{} Each document under certain commit of the revision control system, shall be in one of the following status:
     - Draft.
@@ -170,7 +178,7 @@ Requirement analysis:
 
 Authorization:
 
-- [SyRS-0022]{StRS-0011} The software shall provide authorization control of who can read, review, and/or edit the documents.
+- [SyRS-0022]{StRS-0011,StRS-0056} The software shall provide authorization control of who can read, review, and/or edit the documents.
 - [SyRS-0040]{SyRS-0038,SyRS-0022} The software shall separate the edit authorization of document and code. *(This is challenging)*
 - [SyRS-0039]{StRS-0011,SyRS-0059} The software shall provide authorization control who can approve the benchmark of the document.
 
