@@ -82,6 +82,19 @@ Versioning:
 
 Reviewing:
 
+- [SRS-WS-0022]{SyRS-0018,SyAD-0041,SyAD-0034} Project organizer shall setup reviewing of a set of draft documents, but submit a pull request from a commit (contains those drafts) of a different branch, to the master branch.
+- [SRS-WS-0023]{SyRS-0063,SyAD-0041} Project organizer shall setup a set of to-be-reviewed documents, which may be not the entire document set.
+- [SRS-WS-0024]{SyRS-0056,SyAD-0041} Project organizer shall setup a certain amount of time for people to review.
+- [SRS-WS-0025]{SyRS-0077,SyAD-0041} Project organizer shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
+- [SRS-WS-0026]{SyRS-0088,SyAD-0041,SRS-WS-0025} All readers (no matter whether they have been assigned as reviewers or not) could come and join the reviewing activity as reviewers.
+- [SRS-WS-0027]{SyRS-0079,SyAD-0041} Reviewers shall be able to comment on some particular line of the draft documents through a web interface.
+- [SRS-WS-0029]{SRS-WS-0027} While commenting, reviewers shall view one single document.
+- [SRS-WS-0030]{SRS-WS-0027} Reviewer may choice to show or hide other people's comments on the same document.
+- [SRS-WS-0031]{SRS-WS-0027} If there are so many comments on the same document, the software may provide (1) instant shown/hidden and (2) paging.
+    - That's to avoid the similar situation that GitHub becomes extremely slow when there are 100+ comments on the same pull request.
+- [SRS-WS-0032]{SRS-WS-0027} The software shall provide a `diff`/comparison to the previous official version in the reviewing page.
+- [SRS-WS-0028]{SyRS-0078,SyAD-0041} Reviewers and authors shall be able to discuss by commenting through that web platform.
+
 User management:
 
 ### Usability requirements

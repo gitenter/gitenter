@@ -72,10 +72,15 @@ Comparison of version control platforms for satisfying our targeting functional 
 | Separate code and document changes |  |  | Different branch. A configuration file to indicate whether the current commit in a document change or not. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
-- [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by author(s by a series of `git` commits in a separated branch.
-- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a different `git` branch.
-- [SyAD-0034]{SyAD-0001,SyRS-0026} The software shall treat review meeting as a pull request from a `git` branch to master branch.
-- [SyAD-0035]{SyAD-0001,SyRS-0026} The software shall handle review meeting approval as a merge event in `git`'s "Integration-Manager Workflow", with an associated `git` tag on the particular commit.
+- [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by document author(s) by a series of commits in a separated branch.
+- [SyAD-0042]{SyAD-0032} If multiple authors are editing simultaneously, they shall all merge into the same (non-master) branch.
+    - Since reviewing/merge to master is a once-in-a-while event, this is opposite to the concept of continuous deployment.
+- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a different branch.
+- [SyAD-0034]{SyAD-0001,SyRS-0026} The software shall treat reviewing as a pull request from a commit (contains those drafts) of a different branch, to the master branch.
+    - Reviewing is marked on commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
+- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments may be continuous pulled into the original branch.
+    - *(Shall the reviewing result be generally (1) comments given and question rises, but can be merge and edit on the next version, or (2) must be changed before merge to the master? Notice for the second choice, the other teams may need to idle for a long time.)*
+- [SyAD-0035]{SyAD-0001,SyRS-0026} The software shall handle reviewing approval as a merge event in `git`'s "Integration-Manager Workflow", with an associated tag on the commit of the merge event (so the tag is on master branch).
 
 ### Document formatting
 
@@ -156,7 +161,7 @@ Since requirement engineering and design control is mostly for enterprise uses, 
         - Assign members as project organizer(s) of each repository.
         - Billing (if applicable).
 - [SyAD-0036]{SyAD-0040} An organization can have multiple repositories. An repository can only belongs to one single organization.
-- [SyAD-0039]{SyAD-0040} A user may hold one of the following roles of a repository:
+- [SyAD-0039]{SyAD-0040,SyRS-0088} A user may hold one of the following roles of a repository:
     - Document editor.
         - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
     - Document reader.
@@ -165,7 +170,7 @@ Since requirement engineering and design control is mostly for enterprise uses, 
         - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
 - [SyAD-0041]{SyAD-0038,SyAD-0039} A project organizer of an repository is in charge of:
     - Authorize members (include herself) particular privilege of the corresponding repository. It is not the job of the organization manager, because we want to keep that role non-professional.
-    - Setup a review meeting includes (1) the associate commit, (2) a set of to-be-reviewed documents, (3) timeframe, (4) suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness.
+    - Setup the logistics of a review activity.
     - Organize the approval process of a review meeting.
         - *(Should we need this person? Or it could be a simple system-based voting?)*
 

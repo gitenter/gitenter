@@ -128,14 +128,14 @@ Traceability:
 
 Reviewing:
 
-- [SyRS-0018]{StRS-0045} Authorized user shall setup some particular to-be-reviewed commit.
-- [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
+- [SyRS-0018]{StRS-0045} Authorized user shall start the reviewing activity.
+- [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed draft documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
 - [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
 - [SyRS-0077]{StRS-0045} Authorized user shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
-- [SyRS-0088]{SyRS-0077} Anybody who have the reading authority can come an join the reviewing activity.
+- [SyRS-0088]{SyRS-0077} Anybody who have the reading authority could come and join the reviewing activity.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
 - [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
-- [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018} Users shall be able to review and comment on the to-be-reviewed documents through a web interface.
+- [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018} Users shall be able to review and comment on the draft documents through a web interface.
     - This is different to the GitHub code review workflow in several aspects: (1) Review comment is linked to a marked position of a frozen snapshot of document, rather than a marked position of document changes. (2) Reviewing is by default turned off, and is only turned on for special cases. The reason is that's the scenario provided reviewing and auditing regulatory. The other reason is design documents are in general in global scope, and have complicated internal relationship; on the other hand, code (a majority of bugs in code) is mostly local scope. It is really costly to sit down and discuss in among multiple stakeholders, and it is hard for people to follow these discussions all the time. Definitely this is a really waterfall approach which is contradict with the sprint of continuous-X. The possibility of a more Agile styled requirement and design review workflow can be discuss later.
 - [SyRS-0079]{SyRS-0048} User comments shall be on some particular line of the document.
     - *(Or on traceable item only?)*
@@ -162,6 +162,7 @@ Reviewing:
     - Expired.
 - [SyRS-0065]{SyRS-0061,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a version based on the corresponding review meeting, and (2) date of issues shall be provided.
     - A version based on the associated review meeting corresponds to a global version, but only part of the documents are included in the review activity. Even if there is an approval reviewing of that particular commit, one particular document may not be actually included, so it should be in status draft.
+    - *(Shall this version be compatible to the case that questions/comments raised and correctness will be in the follow-up version (which may not be a full review meeting), but document merged?)*
 - [SyRS-0066]{SyRS-0064} For documents in status of approval or expired, the reviewer(s) and the pertinent manager(s) show be marked with it.
     - Reviewer(s) is per-document.
     - Pertinent manager(s) is per-reviewing activity.
