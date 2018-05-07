@@ -60,8 +60,20 @@ Document visualization:
 - [SRS-WS-0021]{SRS-WS-0016} The software shall display the comments of traceable item in a styled way.
 - [SRS-WS-0018]{SRS-WS-0017,SyRS-0010} The software shall provide hyperlink for both upstream and downstream items, with the destination of the link point to the corresponding line of the targeting item.
 - [SRS-WS-0019]{SRS-WS-0017,SyRS-0051} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use the not-quite-virtualizable tag links).
+- [SRS-WS-0033]{SyRS-0089} For each particular item, the software shall show a list of items with common downstream items with it (but neither of the two is upstream item of the other). When an item has none of these items in the list, it should be qualified for (1) microservice architecture and (2) feature flags.
+    - A pure tree structure contributes to zero common downstream items.
+    - *(We may then show a squared matrix that both row and column are the same list of traceable items. One matrix item is the count of common downstream items of two items. Ideally all matrix items shall be zero. May be used for a single document/same level of items. Notice that traceable items in the same document may refer to each other, this may be acted as the upmost or down-most items of a single document.)*
 - [SRS-WS-0020]{SRS-WS-0016,SyRS-0044} The software shall provide hyperlink to the implementing code pieces.
 - [SRS-WS-0021]{SRS-WS-0016,SyRS-0044} The software shall provide hyperlink to the test cases.
+- [SRS-WS-0034]{SyRS-0091,SRS-WS-0021} Next to the traceable item, the software shall shown the corresponding (unit)test status integrated from some continuous integration platform.
+- [SRS-WS-0035]{SyRS-0057} The reader (developer/engineer) may manually marked the status (TODO/in progress/done) of each traceable item.
+    - This is marked out of the document itself (rather than through special syntax in the document), because of the following reasons:
+        - Otherwise the reader need the editing authority.
+        - It gives more flexibility of complex management of who marked it and when.
+    - *(Should status go with traceable item tags (through different version of the software), or should they be limited to every single commit?)*
+- [SRS-WS-0036]{SRS-WS-0035,SyRS-0092} The software shall be able to integrate to task management systems, include:
+    - Add a traceable item into a task management system as an task.
+    - Trace the status (TODO/in progress/done) of the corresponding task in the document next to the traceable item.
 
 Versioning:
 
