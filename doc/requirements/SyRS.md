@@ -120,7 +120,7 @@ Traceability:
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
 - [SyRS-0091]{SyRS-0045} The (unit)test status from a continuous integration platform, shall be integrated into this system.
-- [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to mark the completeness of documented traceable items.
+- [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to trace the completeness of traceable items through manual ways.
 - [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems (which provide a TODO/in progress/done), such as Trello or Atlassian JIRA.
     - No need to integrate to bug tracking systems, as bugs shall never appear in the requirement/design.
 
@@ -128,36 +128,28 @@ Reviewing:
 
 - [SyRS-0018]{StRS-0045} Authorized user shall start the reviewing activity.
 - [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed draft documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
-- [SyRS-0056]{StRS-0045} Authorized user shall setup a certain amount of time for people to review.
 - [SyRS-0077]{StRS-0045} Authorized user shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
 - [SyRS-0088]{SyRS-0077} Anybody who have the reading authority could come and join the reviewing activity.
-- [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through a directly using of this software, or in a traditional review meeting way.
-- [SyRS-0047]{SyRS-0046} The software shall provide an online reviewing system.
-- [SyRS-0048]{SyRS-0047,SyRS-0026,SyRS-0018} Users shall be able to review and comment on the draft documents through a web interface.
-    - This is different to the GitHub code review workflow in several aspects: (1) Review comment is linked to a marked position of a frozen snapshot of document, rather than a marked position of document changes. (2) Reviewing is by default turned off, and is only turned on for special cases. The reason is that's the scenario provided reviewing and auditing regulatory. The other reason is design documents are in general in global scope, and have complicated internal relationship; on the other hand, code (a majority of bugs in code) is mostly local scope. It is really costly to sit down and discuss in among multiple stakeholders, and it is hard for people to follow these discussions all the time. Definitely this is a really waterfall approach which is contradict with the sprint of continuous-X. The possibility of a more Agile styled requirement and design review workflow can be discuss later.
-- [SyRS-0079]{SyRS-0048} User comments shall be on some particular line of the document.
-    - *(Or on traceable item only?)*
-    - *(What about comments on graphs?)*
-- [SyRS-0078]{SyRS-0048} User shall also be able to comment on other user's comment.
+- [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through software, or in a traditional review meeting way.
+- [SyRS-0048]{SyRS-0046,SyRS-0026,SyRS-0018} The software shall provide an online reviewing system, for users to review and comment on the draft documents through a web interface.
+    - This is different to the GitHub code review workflow in several aspects: (1) Review comment is linked to a marked position of a frozen snapshot of document, rather than a marked position of document changes. (2) Reviewing is by default turned off, and is only turned on for special cases. The reason is that's the scenario provided reviewing and auditing regulatory. The other reason is design documents are in general in global scope, and have complicated internal relationship; on the other hand, code (a majority of bugs in code) is mostly local scope. It is really costly to sit down and discuss in among multiple stakeholders, and it is hard for people to follow these discussions all the time. Definitely this is a really waterfall approach which is contradict with the sprint of continuous-X. The possibility of a more Agile styled requirement and design review workflow can be discuss later. *(Comment to be cleaned up and moved to SRS-WS)*
 - [SyRS-0052]{SyRS-0046} The software shall provide tools for traditional review meetings.
-- [SyRS-0053]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents in PDF version, with the following items explicitly marked.
-    - Author(s).
-    - Date.
-    - Status/version.
-    - Line numbers.
-    - *(Should the upstream/downstream items be hyperlinked in the PDF file?)*
-- [SyRS-0054]{SyRS-0052} The software shall provide tools for recording the review meetings.
-- [SyRS-0080]{SyRS-0054} The review meeting record shall be linked to the to-be-reviewed commit.
-- [SyRS-0058]{SyRS-0048,SyRS-0054} The software shall support a hybrid approach that the traditional review meeting after online reviewing for the controversial discussions.
-- [SyRS-0059]{StRS-0045,SyRS-0077,SyRS-0088} The system shall record the authorized user approval event at the end of every reviewing process, include the information of:
-    - A list of reviewers assigned by the authorized user, with each one has cleared issues (and hold the liability of the correctness of) which part.
-    - A list of volunteering reviewers.
-    - Approval signature of a pertinent manager.
-- [SyRS-0064]{} Each document under certain commit of the revision control system, shall be in one of the following status:
-    - Draft.
-    - In review.
+- [SyRS-0058]{SyRS-0048,SyRS-0052} The software shall support a hybrid approach that the traditional review meeting after online reviewing for the controversial discussions.
+- [SyRS-0056]{StRS-0045} Each new reviewing comes in a series of subsections, and the authorized user shall pace and setup a timeline of both (1) each subsection, and the entire reviewing.
+- [SyRS-0096]{SyRS-0056} A new reviewing subsection is triggered by:
+    - (Traditional review meeting only) a scheduled meeting in a timeframe: the meeting may only target part of the documents.
+    - Document has been changed after the previous subsection.
+- [SyRS-0094]{SyRS-0096} Document shall be in one of the following status in reviewing series:
+    - Draft: Not started yet, or (Traditional review meeting only) unable to be touched in the current section.
     - Approval.
-    - Expired.
+    - Approval with postscripts: Comments/questions raised but changes have been decided to rollover to the next reviewing.
+    - Request changes.
+    - Denial.
+- [SyRS-0097]{SyRS-0094} For each new subsection, documents can either keep their current status, go from "Draft" to "Request change", or go from "Draft"/"Request changes" to "Approval"/"Approval with postscripts"/"Denial". No other changes are allowed.
+- [SyRS-0039]{SyRS-0094} Authorized user shall make the decision of reviewing status based on everybody's opinion and relative discussions/comments.
+    - *(Should we need a person to do it? Or it could be a simple system-based voting?)*
+- [SyRS-0093]{SyRS-0097} Reviewing is finalized when all documents are in status of either "Approval", "Approval with postscripts", or "Denial". None, part, or all included documents may be in each category.
+- [SyRS-0064]{SyRS-0093} When there's a new reviewing with the same document involved, the previous version of the document changed status from "Approval"/"Approval with postscripts" to "Expired" (no need to change "Denial").
 - [SyRS-0065]{SyRS-0061,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a version based on the corresponding review meeting, and (2) date of issues shall be provided.
     - A version based on the associated review meeting corresponds to a global version, but only part of the documents are included in the review activity. Even if there is an approval reviewing of that particular commit, one particular document may not be actually included, so it should be in status draft.
     - *(Shall this version be compatible to the case that questions/comments raised and correctness will be in the follow-up version (which may not be a full review meeting), but document merged?)*
@@ -179,7 +171,6 @@ Authorization:
 
 - [SyRS-0022]{StRS-0011,StRS-0056} The software shall provide authorization control of who can read, review, and/or edit the documents.
 - [SyRS-0040]{SyRS-0038,SyRS-0022} The software shall separate the edit authorization of document and code. *(This is challenging)*
-- [SyRS-0039]{StRS-0011,SyRS-0059} The software shall provide authorization control who can approve the benchmark of the document.
 
 ### Usability requirements
 

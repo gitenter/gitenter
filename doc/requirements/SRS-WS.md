@@ -70,9 +70,10 @@ Document visualization:
     - This is marked out of the document itself (rather than through special syntax in the document), because of the following reasons:
         - Otherwise the reader need the editing authority.
         - It gives more flexibility of complex management of who marked it and when.
+        - It keeps the flexibility that the actual implementation may be either in or out of the software.
     - *(Should status go with traceable item tags (through different version of the software), or should they be limited to every single commit?)*
 - [SRS-WS-0036]{SRS-WS-0035,SyRS-0092} The software shall be able to integrate to task management systems, include:
-    - Add a traceable item into a task management system as an task.
+    - A shortcut to add a traceable item into the task management system.
     - Trace the status (TODO/in progress/done) of the corresponding task in the document next to the traceable item.
 
 Versioning:
@@ -94,18 +95,42 @@ Versioning:
 
 Reviewing:
 
-- [SRS-WS-0022]{SyRS-0018,SyAD-0041,SyAD-0034} Project organizer shall setup reviewing of a set of draft documents, but submit a pull request from a commit (contains those drafts) of a different branch, to the master branch.
+- [SRS-WS-0022]{SyRS-0018,SyAD-0041,SyAD-0034} Project organizer shall setup reviewing by submit a pull request from a commit (contains those drafts) of a different branch, to the master branch.
 - [SRS-WS-0023]{SyRS-0063,SyAD-0041} Project organizer shall setup a set of to-be-reviewed documents, which may be not the entire document set.
 - [SRS-WS-0024]{SyRS-0056,SyAD-0041} Project organizer shall setup a certain amount of time for people to review.
-- [SRS-WS-0025]{SyRS-0077,SyAD-0041} Project organizer shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
+- [SRS-WS-0025]{SyRS-0077,SyAD-0041} Project organizer shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness for a particular reviewing.
 - [SRS-WS-0026]{SyRS-0088,SyAD-0041,SRS-WS-0025} All readers (no matter whether they have been assigned as reviewers or not) could come and join the reviewing activity as reviewers.
-- [SRS-WS-0027]{SyRS-0079,SyAD-0041} Reviewers shall be able to comment on some particular line of the draft documents through a web interface.
-- [SRS-WS-0029]{SRS-WS-0027} While commenting, reviewers shall view one single document.
-- [SRS-WS-0030]{SRS-WS-0027} Reviewer may choice to show or hide other people's comments on the same document.
-- [SRS-WS-0031]{SRS-WS-0027} If there are so many comments on the same document, the software may provide (1) instant shown/hidden and (2) paging.
-    - That's to avoid the similar situation that GitHub becomes extremely slow when there are 100+ comments on the same pull request.
-- [SRS-WS-0032]{SRS-WS-0027} The software shall provide a `diff`/comparison to the previous official version in the reviewing page.
-- [SRS-WS-0028]{SyRS-0078,SyAD-0041} Reviewers and authors shall be able to discuss by commenting through that web platform.
+- [SRS-WS-0027]{SyRS-0048} Reviewers shall be able to comment on some particular line of the draft documents through a web interface.
+    - It is not limited to only traceable items, because (1) people do have different opinions on anywhere of the document, and (2) since comments are not rolled over to the next commit, there is technically no difficulty to do the generalization.
+    - *(What about comments on graphs?)*
+- [SRS-WS-0029]{SRS-WS-0027} Commenting shall be based on one single document.
+- [SRS-WS-0028]{SyRS-0048,SyAD-0041} Reviewers and author(s) shall be able to discuss by commenting on others' comments.
+- [SRS-WS-0030]{SRS-WS-0027,SRS-WS-0028} Reviewer may choice to show or hide other people's comments while reviewing, with the options of:
+    - Show all.
+    - Hide all.
+    - White list.
+    - Black list.
+- [SRS-WS-0031]{SRS-WS-0027} If there are so many comments on the same document, the software shall provide paging.
+    - That's to avoid a similar situation that GitHub becomes extremely slow when there are 100+ comments on the same pull request.
+- [SRS-WS-0032]{SRS-WS-0027} The software shall provide a `diff`/comparison to the previous official version in the web reviewing page.
+- [SRS-WS-0047]{SyRS-0048,SyRS-0094} The software shall let reviewers to choose status of each document. Status can be given (and changed) any time before/after that reviewer and/or other people give comments, but need to be finalized before the deadline.
+- [SRS-WS-0037]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents in `pdf` format, (1) to be used for a traditional review meeting, and/or (2) to fit into a company's the existing work flow in case exists.
+- [SRS-WS-0038]{SRS-WS-0037,SyRS-0064,SyRS-0065} In the `pdf` version of reviewing draft, the following items shall be explicitly marked:
+    - Author(s).
+    - Snapshot date/reviewing deadline.
+    - Version/subversion.
+    - Line numbers.
+- [SRS-WS-0039]{SRS-WS-003} The `pdf` document may have customized header/footer, to fit into the official document format of some particular company.
+- [SRS-WS-0040]{SyRS-0052} The software shall provide a recorder of the traditional review meetings through the web interface.
+- [SRS-WS-0042]{SRS-WS-0040} Meeting recorder may record the discussions on the review meeting, based on a particular line of the draft document.
+- [SRS-WS-0043]{SRS-WS-0040} The software shall provide a display page that can provide the review meeting attendees (1) a synchronization of what part is currently under discussion, and (2) the dynamic records.
+- [SRS-WS-0041]{SRS-WS-0040} The review meeting record shall be linked to the to-be-reviewed commit.
+- [SRS-WS-0046]{StRS-0045,SyRS-0077,SyRS-0088} The system shall record the approval event at the end of every reviewing process, include the information of:
+    - A list of reviewers assigned by the authorized user, with each one has cleared issues (and hold the liability of the correctness of) which part.
+    - A list of volunteering reviewers.
+    - Approval signature of a pertinent manager.
+- [SRS-WS-0045]{SyRS-0064} The software shall provide a list historical review meetings, with the link to all approval documents based on that particular meeting.
+- [SRS-WS-0044]{SRS-WS-0045,SyAD-0035} The approval version of the review meeting result, shall be marked by a `git` tag.
 
 User management:
 

@@ -80,7 +80,7 @@ Comparison of version control platforms for satisfying our targeting functional 
     - Reviewing is marked on commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
 - [SyAD-0043]{SyAD-0034} Updated documents based on the review comments may be continuous pulled into the original branch.
     - *(Shall the reviewing result be generally (1) comments given and question rises, but can be merge and edit on the next version, or (2) must be changed before merge to the master? Notice for the second choice, the other teams may need to idle for a long time.)*
-- [SyAD-0035]{SyAD-0001,SyRS-0026} The software shall handle reviewing approval as a merge event in `git`'s "Integration-Manager Workflow", with an associated tag on the commit of the merge event (so the tag is on master branch).
+- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing approval as a merge event in `git`'s "Integration-Manager Workflow", with an associated tag on the commit of the merge event (so the tag is on master branch).
 
 ### Document formatting
 
@@ -168,11 +168,10 @@ Since requirement engineering and design control is mostly for enterprise uses, 
         - There is no particular role as reviewer, as anybody who can read can review.
         - There is no need to have reader role for public repositories.
         - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
-- [SyAD-0041]{SyAD-0038,SyAD-0039} A project organizer of an repository is in charge of:
+- [SyAD-0041]{SyAD-0038,SyRS-0093} A project organizer of an repository is in charge of:
     - Authorize members (include herself) particular privilege of the corresponding repository. It is not the job of the organization manager, because we want to keep that role non-professional.
     - Setup the logistics of a review activity.
     - Organize the approval process of a review meeting.
-        - *(Should we need this person? Or it could be a simple system-based voting?)*
 
 ## Decomposition description
 
@@ -187,7 +186,7 @@ So from a direct interacting with the requirement, the software shall include th
 - [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
 - [SyAD-0020]{SyAD-0026} `git` revision control system.
 - [SyAD-0021]{SyAD-0027} Database.
-- [SyAD-0017]{SyRS-0010,SyRS-0047} Web service(s) for:
+- [SyAD-0017]{SyRS-0010,SyRS-0046} Web service(s) for:
     - Document visualization.
     - Reviewing.
     - User management.
