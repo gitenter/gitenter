@@ -80,19 +80,20 @@ Revision control:
     - Provide benchmark/version of documents.
     - Recording and monitoring the evolution history of documents.
     - Provide a platform for coordinating document editing jobs among multiple people.
-    - (For document editors) provide a comparison between versions to facilitate document reviewing of a new/unapproved version.
+    - (For document editors and reviewers) provide a comparison between a benchmark version and the most up-to-date version, to facilitate document reviewing of a new/unapproved version.
     - (For document users) provide a comparison between different document benchmark versions.
-- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents by giving both a global version, and a document-wise version.
-    - The global version tends to be more important, as the documents are highly entangled to each other by traceable items.
-    - Some global versions may have corresponding review activities.
+- [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents in both global and document-wise scopes.
+- [SyRS-0098]{SyRS-0061} The revision control system shall provide a version number in global scope.
+    - A global version is important, since the documents are highly entangled to each other by traceable items.
+    - Some global versions may have corresponding specificities (reviewing/approval/...).
 - [SyRS-0087]{SyRS-0001} The evolution history of the documents shall be queryable from the software.
 - [SyRS-0026]{SyRS-0001} The software shall distinguish document changes/commits of various level:
     - Regular backups by author(s).
     - Pending changes/different opinions.
     - To-be-reviewed draft.
-    - Review meeting approval as a group/management decision.
+    - Review approval as a group/management decision.
 - [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents.
-- [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document and code-only changes.
+- [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document changes and changes with other files (code-only) involved.
 - [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
 
 Document formatting:
@@ -150,7 +151,7 @@ Reviewing:
     - *(Should we need a person to do it? Or it could be a simple system-based voting?)*
 - [SyRS-0093]{SyRS-0097} Reviewing is finalized when all documents are in status of either "Approval", "Approval with postscripts", or "Denial". None, part, or all included documents may be in each category.
 - [SyRS-0064]{SyRS-0093} When there's a new reviewing with the same document involved, the previous version of the document changed status from "Approval"/"Approval with postscripts" to "Expired" (no need to change "Denial").
-- [SyRS-0065]{SyRS-0061,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a version based on the corresponding review meeting, and (2) date of issues shall be provided.
+- [SyRS-0065]{SyRS-0098,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a version based on the corresponding review meeting, and (2) date of issues shall be provided.
     - A version based on the associated review meeting corresponds to a global version, but only part of the documents are included in the review activity. Even if there is an approval reviewing of that particular commit, one particular document may not be actually included, so it should be in status draft.
     - *(Shall this version be compatible to the case that questions/comments raised and correctness will be in the follow-up version (which may not be a full review meeting), but document merged?)*
 - [SyRS-0066]{SyRS-0064} For documents in status of approval or expired, the reviewer(s) and the pertinent manager(s) show be marked with it.

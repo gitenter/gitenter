@@ -78,14 +78,15 @@ Document visualization:
 
 Versioning:
 
-- [SRS-WS-0011]{StRS-0011,SyRS-0026,SyRS-0038,SyRS-0018} The software shall provide different definition of default version based on different user roles:
+- [SRS-WS-0011]{SyAD-0032,SyAD-0034,SyAD-0035,SyAD-0039} The software shall provide different default commit (when both a commit number and a branch name is missing) based on different user roles:
     - For document editor, the newest commit edited by the current user should be returned.
     - For document reviewer, the to-be-reviewed commit should be returned.
-    - For document user (e.g. software engineer), the newest review meeting approval version should be returned.
+    - For document reader (e.g. software engineer), the newest approval version should be returned.
+    - *(Then, although "anybody who can read can review", we do have a reason to distinguish reviewers and readers. How?)*
 - [SRS-WS-0002]{SyRS-0087} The timestamp of last modification shall be shown in each document.
 - [SRS-WS-0001]{SyRS-0087} Author(s) list shall be shown in each document.
-- [SRS-WS-0005]{SyRS-0087,SyRS-0061} The document shall be easily switched between different versions.
-- [SRS-WS-0006]{SRS-WS-0005} Switch to a different (historical/draft) version can be done by providing a version number.
+- [SRS-WS-0005]{SyRS-0087} The document shall be easily switched between different versions.
+- [SRS-WS-0006]{SRS-WS-0005,SyAD-0048} Switch to a different (historical/draft) version can be done by providing a commit ID.
 - [SRS-WS-0007]{SRS-WS-0005,SyRS-0065,SyAD-0035} Switch to a historical version can be done by providing a `git` tag.
 - [SRS-WS-0008]{SRS-WS-0005,SyAD-0033} Switch to a draft version can be done by providing a `git` branch name.
 - [SRS-WS-0009]{SRS-WS-0005,SRS-WS-0011} Switch to the default version shall be done by a shortcut.

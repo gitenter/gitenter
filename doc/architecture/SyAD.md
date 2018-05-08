@@ -68,19 +68,25 @@ Comparison of version control platforms for satisfying our targeting functional 
 | Regular backups by authors |  |  | Done as a series of commits in a separated branch |
 | Pending changes/different opinions |  |  | Different branch |
 | To-be-reviewed draft |  |  | Pull request from a different branch |
-| Review meeting approval as a group/management decision |  |  | Merge in "Integration-Manager Workflow" |
-| Separate code and document changes |  |  | Different branch. A configuration file to indicate whether the current commit in a document change or not. |
+| Review approval as a group/management decision |  |  | Merge to the master branch |
+| Separate code and document changes |  |  | Different branch. `git diff` to check if any document changes are involved. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
+- [SyAD-0048]{SyRS-0098} `git` commit ID is used as the global version number of the document set.
 - [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by document author(s) by a series of commits in a separated branch.
-- [SyAD-0042]{SyAD-0032} If multiple authors are editing simultaneously, they shall all merge into the same (non-master) branch.
+- [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all merge into the same (non-master) branch.
     - Since reviewing/merge to master is a once-in-a-while event, this is opposite to the concept of continuous deployment.
-- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a different branch.
-- [SyAD-0034]{SyAD-0001,SyRS-0026} The software shall treat reviewing as a pull request from a commit (contains those drafts) of a different branch, to the master branch.
-    - Reviewing is marked on commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
-- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments may be continuous pulled into the original branch.
-    - *(Shall the reviewing result be generally (1) comments given and question rises, but can be merge and edit on the next version, or (2) must be changed before merge to the master? Notice for the second choice, the other teams may need to idle for a long time.)*
-- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing approval as a merge event in `git`'s "Integration-Manager Workflow", with an associated tag on the commit of the merge event (so the tag is on master branch).
+- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a separated branch.
+- [SyAD-0034]{SyAD-0001,SyRS-0026} Reviewing are linked to a commit (contains to-be-reviewed drafts) in a non-master branch.
+    - Reviewing is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
+    - In principle reviewing can be done on top of any commit (not necessary stay in a non-master branch). But we add this requirement to follow the "Integration-Manager Workflow" pattern.
+- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pulled into the original branch.
+- [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
+- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing approval as a merge to the master branch, with an associated tag on the commit of the merge event (so the tag is on master branch).
+- [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
+- [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
+    - In most cases those changes are done by different groups of people.
+- [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if all files returned by `git diff` are document/document accessories (images, ...).
 
 ### Document formatting
 
