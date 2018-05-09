@@ -108,15 +108,14 @@ Traceability:
 - [SyRS-0072]{SyRS-0071} A traceable document may have associated comments (e.g. in deep explanation of concerns).
 - [SyRS-0074]{StRS-0044} A traceable item may have multiple upstream and multiple downstream items.
 - [SyRS-0050]{SyRS-0074} The upstream items may be prioritized. *(Should they?)*
-- [SyRS-0073]{SyRS-0074} Individual traceable items has no or loose order, for which the order comes from the constrain that the upstream items shall come first.
+- [SyRS-0073]{SyRS-0074} Individual traceable items has no or loose order, for which the order comes from the constrain that the upstream items shall come first in a same document.
 - [SyRS-0075]{SyRS-0070} Related traceable items, or traceable items about a same aspect of the product, shall be grouped together.
 - [SyRS-0089]{SyRS-0074} As independent features may benefit (1) microservice architecture and (2) feature flags, the software shall distinguish/isolate independent traceable items.
 - [SyRS-0076]{SyRS-0070,SyRS-0031} A traceable document item may be surrounded by the descriptive parts of the document, which may follow some kind of document templates.
 - [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
     - *(Is there any possibility to trace graph items?)*
 - [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag renaming.
-- [SyRS-0010]{StRS-0044} The software shall provide user shortcuts/hyperlinks to both the upstream and downstream items of the current document item.
-- [SyRS-0051]{StRS-0044,SyRS-0074} The software shall optimize traceable relationship if both upstream and downstream items are in the same document.
+- [SyRS-0010]{StRS-0074} The software shall provide provide convenient tools to users to navigate between traceable items in both upstream and downstream directions.
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.

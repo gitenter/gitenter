@@ -111,7 +111,9 @@ For a comparison with other markup languages, we listed the cons of the alternat
 - [SyAD-0013]{} There shall be a traceability analyzer configuration file.
 - [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
     - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
-    - *(Notice that the software can know whether the documents has been changed or not, by something similar to `git diff` of the included paths.)*
+- [SyAD-0049]{SyAD-0014,SyAD-0047} A check that whether all the `git diff` involved files are under the document scanned path, shall be used to decide if a change is document only or not.
+    - When the document accessories (images, ...) are also under the same scanned path, the returned result will be correct.
+    - If documents and other files are mixed, then there is no way to distinguish.
 - [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
 - [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
     - *(What about if the code and tests are mixed together?)*
@@ -179,27 +181,37 @@ Since requirement engineering and design control is mostly for enterprise uses, 
     - Setup the logistics of a review activity.
     - Organize the approval process of a review meeting.
 
+*(TODO: Add decisions about reviewing versioning convention.)*
+
 ## Decomposition description
 
 ### Module decomposition
 
 So from a direct interacting with the requirement, the software shall include the following components:
 
-- [SyAD-0019]{SyAD-0006,SyRS-0031} Text editor plugin for:
+- [SyAD-0019]{SyAD-0006,SyRS-0031} Text editor plugin, for:
     - Generate unique tag.
     - Provide template.
+- [SyAD-0050]{SyRS-0010} Client-side document traceability navigator.
+    - So users can navigate between traceable items while editing files on-the-fly.
+    - It can be either part of the editor plugin, or an independent application. But since relation is hard to be build on-the-fly with a non-immediately algorithm, a local cache/database need to be involved.
 - [SyAD-0022]{SyAD-0010} Client-side traceability validator.
 - [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
 - [SyAD-0020]{SyAD-0026} `git` revision control system.
 - [SyAD-0021]{SyAD-0027} Database.
-- [SyAD-0017]{SyRS-0010,SyRS-0046} Web service(s) for:
+- [SyAD-0017]{SyRS-0046} Web service(s), for:
     - Document visualization.
     - Reviewing.
     - User management.
 
-We'll not provide a local application for document visualization at this moment, with the following concerns:
+Notice that several modules may share the following libraries:
 
-+ Several markdown preview tools can be used for a simple visualization of markdown files. And you can always download a pdf version of the document for local references.
+- [SyAD-0051]{SyAD-0007,SyAD-0050,SyAD-0022,SyAD-0018,SyAD-0017} Modified `markdone` parser.
+- [SyAD-0052]{SyAD-0050,SyAD-0022,SyAD-0018} Traceability analysis algorithm.
+
+Local application is limited for document traceability, with the following concerns:
+
++ Several markdown preview tools can be used for a simple visualization of markdown files.
 + Several git GUI clients (`gitg`, `gitkraken`) can be used for checking historical versions. And they are generally not useful unless you are the editor of the document.
 + The crucial part that the existing tools cannot provide, is the traceability items with links to upstream/downstream items. However, since a traceability analysis is needed before displaying, we need a local database (maybe a SQLite) to hold the result. That will involve further complication (and potential combination of part of the functions of the traceability validator), we will not implement it right now.
 

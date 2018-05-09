@@ -55,17 +55,19 @@ Document visualization:
 - [SRS-WS-0015]{SRS-WS-0012} The software shall fully support internal and external hyperlinks defined in markdown format.
 - [SRS-WS-0013]{SRS-WS-0012} The software shall be able to display local images referred in markdown pages.
 - [SRS-WS-0014]{SRS-WS-0013} The software shall have a opinion to show files (images, ...) under particular commit version in their raw format.
-- [SRS-WS-0016]{SRS-WS-0012,SyAD-0007} The software shall parse the special syntax of traceable items, and provide a compatible way to represent them and normal markdown items.
-- [SRS-WS-0017]{SRS-WS-0016,SyRS-0074} The software shall display both upstream and downstream items of a traceable item in a styled way.
-- [SRS-WS-0021]{SRS-WS-0016} The software shall display the comments of traceable item in a styled way.
+- [SRS-WS-0016]{SRS-WS-0012,SyAD-0007} The software shall visualize normal markdown items, and special syntax defined by this software in a compatible way.
+- [SRS-WS-0017]{SRS-WS-0016} The software shall visualize traceable item tag in a styled way.
+- [SRS-WS-0021]{SRS-WS-0016} The software shall visualize traceable item comments in a styled way.
 - [SRS-WS-0018]{SRS-WS-0017,SyRS-0010} The software shall provide hyperlink for both upstream and downstream items, with the destination of the link point to the corresponding line of the targeting item.
-- [SRS-WS-0019]{SRS-WS-0017,SyRS-0051} For tree structure items (items which only have one upstream item), there should be an option to rebuild the tree (rather than use the not-quite-virtualizable tag links).
-- [SRS-WS-0033]{SyRS-0089} For each particular item, the software shall show a list of items with common downstream items with it (but neither of the two is upstream item of the other). When an item has none of these items in the list, it should be qualified for (1) microservice architecture and (2) feature flags.
+- [SRS-WS-0048]{SyRS-0010} The software shall optimize traceability visualization if the items in relationship are in the same document.
+- [SRS-WS-0019]{SRS-WS-0018,SRS-WS-0048} For tree structure items (items which only have one upstream item), there should provide an optional tree-view along with the hyperlink view.
+    - *(Shall the hyperlink view be hided in that case?)*
+- [SRS-WS-0033]{SyRS-0089} For each item, the software shall list items with common downstream items with it (but neither of the two is upstream item of the other). When an item has none of these items in the list, it should be qualified for (1) microservice architecture and (2) feature flags.
     - A pure tree structure contributes to zero common downstream items.
     - *(We may then show a squared matrix that both row and column are the same list of traceable items. One matrix item is the count of common downstream items of two items. Ideally all matrix items shall be zero. May be used for a single document/same level of items. Notice that traceable items in the same document may refer to each other, this may be acted as the upmost or down-most items of a single document.)*
-- [SRS-WS-0020]{SRS-WS-0016,SyRS-0044} The software shall provide hyperlink to the implementing code pieces.
-- [SRS-WS-0021]{SRS-WS-0016,SyRS-0044} The software shall provide hyperlink to the test cases.
-- [SRS-WS-0034]{SyRS-0091,SRS-WS-0021} Next to the traceable item, the software shall shown the corresponding (unit)test status integrated from some continuous integration platform.
+- [SRS-WS-0020]{SRS-WS-0016,SyRS-0044,SyRS-0045} The software shall provide hyperlink to the implementing code pieces and the test cases.
+    - May link to the corresponding page in the integrated code revision system, with the correct line number provided.
+- [SRS-WS-0034]{SyRS-0045,SyRS-0091} Next to the traceable item, the software shall shown the corresponding (unit)test status integrated from some continuous integration platform.
 - [SRS-WS-0035]{SyRS-0057} The reader (developer/engineer) may manually marked the status (TODO/in progress/done) of each traceable item.
     - This is marked out of the document itself (rather than through special syntax in the document), because of the following reasons:
         - Otherwise the reader need the editing authority.
