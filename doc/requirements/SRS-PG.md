@@ -1,18 +1,4 @@
-# Software Requirements Specification -- Web User Interface
-
-## Document identifier
-
-**Date of issue:**
-
-**Issuing organization:**
-
-**Author(s):**
-
-**Approval signatures:**
-
-**Status/version:**
-
-**Reviewers/pertinent managers:**
+# Software Requirements Specification -- Text Editor Plugin
 
 ## Introduction
 
@@ -35,8 +21,6 @@
 ## Definitions, acronyms, and abbreviations
 
 ### Definition
-
-+ **Milestone:** Time point where documents are to be reviewed.
 
 ### Acronyms and abbreviations
 
