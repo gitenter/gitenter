@@ -174,6 +174,7 @@ Procedure:
 ### Operational scenarios
 
 - [StRS-0011]{StRS-0009} The software shall support various different users roles.
+- [StRS-0057]{} The software shall keep the flexibility that user(s) only commit to part of the provided features.
 
 ### Operational environment
 

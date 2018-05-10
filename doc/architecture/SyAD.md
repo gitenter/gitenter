@@ -79,10 +79,11 @@ Comparison of version control platforms for satisfying our targeting functional 
 - [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a separated branch.
 - [SyAD-0034]{SyAD-0001,SyRS-0026} Reviewing are linked to a commit (contains to-be-reviewed drafts) in a non-master branch.
     - Reviewing is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
+    - Even if there are new commits pushing to the same branch, the review is always link to the previous commit.
     - In principle reviewing can be done on top of any commit (not necessary stay in a non-master branch). But we add this requirement to follow the "Integration-Manager Workflow" pattern.
-- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pulled into the original branch.
+- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pushed into the original branch.
 - [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
-- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing approval as a merge to the master branch, with an associated tag on the commit of the merge event (so the tag is on master branch).
+- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing finalization as a merge to the master branch.
 - [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
@@ -180,8 +181,7 @@ Since requirement engineering and design control is mostly for enterprise uses, 
     - Authorize members (include herself) particular privilege of the corresponding repository. It is not the job of the organization manager, because we want to keep that role non-professional.
     - Setup the logistics of a review activity.
     - Organize the approval process of a review meeting.
-
-*(TODO: Add decisions about reviewing versioning convention.)*
+        - *(But then should this person be the pertinent manager, as she holds the liability on the decision? Or should there be a more complicated interface to let the project organizer to forward the documents to the manager for final decision?)*
 
 ## Decomposition description
 
@@ -246,6 +246,8 @@ We'll not implement the microservices at this moment, but will choice the one se
 ![](process_decomposition.png "")
 
 ## Dependency description
+
+*(TODO: (beside what normally should be in here) (1) check the dependency of each single feature -- which one works only if some other feature is on (2) technic how to achieve that. This is most on the higher level, while common downstream item (designed as a feature of this product) is for the lower level.)*
 
 ### Intermodule dependencies
 

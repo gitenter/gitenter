@@ -121,7 +121,8 @@ Traceability:
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
 - [SyRS-0091]{SyRS-0045} The (unit)test status from a continuous integration platform, shall be integrated into this system.
 - [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to trace the completeness of traceable items through manual ways.
-- [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems (which provide a TODO/in progress/done), such as Trello or Atlassian JIRA.
+- [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems (which provide a TODO/in progress/done.
+    - Examples include Trello and Atlassian JIRA.
     - No need to integrate to bug tracking systems, as bugs shall never appear in the requirement/design.
 
 Reviewing:
@@ -145,7 +146,12 @@ Reviewing:
     - Approval with postscripts: Comments/questions raised but changes have been decided to rollover to the next reviewing.
     - Request changes.
     - Denial.
-- [SyRS-0097]{SyRS-0094} For each new subsection, documents can either keep their current status, go from "Draft" to "Request change", or go from "Draft"/"Request changes" to "Approval"/"Approval with postscripts"/"Denial". No other changes are allowed.
+- [SyRS-0097]{SyRS-0094} Documents may keep their current status, or change status at the end of each review subsection.
+    - Suggested changing direction includes:
+        - from "Draft" to "Request change".
+        - from "Draft"/"Request changes" to "Approval"/"Approval with postscripts"/"Denial".
+    - "Draft" cannot be switched to from any other opinions.
+    - We cannot forbidden people to change files which is already approved (because of traceability tag consistency). Then we are facing the risk that documents may be changed to incorrect after it is being approved. Therefore, we keep the possibility of any change of status.
 - [SyRS-0039]{SyRS-0094} Authorized user shall make the decision of reviewing status based on everybody's opinion and relative discussions/comments.
     - *(Should we need a person to do it? Or it could be a simple system-based voting?)*
 - [SyRS-0093]{SyRS-0097} Reviewing is finalized when all documents are in status of either "Approval", "Approval with postscripts", or "Denial". None, part, or all included documents may be in each category.
