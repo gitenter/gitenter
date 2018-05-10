@@ -64,7 +64,7 @@ Or they may be saved in a separated database (GitHub, BitBucket, GitLab, ... all
 Comparison of version control platforms for satisfying our targeting functional requirements:
 
 |            | Concurrent versions system (CVS) | Subversion (SVN) | git        |
-| ---------- | -------------------------------- | ---------------- | --- |
+| ---------- | -------------------------------- | ---------------- | ---------- |
 | Regular backups by authors |  |  | Done as a series of commits in a separated branch |
 | Pending changes/different opinions |  |  | Different branch |
 | To-be-reviewed draft |  |  | Pull request from a different branch |
@@ -247,9 +247,24 @@ We'll not implement the microservices at this moment, but will choice the one se
 
 ## Dependency description
 
-*(TODO: (beside what normally should be in here) (1) check the dependency of each single feature -- which one works only if some other feature is on (2) technic how to achieve that. This is most on the higher level, while common downstream item (designed as a feature of this product) is for the lower level.)*
-
 ### Intermodule dependencies
+
+Since user may only want to use part of the features provided by this software, we want to make different features as independent as possible. Here is the dependency between key features:
+
+![](feature_dependency.png "")
+
+Here maps the key features to the existing modules:
+
+|                                 | review only  | traceability only | review and traceability |
+| ------------------------------- | ------------ | ----------------- | ----------------------- |
+| Text editor plugin              |              | X                 |                         |
+| (client) traceability navigator |              | X                 |                         |
+| (client) traceability validator |              |                   |                         |
+| (client) git                    | X            |                   |                         |
+| (server) traceability analyzer  |              |                   |                         |
+| (server) git                    | X            |                   |                         |
+| (server) database               | X            |                   |                         |
+| web service                     | X            |                   |                         |
 
 ### Interprocess dependencies
 
