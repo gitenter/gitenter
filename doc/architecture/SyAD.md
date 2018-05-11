@@ -255,16 +255,16 @@ Since user may only want to use part of the features provided by this software, 
 
 Here maps the key features to the existing modules:
 
-|                                 | review only  | traceability only | review and traceability |
+|                                 | review only  | traceability only | all features            |
 | ------------------------------- | ------------ | ----------------- | ----------------------- |
-| Text editor plugin              |              | X                 |                         |
-| (client) traceability navigator |              | X                 |                         |
-| (client) traceability validator |              |                   |                         |
-| (client) git                    | X            |                   |                         |
-| (server) traceability analyzer  |              |                   |                         |
-| (server) git                    | X            |                   |                         |
-| (server) database               | X            |                   |                         |
-| web service                     | X            |                   |                         |
+| Text editor plugin              |              | X                 | X                       |
+| (client) traceability navigator |              | X                 | X                       |
+| (client) traceability validator |              |                   | X                       |
+| (client) git                    | X            |                   | X                       |
+| (server) traceability analyzer  |              |                   | X                       |
+| (server) git                    | X            |                   | X                       |
+| (server) database               | X            |                   | X                       |
+| web service                     | X            |                   | X                       |
 
 ### Interprocess dependencies
 
