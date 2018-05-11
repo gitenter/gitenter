@@ -87,7 +87,7 @@ Comparison of version control platforms for satisfying our targeting functional 
 - [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
-- [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if all files returned by `git diff` are document/document accessories (images, ...).
+- [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if files returned by `git diff` are document/document accessories (images, ...).
 
 ### Document formatting
 
@@ -109,7 +109,7 @@ For a comparison with other markup languages, we listed the cons of the alternat
 
 ### Configuration
 
-- [SyAD-0013]{} There shall be a traceability analyzer configuration file.
+- [SyAD-0013]{} There shall be configuration file(s).
 - [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
     - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
 - [SyAD-0049]{SyAD-0014,SyAD-0047} A check that whether all the `git diff` involved files are under the document scanned path, shall be used to decide if a change is document only or not.
@@ -118,7 +118,7 @@ For a comparison with other markup languages, we listed the cons of the alternat
 - [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
 - [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
     - *(What about if the code and tests are mixed together?)*
-- [SyAD-0023]{StRS-0050} There shall be an index configuration file for which user can link to a set of documents with order/structure/relation between each other.
+- [SyAD-0023]{SyAD-0013,StRS-0050} The configuration file shall setup the order/structure/relation between each document.
     - *(Notice that the relationship can be build inside of (1) the "references" section of every document, (2) traceability markers, it shouldn't be need to mark manually in this configuration file.)*
 
 ### Tag and traceability
@@ -164,24 +164,29 @@ Since requirement engineering and design control is mostly for enterprise uses, 
 - [SyAD-0037]{SyAD-0040} An organization can have multiple users as its members. A user may be a member of more than one organizations.
 - [SyAD-0038]{SyAD-0037} A member of an organization may have the following specific role:
     - A non-professional manager:
-        - Create/delete repositories.
-            - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
         - Define members by add/remove users into/from that organization.
-        - Assign members as project organizer(s) of each repository.
+        - Add/remove other users as non-professional managers.
         - Billing (if applicable).
 - [SyAD-0036]{SyAD-0040} An organization can have multiple repositories. An repository can only belongs to one single organization.
-- [SyAD-0039]{SyAD-0040,SyRS-0088} A user may hold one of the following roles of a repository:
-    - Document editor.
-        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
-    - Document reader.
-        - There is no particular role as reviewer, as anybody who can read can review.
-        - There is no need to have reader role for public repositories.
-        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
+- [SyAD-0053]{} Any user can create repositories. After a new repository has been created, the user becomes the project organizer of that repository.
+    - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
 - [SyAD-0041]{SyAD-0038,SyRS-0093} A project organizer of an repository is in charge of:
-    - Authorize members (include herself) particular privilege of the corresponding repository. It is not the job of the organization manager, because we want to keep that role non-professional.
+    - Choose/switch between the opinions whether the repository is private or public.
+    - Add/remove other users as project organizers.
+    - Authorize members (include herself) particular privilege of the corresponding repository, or choose the opinion whether users in some particular role can add particular privileges for themselves.
     - Setup the logistics of a review activity.
     - Organize the approval process of a review meeting.
         - *(But then should this person be the pertinent manager, as she holds the liability on the decision? Or should there be a more complicated interface to let the project organizer to forward the documents to the manager for final decision?)*
+- [SyAD-0039]{SyRS-0088,SyAD-0041} A user may hold one of the following roles of a repository (She cannot hold multiple roles):
+    - Document editor.
+        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
+        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read and/or review may promote herself ads a reviewer.
+    - Document reviewer.
+        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read may promote herself ads a reviewer.
+        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
+    - Document reader.
+        - By default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
+        - The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
 
 ## Decomposition description
 
@@ -197,6 +202,7 @@ So from a direct interacting with the requirement, the software shall include th
     - It can be either part of the editor plugin, or an independent application. But since relation is hard to be build on-the-fly with a non-immediately algorithm, a local cache/database need to be involved.
 - [SyAD-0022]{SyAD-0010} Client-side traceability validator.
 - [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
+    - *(The other possibility is a client side traceability analyzer (not only validator), which later send the analysis result to the server (through some messaging system). The benefit is it may reduce the load of the web server. However, it has the shortcomings of (1) hard to check if the data comes from the user's side is correct, otherwise it may break the database consistency, and (2) user has must-have client side installation -- it is extremely troublesome as our newest system need to be compatible with old client installations.)*
 - [SyAD-0020]{SyAD-0026} `git` revision control system.
 - [SyAD-0021]{SyAD-0027} Database.
 - [SyAD-0017]{SyRS-0046} Web service(s), for:
@@ -255,16 +261,16 @@ Since user may only want to use part of the features provided by this software, 
 
 Here maps the key features to the existing modules:
 
-|                                 | review only  | traceability only | review and traceability |
+|                                 | review only  | traceability only | all features            |
 | ------------------------------- | ------------ | ----------------- | ----------------------- |
-| Text editor plugin              |              | X                 |                         |
-| (client) traceability navigator |              | X                 |                         |
-| (client) traceability validator |              |                   |                         |
-| (client) git                    | X            |                   |                         |
-| (server) traceability analyzer  |              |                   |                         |
-| (server) git                    | X            |                   |                         |
-| (server) database               | X            |                   |                         |
-| web service                     | X            |                   |                         |
+| Text editor plugin              |              | X                 | X                       |
+| (client) traceability navigator |              | X                 | X                       |
+| (client) traceability validator |              |                   | X                       |
+| (client) git                    | X            |                   | X                       |
+| (server) traceability analyzer  |              |                   | X                       |
+| (server) git                    | X            |                   | X                       |
+| (server) database               | X            |                   | X                       |
+| web service                     | X            |                   | X                       |
 
 ### Interprocess dependencies
 

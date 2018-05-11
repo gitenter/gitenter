@@ -18,6 +18,9 @@
 
 ## References
 
+1. System requirements specification (SyRS).
+1. System Architecture Description (SyAD).
+
 ## Definitions, acronyms, and abbreviations
 
 ### Definition
@@ -48,7 +51,20 @@
 
 User/repository management:
 
-- [SRS-WS-0057]{SyAD-0013,SyAD-0023,StRS-0057} The software shall give the user an option to setup the configuration files automatically when a new repository is created, or leave it for the user to setup later.
+- [SRS-WS-0075]{SyAD-0040} A user shall be able to register by herself.
+- [SRS-WS-0076]{SyAD-0038} A user shall be able to create organizations. After the organization is created, the user automatically becomes the non-professional manager of that organization.
+- [SRS-WS-0078]{SyAD-0038} The non-professional manager shall be able to add/remove users into/from that organization. She cannot remove herself from the organization.
+- [SRS-WS-0079]{SyAD-0038} The non-professional manager shall be able to add/remove other users as non-professional managers. She cannot remove herself from the roll.
+- [SRS-WS-0077]{SyAD-0041} A user shall be able to create/delete repositories under some particular organization which she is a member of. After a new repository has been created, the user becomes the project organizer of that repository.
+- [SRS-WS-0057]{SRS-WS-0077,SyAD-0013} While creating a new repository, the user shall be given the option to setup the configuration files automatically, or leave it for the user to setup later.
+- [SRS-WS-0083]{SRS-WS-0077} The project organizer shall choose (when creating the repository) or switch whether the repository is public or private.
+- [SRS-WS-0082]{SRS-WS-0077} The project organizer shall be able to add/remove other users as project organizers. She cannot remove herself from the roll.
+- [SRS-WS-0080]{SyAD-0039} After a repository is created, by default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
+- [SRS-WS-0085]{RS-WS-0077} The project organizer may add/remove organization members as reviewer/editor.
+- [SRS-WS-0081]{SRS-WS-0080} The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
+- [SRS-WS-0084]{SRS-WS-0077,SyAD-0039} The project organizer shall choose (when creating the repository) or switch later whether the users can:
+    - Promote themselves as reviewer if they are reader.
+    - Promote themselves as editor if they are reader/reviewer.
 
 Document visualization:
 
@@ -67,7 +83,6 @@ Document visualization:
 - [SRS-WS-0019]{SRS-WS-0018,SRS-WS-0048} For tree structure items (items which only have one upstream item), there should provide an optional tree-view along with the hyperlink view.
     - *(Shall the hyperlink view be hided in that case?)*
 - [SRS-WS-0033]{SyRS-0089} For each item, the software shall list items with common downstream items with it (but neither of the two is upstream item of the other). When an item has none of these items in the list, it should be qualified for (1) microservice architecture and (2) feature flags.
-    - A pure tree structure contributes to zero common downstream items.
     - *(We may then show a squared matrix that both row and column are the same list of traceable items. One matrix item is the count of common downstream items of two items. Ideally all matrix items shall be zero. May be used for a single document/same level of items. Notice that traceable items in the same document may refer to each other, this may be acted as the upmost or down-most items of a single document.)*
 - [SRS-WS-0020]{SRS-WS-0016,SyRS-0044,SyRS-0045} The software shall provide hyperlink to the implementing code pieces and the test cases.
     - May link to the corresponding page in the integrated code revision system, with the correct line number provided.
@@ -86,9 +101,9 @@ Versioning:
 
 - [SRS-WS-0011]{SyAD-0032,SyAD-0034,SyAD-0035,SyAD-0039} The software shall provide different default commit (when both a commit number and a branch name is missing) based on different user roles:
     - For document editor, the newest commit edited by the current user should be returned.
+        - *(Should or should not skip the commits which traceability analysis fail?)*
     - For document reviewer, the to-be-reviewed commit should be returned.
     - For document reader (e.g. software engineer), the newest approval version should be returned.
-    - *(Then, although "anybody who can read can review", we do have a reason to distinguish reviewers and readers. How?)*
 - [SRS-WS-0002]{SyRS-0087} The timestamp of last modification shall be shown in each document.
 - [SRS-WS-0001]{SyRS-0087} Author(s) list shall be shown in each document.
 - [SRS-WS-0005]{SyRS-0087} The document shall be easily switched between different versions.
@@ -113,7 +128,6 @@ Reviewing:
 - [SRS-WS-0024]{SyRS-0056,SyRS-0052,SyAD-0041} For each review subsection, project organizer shall setup a certain amount of time for people to review, and/or review meeting schedule.
 - [SRS-WS-0025]{SyRS-0077,SyAD-0041} For the first reviewing subsection, project organizer shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness for a particular reviewing.
 - [SRS-WS-0050]{SRS-WS-0025} Project organizer may add suggested reviewers anytime before the reviewing is finalized.
-- [SRS-WS-0026]{SyRS-0088,SyAD-0041,SRS-WS-0025} All readers (no matter whether they have been assigned as reviewers or not) could come and join the reviewing activity as reviewers.
 - [SRS-WS-0027]{SyRS-0048,StRS-0057} Reviewers shall be able to comment on some particular line of the draft documents through a web interface.
     - It is not limited to only traceable items, because (1) people do have different opinions on anywhere of the document, and (2) this still works for user who want to use the review feature, but not the traceability feature.
     - *(What about comments on graphs?)*
