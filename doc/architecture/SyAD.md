@@ -87,7 +87,7 @@ Comparison of version control platforms for satisfying our targeting functional 
 - [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
-- [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if all files returned by `git diff` are document/document accessories (images, ...).
+- [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if files returned by `git diff` are document/document accessories (images, ...).
 
 ### Document formatting
 
@@ -109,7 +109,7 @@ For a comparison with other markup languages, we listed the cons of the alternat
 
 ### Configuration
 
-- [SyAD-0013]{} There shall be a traceability analyzer configuration file.
+- [SyAD-0013]{} There shall be configuration file(s).
 - [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
     - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
 - [SyAD-0049]{SyAD-0014,SyAD-0047} A check that whether all the `git diff` involved files are under the document scanned path, shall be used to decide if a change is document only or not.
@@ -118,7 +118,7 @@ For a comparison with other markup languages, we listed the cons of the alternat
 - [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
 - [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
     - *(What about if the code and tests are mixed together?)*
-- [SyAD-0023]{StRS-0050} There shall be an index configuration file for which user can link to a set of documents with order/structure/relation between each other.
+- [SyAD-0023]{SyAD-0013,StRS-0050} The configuration file shall setup the order/structure/relation between each document.
     - *(Notice that the relationship can be build inside of (1) the "references" section of every document, (2) traceability markers, it shouldn't be need to mark manually in this configuration file.)*
 
 ### Tag and traceability
@@ -202,6 +202,7 @@ So from a direct interacting with the requirement, the software shall include th
     - It can be either part of the editor plugin, or an independent application. But since relation is hard to be build on-the-fly with a non-immediately algorithm, a local cache/database need to be involved.
 - [SyAD-0022]{SyAD-0010} Client-side traceability validator.
 - [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
+    - *(The other possibility is a client side traceability analyzer (not only validator), which later send the analysis result to the server (through some messaging system). The benefit is it may reduce the load of the web server. However, it has the shortcomings of (1) hard to check if the data comes from the user's side is correct, otherwise it may break the database consistency, and (2) user has must-have client side installation -- it is extremely troublesome as our newest system need to be compatible with old client installations.)*
 - [SyAD-0020]{SyAD-0026} `git` revision control system.
 - [SyAD-0021]{SyAD-0027} Database.
 - [SyAD-0017]{SyRS-0046} Web service(s), for:

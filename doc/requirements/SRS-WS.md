@@ -18,6 +18,9 @@
 
 ## References
 
+1. System requirements specification (SyRS).
+1. System Architecture Description (SyAD).
+
 ## Definitions, acronyms, and abbreviations
 
 ### Definition
@@ -53,7 +56,7 @@ User/repository management:
 - [SRS-WS-0078]{SyAD-0038} The non-professional manager shall be able to add/remove users into/from that organization. She cannot remove herself from the organization.
 - [SRS-WS-0079]{SyAD-0038} The non-professional manager shall be able to add/remove other users as non-professional managers. She cannot remove herself from the roll.
 - [SRS-WS-0077]{SyAD-0041} A user shall be able to create/delete repositories under some particular organization which she is a member of. After a new repository has been created, the user becomes the project organizer of that repository.
-- [SRS-WS-0057]{SRS-WS-0077,SyAD-0013,SyAD-0023} While creating a new repository, the user shall be given the option to setup the configuration files automatically, or leave it for the user to setup later.
+- [SRS-WS-0057]{SRS-WS-0077,SyAD-0013} While creating a new repository, the user shall be given the option to setup the configuration files automatically, or leave it for the user to setup later.
 - [SRS-WS-0083]{SRS-WS-0077} The project organizer shall choose (when creating the repository) or switch whether the repository is public or private.
 - [SRS-WS-0082]{SRS-WS-0077} The project organizer shall be able to add/remove other users as project organizers. She cannot remove herself from the roll.
 - [SRS-WS-0080]{SyAD-0039} After a repository is created, by default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
@@ -80,7 +83,6 @@ Document visualization:
 - [SRS-WS-0019]{SRS-WS-0018,SRS-WS-0048} For tree structure items (items which only have one upstream item), there should provide an optional tree-view along with the hyperlink view.
     - *(Shall the hyperlink view be hided in that case?)*
 - [SRS-WS-0033]{SyRS-0089} For each item, the software shall list items with common downstream items with it (but neither of the two is upstream item of the other). When an item has none of these items in the list, it should be qualified for (1) microservice architecture and (2) feature flags.
-    - A pure tree structure contributes to zero common downstream items.
     - *(We may then show a squared matrix that both row and column are the same list of traceable items. One matrix item is the count of common downstream items of two items. Ideally all matrix items shall be zero. May be used for a single document/same level of items. Notice that traceable items in the same document may refer to each other, this may be acted as the upmost or down-most items of a single document.)*
 - [SRS-WS-0020]{SRS-WS-0016,SyRS-0044,SyRS-0045} The software shall provide hyperlink to the implementing code pieces and the test cases.
     - May link to the corresponding page in the integrated code revision system, with the correct line number provided.
@@ -99,6 +101,7 @@ Versioning:
 
 - [SRS-WS-0011]{SyAD-0032,SyAD-0034,SyAD-0035,SyAD-0039} The software shall provide different default commit (when both a commit number and a branch name is missing) based on different user roles:
     - For document editor, the newest commit edited by the current user should be returned.
+        - *(Should or should not skip the commits which traceability analysis fail?)*
     - For document reviewer, the to-be-reviewed commit should be returned.
     - For document reader (e.g. software engineer), the newest approval version should be returned.
 - [SRS-WS-0002]{SyRS-0087} The timestamp of last modification shall be shown in each document.
