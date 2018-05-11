@@ -164,24 +164,29 @@ Since requirement engineering and design control is mostly for enterprise uses, 
 - [SyAD-0037]{SyAD-0040} An organization can have multiple users as its members. A user may be a member of more than one organizations.
 - [SyAD-0038]{SyAD-0037} A member of an organization may have the following specific role:
     - A non-professional manager:
-        - Create/delete repositories.
-            - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
         - Define members by add/remove users into/from that organization.
-        - Assign members as project organizer(s) of each repository.
+        - Add/remove other users as non-professional managers.
         - Billing (if applicable).
 - [SyAD-0036]{SyAD-0040} An organization can have multiple repositories. An repository can only belongs to one single organization.
-- [SyAD-0039]{SyAD-0040,SyRS-0088} A user may hold one of the following roles of a repository:
-    - Document editor.
-        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
-    - Document reader.
-        - There is no particular role as reviewer, as anybody who can read can review.
-        - There is no need to have reader role for public repositories.
-        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
+- [SyAD-0053]{} Any user can create repositories. After a new repository has been created, the user becomes the project organizer of that repository.
+    - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
 - [SyAD-0041]{SyAD-0038,SyRS-0093} A project organizer of an repository is in charge of:
-    - Authorize members (include herself) particular privilege of the corresponding repository. It is not the job of the organization manager, because we want to keep that role non-professional.
+    - Choose/switch between the opinions whether the repository is private or public.
+    - Add/remove other users as project organizers.
+    - Authorize members (include herself) particular privilege of the corresponding repository, or choose the opinion whether users in some particular role can add particular privileges for themselves.
     - Setup the logistics of a review activity.
     - Organize the approval process of a review meeting.
         - *(But then should this person be the pertinent manager, as she holds the liability on the decision? Or should there be a more complicated interface to let the project organizer to forward the documents to the manager for final decision?)*
+- [SyAD-0039]{SyRS-0088,SyAD-0041} A user may hold one of the following roles of a repository (She cannot hold multiple roles):
+    - Document editor.
+        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
+        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read and/or review may promote herself ads a reviewer.
+    - Document reviewer.
+        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read may promote herself ads a reviewer.
+        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
+    - Document reader.
+        - By default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
+        - The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
 
 ## Decomposition description
 
