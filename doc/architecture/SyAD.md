@@ -112,11 +112,9 @@ For a comparison with other markup languages, we listed the cons of the alternat
 - [SyAD-0013]{} There shall be configuration file(s).
 - [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
     - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
-- [SyAD-0049]{SyAD-0014,SyAD-0047} A check that whether all the `git diff` involved files are under the document scanned path, shall be used to decide if a change is document only or not.
-    - When the document accessories (images, ...) are also under the same scanned path, the returned result will be correct.
-    - If documents and other files are mixed, then there is no way to distinguish.
-- [SyAD-0015]{SyAD-0013,SyRS-0044} The configuration file indicates the scanned path(s) for the implemented code.
-- [SyAD-0016]{SyAD-0013,SyRS-0045} The configuration file indicates the scanned path(s) for test cases.
+- [SyAD-0054]{SyAD-0013} The configuration file shall indicate whether the traceability relationship are marked in implemented code/test cases.
+- [SyAD-0015]{SyAD-0054,SyRS-0044} The configuration file shall indicate the scanned path(s) for the implemented code (if applicable).
+- [SyAD-0016]{SyAD-0054,SyRS-0045} The configuration file shall indicate the scanned path(s) for test cases (if appliable).
     - *(What about if the code and tests are mixed together?)*
 - [SyAD-0023]{SyAD-0013,StRS-0050} The configuration file shall setup the order/structure/relation between each document.
     - *(Notice that the relationship can be build inside of (1) the "references" section of every document, (2) traceability markers, it shouldn't be need to mark manually in this configuration file.)*
@@ -139,12 +137,8 @@ Optional block comments
 - [SyAD-0028]{SyAD-0007} Beside the traceable item extension, the software shall fully support the original `markdown` syntax.
     - *(Should we further distinguish bubble list `-`, `+` and `star` for different purposes? E.g. to use the first order ones to distinguish todo/implemented/fully tested)*
 - [SyAD-0008]{SyRS-0036} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
-- [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall analyze the upstream/downstream relationship based on the provided upstream tags.
-- [SyAD-0012]{SyAD-0010,SyRS-0038} The traceability analysis shall be automatic triggered when there are document changes in the new commit.
-- [SyAD-0011]{SyAD-0010} The software shall raise errors if the traceability relationship contains errors:
-    - Marked tag in relationship does not exit.
-    - Undistinguishable tags appear more than one times.
-    - Loops in relationship.
+- [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall analyze the traceability relationship based on the provided upstream tags.
+- [SyAD-0011]{SyAD-0010} The software shall raise exceptions if the traceability relationship contains errors.
 - [SyAD-0024]{SyAD-0011} There shall be a client-side validator to raises traceability errors before the new changes are committed/uploaded to the server.
 - [SyAD-0025]{SyAD-0010,SyAD-0011,SyAD-0027} There shall be a server-side analyzer which write the upstream/downstream relationship into the database.
 

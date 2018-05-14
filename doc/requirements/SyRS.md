@@ -114,7 +114,7 @@ Traceability:
 - [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
     - *(Is there any possibility to trace graph items?)*
 - [SyRS-0010]{StRS-0074} The software shall provide provide convenient tools to users to navigate between traceable items in both upstream and downstream directions.
-- [SyRS-0089]{SyRS-0074} As independent features may benefit (1) microservice architecture and (2) feature flags, the software shall distinguish/isolate independent traceable items, by listing items with no common downstream item with others.
+- [SyRS-0089]{SyRS-0074} As independent features may benefit (1) microservice architecture and (2) feature flags, the software shall distinguish/isolate independent traceable items with no common downstream item with others.
     - A pure tree structure contributes to zero common downstream items.
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
