@@ -33,6 +33,13 @@
 
 #### System interfaces
 
+(Client-side) traceability validator:
+
+The traceability validator has a lot of overlapping functions with this software. However, we want to do them again in here, because:
+
++ We have to do it in here to keep flexibility. As we can't force the user to install the traceability validator, if not, something may go wrong.
++ While traceability validator only returns a boolean which may block the action, here we need to record the result.
+
 #### User interface
 
 #### Software interface

@@ -195,8 +195,12 @@ So from a direct interacting with the requirement, the software shall include th
     - So users can navigate between traceable items while editing files on-the-fly.
     - It can be either part of the editor plugin, or an independent application. But since relation is hard to be build on-the-fly with a non-immediately algorithm, a local cache/database need to be involved.
 - [SyAD-0022]{SyAD-0010} Client-side traceability validator.
+    - Optional installed.
 - [SyAD-0018]{SyAD-0010} Server-side traceability analyzer.
-    - *(The other possibility is a client side traceability analyzer (not only validator), which later send the analysis result to the server (through some messaging system). The benefit is it may reduce the load of the web server. However, it has the shortcomings of (1) hard to check if the data comes from the user's side is correct, otherwise it may break the database consistency, and (2) user has must-have client side installation -- it is extremely troublesome as our newest system need to be compatible with old client installations.)*
+    - The other possibility is a client side traceability analyzer (not only validator), which later send the analysis result to the server (through some messaging system). The benefit is it may reduce the load of the web server. However, We are not doing it, because it has several shortcomings:
+        - Hard to check if the data comes from the user's side is correct. Otherwise it may break the database consistency.
+        - User has must-have client side installation -- it is extremely troublesome as our newest system need to be compatible with old client installations.
+        - Makes integration with other revision control tools (GitHub, ...) impossible.
 - [SyAD-0020]{SyAD-0026} `git` revision control system.
 - [SyAD-0021]{SyAD-0027} Database.
 - [SyAD-0017]{SyRS-0046} Web service(s), for:
