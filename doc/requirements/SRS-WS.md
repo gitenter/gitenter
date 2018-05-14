@@ -208,6 +208,9 @@ Reviewing:
     - Volunteering reviewers.
     - Approval signature of a project organizer/pertinent manager. *(Should it be here?)*
 - [SRS-WS-0069]{} The review summary page shall link to the final version all the "Approval"/"Approval with postscripts" pages, and list the denial pages (with no link).
+- [SRS-WS-0086]{SRS-WS-0069} For the "Approval"/"Approval with postscripts" documents, the software shall mark the information of whether each single traceable item has been changed compare to the previous official version.
+    - Whether changed or not is defined by if there's an identical item in the previous version (not counting the tag name or the traceability relations).
+        - Since item order/in which document doesn't matter, it is not the same as we found by `git diff`.
 - [SRS-WS-0070]{SRS-WS-0069,SRS-WS-0066} For documents in status "Approval with postscripts", the associated comments shall be shown together with the comment.
     - The associated comments include any one made in this review series, include the ones been snapshotted and cleared earlier. This is to avoid the case that a document is previously marked as "Request changes" and comments has been cleared, but later on people realized it is too many workload to change in the near future, and turns it to "Approval with postscripts" again.
     - May later on provide an interface to choose which comment to include. This may be similar to the editor checkbox for comment snapshots, but we probably want to keep them independent to reduce dependencies.
