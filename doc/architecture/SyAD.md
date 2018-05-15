@@ -72,7 +72,8 @@ Comparison of version control platforms for satisfying our targeting functional 
 | Separate code and document changes |  |  | Different branch. `git diff` to check if any document changes are involved. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
-- [SyAD-0048]{SyRS-0098} `git` commit ID is used as the global version number of the document set.
+- [SyAD-0057]{StRS-0057} The software shall be fully compatible with git commands not generated from this software.
+- [SyAD-0048]{SyRS-0098} git commit ID is used as the global version number of the document set.
 - [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by document author(s) by a series of commits in a separated branch.
 - [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all merge into the same (non-master) branch.
     - Since reviewing/merge to master is a once-in-a-while event, this is opposite to the concept of continuous deployment.
@@ -85,9 +86,10 @@ Comparison of version control platforms for satisfying our targeting functional 
 - [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pushed into the original branch.
 - [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
 - [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing finalization as a merge to the master branch.
-- [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
-    - *(What should we do if the "reverting" action break the consistency of the traceability relationship? -- probably not revert, but just not include in the official release -- like not-included documents.)*
-    - *(So the non-include document may still be modified, and merged to the main branch. How to handle that?)*
+- [SyAD-0056]{SyRS-0063} Changes of documents not in the to-be-reviewed list, shall also be merged into the master branch.
+    - Since otherwise it may break the consistency of the traceability relationship.
+- [SyAD-0045]{SyRS-0093,SyAD-0035} When merging to the master branch, "Denial" documents shall be treated the same as document not being included. Changes will be kept, but document will not be included in the official final list.
+    - We cannot revert the denial document, because that may break the consistency of the traceability relationship.
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
 - [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if files returned by `git diff` are document/document accessories (images, ...).
