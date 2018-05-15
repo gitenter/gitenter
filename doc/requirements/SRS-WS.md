@@ -75,7 +75,7 @@ Document visualization:
 - [SRS-WS-0015]{SRS-WS-0012} The software shall fully support internal and external hyperlinks defined in markdown format.
 - [SRS-WS-0013]{SRS-WS-0012} The software shall be able to display local images referred in markdown pages.
 - [SRS-WS-0014]{SRS-WS-0013} The software shall have a opinion to show files (images, ...) under particular commit version in their raw format.
-- [SRS-WS-0016]{SRS-WS-0012,SyAD-0007} The software shall visualize normal markdown items, and special syntax defined by this software in a compatible way.
+- [SRS-WS-0016]{SRS-WS-0012,SyAD-0007} The software shall visualize (1) normal markdown items and (2) modified markdown syntax defined by this software in a compatible way.
 - [SRS-WS-0017]{SRS-WS-0016} The software shall visualize traceable item tag in a styled way.
 - [SRS-WS-0021]{SRS-WS-0016} The software shall visualize traceable item comments in a styled way.
 - [SRS-WS-0018]{SRS-WS-0017,SyRS-0010} The software shall provide hyperlink for both upstream and downstream items, with the destination of the link point to the corresponding line of the targeting item.
@@ -177,6 +177,7 @@ Reviewing:
 - [SRS-WS-0063]{SyRS-0097,SRS-WS-0061} The review summary page shall show the end status of each document for any expired subsection(s), and keep tracking the status of each document of newest subsection.
 - [SRS-WS-0066]{SRS-WS-0052,SRS-WS-0061} The review summary page shall link to the review comment snapshot for the status-changed documents/cleared comments.
 - [SRS-WS-0051]{SyAD-0043,SRS-WS-0022,SRS-WS-0024} After the documents has been updated, the project organizer may start a new review subsection, and assign a new deadline/review meeting schedule.
+- [SRS-WS-0087]{SRS-WS-0051,SRS-WS-0023} Project organizer may modify the list of to-be-reviewed draft document in the new subsection, and/or link the one with naming changes.
 - [SRS-WS-0065]{SRS-WS-0049,SRS-WS-0051} Project organizer are no longer allowed to change document status for the old subsection when a new subsection is setup.
 - [SRS-WS-0053]{SRS-WS-0027} Reviewer shall be able to comment on any involved document at any time before the finalization of the entire reviewing.
     - Reviewer may comment on "Approval"/"Approval with postscripts"/"Denial" documents (but the comment itself will not be mixed with the previous ones), since document/status may still be changed.

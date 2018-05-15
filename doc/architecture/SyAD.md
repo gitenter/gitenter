@@ -81,13 +81,17 @@ Comparison of version control platforms for satisfying our targeting functional 
     - Reviewing is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
     - Even if there are new commits pushing to the same branch, the review is always link to the previous commit.
     - In principle reviewing can be done on top of any commit (not necessary stay in a non-master branch). But we add this requirement to follow the "Integration-Manager Workflow" pattern.
+    - *(Can two parallel reviewing happens at the same time? Shared commit, but no shared document?)*
 - [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pushed into the original branch.
 - [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
 - [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing finalization as a merge to the master branch.
 - [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
+    - *(What should we do if the "reverting" action break the consistency of the traceability relationship? -- probably not revert, but just not include in the official release -- like not-included documents.)*
+    - *(So the non-include document may still be modified, and merged to the main branch. How to handle that?)*
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
 - [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if files returned by `git diff` are document/document accessories (images, ...).
+- [SyAD-0055]{SyAD-0001} Local git client shall be able to synchronize with git server through (1) SSH and (2) password authorizations.
 
 ### Document formatting
 
@@ -181,6 +185,22 @@ Since requirement engineering and design control is mostly for enterprise uses, 
     - Document reader.
         - By default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
         - The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
+
+### Feature toggle
+
+There shall be several different level of feature toggles, starting from the weakest one which can be overwritten:
+
++ System-wise default value.
++ Repository level.
+    + Notice that some features can only be on if specific setups are done (e.g. third party integration).
+    + Shall only include a subset of (display-related) features.
+    + *(Setup through configuration file? Through web UI?)*
++ Personalized level:
+    + Setup per user.
+    + Shall only include a subset of (display-related) features.
+    + If not applicable for some particular repository (e.g. third party integration), then the feature will be force disabled.
++ System-wise enforced:
+    + For turn off the features only.
 
 ## Decomposition description
 
