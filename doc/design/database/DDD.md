@@ -208,7 +208,7 @@ This data dictionary is written in a descriptive style. The aim is to put all re
 
 ##### Table `ssh_key`
 
-##### Table `feature_toggle`
+##### Table `member_feature_toggle`
 
 - `id`
 - `member_id`

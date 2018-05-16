@@ -130,7 +130,6 @@ Reviewing:
 
 - [SyRS-0018]{StRS-0045} Authorized user shall start the reviewing activity.
 - [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed draft documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
-    - *(What should happen if include documents are deleted in future subsections in the same review series?)*
 - [SyRS-0077]{StRS-0045} Authorized user shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
 - [SyRS-0088]{SyRS-0077} Anybody who have the reading authority could come and join the reviewing activity.
 - [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through software, or in a traditional review meeting way.

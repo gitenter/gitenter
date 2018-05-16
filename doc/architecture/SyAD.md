@@ -82,12 +82,14 @@ Comparison of version control platforms for satisfying our targeting functional 
     - Reviewing is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
     - Even if there are new commits pushing to the same branch, the review is always link to the previous commit.
     - In principle reviewing can be done on top of any commit (not necessary stay in a non-master branch). But we add this requirement to follow the "Integration-Manager Workflow" pattern.
-    - *(Can two parallel reviewing happens at the same time? Shared commit, but no shared document?)*
 - [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pushed into the original branch.
 - [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
 - [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing finalization as a merge to the master branch.
+    - *(So after merge it is a different commit. Should traceability be done again? But if yes, what should we do if the other document break the traceability?)*
+    - *(How to solve merge conflict? -- notice that when there's no merge conflict, all the finalized documents are merged in, but it is still possible that the changed document in master branch (not in this reviewing branch) break the traceability. Possibilities to solve this: (1) Finalization links to any commit, and it is irrelevant to merging event. (2) Extend the merging conflict check to not only no document conflict, but also traceability conflict. The second one is definitely a better choice, but is technically harder/need more in deep change of the git workflow.)*
 - [SyAD-0056]{SyRS-0063} Changes of documents not in the to-be-reviewed list, shall also be merged into the master branch.
     - Since otherwise it may break the consistency of the traceability relationship.
+    - *(But this is conflict with the scenario of "Integration-Manager Workflow" pattern, since unconfirmed changes merge to the master. Should we at least check all changes not in the to-be-reviewed list, and vote for "Ok to Keep as Draft/Need to Revert"? The software can be smarter to distinguish the changes only involve traceability tag modification, and skip all those documents, through.)*
 - [SyAD-0045]{SyRS-0093,SyAD-0035} When merging to the master branch, "Denial" documents shall be treated the same as document not being included. Changes will be kept, but document will not be included in the official final list.
     - We cannot revert the denial document, because that may break the consistency of the traceability relationship.
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
