@@ -128,23 +128,22 @@ Traceability:
 
 Reviewing:
 
-- [SyRS-0018]{StRS-0045} Authorized user shall start the reviewing activity.
+- [SyRS-0018]{StRS-0045} Authorized user shall start the review activity.
 - [SyRS-0063]{StRS-0045,StRS-0048} Authorized user shall setup a set of to-be-reviewed draft documents, which may be not the entire document set. Some documents may be modified but not in case to-be-reviewed, e.g., the ones which has been triggered by tiny modification for the traceability reasons.
-- [SyRS-0077]{StRS-0045} Authorized user shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular reviewing activity.
-- [SyRS-0088]{SyRS-0077} Anybody who have the reading authority could come and join the reviewing activity.
-- [SyRS-0046]{StRS-0045} Document reviewing activities shall be done either through software, or in a traditional review meeting way.
+- [SyRS-0077]{StRS-0045} Authorized user shall setup a list of suggested reviewers, as well as the parts they are in charge of holding the liability of the correctness, for a particular review activity.
+- [SyRS-0088]{SyRS-0077} Anybody who have the reading authority could come and join the review activity.
+- [SyRS-0046]{StRS-0045} Document review activities shall be done either through software, or in a traditional review meeting way.
 - [SyRS-0048]{SyRS-0046,SyRS-0026,SyRS-0018} The software shall provide an online reviewing system, for users to review and comment on the draft documents through a web interface.
-    - This is different to the GitHub code review workflow in several aspects: (1) Review comment is linked to a marked position of a frozen snapshot of document, rather than a marked position of document changes. (2) Reviewing is by default turned off, and is only turned on for special cases. The reason is that's the scenario provided reviewing and auditing regulatory. The other reason is design documents are in general in global scope, and have complicated internal relationship; on the other hand, code (a majority of bugs in code) is mostly local scope. It is really costly to sit down and discuss in among multiple stakeholders, and it is hard for people to follow these discussions all the time. Definitely this is a really waterfall approach which is contradict with the sprint of continuous-X. The possibility of a more Agile styled requirement and design review workflow can be discuss later. *(Comment to be cleaned up and moved to SRS-WS)*
 - [SyRS-0052]{SyRS-0046} The software shall provide tools for traditional review meetings.
 - [SyRS-0058]{SyRS-0048,SyRS-0052} The software shall support a hybrid approach that the traditional review meeting after online reviewing for the controversial discussions.
-- [SyRS-0056]{StRS-0045} Each new reviewing comes in a series of subsections, and the authorized user shall pace and setup a timeline of both (1) each subsection, and the entire reviewing.
-- [SyRS-0096]{SyRS-0056} A new reviewing subsection is triggered by:
+- [SyRS-0056]{StRS-0045} Each new review comes in a series of subsections, and the authorized user shall pace and setup a timeline of both (1) each subsection, and the entire review.
+- [SyRS-0096]{SyRS-0056} A new review subsection is triggered by:
     - (Traditional review meeting only) a scheduled meeting in a timeframe: the meeting may only target part of the documents.
     - Document has been changed after the previous subsection.
-- [SyRS-0094]{SyRS-0096} Document shall be in one of the following status in reviewing series:
+- [SyRS-0094]{SyRS-0096} Document shall be in one of the following status in a review series:
     - Draft: Not started yet, or (Traditional review meeting only) unable to be touched in the current section.
     - Approval.
-    - Approval with postscripts: Comments/questions raised but changes have been decided to rollover to the next reviewing.
+    - Approval with postscripts: Comments/questions raised but changes have been decided to rollover to the next review.
     - Request changes.
     - Denial.
 - [SyRS-0097]{SyRS-0094} Documents may keep their current status, or change status at the end of each review subsection.
@@ -153,18 +152,17 @@ Reviewing:
         - from "Draft"/"Request changes" to "Approval"/"Approval with postscripts"/"Denial".
     - "Draft" cannot be switched to from any other opinions.
     - We cannot forbidden people to change files which is already approved (because of traceability tag consistency). Then we are facing the risk that documents may be changed to incorrect after it is being approved. Therefore, we keep the possibility of any change of status.
-- [SyRS-0039]{SyRS-0094} Authorized user shall make the decision of reviewing status based on everybody's opinion and relative discussions/comments.
+- [SyRS-0039]{SyRS-0094} Authorized user shall make the decision of review status based on everybody's opinion and relative discussions/comments.
     - *(Should we need a person to do it? Or it could be a simple system-based voting?)*
-- [SyRS-0093]{SyRS-0097} Reviewing is finalized when all documents are in status of either "Approval", "Approval with postscripts", or "Denial". None, part, or all included documents may be in each category.
-- [SyRS-0064]{SyRS-0093} When there's a new reviewing with the same document involved, the previous version of the document changed status from "Approval"/"Approval with postscripts" to "Expired" (no need to change "Denial").
+- [SyRS-0093]{SyRS-0097} Review is finalized when all documents are in status of either "Approval", "Approval with postscripts", or "Denial". None, part, or all included documents may be in each category.
+- [SyRS-0064]{SyRS-0093} When there's a new review with the same document involved, the previous version of the document changed status from "Approval"/"Approval with postscripts" to "Expired" (no need to change "Denial").
+    - A version based on the associated review meeting corresponds to a global version, but only part of the documents are included in that review activity. Even if there is an approval review of that particular commit, one particular document may not be actually included. So documents in status "Approval" may not turn "Expired" when a new review is in place.
 - [SyRS-0065]{SyRS-0098,SyRS-0063,SyRS-0064} For documents in status of approval or expired, (1) a version based on the corresponding review meeting, and (2) date of issues shall be provided.
-    - A version based on the associated review meeting corresponds to a global version, but only part of the documents are included in the review activity. Even if there is an approval reviewing of that particular commit, one particular document may not be actually included, so it should be in status draft.
-    - *(Shall this version be compatible to the case that questions/comments raised and correctness will be in the follow-up version (which may not be a full review meeting), but document merged?)*
 - [SyRS-0066]{SyRS-0064} For documents in status of approval or expired, the reviewer(s) and the pertinent manager(s) show be marked with it.
     - Reviewer(s) is per-document.
-    - Pertinent manager(s) is per-reviewing activity.
-- [SyRS-0068]{SyRS-0064} All documents in draft or in reviewer status shall be linked to its newest approval version.
-    - The newest approval version of a particular document may be order then the last approval reviewing (even if it has been modified), as it may not be included in that reviewing.
+    - Pertinent manager(s) is per-review activity.
+- [SyRS-0068]{SyRS-0064} All documents in any commit shall be linked to its newest approval version of that, in case that version exist.
+    - *(How to know they are the same document? Filename matching?)*
 
 Requirement analysis:
 

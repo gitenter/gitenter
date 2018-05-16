@@ -72,21 +72,21 @@ Comparison of version control platforms for satisfying our targeting functional 
 | Separate code and document changes |  |  | Different branch. `git diff` to check if any document changes are involved. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
-- [SyAD-0057]{StRS-0057} The software shall be fully compatible with git commands not generated from this software.
+- [SyAD-0057]{StRS-0057} The software shall be fully compatible with git commands not generated from this software, and/or workflow that doesn't follow the pattern of this software.
 - [SyAD-0048]{SyRS-0098} git commit ID is used as the global version number of the document set.
-- [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by document author(s) by a series of commits in a separated branch.
-- [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all merge into the same (non-master) branch.
+- [SyAD-0032]{SyAD-0001,SyRS-0026} The user shall (be recommended to) handle regular backups by a series of commits in a separated branch.
+- [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all (be recommended to) merge into the same (non-master) branch.
     - Since reviewing/merge to master is a once-in-a-while event, this is opposite to the concept of continuous deployment.
-- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a separated branch.
-- [SyAD-0034]{SyAD-0001,SyRS-0026} Reviewing are linked to a commit (contains to-be-reviewed drafts) in a non-master branch.
-    - Reviewing is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
-    - Even if there are new commits pushing to the same branch, the review is always link to the previous commit.
-    - In principle reviewing can be done on top of any commit (not necessary stay in a non-master branch). But we add this requirement to follow the "Integration-Manager Workflow" pattern.
-- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pushed into the original branch.
-- [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
-- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing finalization as a merge to the master branch.
-    - *(So after merge it is a different commit. Should traceability be done again? But if yes, what should we do if the other document break the traceability?)*
-    - *(How to solve merge conflict? -- notice that when there's no merge conflict, all the finalized documents are merged in, but it is still possible that the changed document in master branch (not in this reviewing branch) break the traceability. Possibilities to solve this: (1) Finalization links to any commit, and it is irrelevant to merging event. (2) Extend the merging conflict check to not only no document conflict, but also traceability conflict. The second one is definitely a better choice, but is technically harder/need more in deep change of the git workflow.)*
+- [SyAD-0033]{SyAD-0001,SyRS-0026} The user shall (be recommended to) handle pending changes/different opinions in a separated branch.
+- [SyAD-0034]{SyAD-0001,SyRS-0056} A review subsection is linked to a specific commit (contains to-be-reviewed drafts).
+    - It is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
+    - Even if there are new commits pushing to the same branch, the review subsection is always link to the previous commit.
+- [SyAD-0058]{SyAD-0034} Review is suggested to be on commits in a non-master branch, which can later on follow the "Integration-Manager Workflow" pattern while merging.
+- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be (recommended to) continuous pushed into the original branch, or a new branch created from the original branch.
+- [SyAD-0044]{SyAD-0043,SyRS-0096} A new review subsection of the same series, shall be in the git downstream of the previous subsection.
+    - For that, merge to master is, although a bad practice, satisfying this condition.
+- [SyAD-0035]{yAD-0058,SyRS-0093} In case the review is in a non-master branch, the software shall handle review finalization as a merge to the master branch.
+    - *(The user may want to do a more Agile approach, say in each tiny lifecycle change the requirement/design, modify the code and do test. They may only want to merge at the end. How to handle this case?)*
 - [SyAD-0056]{SyRS-0063} Changes of documents not in the to-be-reviewed list, shall also be merged into the master branch.
     - Since otherwise it may break the consistency of the traceability relationship.
     - *(But this is conflict with the scenario of "Integration-Manager Workflow" pattern, since unconfirmed changes merge to the master. Should we at least check all changes not in the to-be-reviewed list, and vote for "Ok to Keep as Draft/Need to Revert"? The software can be smarter to distinguish the changes only involve traceability tag modification, and skip all those documents, through.)*
