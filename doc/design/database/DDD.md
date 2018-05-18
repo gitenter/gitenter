@@ -137,7 +137,7 @@ However, it is a crucial fact that we do not understand our system deep enough, 
 
 For ERD and implementation, (1) to get a quick working model, and (2) to avoid future changes, we'll do just minimal setting. Detailed explanation and possible extensions may be found in the appendix of "data dictionary of ERD".
 
-![](entity_relationship_diagram.png "")
+![](entity_relationship_diagram.svg "")
 
 *(To avoid it to have so may versions, this diagram may not be extremely up-to-date.)*
 
