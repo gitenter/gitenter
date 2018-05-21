@@ -62,6 +62,12 @@ We are going to make a tool which provide the flexibility and complicity of a so
 
 *(TODO: consider rewrite this list to a table of supported/not supported of each feature for each product.)*
 
+On the other hand, even for companies which don't mandatorily need a documentation system, they may be benefit using it by:
+
++ To get a consistent set of requirements for some prototyping/concept product.
++ To avoid mixing design decisions with requirements/user needs.
++ To build the logic pipeline starting from stakeholder requirements all the way done to test cases.
+
 ### Business scope
 
 *(Identifying the business domain by name.)*

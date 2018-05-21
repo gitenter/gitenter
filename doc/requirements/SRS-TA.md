@@ -57,7 +57,7 @@ The traceability validator has a lot of overlapping functions with this software
 ### Functions
 
 - [SRS-TA-0011]{SyAD-0018} The software shall be triggered every time a new commit has been pushed to the git server.
-- [SRS-TA-0009]{SRS-TA-0011,SyAD-0010} The software shall be only execute and record the result if the traceability relationship has been changed in the new commit.
+- [SRS-TA-0009]{SRS-TA-0011,SyAD-0010} The software shall be only execute and record the result if the traceability relationship has been changed in the new commit. Otherwise it treats the commit as "Ignored".
 - [SRS-TA-0010]{SRS-TA-0009,SyAD-0047} Whether traceability changes have been involved in a commit, shall be pre-screened by:
     - Whether there are document changes: comparing if files returned by `git diff` includes document.
         - Notice that document accessories (images, ...) under the document path will not affect the tradability relationship.
@@ -73,7 +73,7 @@ The traceability validator has a lot of overlapping functions with this software
 - [SRS-TA-0008]{SyAD-0011} The software shall raise exceptions if the traceable items form loop relationship.
     - *(Should it also analyze non-normalized relationship, like a->b->c but also a->c? Even if we do, we may just raise warnings rather than exceptions.)*
     - *(TODO: We should rethink this traceability relationship by using the same theory of normal forms.)*
-- [SRS-TA-0015]{SyAD-0011,SyAD-002} If any exception has been raised while executing this software, the commit itself is still saved to the system, but that commit will be marked with an associated error message, while no traceability-related data shall be saved to the database.
+- [SRS-TA-0015]{SyAD-0011,SyAD-002} If any exception has been raised while executing this software, the commit itself is still saved to the system, but that commit will be marked as "Invalid" with an associated error message, while no traceability-related data shall be saved to the database.
     - This means the traceability analysis is post-`git push`.
     - It is like CI that even if test fails, the commit is still updated.
     - The other possibility is to have pre-`git push` commit, and reject the commit to go into the git server if anything goes wrong. The reason of not doing it includes:

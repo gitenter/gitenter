@@ -72,22 +72,30 @@ Comparison of version control platforms for satisfying our targeting functional 
 | Separate code and document changes |  |  | Different branch. `git diff` to check if any document changes are involved. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
-- [SyAD-0048]{SyRS-0098} `git` commit ID is used as the global version number of the document set.
-- [SyAD-0032]{SyAD-0001,SyRS-0026} The software shall handle regular backups by document author(s) by a series of commits in a separated branch.
-- [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all merge into the same (non-master) branch.
+- [SyAD-0057]{StRS-0057} The software shall be fully compatible with git commands not generated from this software, and/or workflow that doesn't follow the pattern of this software.
+- [SyAD-0048]{SyRS-0098} git commit ID is used as the global version number of the document set.
+- [SyAD-0032]{SyAD-0001,SyRS-0026} The user shall (be recommended to) handle regular backups by a series of commits in a separated branch.
+- [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all (be recommended to) merge into the same (non-master) branch.
     - Since reviewing/merge to master is a once-in-a-while event, this is opposite to the concept of continuous deployment.
-- [SyAD-0033]{SyAD-0001,SyRS-0026} The software shall handle pending changes/different opinions in a separated branch.
-- [SyAD-0034]{SyAD-0001,SyRS-0026} Reviewing are linked to a commit (contains to-be-reviewed drafts) in a non-master branch.
-    - Reviewing is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
-    - Even if there are new commits pushing to the same branch, the review is always link to the previous commit.
-    - In principle reviewing can be done on top of any commit (not necessary stay in a non-master branch). But we add this requirement to follow the "Integration-Manager Workflow" pattern.
-- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be continuous pushed into the original branch.
-- [SyAD-0044]{SyAD-0043,SyRS-0096} Reviewed subsections are linked to a series of commits in the same branch.
-- [SyAD-0035]{SyAD-0001,SyRS-0026,SyRS-0093} The software shall handle reviewing finalization as a merge to the master branch.
-- [SyAD-0045]{SyRS-0093,SyAD-0035} Denial documents shall be reverted before merging to master.
+- [SyAD-0033]{SyAD-0001,SyRS-0026} The user shall (be recommended to) handle pending changes/different opinions in a separated branch.
+- [SyAD-0034]{SyAD-0001,SyRS-0056} A review subsection is linked to a specific commit (contains to-be-reviewed drafts).
+    - It is linked to commit, rather than branch, because in principle if the document has even been changed, it shall be reviewed again.
+    - Even if there are new commits pushing to the same branch, the review subsection is always link to the previous commit.
+- [SyAD-0058]{SyAD-0034} Review is suggested to be on commits in a non-master branch, which can later on follow the "Integration-Manager Workflow" pattern while merging.
+- [SyAD-0043]{SyAD-0034} Updated documents based on the review comments shall be (recommended to) continuous pushed into the original branch, or a new branch created from the original branch.
+- [SyAD-0044]{SyAD-0043,SyRS-0096} A new review subsection of the same series, shall be in the git downstream of the previous subsection.
+    - For that, merge to master is, although a bad practice, satisfying this condition.
+- [SyAD-0035]{yAD-0058,SyRS-0093} In case the review is in a non-master branch, the software shall handle review finalization as a merge to the master branch.
+    - *(The user may want to do a more Agile approach, say in each tiny lifecycle change the requirement/design, modify the code and do test. They may only want to merge at the end. How to handle this case?)*
+- [SyAD-0056]{SyRS-0063} Changes of documents not in the to-be-reviewed list, shall also be merged into the master branch.
+    - Since otherwise it may break the consistency of the traceability relationship.
+    - *(But this is conflict with the scenario of "Integration-Manager Workflow" pattern, since unconfirmed changes merge to the master. Should we at least check all changes not in the to-be-reviewed list, and vote for "Ok to Keep as Draft/Need to Revert"? The software can be smarter to distinguish the changes only involve traceability tag modification, and skip all those documents, through.)*
+- [SyAD-0045]{SyRS-0093,SyAD-0035} When merging to the master branch, "Denial" documents shall be treated the same as document not being included. Changes will be kept, but document will not be included in the official final list.
+    - We cannot revert the denial document, because that may break the consistency of the traceability relationship.
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
 - [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if files returned by `git diff` are document/document accessories (images, ...).
+- [SyAD-0055]{SyAD-0001} Local git client shall be able to synchronize with git server through (1) SSH and (2) password authorizations.
 
 ### Document formatting
 
@@ -181,6 +189,22 @@ Since requirement engineering and design control is mostly for enterprise uses, 
     - Document reader.
         - By default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
         - The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
+
+### Feature toggle
+
+There shall be several different level of feature toggles, starting from the weakest one which can be overwritten:
+
++ System-wise default value.
++ Repository level.
+    + Notice that some features can only be on if specific setups are done (e.g. third party integration).
+    + Shall only include a subset of (display-related) features.
+    + *(Setup through configuration file? Through web UI?)*
++ Personalized level:
+    + Setup per user.
+    + Shall only include a subset of (display-related) features.
+    + If not applicable for some particular repository (e.g. third party integration), then the feature will be force disabled.
++ System-wise enforced:
+    + For turn off the features only.
 
 ## Decomposition description
 
