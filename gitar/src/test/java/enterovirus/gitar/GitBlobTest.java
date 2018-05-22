@@ -5,23 +5,34 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.gitar.wrap.TagName;
 
 public class GitBlobTest {
-
+	
+	@Rule public TemporaryFolder folder= new TemporaryFolder();
+	private File repositoryDirectory;
+	
+	@Before
+	public void initialize() throws IOException {
+		repositoryDirectory = folder.newFolder("repo");
+	}
+		
 	@Test
 	public void test1() throws IOException {
 		
 		GitBlob gitBlob;
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		String relativeFilepath = "1st-commit-file-to-be-change-in-the-2nd-commit";
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		gitBlob = new GitBlob(repositoryDirectory, commitSha, relativeFilepath);
 		System.out.println("Content: "+new String(gitBlob.getBlobContent()));
@@ -40,7 +51,7 @@ public class GitBlobTest {
 		
 		GitBlob gitBlob;
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/mime_types/org/repo.git");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/mime_types/org/repo.git");
 		BranchName branchName = new BranchName("master");
 		
 		gitBlob = new GitBlob(repositoryDirectory, branchName, "sample.png");

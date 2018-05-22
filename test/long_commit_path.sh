@@ -31,7 +31,8 @@ generate_a_git_commit () {
 	branchname=$1
 
 	cd $HOME/Workspace/enterovirus-test/$testcasename/org/repo
-	currenttime="`date +%Y%m%d%H%M%S%s%N`"
+#	currenttime="`date +%Y%m%d%H%M%S%s%N`"  # Linux
+	currenttime="`gdate +%Y%m%d%H%M%S%s%N`" # Mac OS
 	echo "file content of $currenttime" > filename-$currenttime
 	git add -A
 	git commit -m "commit message of "$currenttime

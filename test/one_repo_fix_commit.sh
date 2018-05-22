@@ -27,7 +27,9 @@ git push origin --tags
 # Update commit sha in SQL script for for the 1st commit
 export commit_id=$(git log -1 --pretty="%H")
 echo $commit_id >> $rootfilepath/commit-sha-list.txt
-sed -i "s/\t(1, 1, TO-BE-1ST-COMMIT-SHA),/\t(1, 1, '"$commit_id"'),/g" $HOME/Workspace/enterovirus/test/$testcasename-data.sql
+#sed -i "s/\t(1, 1, TO-BE-1ST-COMMIT-SHA),/\t(1, 1, '"$commit_id"'),/g" $HOME/Workspace/enterovirus/test/$testcasename-data.sql        # Linux
+sed -i '.bak' -e "s/(1, 1, TO-BE-1ST-COMMIT-SHA),/(1, 1, '"$commit_id"'),/g" $HOME/Workspace/enterovirus/test/$testcasename-data.sql  # Mac OS
+
 
 # Fake client side git 2nd commit
 cd $gitclientfilepath
@@ -46,7 +48,8 @@ git push origin master
 # Update commit sha in SQL script for the 2nd commit
 export commit_id=$(git log -1 --pretty="%H")
 echo $commit_id >> $rootfilepath/commit-sha-list.txt
-sed -i "s/\t(2, 1, TO-BE-2ND-COMMIT-SHA);/\t(2, 1, '"$commit_id"');/g" $HOME/Workspace/enterovirus/test/$testcasename-data.sql
+#sed -i "s/\t(2, 1, TO-BE-2ND-COMMIT-SHA);/\t(2, 1, '"$commit_id"');/g" $HOME/Workspace/enterovirus/test/$testcasename-data.sql.       # Linux
+sed -i '.bak' "s/(2, 1, TO-BE-2ND-COMMIT-SHA);/(2, 1, '"$commit_id"');/g" $HOME/Workspace/enterovirus/test/$testcasename-data.sql  # Mac OS
 
 # Initialize SQL database
 . $HOME/Workspace/enterovirus/test/library/sql-init.sh || exit 1

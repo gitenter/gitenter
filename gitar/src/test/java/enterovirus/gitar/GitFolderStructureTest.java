@@ -16,8 +16,8 @@ public class GitFolderStructureTest {
 	@Test
 	public void testSha1() throws IOException {
 	
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+		File commitRecordFile = new File(System.getProperty("user.home"), "enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
 		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, commitSha);
@@ -30,8 +30,8 @@ public class GitFolderStructureTest {
 	@Test
 	public void testSha2() throws IOException {
 	
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
 		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, commitSha);
@@ -44,7 +44,7 @@ public class GitFolderStructureTest {
 	@Test
 	public void testBranch() throws IOException {
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		BranchName branchName = new BranchName("master"); 
 		
 		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, branchName);
@@ -56,7 +56,7 @@ public class GitFolderStructureTest {
 	@Test
 	public void testTag() throws IOException {
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		TagName tagName = new TagName("first-commit");
 		
 		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, tagName);
@@ -68,7 +68,7 @@ public class GitFolderStructureTest {
 	@Test
 	public void testBranchWithFilter() throws IOException {
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		BranchName branchName = new BranchName("master"); 
 		String[] includePaths = new String[]{"1st-commit-folder"};
 		
@@ -81,8 +81,8 @@ public class GitFolderStructureTest {
 	@Test
 	public void testShaWithFilter() throws IOException {
 	
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		String[] includePaths = new String[]{"requirement", "design"};
 		
