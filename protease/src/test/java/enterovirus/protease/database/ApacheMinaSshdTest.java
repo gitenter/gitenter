@@ -29,7 +29,7 @@ public class ApacheMinaSshdTest {
 		 * public static List<AuthorizedKeyEntry> readAuthorizedKeys(File file)
 		 * public static List<AuthorizedKeyEntry> readAuthorizedKeys(Path path, OpenOption... options)
 		 */
-		File authorizedKeyFile = new File("/home/beta/Workspace/enterovirus-test/ssh_tests/.ssh/authorized_keys");
+		File authorizedKeyFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/ssh_tests/.ssh/authorized_keys");
 		List<AuthorizedKeyEntry> entries = AuthorizedKeyEntry.readAuthorizedKeys(authorizedKeyFile);
 		
 		for (AuthorizedKeyEntry entry : entries) {
@@ -95,7 +95,7 @@ public class ApacheMinaSshdTest {
 		 * Should do. This makes sure that the user input keys are valid.
 		 */
 		
-		File authorizedKeyFile = new File("/home/beta/Workspace/enterovirus-test/ssh_tests/.ssh/authorized_keys");
+		File authorizedKeyFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/ssh_tests/.ssh/authorized_keys");
 		List<AuthorizedKeyEntry> entries = AuthorizedKeyEntry.readAuthorizedKeys(authorizedKeyFile);
 		
 		/*
@@ -127,7 +127,7 @@ public class ApacheMinaSshdTest {
 		 * Seems not quite useful for my current usage.
 		 */
 		
-		File authorizedKeyFile = new File("/home/beta/Workspace/enterovirus-test/ssh_tests/.ssh/authorized_keys");
+		File authorizedKeyFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/ssh_tests/.ssh/authorized_keys");
 		List<AuthorizedKeyEntry> entries = AuthorizedKeyEntry.readAuthorizedKeys(authorizedKeyFile);
 		
 		/*

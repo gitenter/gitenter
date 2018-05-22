@@ -1,5 +1,7 @@
 package enterovirus.protease.config;
 
+import java.io.File;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,7 +16,7 @@ public class TestSshConfig {
 	public SshSource sshSource() {
 		
 		SshSource sshSource = new SshSource();
-		sshSource.setSshFolderPath("/home/beta/Workspace/enterovirus-test/ssh_tests/.ssh");
+		sshSource.setSshFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/ssh_tests/.ssh"));
 		return sshSource;
 	}
 }

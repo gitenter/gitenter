@@ -35,7 +35,7 @@ public class SshKeyRepositoryTest {
 		
 		MemberBean member = memberRepository.findById(1);
 		
-		Path publicKeyFile = Paths.get("/home/beta/.ssh/id_rsa.pub");
+		Path publicKeyFile = Paths.get(System.getProperty("user.home"), ".ssh/id_rsa.pub");
 		
 		/*
 		 * Read the first line, as it has only one line.

@@ -41,7 +41,7 @@ public class CommitRepositoryTest {
 	@Transactional
 	public void testFindByRepositoryIdAndCommitSha() throws Exception {
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
 		Integer repositoryId = 1; // There is only one single repository in this testcase. So its Id is "1".
@@ -57,7 +57,7 @@ public class CommitRepositoryTest {
 	@Transactional
 	public void testFindByRepositoryIdAndCommitShaIn() throws Exception {
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		List<CommitSha> commitShas = new ArrayList<CommitSha>();
 		commitShas.add(new CommitSha(commitRecordFile, 1));
 		commitShas.add(new CommitSha(commitRecordFile, 2));

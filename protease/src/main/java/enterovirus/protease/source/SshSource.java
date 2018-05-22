@@ -21,4 +21,8 @@ public class SshSource {
 	public File getAuthorizedKeysFilepath () {
 		return new File(new File(sshFolderPath), "authorized_keys");
 	}
+	
+	public void setSshFolderPath(File file) {
+		this.sshFolderPath = file.getAbsolutePath();
+	}
 }

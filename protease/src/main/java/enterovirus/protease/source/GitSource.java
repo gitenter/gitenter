@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class GitSource {
 
 	/*
@@ -54,5 +53,13 @@ public class GitSource {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");
 		String gitFolder = parts[parts.length-1];
 		return gitFolder.substring(0, gitFolder.length()-4);
+	}
+
+	public void setRootFolderPath(String rootFolderPath) {
+		this.rootFolderPath = rootFolderPath;
+	}
+	
+	public void setRootFolderPath(File file) {
+		this.rootFolderPath = file.getPath();
 	}
 }

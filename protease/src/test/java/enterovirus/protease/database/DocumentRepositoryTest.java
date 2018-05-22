@@ -82,7 +82,7 @@ public class DocumentRepositoryTest {
 	@Transactional
 	public void testFindByCommitShaAndRelativeFilepath() throws Exception {
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		String filepath = "1st-commit-folder/1st-commit-file-under-1st-commit-folder";
 		

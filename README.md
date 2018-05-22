@@ -28,6 +28,16 @@ That seems also because STS cannot handle two classes which accidentally have th
 [main] ERROR org.springframework.boot.SpringApplication - Application startup failed
 ```
 
+### Lombok
+
+To make Lombok work with the IDE, you need to not only add Lombok to `pom.xml`, but also setup the IDE dependency path.
+
+Navigate to the Lombok `.jar` folder (`.m2/repository/org/projectlombok/lombok`) and `sudo java -jar lombok-1.16.18.jar`, then a GUI will be opened. Through the GUI, `specify Location...` and choose the STS execusion path (in my case `/opt/sts-bundle/sts-3.9.0.RELEASE/STS`), then `Install/Update`. Restart STS and the generated getters and setters works in eclipse `Outline`.
+
+#### Mac OS
+
+Enable Lombok on Mac OS is kind of tricky, but it works by following [this link](https://nawaman.net/blog/2017-11-05).
+
 ### Log4j multiple binding
 
 Analyze the dependency tree using `mvn dependency:tree`. Then remove the dependencies by e.g.

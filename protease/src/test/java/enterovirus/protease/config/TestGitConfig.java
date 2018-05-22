@@ -1,5 +1,7 @@
 package enterovirus.protease.config;
 
+import java.io.File;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -26,7 +28,7 @@ public class TestGitConfig {
 	public GitSource oneRepoFixCommitGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one_repo_fix_commit");
+		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit"));
 		return gitSource;
 	}
 	
@@ -35,7 +37,7 @@ public class TestGitConfig {
 	public GitSource longCommitPathgitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long_commit_path/");
+		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/long_commit_path/"));
 		return gitSource;
 	}
 }
