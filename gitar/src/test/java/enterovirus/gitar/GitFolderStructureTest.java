@@ -17,7 +17,7 @@ public class GitFolderStructureTest {
 	public void testSha1() throws IOException {
 	
 		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
-		File commitRecordFile = new File(System.getProperty("user.home"), "enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 		
 		GitFolderStructure fs = new GitFolderStructure(repositoryDirectory, commitSha);

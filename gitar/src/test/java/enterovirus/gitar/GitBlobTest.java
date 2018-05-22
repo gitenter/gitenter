@@ -15,14 +15,6 @@ import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.gitar.wrap.TagName;
 
 public class GitBlobTest {
-	
-	@Rule public TemporaryFolder folder= new TemporaryFolder();
-	private File repositoryDirectory;
-	
-	@Before
-	public void initialize() throws IOException {
-		repositoryDirectory = folder.newFolder("repo");
-	}
 		
 	@Test
 	public void test1() throws IOException {
