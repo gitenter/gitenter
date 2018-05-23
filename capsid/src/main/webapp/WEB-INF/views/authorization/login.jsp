@@ -4,7 +4,7 @@
 
     <article>
       <div class="login">
-      <sf:form method="POST" commandName="memberLoginBean" >
+      <sf:form method="POST" modelAttribute="memberLoginBean" >
         <table class="fill-in">
           <tr>
             <td>Username</td>

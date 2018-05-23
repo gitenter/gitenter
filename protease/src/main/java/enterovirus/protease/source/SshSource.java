@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class SshSource {
 
 	/*
@@ -24,5 +23,9 @@ public class SshSource {
 	
 	public void setSshFolderPath(File file) {
 		this.sshFolderPath = file.getAbsolutePath();
+	}
+
+	public void setSshFolderPath(String sshFolderPath) {
+		this.sshFolderPath = sshFolderPath;
 	}
 }

@@ -22,7 +22,7 @@ public class AuthorizationController {
 	public String registerUser (Model model) {
 		
 		/* 
-		 * The commandName NEED to be the same as the class name,
+		 * The modelAttribute NEED to be the same as the class name,
 		 * otherwise the <sf:errors> will not render. 
 		 */
 		model.addAttribute("memberDTO", new MemberDTO());

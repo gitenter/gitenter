@@ -9,7 +9,7 @@
 #sudo rm ROOT.war
 
 # Shall first setup the server
-#cd /home/beta/Workspace/enterovirus/deployment/ec2
+#cd $HOME/Workspace/enterovirus/deployment/ec2
 #sh scp.sh
 #sh ssh.sh
 #cd /tmp/
@@ -18,13 +18,13 @@
 echo "\n"
 echo "Reset/Initialize fake client"
 echo "============================"
-cd /home/beta/Workspace/enterovirus-test/fake_client
+cd $HOME/Workspace/enterovirus-test/fake_client
 rm -rf *
 
 echo "\n"
 echo "Run automatic UI test"
 echo "====================="
-cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
+cd $HOME/Workspace/enterovirus/capsid/automated-ui-test
 
 # UI automatic test.
 # URL without the "/" at the end of it

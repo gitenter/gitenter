@@ -8,7 +8,7 @@
 echo "\n"
 echo "Reset/Initialize the database"
 echo "============================="
-cd /home/beta/Workspace/enterovirus/database
+cd $HOME/Workspace/enterovirus/database
 sh setup.sh
 
 echo "\n"
@@ -24,13 +24,13 @@ sudo -H -u git bash -c 'chmod 600 /home/git/.ssh/authorized_keys'
 echo "\n"
 echo "Reset/Initialize fake client"
 echo "============================"
-cd /home/beta/Workspace/enterovirus-test/fake_client
+cd $HOME/Workspace/enterovirus-test/fake_client
 rm -rf *
 
 echo "\n"
 echo "Run automatic UI test"
 echo "====================="
-cd /home/beta/Workspace/enterovirus/capsid/automated-ui-test
+cd $HOME/Workspace/enterovirus/capsid/automated-ui-test
 
 # UI automatic test.
 # URL without the "/" at the end of it

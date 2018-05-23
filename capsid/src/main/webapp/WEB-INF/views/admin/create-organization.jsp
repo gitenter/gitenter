@@ -8,7 +8,7 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="organizationBean" >
+      <sf:form method="POST" modelAttribute="organizationBean" >
         <table class="fill-in">
           <tr>
             <td>Name</td>

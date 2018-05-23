@@ -76,9 +76,6 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		
-		openGit(new File("/home/beta/git/client_1/.git"));
-		
 //		System.out.println("Hello enterovirus gitar!");
 	}
 }

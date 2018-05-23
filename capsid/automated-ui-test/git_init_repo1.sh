@@ -1,6 +1,6 @@
 gitclonepath=$1
 
-clientroot=/home/beta/Workspace/enterovirus-test/fake_client
+clientroot=$HOME/Workspace/enterovirus-test/fake_client
 cd $clientroot
 
 git clone $gitclonepath
@@ -24,7 +24,7 @@ git push origin master
 # Turn the system back on. Add a markdown template file (which include no traceable item).
 sed -i "s/enable_systemwide = off/enable_systemwide = on/g" $clientroot/repo1/gitenter.properties
 
-cp /home/beta/Workspace/enterovirus/test/files/sample.jpg $clientroot/repo1/doc
+cp $HOME/Workspace/enterovirus/test/files/sample.jpg $clientroot/repo1/doc
 
 # Use 'EOM' rather than EOM because the content include code:
 # https://stackoverflow.com/questions/22697688/how-to-cat-eof-a-file-containing-code-in-shell

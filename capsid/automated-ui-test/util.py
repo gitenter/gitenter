@@ -5,6 +5,7 @@ from lxml import html
 import requests
 from bs4 import BeautifulSoup
 from random import randint
+from os.path import expanduser
 
 # TODO:
 # For a lot of pages with form validation involved, failed commands actually
@@ -56,7 +57,7 @@ def log_in (root, name, expect_status_code):
     data = {
         "username" : name,
         "password" : name,
-        "_csrf" : get_csrf(client, url)
+        "_csrf" : get_csrf(client, 
         }
     r = client.post(url, data=data, headers=dict(Referer=url))
 
@@ -73,7 +74,7 @@ def add_ssh_key (root, client, expect_status_code):
 
     url = root+'/settings/ssh'
 
-    f = open("/home/beta/.ssh/id_rsa.pub", "r")
+    f = open(expanduser("~/.ssh/id_rsa.pub"), "r")
 
     data = {
         "value" : f.read().rstrip(), # Here has a "\n" at the very end. That is allowed for the system.

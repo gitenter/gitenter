@@ -9,7 +9,7 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="repositoryBean" >
+      <sf:form method="POST" modelAttribute="repositoryBean" >
         <table class="fill-in">
           <tr>
             <td>Name</td>

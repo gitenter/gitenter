@@ -9,7 +9,7 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" commandName="memberDTO" >
+      <sf:form method="POST" modelAttribute="memberDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>

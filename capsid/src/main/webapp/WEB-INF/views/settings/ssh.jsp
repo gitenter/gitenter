@@ -11,7 +11,7 @@
     </nav>
     <article>
       <div>
-        <sf:form method="POST" commandName="sshKeyFieldBean" >
+        <sf:form method="POST" modelAttribute="sshKeyFieldBean" >
         <table class="fill-in">
           <tr>
             <td>Previous keys</td>

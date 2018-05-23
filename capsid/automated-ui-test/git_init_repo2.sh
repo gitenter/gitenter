@@ -1,6 +1,6 @@
 gitorigin=$1
 
-clientroot=/home/beta/Workspace/enterovirus-test/fake_client
+clientroot=$HOME/Workspace/enterovirus-test/fake_client
 cd $clientroot
 
 mkdir repo2

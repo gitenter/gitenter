@@ -1,5 +1,7 @@
 package enterovirus.capsid.config;
 
+import java.io.File;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,7 +16,7 @@ public class SshConfig {
 	public SshSource stsSshGitSource() {
 		
 		SshSource sshSource = new SshSource();
-		sshSource.setSshFolderPath("/home/beta/Workspace/enterovirus-test/fake_server/.ssh");
+		sshSource.setSshFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/fake_server/.ssh"));
 		return sshSource;
 	}
 	
