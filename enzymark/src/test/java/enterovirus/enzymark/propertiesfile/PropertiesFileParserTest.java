@@ -99,10 +99,10 @@ public class PropertiesFileParserTest {
 	@Test
 	public void testFromGit() throws Exception {
 		
-		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
+		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
 		String relativeFilepath = "gitenter.properties";
 		
-		File commitRecordFile = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
+		File commitRecordFile = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		CommitSha commitSha = new CommitSha(commitRecordFile, 1);
 	
 		PropertiesFileParser parser = new PropertiesFileParser(repositoryDirectory, commitSha, relativeFilepath);
