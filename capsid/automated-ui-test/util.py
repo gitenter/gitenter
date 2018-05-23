@@ -57,7 +57,7 @@ def log_in (root, name, expect_status_code):
     data = {
         "username" : name,
         "password" : name,
-        "_csrf" : get_csrf(client, 
+        "_csrf" : get_csrf(client, url)
         }
     r = client.post(url, data=data, headers=dict(Referer=url))
 

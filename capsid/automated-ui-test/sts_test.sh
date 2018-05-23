@@ -7,6 +7,8 @@ sh setup.sh
 echo "\n"
 echo "Reset/Initialize the git storage"
 echo "================================"
+mkdir $HOME/Workspace/enterovirus-test/fake_server
+mkdir $HOME/Workspace/enterovirus-test/fake_server/.ssh
 cd $HOME/Workspace/enterovirus-test/fake_server
 rm -rf *
 cd $HOME/Workspace/enterovirus-test/fake_server/.ssh
@@ -16,6 +18,7 @@ touch authorized_keys
 echo "\n"
 echo "Reset/Initialize fake client"
 echo "============================"
+mkdir $HOME/Workspace/enterovirus-test/fake_client
 cd $HOME/Workspace/enterovirus-test/fake_client
 rm -rf *
 

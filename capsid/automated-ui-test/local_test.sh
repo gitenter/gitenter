@@ -24,6 +24,7 @@ sudo -H -u git bash -c 'chmod 600 /home/git/.ssh/authorized_keys'
 echo "\n"
 echo "Reset/Initialize fake client"
 echo "============================"
+mkdir $HOME/Workspace/enterovirus-test/fake_client
 cd $HOME/Workspace/enterovirus-test/fake_client
 rm -rf *
 

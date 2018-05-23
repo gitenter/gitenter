@@ -18,6 +18,7 @@
 echo "\n"
 echo "Reset/Initialize fake client"
 echo "============================"
+mkdir $HOME/Workspace/enterovirus-test/fake_client
 cd $HOME/Workspace/enterovirus-test/fake_client
 rm -rf *
 
