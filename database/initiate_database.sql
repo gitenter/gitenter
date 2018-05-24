@@ -1,3 +1,12 @@
+CREATE TABLE mm (
+	id serial PRIMARY KEY,
+	username text NOT NULL UNIQUE,
+	password text NOT NULL,
+	display_name text NOT NULL,
+	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)'),
+	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE SCHEMA settings;
 
 CREATE TABLE settings.member (
@@ -6,8 +15,7 @@ CREATE TABLE settings.member (
 	password text NOT NULL,
 	display_name text NOT NULL,
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)'),
-	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	last_active_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE settings.ssh_key (

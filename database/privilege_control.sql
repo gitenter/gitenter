@@ -1,8 +1,8 @@
-GRANT USAGE ON SCHEMA setting TO enterovirus_apps;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA setting TO enterovirus_apps;
+GRANT USAGE ON SCHEMA settings TO enterovirus_apps;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA settings TO enterovirus_apps;
 
-GRANT SELECT ON ALL TABLES IN SCHEMA setting TO enterovirus_gitar;
-GRANT SELECT ON ALL TABLES IN SCHEMA setting TO enterovirus_capsid;
+GRANT SELECT ON ALL TABLES IN SCHEMA settings TO enterovirus_gitar;
+GRANT SELECT ON ALL TABLES IN SCHEMA settings TO enterovirus_capsid;
 
 --------------------------------------------------------------------------------
 
