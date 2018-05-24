@@ -23,7 +23,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "member")
+@Table(schema = "settings", name = "member")
 public class MemberBean {
 
 	/*

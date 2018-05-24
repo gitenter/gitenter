@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "ssh_key")
+@Table(schema = "settings", name = "ssh_key")
 public class SshKeyBean {
 
 	@Id

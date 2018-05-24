@@ -27,7 +27,7 @@ import enterovirus.gitar.wrap.*;
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "repository")
+@Table(schema = "settings", name = "repository")
 public class RepositoryBean {
 
 	@Id

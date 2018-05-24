@@ -24,7 +24,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "organization")
+@Table(schema = "settings", name = "organization")
 public class OrganizationBean {
 
 	@Id
@@ -47,7 +47,7 @@ public class OrganizationBean {
 	
 	@ManyToMany(targetEntity=MemberBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(
-			schema = "config", name="organization_manager_map",		
+			schema = "settings", name="organization_manager_map",		
 			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
 			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
 	private List<MemberBean> managers;

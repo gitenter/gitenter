@@ -14,7 +14,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "repository_member_map")
+@Table(schema = "settings", name = "repository_member_map")
 public class RepositoryMemberMapBean {
 
 	@Id

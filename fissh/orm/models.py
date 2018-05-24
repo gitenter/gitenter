@@ -10,7 +10,7 @@ class Member(models.Model):
     email = models.TextField()
 
     class Meta:
-        db_table = 'config\".\"member'
+        db_table = 'settings\".\"member'
 
 
 class Organization(models.Model):
@@ -19,7 +19,7 @@ class Organization(models.Model):
     display_name = models.TextField()
 
     class Meta:
-        db_table = 'config\".\"organization'
+        db_table = 'settings\".\"organization'
 
 
 class Repository(models.Model):
@@ -34,7 +34,7 @@ class Repository(models.Model):
     objects = RepositoryManager()
 
     class Meta:
-        db_table = 'config\".\"repository'
+        db_table = 'settings\".\"repository'
 
 
 class RepositoryMemberMap:
@@ -51,4 +51,4 @@ class RepositoryMemberMap:
     objects = RepositoryMemberMapManager()
 
     class Meta:
-        db_table = 'config\".\"repository_member_map'
+        db_table = 'settings\".\"repository_member_map'

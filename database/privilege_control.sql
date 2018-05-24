@@ -6,11 +6,11 @@ GRANT SELECT ON ALL TABLES IN SCHEMA setting TO enterovirus_capsid;
 
 --------------------------------------------------------------------------------
 
-GRANT USAGE ON SCHEMA config TO enterovirus_apps;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA config TO enterovirus_apps;
+GRANT USAGE ON SCHEMA settings TO enterovirus_apps;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA settings TO enterovirus_apps;
 
-GRANT SELECT ON ALL TABLES IN SCHEMA config TO enterovirus_gitar;
-GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA config TO enterovirus_capsid;
+GRANT SELECT ON ALL TABLES IN SCHEMA settings TO enterovirus_gitar;
+GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA settings TO enterovirus_capsid;
 
 --------------------------------------------------------------------------------
 

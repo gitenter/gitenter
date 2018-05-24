@@ -1,10 +1,6 @@
-CREATE SCHEMA setting;
+CREATE SCHEMA settings;
 
---------------------------------------------------------------------------------
-
-CREATE SCHEMA config;
-
-CREATE TABLE config.member (
+CREATE TABLE settings.member (
 	id serial PRIMARY KEY,
 	username text NOT NULL UNIQUE,
 	password text NOT NULL,
@@ -12,9 +8,9 @@ CREATE TABLE config.member (
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)')
 );
 
-CREATE TABLE config.ssh_key (
+CREATE TABLE settings.ssh_key (
 	id serial PRIMARY KEY,
-	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
+	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
 
 	/* 
 	 * Key type has limited possibilities of “ecdsa-sha2-nistp256”, 
@@ -33,22 +29,22 @@ CREATE TABLE config.ssh_key (
 	comment text
 );
 
-CREATE TABLE config.organization (
+CREATE TABLE settings.organization (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE,
 	display_name text NOT NULL
 );
 
-CREATE TABLE config.organization_manager_map (
-	member_id serial REFERENCES config.member (id) ON DELETE RESTRICT,
-	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
+CREATE TABLE settings.organization_manager_map (
+	member_id serial REFERENCES settings.member (id) ON DELETE RESTRICT,
+	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
 	PRIMARY KEY (member_id, organization_id)
 );
 
-CREATE TABLE config.repository (
+CREATE TABLE settings.repository (
 	id serial PRIMARY KEY,
 
-	organization_id serial REFERENCES config.organization (id) ON DELETE CASCADE,
+	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
 	name text NOT NULL,
 	display_name text NOT NULL,
 	description text,
@@ -57,11 +53,11 @@ CREATE TABLE config.repository (
 	is_public boolean NOT NULL
 );
 
-CREATE TABLE config.repository_member_map (
+CREATE TABLE settings.repository_member_map (
 	id serial PRIMARY KEY,
 
-	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
-	member_id serial REFERENCES config.member (id) ON DELETE CASCADE,
+	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
+	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
 	/*
 	 * With this constrain, a user can at most have one role.
 	 */
@@ -90,7 +86,7 @@ CREATE SCHEMA git;
 
 CREATE TABLE git.git_commit (
 	id serial PRIMARY KEY,
-	repository_id serial REFERENCES config.repository (id) ON DELETE CASCADE,
+	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
 	sha_checksum_hash text NOT NULL,
 
 	/*
