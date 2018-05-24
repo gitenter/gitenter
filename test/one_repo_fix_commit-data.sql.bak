@@ -14,7 +14,7 @@ INSERT INTO settings.repository VALUES
 ALTER SEQUENCE settings.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES
-	(1, 1, '7500e7454d8387abe690434cd3854c659bd0c536'),
+	(1, 1, '5296f6c6f240d4a9238269bf55704c9992d71a16'),
 	(2, 1, TO-BE-2ND-COMMIT-SHA);
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
