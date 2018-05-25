@@ -77,8 +77,8 @@ public class MemberBean {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registrationTimestamp;
 	
-	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	private List<OrganizationBean> organizations;
+//	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+//	private List<OrganizationBean> organizations;
 	
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();

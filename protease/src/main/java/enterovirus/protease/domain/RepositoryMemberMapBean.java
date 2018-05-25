@@ -44,7 +44,7 @@ public class RepositoryMemberMapBean {
 	 * Can't do inner classes of "RepositoryMemberRole" and 
 	 * "RepositoryMemberRoleConventer". Failed to load ApplicationContext.
 	 */
-	@Column(name="role")
+	@Column(name="role_shortname")
 	@Convert(converter = RepositoryMemberRoleConventer.class)
 	private RepositoryMemberRole role;
 	

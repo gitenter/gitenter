@@ -45,43 +45,43 @@ public class OrganizationBean {
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<RepositoryBean> repositories;
 	
-	@ManyToMany(targetEntity=MemberBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinTable(
-			schema = "settings", name="organization_manager_map",		
-			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
-			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
-	private List<MemberBean> managers;
+//	@ManyToMany(targetEntity=MemberBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+//	@JoinTable(
+//			schema = "settings", name="organization_manager_map",		
+//			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
+//			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
+//	private List<MemberBean> managers;
 	
 	/*
 	 * TODO:
 	 * Consider to have a JOIN query to get that.
 	 */
-	public boolean isManagedBy (Integer memberId) {
-		for (MemberBean manager : managers) {
-			if (manager.getId().equals(memberId)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean addManager (MemberBean manager) {
-		return managers.add(manager);
-	}
-	
-	public boolean removeManager (Integer memberId) {
-		
-		Iterator<MemberBean> i = managers.iterator();
-		while (i.hasNext()) {
-			MemberBean manager = i.next();
-			if (manager.getId().equals(memberId)) {
-				i.remove();
-				return true;
-			}
-		}
-		
-		return false;
-	}
+//	public boolean isManagedBy (Integer memberId) {
+//		for (MemberBean manager : managers) {
+//			if (manager.getId().equals(memberId)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//	
+//	public boolean addManager (MemberBean manager) {
+//		return managers.add(manager);
+//	}
+//	
+//	public boolean removeManager (Integer memberId) {
+//		
+//		Iterator<MemberBean> i = managers.iterator();
+//		while (i.hasNext()) {
+//			MemberBean manager = i.next();
+//			if (manager.getId().equals(memberId)) {
+//				i.remove();
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	public RepositoryBean findRepositoryByName(String repositoryName) throws IOException {
 	

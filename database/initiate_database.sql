@@ -9,6 +9,72 @@ CREATE TABLE settings.member (
 	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE settings.organization (
+	id serial PRIMARY KEY,
+	name text NOT NULL UNIQUE,
+	display_name text NOT NULL
+);
+
+CREATE TABLE settings.organization_member_map (
+	id serial PRIMARY KEY,
+	member_id serial REFERENCES settings.member (id) ON DELETE RESTRICT,
+	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
+	/*
+	 * With this constrain, a member can at most have one role
+	 * in a particular organization.
+	 */
+	UNIQUE (member_id, organization_id),
+
+	/*
+	 * Rather than a lookup table in SQL, we define the enum types
+	 * in the persistent layer. A "shortName" is used, as (1) the
+	 * ordinal of an Enum depends on the ordering of its values
+	 * and can create problems, if we need to add new ones, and
+	 * (2) the String representation of an Enum is often quite
+	 * verbose and renaming a value will break the database mapping.
+	 *
+	 * The detailed business logic is in the application level.
+	 *
+	 * Currently we have "role_shortname" to have values:
+	 * G: non-professional manager
+	 * M: ordinary member
+	 */
+	role_shortname char(1) NOT NULL CHECK (role_shortname='G' OR role_shortname='M')
+);
+
+CREATE TABLE settings.repository (
+	id serial PRIMARY KEY,
+
+	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
+	name text NOT NULL,
+	display_name text NOT NULL,
+	description text,
+	UNIQUE (organization_id, name),
+
+	is_public boolean NOT NULL
+);
+
+CREATE TABLE settings.repository_member_map (
+	id serial PRIMARY KEY,
+
+	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
+	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
+	/*
+	 * With this constrain, a user can at most have one role on
+	 * some particular repository.
+	 */
+	UNIQUE (repository_id, member_id),
+
+	/*
+	 * Currently we have "role_shortname" to have values:
+	 * O: project organizer
+	 * E: document editor
+	 * R: document reviewer
+	 * B: blacklist
+	 */
+	role_shortname char(1) NOT NULL CHECK (role='O' OR role='E' OR role='R' OR role='B')
+);
+
 CREATE TABLE settings.ssh_key (
 	id serial PRIMARY KEY,
 	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
@@ -30,55 +96,24 @@ CREATE TABLE settings.ssh_key (
 	comment text
 );
 
-CREATE TABLE settings.organization (
+CREATE TABLE settings.member_feature_toggle (
 	id serial PRIMARY KEY,
-	name text NOT NULL UNIQUE,
-	display_name text NOT NULL
-);
-
-CREATE TABLE settings.organization_manager_map (
-	member_id serial REFERENCES settings.member (id) ON DELETE RESTRICT,
-	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
-	PRIMARY KEY (member_id, organization_id)
-);
-
-CREATE TABLE settings.repository (
-	id serial PRIMARY KEY,
-
-	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
-	name text NOT NULL,
-	display_name text NOT NULL,
-	description text,
-	UNIQUE (organization_id, name),
-
-	is_public boolean NOT NULL
-);
-
-CREATE TABLE settings.repository_member_map (
-	id serial PRIMARY KEY,
-
-	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
 	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
-	/*
-	 * With this constrain, a user can at most have one role.
-	 */
-	UNIQUE (repository_id, member_id),
 
-	/*
-	 * Rather than a lookup table in SQL, we define the enum types
-	 * in the persistent layer. A "shortName" is used, as (1) the
-	 * ordinal of an Enum depends on the ordering of its values
-	 * and can create problems, if we need to add new ones, and
-	 * (2) the String representation of an Enum is often quite
-	 * verbose and renaming a value will break the database mapping.
-	 *
-	 * Currently we have "role" to have values
-	 * R for READER
-	 * V for REVIEWER
-	 * E for EDITOR
-	 * L for PROJECT_LEADER
-	 */
-	role char(1) NOT NULL CHECK (role='R' OR role='V' OR role='E' OR role='L')
+	feature_shortname char(1) NOT NULL,
+	UNIQUE(member_id, feature_shortname),
+
+	is_on boolean NOT NULL
+);
+
+CREATE TABLE settings.repository_feature_toggle (
+	id serial PRIMARY KEY,
+	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
+
+	feature_shortname char(1) NOT NULL,
+	UNIQUE(repository_id, feature_shortname),
+
+	is_on boolean NOT NULL
 );
 
 --------------------------------------------------------------------------------

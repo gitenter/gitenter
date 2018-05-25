@@ -34,14 +34,14 @@ import enterovirus.protease.domain.MemberBean;
 @DbUnitConfiguration(databaseConnection={"schemaSettingsDatabaseConnection"})
 public class MemberRepositoryTest {
 
-	@Autowired MemberRepository memberRepository;
+	@Autowired MemberRepository repository;
 	
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="dbunit-data/minimal-schema-settings.xml")
 	//@DatabaseTearDown("member.xml")
 	public void test() throws IOException {
-		MemberBean member = memberRepository.findById(1);
-		assertEquals(member.getDisplayName(), "Display Name");
+		MemberBean item = repository.findById(1);
+		assertEquals(item.getDisplayName(), "Display Name");
 	}
 }
