@@ -7,17 +7,17 @@ Base = declarative_base()
 
 
 organization_manager_map = Table(
-    'config.organization_manager_map',
+    'settings.organization_manager_map',
     Base.metadata,
-    Column('member_id', Integer, ForeignKey('config.member.id')),
-    Column('organization_id', Integer, ForeignKey('config.organization.id'))
+    Column('member_id', Integer, ForeignKey('settings.member.id')),
+    Column('organization_id', Integer, ForeignKey('settings.organization.id'))
 )
 
 
 class Member(Base):
 
     __tablename__ = 'member'
-    __table_args__ = {'schema': 'config'}
+    __table_args__ = {'schema': 'settings'}
 
     id = Column(Integer, primary_key=True)
 
@@ -39,7 +39,7 @@ class Member(Base):
 class Organization(Base):
 
     __tablename__ = 'organization'
-    __table_args__ = {'schema': 'config'}
+    __table_args__ = {'schema': 'settings'}
 
     id = Column(Integer, primary_key=True)
 
@@ -57,11 +57,11 @@ class Organization(Base):
 class Repository(Base):
 
     __tablename__ = 'repository'
-    __table_args__ = {'schema': 'config'}
+    __table_args__ = {'schema': 'settings'}
 
     id = Column(Integer, primary_key=True)
 
-    organization_id = Column(Integer, ForeignKey('config.organization.id'))
+    organization_id = Column(Integer, ForeignKey('settings.organization.id'))
     organization = relationship("Organization", back_populates="repositories")
 
     name = Column(String)
@@ -78,16 +78,16 @@ class Repository(Base):
 class RepositoryMemberMap(Base):
 
     __tablename__ = 'repository_member_map'
-    __table_args__ = {'schema': 'config'}
+    __table_args__ = {'schema': 'settings'}
 
     id = Column(Integer, primary_key=True)
 
-    repository_id = Column(Integer, ForeignKey('config.repository.id'))
+    repository_id = Column(Integer, ForeignKey('settings.repository.id'))
     repository = relationship(
         "Repository",
         back_populates="repository_member_maps")
 
-    member_id = Column(Integer, ForeignKey('config.member.id'))
+    member_id = Column(Integer, ForeignKey('settings.member.id'))
     member = relationship(
         "Member",
         back_populates="repository_member_maps")

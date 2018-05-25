@@ -1,29 +1,33 @@
 package enterovirus.protease.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import lombok.*;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "member")
+@Table(schema = "settings", name = "member")
 public class MemberBean {
 
 	/*
@@ -63,12 +67,18 @@ public class MemberBean {
 	@Column(name="display_name")
 	private String displayName;
 	
+	@NotNull
 	@Email
 	@Column(name="email")
 	private String email;
 	
-	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	private List<OrganizationBean> organizations;
+	@NotNull
+	@Column(name="registration_timestamp", updatable=false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date registrationTimestamp;
+	
+//	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+//	private List<OrganizationBean> organizations;
 	
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();

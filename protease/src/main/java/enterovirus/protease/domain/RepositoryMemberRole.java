@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public enum RepositoryMemberRole {
 
-	READER('R', "Reader"),
-	REVIEWER('V', "Reviewer"),
-	EDITOR('E', "Editor"),
-	PROJECT_LEADER('L', "Project Leader");
+	ORGANIZER('O', "Project organizer"),
+	EDITOR('E', "Document editor"),
+	REVIEWER('R', "Document reviewer"),
+	BLACKLIST('B', "Blacklist");
 	
 	private Character shortName;
 	private String displayName;
@@ -20,14 +20,14 @@ public enum RepositoryMemberRole {
 
 	public static RepositoryMemberRole fromShortName(Character shortName) {
 		switch (shortName) {
-		case 'R':
-			return READER;
-		case 'V':
-			return REVIEWER;
+		case 'O':
+			return ORGANIZER;
 		case 'E':
 			return EDITOR;
-		case 'L':
-			return PROJECT_LEADER;
+		case 'R':
+			return REVIEWER;
+		case 'B':
+			return BLACKLIST;
 		
 		default:
 			throw new IllegalArgumentException("Repository member role shortName: "+shortName+" is not supported.");

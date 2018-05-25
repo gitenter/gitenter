@@ -200,7 +200,7 @@ This data dictionary will try to be as complete as possible, i.e., includes the 
 
 This data dictionary is written in a descriptive style. The aim is to put all relevant thoughts to some reasonable place. We are not trying to make it complete and/or accurate. Therefore, it is unavailable that it is long and tedious.
 
-#### Schema `config`
+#### Schema `settings`
 
 ##### Table `organization`
 

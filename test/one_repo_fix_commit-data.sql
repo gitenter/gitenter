@@ -1,21 +1,21 @@
-INSERT INTO config.member VALUES
+INSERT INTO settings.member VALUES
 	(1, 'user', 'password', 'USER', 'email@email.com');
-ALTER SEQUENCE config.member_id_seq RESTART WITH 2;
+ALTER SEQUENCE settings.member_id_seq RESTART WITH 2;
 
-INSERT INTO config.organization VALUES
+INSERT INTO settings.organization VALUES
 	(1, 'org', 'ORG');
-ALTER SEQUENCE config.organization_id_seq RESTART WITH 2;
+ALTER SEQUENCE settings.organization_id_seq RESTART WITH 2;
 
-INSERT INTO config.organization_manager_map VALUES
+INSERT INTO settings.organization_manager_map VALUES
 	(1, 1);
 
-INSERT INTO config.repository VALUES
+INSERT INTO settings.repository VALUES
 	(1, 1, 'repo', 'REPO', NULL, TRUE);
-ALTER SEQUENCE config.repository_id_seq RESTART WITH 2;
+ALTER SEQUENCE settings.repository_id_seq RESTART WITH 2;
 
 INSERT INTO git.git_commit VALUES
-	(1, 1, 'e8c055a0d4bd6e82d2a8d22b45763288d2cb1a53'),
-	(2, 1, 'b2c36801545fb56fd20c25dac91593761f6d5fa2');
+	(1, 1, '5296f6c6f240d4a9238269bf55704c9992d71a16'),
+	(2, 1, 'aabbf881d6558e910e833565c24b6bb2ca9bdf11');
 ALTER SEQUENCE git.git_commit_id_seq RESTART WITH 3;
 
 INSERT INTO git.git_commit_valid VALUES

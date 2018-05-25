@@ -1,6 +1,6 @@
 package enterovirus.protease.database;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -20,8 +20,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-import enterovirus.protease.*;
-import enterovirus.protease.domain.*;
+import enterovirus.protease.ProteaseConfig;
+import enterovirus.protease.domain.MemberBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "production")
@@ -32,15 +32,16 @@ import enterovirus.protease.domain.*;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaSettingsDatabaseConnection"})
-public class RepositoryRepositoryTest {
+public class MemberRepositoryTest {
 
-	@Autowired RepositoryRepository repository;
+	@Autowired MemberRepository repository;
 	
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="dbunit-data/minimal-schema-settings.xml")
+	//@DatabaseTearDown("member.xml")
 	public void test() throws IOException {
-		RepositoryBean item = repository.findById(1);
-		assertEquals(item.getName(), "repository");
+		MemberBean item = repository.findById(1);
+		assertEquals(item.getDisplayName(), "Display Name");
 	}
 }

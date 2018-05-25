@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<member id="1" username="user" password="password" display_name="Display Name" email="email@email.com" />
+	<organization id="1" name="organization" display_name="Organization" />
+	<organization_member_map id="1" member_id="1" organization_id="1" role_shortname="G"/>
+	<repository id="1" organization_id="1" name="repository" display_name="Repository" description="Repo description" is_public="true" />
+	<repository_member_map id="1" repository_id="1" member_id="1" role_shortname="R" />
+</dataset>

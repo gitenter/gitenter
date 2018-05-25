@@ -40,4 +40,13 @@ public class TestGitConfig {
 		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/long_commit_path/"));
 		return gitSource;
 	}
+	
+	@Profile("production")
+	@Bean
+	public GitSource gitSource() {
+		
+		GitSource gitSource = new GitSource();
+		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/long_commit_path/"));
+		return gitSource;
+	}
 }

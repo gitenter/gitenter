@@ -14,7 +14,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(schema = "config", name = "repository_member_map")
+@Table(schema = "settings", name = "repository_member_map")
 public class RepositoryMemberMapBean {
 
 	@Id
@@ -44,7 +44,7 @@ public class RepositoryMemberMapBean {
 	 * Can't do inner classes of "RepositoryMemberRole" and 
 	 * "RepositoryMemberRoleConventer". Failed to load ApplicationContext.
 	 */
-	@Column(name="role")
+	@Column(name="role_shortname")
 	@Convert(converter = RepositoryMemberRoleConventer.class)
 	private RepositoryMemberRole role;
 	
