@@ -74,6 +74,15 @@ public class TestDatabaseConfig {
 		dataConnection.setSchema("settings");
 		return dataConnection;
 	}
+	
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaGitDatabaseConnection() {
+		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dataConnection.setDataSource(dataSource());
+		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
+		dataConnection.setSchema("git");
+		return dataConnection;
+	}
 //	
 //	@Profile("fake_update")
 //	@Bean

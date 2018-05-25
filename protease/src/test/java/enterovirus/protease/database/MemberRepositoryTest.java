@@ -1,7 +1,8 @@
 package enterovirus.protease.database;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,11 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-import enterovirus.protease.*;
-import enterovirus.protease.domain.*;
+import enterovirus.protease.ProteaseConfig;
+import enterovirus.protease.domain.MemberBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "production")
@@ -32,16 +32,16 @@ import enterovirus.protease.domain.*;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaSettingsDatabaseConnection"})
-@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="member.xml")
-//@DatabaseTearDown("member.xml")
-public class MemberRepositoryTest /*extends DBTestCase*/ {
+public class MemberRepositoryTest {
 
-	@Autowired MemberDatabaseRepository memberRepository;
+	@Autowired MemberRepository memberRepository;
 	
 	@Test
 	@Transactional
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="dbunit-data/minimal-schema-settings.xml")
+	//@DatabaseTearDown("member.xml")
 	public void test() throws IOException {
-		Optional<MemberBean> member = memberRepository.findById(1);
-		System.out.println(member.get().getDisplayName());
+		MemberBean member = memberRepository.findById(1);
+		assertEquals(member.getDisplayName(), "Display Name");
 	}
 }
