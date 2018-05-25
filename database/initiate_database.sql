@@ -1,12 +1,3 @@
-CREATE TABLE mm (
-	id serial PRIMARY KEY,
-	username text NOT NULL UNIQUE,
-	password text NOT NULL,
-	display_name text NOT NULL,
-	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)'),
-	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE SCHEMA settings;
 
 CREATE TABLE settings.member (
@@ -22,9 +13,9 @@ CREATE TABLE settings.ssh_key (
 	id serial PRIMARY KEY,
 	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
 
-	/* 
-	 * Key type has limited possibilities of “ecdsa-sha2-nistp256”, 
-	 * “ecdsa-sha2-nistp384”, “ecdsa-sha2-nistp521”, “ssh-ed25519”, 
+	/*
+	 * Key type has limited possibilities of “ecdsa-sha2-nistp256”,
+	 * “ecdsa-sha2-nistp384”, “ecdsa-sha2-nistp521”, “ssh-ed25519”,
 	 * “ssh-dss” or “ssh-rsa”.
 	 *
 	 * However, it is handled by the I/O and security package,
@@ -34,7 +25,7 @@ CREATE TABLE settings.ssh_key (
 	 * (Refer to: http://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_FORMAT)
 	 * but that is not user defined, so should not be set in here.
 	 */
-	key_type text NOT NULL, 
+	key_type text NOT NULL,
 	key_data bytea NOT NULL, /* Should be unique. But I loose the constrain a little bit at this moment. */
 	comment text
 );
@@ -75,10 +66,10 @@ CREATE TABLE settings.repository_member_map (
 
 	/*
 	 * Rather than a lookup table in SQL, we define the enum types
-	 * in the persistent layer. A "shortName" is used, as (1) the 
-	 * ordinal of an Enum depends on the ordering of its values 
+	 * in the persistent layer. A "shortName" is used, as (1) the
+	 * ordinal of an Enum depends on the ordering of its values
 	 * and can create problems, if we need to add new ones, and
-	 * (2) the String representation of an Enum is often quite 
+	 * (2) the String representation of an Enum is often quite
 	 * verbose and renaming a value will break the database mapping.
 	 *
 	 * Currently we have "role" to have values
@@ -101,7 +92,7 @@ CREATE TABLE git.git_commit (
 
 	/*
 	 * It is not save to make "sha_checksum_hash" itself unique,
-	 * since empty repositories make at the same time (should be up 
+	 * since empty repositories make at the same time (should be up
 	 * to second?) will have exactly the same "sha_checksum_hash".
 	 * It happens in my automatic UI test case, and causes SQL errors.
 	 *
@@ -140,7 +131,7 @@ CREATE TABLE git.document (
 	UNIQUE(commit_id, relative_filepath)
 );
 
-CREATE FUNCTION git.commit_id_from_document (integer) 
+CREATE FUNCTION git.commit_id_from_document (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
@@ -157,10 +148,10 @@ CREATE TABLE git.traceable_item (
 	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	item_tag text NOT NULL,
 	content text NOT NULL,
-	UNIQUE (document_id, item_tag)	
+	UNIQUE (document_id, item_tag)
 );
 
-CREATE FUNCTION git.document_id_from_traceable_item (integer) 
+CREATE FUNCTION git.document_id_from_traceable_item (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
@@ -173,7 +164,7 @@ IMMUTABLE;
 
 CREATE UNIQUE INDEX traceable_item_tag_unique_per_commit_idx
 	ON git.traceable_item (
-		git.commit_id_from_document(id), 
+		git.commit_id_from_document(id),
 		item_tag
 );
 
@@ -182,7 +173,7 @@ CREATE TABLE git.traceability_map (
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	PRIMARY KEY (upstream_item_id, downstream_item_id),
 
-	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id)) 
+	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id))
 		= git.commit_id_from_document(git.document_id_from_traceable_item(downstream_item_id)))
 );
 
