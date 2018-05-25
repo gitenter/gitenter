@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-	<mm id="1" username="a" password="ab" display_name="aaa~~~~!!!!!abc~~~~~!!!!!" email="email@email.com"/>
+	<member id="1" username="a" password="ab" display_name="aaa~~~~!!!!!abc~~~~~!!!!!" email="email@email.com"/>
 </dataset>
