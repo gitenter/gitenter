@@ -67,6 +67,7 @@ public class MemberBean {
 	@Column(name="display_name")
 	private String displayName;
 	
+	@NotNull
 	@Email
 	@Column(name="email")
 	private String email;
@@ -75,11 +76,6 @@ public class MemberBean {
 	@Column(name="registration_timestamp", updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registrationTimestamp;
-
-	@NotNull
-	@Column(name="last_active_timestamp", updatable=true)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastActiveTimestamp;
 	
 	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private List<OrganizationBean> organizations;
