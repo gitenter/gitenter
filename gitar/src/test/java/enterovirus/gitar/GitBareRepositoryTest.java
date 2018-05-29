@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.*;
 
-public class GitRepositoryTest {
+public class GitBareRepositoryTest {
 	
 	@Rule public TemporaryFolder folder= new TemporaryFolder();
 	
@@ -33,7 +33,7 @@ public class GitRepositoryTest {
 		
 		File repositoryDirectory = folder.newFolder("bare-repo");
 		
-		GitRepository.initBare(repositoryDirectory, hooksDirectory);
+		GitBareRepository.initBare(repositoryDirectory, hooksDirectory);
 		
 		File hook = new File(repositoryDirectory, "hooks/this-is-a-hook");
 		assertTrue(hook.exists());
@@ -45,7 +45,7 @@ public class GitRepositoryTest {
 		
 		File repositoryDirectory = folder.newFolder("bare-repo-with-config");
 		
-		GitRepository.initBareWithConfig(repositoryDirectory, hooksDirectory, configDirectory);
+		GitBareRepository.initBareWithConfig(repositoryDirectory, hooksDirectory, configDirectory);
 		
 		File hook = new File(repositoryDirectory, "hooks/this-is-a-hook");
 		assertTrue(hook.exists());

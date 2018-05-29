@@ -18,7 +18,7 @@ public class GitBranch {
 	
 	public GitBranch(File repositoryDirectory) throws IOException, GitAPIException {
 		
-		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			List<Ref> call = git.branchList().call();
 			for (Ref ref : call) {

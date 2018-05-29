@@ -29,7 +29,7 @@ public class GitLog {
 		 * The JGit function is compatible with branch name with the form
 		 * "master" and "refs/heads/master".
 		 */
-		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			Iterable<RevCommit> logs = git.log()
 					.add(repository.resolve(branchName.getName()))
@@ -44,7 +44,7 @@ public class GitLog {
 		 * The JGit function is compatible with branch name with the form
 		 * "master" and "refs/heads/master".
 		 */
-		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			Iterable<RevCommit> logs = git.log()
 					.add(repository.resolve(branchName.getName()))
@@ -61,7 +61,7 @@ public class GitLog {
 	 */
 	public GitLog(File repositoryDirectory, BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) throws IOException, GitAPIException {
 		
-		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
+		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			
 			if (oldCommitSha.isNull()) {

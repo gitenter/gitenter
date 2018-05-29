@@ -185,10 +185,10 @@ public class ManagerAdminController {
 		 * configuration file) in it.
 		 */
 		if (includeSetupFiles.equals(Boolean.FALSE)) {
-			GitRepository.initBare(repositoryDirectory, sampleHooksDirectory);
+			GitBareRepository.initBare(repositoryDirectory, sampleHooksDirectory);
 		}
 		else {
-			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
+			GitBareRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
 			
 			/*
 			 * Dirty but this part can only be done in here. See comments under GitRepository.
