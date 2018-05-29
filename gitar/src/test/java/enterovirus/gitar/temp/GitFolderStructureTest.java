@@ -1,4 +1,4 @@
-package enterovirus.gitar;
+package enterovirus.gitar.temp;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import enterovirus.gitar.temp.GitBlob;
+import enterovirus.gitar.temp.GitFolderStructure;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.gitar.wrap.TagName;

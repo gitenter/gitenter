@@ -1,9 +1,10 @@
-package enterovirus.gitar;
+package enterovirus.gitar.temp;
 
 import java.io.File;
 
 import org.junit.Test;
 
+import enterovirus.gitar.temp.GitTag;
 import enterovirus.gitar.wrap.TagName;
 
 public class GitTagTest {

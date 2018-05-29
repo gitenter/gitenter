@@ -1,10 +1,11 @@
-package enterovirus.gitar;
+package enterovirus.gitar.temp;
 
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import enterovirus.gitar.temp.GitLog;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.gitar.wrap.CommitSha;

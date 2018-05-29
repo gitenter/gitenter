@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
 import enterovirus.gitar.*;
+import enterovirus.gitar.temp.GitBlob;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 

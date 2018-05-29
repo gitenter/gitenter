@@ -6,16 +6,12 @@ import java.util.Collection;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
+import enterovirus.gitar.GitBranch;
+import enterovirus.gitar.GitTag;
+
 public class BareRepository extends GitRepository {
-	
-	private Repository repository;
-	
-	Repository getRepository() {
-		return repository;
-	}
 
 	/*
 	 * TODO:
@@ -55,24 +51,6 @@ public class BareRepository extends GitRepository {
 	}
 
 	@Override
-	public GitBranch getBranch(String branchName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<GitBranch> getBranches() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GitTag getTag(String tagName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Boolean addHook(File filepath) {
 		// TODO Auto-generated method stub
 		return null;
@@ -83,6 +61,4 @@ public class BareRepository extends GitRepository {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 }

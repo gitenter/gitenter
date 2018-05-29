@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import enterovirus.gitar.GitFolderStructure;
+import enterovirus.gitar.temp.GitFolderStructure;
 import enterovirus.gitar.wrap.CommitSha;
 import lombok.Getter;
 import lombok.Setter;

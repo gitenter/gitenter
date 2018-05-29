@@ -1,37 +1,33 @@
 package enterovirus.gitar;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
-
-import enterovirus.gitar.wrap.*;
 
 public class GitTag {
 
-	private List<TagName> tagNames = new ArrayList<TagName>();
+	private final String name;
+	private final GitRepository gitRepository;
 	
-	public GitTag(File repositoryDirectory) throws IOException, GitAPIException {
-		
-		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
-		try (Git git = new Git(repository)) {
-			List<Ref> call = git.tagList().call();
-			for (Ref ref : call) {
-				/*
-				 * Parse "refs/tags/merged" and get the name "master".
-				 * So for other branches.
-				 */
-				tagNames.add(new TagName(ref.getName().split("/")[2]));
-			}
-		}
+	private Ref tag;
+	
+	public String getName() {
+		return name;
 	}
 
-	public List<TagName> getTagNames() {
-		return tagNames;
+	public GitTag(GitRepository gitRepository, String name) throws IOException {
+		this.gitRepository = gitRepository;
+		this.name = name;
+		
+		tag = gitRepository.repository.exactRef("refs/tags/"+name);
+	}
+	
+	/*
+	 * TODO:
+	 * This method is really similar to GitBranch.getHead() .
+	 * Consider to setup some structure later.
+	 */
+	public GitCommit getCommit() throws IOException {
+		return new GitCommit(gitRepository, tag.getObjectId().getName());
 	}
 }

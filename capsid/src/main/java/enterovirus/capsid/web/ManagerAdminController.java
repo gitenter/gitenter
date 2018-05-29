@@ -24,6 +24,8 @@ import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
 import enterovirus.gitar.*;
+import enterovirus.gitar.temp.GitBareRepository;
+import enterovirus.gitar.temp.GitLog;
 import enterovirus.gitar.wrap.*;
 
 @Controller

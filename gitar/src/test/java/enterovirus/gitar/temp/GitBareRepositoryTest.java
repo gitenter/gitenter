@@ -1,4 +1,4 @@
-package enterovirus.gitar;
+package enterovirus.gitar.temp;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import enterovirus.gitar.temp.GitBareRepository;
+
 import static org.junit.Assert.*;
 
 public class GitBareRepositoryTest {

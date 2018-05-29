@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import enterovirus.gitar.GitBlob;
+import enterovirus.gitar.temp.GitBlob;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.domain.*;

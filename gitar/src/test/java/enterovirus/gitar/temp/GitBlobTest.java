@@ -1,4 +1,4 @@
-package enterovirus.gitar;
+package enterovirus.gitar.temp;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import enterovirus.gitar.temp.GitBlob;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.gitar.wrap.TagName;

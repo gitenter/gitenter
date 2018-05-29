@@ -12,8 +12,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import enterovirus.gitar.GitBranch;
-import enterovirus.gitar.GitLog;
+import enterovirus.gitar.temp.GitBranch;
+import enterovirus.gitar.temp.GitLog;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitInfo;
 import enterovirus.gitar.wrap.CommitSha;
