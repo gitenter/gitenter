@@ -10,11 +10,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import enterovirus.gitar.temp.GitBareRepository;
+import enterovirus.gitar.temp.GitRepository;
 
 import static org.junit.Assert.*;
 
-public class GitBareRepositoryTest {
+public class GitRepositoryTest {
 	
 	@Rule public TemporaryFolder folder= new TemporaryFolder();
 	
@@ -36,7 +36,7 @@ public class GitBareRepositoryTest {
 		
 		File repositoryDirectory = folder.newFolder("bare-repo");
 		
-		GitBareRepository.initBare(repositoryDirectory, hooksDirectory);
+		GitRepository.initBare(repositoryDirectory, hooksDirectory);
 		
 		File hook = new File(repositoryDirectory, "hooks/this-is-a-hook");
 		assertTrue(hook.exists());
@@ -48,7 +48,7 @@ public class GitBareRepositoryTest {
 		
 		File repositoryDirectory = folder.newFolder("bare-repo-with-config");
 		
-		GitBareRepository.initBareWithConfig(repositoryDirectory, hooksDirectory, configDirectory);
+		GitRepository.initBareWithConfig(repositoryDirectory, hooksDirectory, configDirectory);
 		
 		File hook = new File(repositoryDirectory, "hooks/this-is-a-hook");
 		assertTrue(hook.exists());

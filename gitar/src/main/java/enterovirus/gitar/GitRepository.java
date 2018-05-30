@@ -10,21 +10,23 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitTag;
 
 public abstract class GitRepository {
 	
-	protected File directory;
-	Repository repository;
+	protected final File directory;
+	Repository jGitRepository;
 
 	public File getDirectory() {
 		return directory;
 	}
-
-	public void setDirectory(File directory) {
-		this.directory = directory;
+	
+	protected void buildJGitRepository() throws IOException {
+		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+		jGitRepository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
 	}
 	
 	public GitRepository(File directory) {
@@ -42,7 +44,7 @@ public abstract class GitRepository {
 	public Collection<GitBranch> getBranches() throws IOException, GitAPIException {
 		
 		Collection<GitBranch> branches = new ArrayList<GitBranch>();
-		try (Git git = new Git(repository)) {
+		try (Git git = new Git(jGitRepository)) {
 			List<Ref> call = git.branchList().call();
 			for (Ref ref : call) {
 				/*

@@ -3,10 +3,10 @@ package enterovirus.gitar;
 public abstract class GitPath {
 
 	private final String relativePath;
-	private final GitCommit gitCommit;
+	private final GitCommit commit;
 	
-	public GitPath(GitCommit gitCommit, String relativePath) {
-		this.gitCommit = gitCommit;
+	public GitPath(GitCommit commit, String relativePath) {
+		this.commit = commit;
 		this.relativePath = relativePath;
 	}
 }

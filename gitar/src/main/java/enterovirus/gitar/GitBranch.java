@@ -7,22 +7,22 @@ import org.eclipse.jgit.lib.Ref;
 public class GitBranch {
 
 	private final String name;
-	private final GitRepository gitRepository;
+	private final GitRepository repository;
 	
-	private Ref branch;
+	private Ref jGitBranch;
 	
 	public String getName() {
 		return name;
 	}
 
-	public GitBranch(GitRepository gitRepository, String name) throws IOException {
-		this.gitRepository = gitRepository;
+	public GitBranch(GitRepository repository, String name) throws IOException {
+		this.repository = repository;
 		this.name = name;
 		
-		branch = gitRepository.repository.exactRef("refs/heads/"+name);
+		jGitBranch = repository.jGitRepository.exactRef("refs/heads/"+name);
 	}
 	
 	public GitCommit getHead() throws IOException {
-		return new GitCommit(gitRepository, branch.getObjectId().getName());
+		return new GitCommit(repository, jGitBranch.getObjectId().getName());
 	}
 }

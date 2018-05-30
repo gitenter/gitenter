@@ -11,24 +11,18 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class BareRepositoryTest {
+public class GitLocalRepositoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 
 	@Test
 	public void testInit() throws IOException, GitAPIException {
 		
-		File directory = folder.newFolder("bare-repo");
+		File directory = folder.newFolder("repo");
 		
-		new BareRepository(directory);
+		new GitLocalRepository(directory);
 		
-		assertTrue(new File(directory, "branches").isDirectory());
-		assertTrue(new File(directory, "hooks").isDirectory());
-		assertTrue(new File(directory, "logs").isDirectory());
-		assertTrue(new File(directory, "objects").isDirectory());
-		assertTrue(new File(directory, "refs").isDirectory());
-		assertTrue(new File(directory, "config").isFile());
-		assertTrue(new File(directory, "HEAD").isFile());
+		assertTrue(new File(directory, ".git").isDirectory());
 	}
 	
 	@Test(expected = JGitInternalException.class)
@@ -36,15 +30,15 @@ public class BareRepositoryTest {
 		
 		File directory = new File("/a/path/which/does/not/exist");
 		
-		new BareRepository(directory);
+		new GitLocalRepository(directory);
 	}
 	
 	@Test(expected = JGitInternalException.class)
 	public void testInitFolderReadOnly() throws IOException, GitAPIException {
 		
-		File directory = folder.newFolder("bare-repo");
+		File directory = folder.newFolder("repo");
 		directory.setReadOnly();
 		
-		new BareRepository(directory);
+		new GitRemoteRepository(directory);
 	}
 }

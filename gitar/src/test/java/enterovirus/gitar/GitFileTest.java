@@ -13,7 +13,7 @@ public class GitFileTest {
 		
 		File directory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		
-		GitRepository gitRepository = new BareRepository(directory);
+		GitRepository gitRepository = new GitRemoteRepository(directory);
 		GitCommit gitCommit = gitRepository.getBranch("master").getHead();
 		GitFile gitFile = gitCommit.getFile("1st-commit-file-to-be-change-in-the-2nd-commit");
 		

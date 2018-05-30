@@ -10,7 +10,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 
-import enterovirus.gitar.temp.GitBareRepository;
+import enterovirus.gitar.temp.GitRepository;
 import enterovirus.gitar.wrap.*;
 
 public class GitBranch {
@@ -19,7 +19,7 @@ public class GitBranch {
 	
 	public GitBranch(File repositoryDirectory) throws IOException, GitAPIException {
 		
-		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
+		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			List<Ref> call = git.branchList().call();
 			for (Ref ref : call) {

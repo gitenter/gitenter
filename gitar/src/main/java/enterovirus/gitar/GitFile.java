@@ -16,12 +16,12 @@ public class GitFile extends GitPath {
 		return blobContent;
 	}
 
-	public GitFile(GitCommit gitCommit, String relativePath) throws IOException, FileNotFoundException {
+	public GitFile(GitCommit commit, String relativePath) throws IOException, FileNotFoundException {
 		
-		super(gitCommit, relativePath);
+		super(commit, relativePath);
 		
-		RevTree revTree = gitCommit.commit.getTree();
-		try (TreeWalk treeWalk = new TreeWalk(gitCommit.gitRepository.repository)) {
+		RevTree revTree = commit.jGitCommit.getTree();
+		try (TreeWalk treeWalk = new TreeWalk(commit.repository.jGitRepository)) {
 			
 			treeWalk.addTree(revTree);
 			treeWalk.setRecursive(true);
@@ -40,7 +40,7 @@ public class GitFile extends GitPath {
 				 */
 				throw new FileNotFoundException("Did not find expected file with relative path \""+relativePath+"\".");
 			}
-			ObjectLoader loader = gitCommit.gitRepository.repository.open(treeWalk.getObjectId(0));
+			ObjectLoader loader = commit.repository.jGitRepository.open(treeWalk.getObjectId(0));
 			blobContent = loader.getBytes();
 		}
 	}

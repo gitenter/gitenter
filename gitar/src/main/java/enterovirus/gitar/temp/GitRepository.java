@@ -11,7 +11,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
 
-public class GitBareRepository {
+public class GitRepository {
 	
 	static Repository getRepositoryFromDirectory(File repositoryDirectory) throws IOException {
 		

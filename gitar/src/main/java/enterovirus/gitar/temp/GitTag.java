@@ -18,7 +18,7 @@ public class GitTag {
 	
 	public GitTag(File repositoryDirectory) throws IOException, GitAPIException {
 		
-		Repository repository = GitBareRepository.getRepositoryFromDirectory(repositoryDirectory);
+		Repository repository = GitRepository.getRepositoryFromDirectory(repositoryDirectory);
 		try (Git git = new Git(repository)) {
 			List<Ref> call = git.tagList().call();
 			for (Ref ref : call) {

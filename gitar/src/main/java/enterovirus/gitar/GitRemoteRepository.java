@@ -11,15 +11,20 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitTag;
 
-public class BareRepository extends GitRepository {
+public class GitRemoteRepository extends GitRepository {
 
 	/*
 	 * TODO:
 	 * Further wrap JGit exceptions.
 	 */
-	public BareRepository(File directory) throws IOException, GitAPIException {
+	public GitRemoteRepository(File directory) throws IOException, GitAPIException {
 		super(directory);
 		
+		/*
+		 * TODO:
+		 * Check if it is the client side normal repository. If yes, should not
+		 * setup the bare repository like this.
+		 */
 		if (!exists()) {
 			Git.init().setDirectory(directory).setBare(true).call();
 		}
@@ -28,8 +33,7 @@ public class BareRepository extends GitRepository {
 		 * TODO:
 		 * Can this part be used in exist()?
 		 */
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		repository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
+		buildJGitRepository();
 	}
 	
 	private Boolean exists() {
@@ -37,6 +41,9 @@ public class BareRepository extends GitRepository {
 		 * TODO: 
 		 * What about the case if it is a broken git repo with only
 		 * part of the files exist?
+		 * 
+		 * There is a git command `git rev-parse --is-bare-repository`
+		 * but JGit does not implement it. Consider directory call that command.
 		 */
 		if (!new File(directory, "branches").isDirectory()
 				|| !new File(directory, "hooks").isDirectory()

@@ -12,23 +12,23 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 public class GitCommit {
 	
 	private final String shaChecksumHash;
-	final GitRepository gitRepository;
+	final GitRepository repository;
 	
 	private final ObjectId objectId;
-	RevCommit commit;
+	RevCommit jGitCommit;
 	
 	public String getShaChecksumHash() {
 		return shaChecksumHash;
 	}
 	
-	public GitCommit(GitRepository gitRepository, String shaChecksumHash) throws IOException {
-		this.gitRepository = gitRepository;
+	public GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
+		this.repository = repository;
 		this.shaChecksumHash = shaChecksumHash;
 		
 		objectId = ObjectId.fromString(shaChecksumHash);
 		
-		try (RevWalk revWalk = new RevWalk(gitRepository.repository)) {
-			commit = revWalk.parseCommit(objectId);
+		try (RevWalk revWalk = new RevWalk(repository.jGitRepository)) {
+			jGitCommit = revWalk.parseCommit(objectId);
 		}
 	}
 	

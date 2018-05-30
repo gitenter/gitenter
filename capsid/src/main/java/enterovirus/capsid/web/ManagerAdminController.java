@@ -24,7 +24,7 @@ import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
 import enterovirus.gitar.*;
-import enterovirus.gitar.temp.GitBareRepository;
+import enterovirus.gitar.temp.GitRepository;
 import enterovirus.gitar.temp.GitLog;
 import enterovirus.gitar.wrap.*;
 
@@ -187,10 +187,10 @@ public class ManagerAdminController {
 		 * configuration file) in it.
 		 */
 		if (includeSetupFiles.equals(Boolean.FALSE)) {
-			GitBareRepository.initBare(repositoryDirectory, sampleHooksDirectory);
+			GitRepository.initBare(repositoryDirectory, sampleHooksDirectory);
 		}
 		else {
-			GitBareRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
+			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
 			
 			/*
 			 * Dirty but this part can only be done in here. See comments under GitRepository.

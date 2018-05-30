@@ -7,19 +7,19 @@ import org.eclipse.jgit.lib.Ref;
 public class GitTag {
 
 	private final String name;
-	private final GitRepository gitRepository;
+	private final GitRepository repository;
 	
-	private Ref tag;
+	private Ref jGitTag;
 	
 	public String getName() {
 		return name;
 	}
 
-	public GitTag(GitRepository gitRepository, String name) throws IOException {
-		this.gitRepository = gitRepository;
+	public GitTag(GitRepository repository, String name) throws IOException {
+		this.repository = repository;
 		this.name = name;
 		
-		tag = gitRepository.repository.exactRef("refs/tags/"+name);
+		jGitTag = repository.jGitRepository.exactRef("refs/tags/"+name);
 	}
 	
 	/*
@@ -28,6 +28,6 @@ public class GitTag {
 	 * Consider to setup some structure later.
 	 */
 	public GitCommit getCommit() throws IOException {
-		return new GitCommit(gitRepository, tag.getObjectId().getName());
+		return new GitCommit(repository, jGitTag.getObjectId().getName());
 	}
 }

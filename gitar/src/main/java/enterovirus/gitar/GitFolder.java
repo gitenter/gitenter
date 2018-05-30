@@ -40,12 +40,12 @@ public class GitFolder extends GitPath {
 
 	private static final String rootMarker = ".";
 
-	public GitFolder(GitCommit gitCommit, String relativePath) throws IOException {
+	public GitFolder(GitCommit commit, String relativePath) throws IOException {
 		
-		super(gitCommit, relativePath);
+		super(commit, relativePath);
 		
-		RevTree revTree = gitCommit.commit.getTree();
-		try (TreeWalk treeWalk = new TreeWalk(gitCommit.gitRepository.repository)) {
+		RevTree revTree = commit.jGitCommit.getTree();
+		try (TreeWalk treeWalk = new TreeWalk(commit.repository.jGitRepository)) {
 			
 			treeWalk.addTree(revTree);
 			treeWalk.setRecursive(true);
