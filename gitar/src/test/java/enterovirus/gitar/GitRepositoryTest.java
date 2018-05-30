@@ -31,7 +31,7 @@ public class GitRepositoryTest {
 		}
 		
 		// JGit return isBare() true value even if the folder is empty.
-		// But reported: https://bugs.eclipse.org/bugs/show_bug.cgi?id=535333
+		// Bug reported: https://bugs.eclipse.org/bugs/show_bug.cgi?id=535333
 		assertTrue(jGitRepository.isBare());
 	}
 }

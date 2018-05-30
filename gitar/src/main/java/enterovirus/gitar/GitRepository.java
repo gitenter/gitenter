@@ -24,6 +24,35 @@ public abstract class GitRepository {
 		return directory;
 	}
 	
+	protected boolean isNormalRepository() {
+		/*
+		 * TODO: 
+		 * What about the case if it is a broken git repo with only
+		 * part of the files exist?
+		 */
+		if (!new File(directory, ".git").isDirectory()) {
+			return false;
+		}
+		return true;
+	}
+	
+	protected boolean isBareRepository() {
+		/* 
+		 * There is a git command `git rev-parse --is-bare-repository`
+		 * but JGit does not implement it. Consider directory call that command.
+		 */
+		if (!new File(directory, "branches").isDirectory()
+				|| !new File(directory, "hooks").isDirectory()
+				|| !new File(directory, "logs").isDirectory()
+				|| !new File(directory, "objects").isDirectory()
+				|| !new File(directory, "refs").isDirectory()
+				|| !new File(directory, "config").isFile()
+				|| !new File(directory, "HEAD").isFile()) {
+			return false;
+		}
+		return true;
+	}
+	
 	protected void buildJGitRepository() throws IOException {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		jGitRepository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
@@ -62,8 +91,8 @@ public abstract class GitRepository {
 		return new GitTag(this, tagName);
 	}
 	
-	public abstract Boolean addHook(File filepath);
-	public abstract Boolean addHooks(File folderpath);
+	public abstract boolean addHook(File filepath);
+	public abstract boolean addHooks(File folderpath);
 	
 //	public abstract static GitRepository getFromFile(File folderpath);
 }

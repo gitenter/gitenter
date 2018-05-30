@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class GitRemoteRepositoryTest {
+public class GitBareRepositoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 
@@ -20,7 +20,7 @@ public class GitRemoteRepositoryTest {
 		
 		File directory = folder.newFolder("repo.git");
 		
-		new GitRemoteRepository(directory);
+		new GitBareRepository(directory);
 		
 		assertTrue(new File(directory, "branches").isDirectory());
 		assertTrue(new File(directory, "hooks").isDirectory());
@@ -36,7 +36,7 @@ public class GitRemoteRepositoryTest {
 		
 		File directory = new File("/a/path/which/does/not/exist");
 		
-		new GitRemoteRepository(directory);
+		new GitBareRepository(directory);
 	}
 	
 	@Test(expected = JGitInternalException.class)
@@ -45,6 +45,15 @@ public class GitRemoteRepositoryTest {
 		File directory = folder.newFolder("repo.git");
 		directory.setReadOnly();
 		
-		new GitRemoteRepository(directory);
+		new GitBareRepository(directory);
+	}
+	
+	@Test(expected = IOException.class)
+	public void testDirectoryInitToOtherType() throws IOException, GitAPIException {
+		
+		File directory = folder.newFolder("repo");
+
+		new GitNormalRepository(directory);
+		new GitBareRepository(directory);
 	}
 }

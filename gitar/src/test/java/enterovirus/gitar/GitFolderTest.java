@@ -13,7 +13,7 @@ public class GitFolderTest {
 		
 		File directory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/one_repo_fix_commit/org/repo.git");
 		
-		GitRepository gitRepository = new GitRemoteRepository(directory);
+		GitRepository gitRepository = new GitBareRepository(directory);
 		GitCommit gitCommit = gitRepository.getBranch("master").getHead();
 		GitFolder gitFolder = gitCommit.getFolder("1st-commit-folder");
 		
