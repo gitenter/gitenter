@@ -56,4 +56,33 @@ public class GitBareRepositoryTest {
 		new GitNormalRepository(directory);
 		new GitBareRepository(directory);
 	}
+	
+	@Test
+	public void testAddAHook() throws IOException, GitAPIException {
+		
+		File directory = folder.newFolder("repo");
+		File hook = folder.newFile("whatever-name-for-the-hook-file");
+		
+		GitRepository repository = new GitBareRepository(directory);
+		repository.addAHook(hook, "pre-receive");
+		
+		File targetHook = new File(new File(directory, "hooks"), "pre-receive");
+		assertTrue(targetHook.isFile());
+		assertTrue(targetHook.canExecute());
+	}
+	
+	@Test
+	public void testAddHooks() throws IOException, GitAPIException {
+		
+		File directory = folder.newFolder("repo");
+		File hooks = folder.newFolder("hooks");
+		new File(hooks, "pre-receive").createNewFile();
+		
+		GitRepository repository = new GitBareRepository(directory);
+		repository.addHooks(hooks);
+		
+		File targetHook = new File(new File(directory, "hooks"), "pre-receive");
+		assertTrue(targetHook.isFile());
+		assertTrue(targetHook.canExecute());
+	}
 }

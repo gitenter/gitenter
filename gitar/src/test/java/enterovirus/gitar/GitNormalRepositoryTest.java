@@ -59,4 +59,16 @@ public class GitNormalRepositoryTest {
 		repository.addRemote("origin", "/fake/url");
 		assertEquals(repository.getRemote("origin").url, "/fake/url");
 	}
+	
+	@Test
+	public void testGetBranchNotExist() throws IOException, GitAPIException {
+		
+		File directory = folder.newFolder("repo");
+		GitNormalRepository repository = new GitNormalRepository(directory);
+		
+//		repository.createBranch("branch-name");
+//		assertTrue(repository.getBranch("branch-name").exist());
+		
+		assertFalse(repository.getBranch("branch-name-not-exist").exist());
+	}
 }

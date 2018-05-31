@@ -1,6 +1,7 @@
 package enterovirus.gitar;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
@@ -28,11 +29,24 @@ public class GitBranch {
 		jGitBranch = repository.jGitRepository.exactRef("refs/heads/"+name);
 	}
 	
+	public boolean exist() throws GitAPIException {
+		
+		try (Git git = new Git(repository.jGitRepository)) {
+			List<Ref> call = git.branchList().call();
+			for (Ref ref : call) {
+				if (name.equals(ref.getName().split("/")[2])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public GitCommit getHead() throws IOException {
 		return new GitCommit(repository, jGitBranch.getObjectId().getName());
 	}
 	
-	public void checkoutTo () throws CheckoutConflictException, GitAPIException {
+	public void checkoutTo() throws CheckoutConflictException, GitAPIException {
 		try (Git git = new Git(repository.jGitRepository)) {
 			git.checkout().setName(name).call();
 		}

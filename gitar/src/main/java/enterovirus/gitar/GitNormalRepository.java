@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
@@ -45,18 +46,6 @@ public class GitNormalRepository extends GitRepository {
 		
 		buildJGitRepository();
 	}
-
-	@Override
-	public boolean addHook(File filepath) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addHooks(File folderpath) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 	public void addRemote(String name, String url) {
 		
@@ -75,5 +64,10 @@ public class GitNormalRepository extends GitRepository {
 		try (Git git = new Git(jGitRepository)) {
 			git.branchCreate().setName(branchName).call();
 		}
+	}
+	
+	@Override
+	protected File getHooksDirectory() {
+		return new File(new File(directory, ".git"), "hooks");
 	}
 }

@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -66,7 +68,7 @@ public abstract class GitRepository {
 		return new GitCommit(this, shaChecksumHash);
 	}
 
-	public GitBranch getBranch(String branchName) throws IOException {
+	public GitBranch getBranch(String branchName) throws IOException, CheckoutConflictException, GitAPIException {
 		return new GitBranch(this, branchName);
 	}
 	
@@ -91,8 +93,18 @@ public abstract class GitRepository {
 		return new GitTag(this, tagName);
 	}
 	
-	public abstract boolean addHook(File filepath);
-	public abstract boolean addHooks(File folderpath);
+	public void addAHook(File filepath, String hookName) throws IOException {
+		File hookFilepath = new File(getHooksDirectory(), hookName);
+		FileUtils.copyFile(filepath, hookFilepath);
+		hookFilepath.setExecutable(true);
+	}
 	
-//	public abstract static GitRepository getFromFile(File folderpath);
+	public void addHooks(File folderpath) throws IOException {
+		FileUtils.copyDirectory(folderpath, getHooksDirectory());
+		for(File hookFile : getHooksDirectory().listFiles()) {
+			hookFile.setExecutable(true);
+		}
+	}
+	
+	protected abstract File getHooksDirectory();
 }

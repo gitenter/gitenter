@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -35,14 +36,7 @@ public class GitBareRepository extends GitRepository {
 	}
 	
 	@Override
-	public boolean addHook(File filepath) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addHooks(File folderpath) {
-		// TODO Auto-generated method stub
-		return false;
+	protected File getHooksDirectory() {
+		return new File(directory, "hooks");
 	}
 }
