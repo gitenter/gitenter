@@ -51,11 +51,12 @@ public class GitNormalRepositoryTest {
 	}
 	
 	@Test
-	public void testAddRemote() throws IOException, GitAPIException {
+	public void testRemote() throws IOException, GitAPIException {
 	
 		File directory = folder.newFolder("repo");
 		GitNormalRepository repository = new GitNormalRepository(directory);
 		
 		repository.addRemote("origin", "/fake/url");
+		assertEquals(repository.getRemote("origin").url, "/fake/url");
 	}
 }

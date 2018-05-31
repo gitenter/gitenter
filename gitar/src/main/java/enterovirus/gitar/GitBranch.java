@@ -21,7 +21,7 @@ public class GitBranch {
 		return name;
 	}
 
-	public GitBranch(GitRepository repository, String name) throws IOException {
+	GitBranch(GitRepository repository, String name) throws IOException {
 		this.repository = repository;
 		this.name = name;
 		

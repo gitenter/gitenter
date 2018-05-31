@@ -40,7 +40,7 @@ public class GitFolder extends GitPath {
 
 	private static final String rootMarker = ".";
 
-	public GitFolder(GitCommit commit, String relativePath) throws IOException {
+	GitFolder(GitCommit commit, String relativePath) throws IOException {
 		
 		super(commit, relativePath);
 		

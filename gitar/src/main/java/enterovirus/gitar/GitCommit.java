@@ -21,7 +21,7 @@ public class GitCommit {
 		return shaChecksumHash;
 	}
 	
-	public GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
+	GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
 		this.repository = repository;
 		this.shaChecksumHash = shaChecksumHash;
 		

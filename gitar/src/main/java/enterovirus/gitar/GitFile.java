@@ -16,7 +16,7 @@ public class GitFile extends GitPath {
 		return blobContent;
 	}
 
-	public GitFile(GitCommit commit, String relativePath) throws IOException, FileNotFoundException {
+	GitFile(GitCommit commit, String relativePath) throws IOException, FileNotFoundException {
 		
 		super(commit, relativePath);
 		

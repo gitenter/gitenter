@@ -15,7 +15,7 @@ public class GitTag {
 		return name;
 	}
 
-	public GitTag(GitRepository repository, String name) throws IOException {
+	GitTag(GitRepository repository, String name) throws IOException {
 		this.repository = repository;
 		this.name = name;
 		

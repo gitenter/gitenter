@@ -2,7 +2,10 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -19,6 +22,8 @@ import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitTag;
 
 public class GitNormalRepository extends GitRepository {
+	
+	private Map<String,GitRemote> remotes = new HashMap<String,GitRemote>();
 
 	/*
 	 * TODO:
@@ -53,10 +58,17 @@ public class GitNormalRepository extends GitRepository {
 		return false;
 	}
 	
-	public void addRemote(String shortName, String url) throws IOException {
-		StoredConfig config = jGitRepository.getConfig();
-		config.setString("remote", shortName, "url", url);
-		config.save();
+	public void addRemote(String name, String url) {
+		
+		remotes.put(name, new GitRemote(this, name, url));
+		
+//		StoredConfig config = jGitRepository.getConfig();
+//		config.setString("remote", name, "url", url);
+//		config.save();
+	}
+	
+	public GitRemote getRemote(String name) {
+		return remotes.get(name);
 	}
 	
 	public void createBranch(String branchName) throws InvalidRefNameException, GitAPIException {
