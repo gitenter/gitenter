@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
@@ -14,12 +15,20 @@ import org.junit.rules.TemporaryFolder;
 public class GitBareRepositoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
+	
+	static GitBareRepository getOne(TemporaryFolder folder) throws IOException, GitAPIException {
+		
+		Random rand = new Random();
+		String name = "repo-"+String.valueOf(rand.nextInt(Integer.MAX_VALUE));
+		
+		File directory = folder.newFolder(name+".git");
+		return new GitBareRepository(directory);
+	}
 
 	@Test
 	public void testInit() throws IOException, GitAPIException {
 		
 		File directory = folder.newFolder("repo.git");
-		
 		new GitBareRepository(directory);
 		
 		assertTrue(new File(directory, "branches").isDirectory());
@@ -35,7 +44,6 @@ public class GitBareRepositoryTest {
 	public void testInitFolderNotExist() throws IOException, GitAPIException {
 		
 		File directory = new File("/a/path/which/does/not/exist");
-		
 		new GitBareRepository(directory);
 	}
 	
@@ -60,13 +68,12 @@ public class GitBareRepositoryTest {
 	@Test
 	public void testAddAHook() throws IOException, GitAPIException {
 		
-		File directory = folder.newFolder("repo");
-		File hook = folder.newFile("whatever-name-for-the-hook-file");
+		GitRepository repository = getOne(folder);
 		
-		GitRepository repository = new GitBareRepository(directory);
+		File hook = folder.newFile("whatever-name-for-the-hook-file");
 		repository.addAHook(hook, "pre-receive");
 		
-		File targetHook = new File(new File(directory, "hooks"), "pre-receive");
+		File targetHook = new File(new File(repository.directory, "hooks"), "pre-receive");
 		assertTrue(targetHook.isFile());
 		assertTrue(targetHook.canExecute());
 	}
@@ -74,14 +81,13 @@ public class GitBareRepositoryTest {
 	@Test
 	public void testAddHooks() throws IOException, GitAPIException {
 		
-		File directory = folder.newFolder("repo");
+		GitRepository repository = getOne(folder);
+		
 		File hooks = folder.newFolder("hooks");
 		new File(hooks, "pre-receive").createNewFile();
-		
-		GitRepository repository = new GitBareRepository(directory);
 		repository.addHooks(hooks);
 		
-		File targetHook = new File(new File(directory, "hooks"), "pre-receive");
+		File targetHook = new File(new File(repository.directory, "hooks"), "pre-receive");
 		assertTrue(targetHook.isFile());
 		assertTrue(targetHook.canExecute());
 	}

@@ -47,6 +47,11 @@ public class GitNormalRepository extends GitRepository {
 		buildJGitRepository();
 	}
 	
+	@Override
+	Git getJGitGit() throws IOException {
+		return Git.open(directory);
+	}
+	
 	public void addRemote(String name, String url) {
 		
 		remotes.put(name, new GitRemote(this, name, url));
@@ -60,8 +65,8 @@ public class GitNormalRepository extends GitRepository {
 		return remotes.get(name);
 	}
 	
-	public void createBranch(String branchName) throws InvalidRefNameException, GitAPIException {
-		try (Git git = new Git(jGitRepository)) {
+	public void createBranch(String branchName) throws IOException, GitAPIException {
+		try (Git git = getJGitGit()) {
 			git.branchCreate().setName(branchName).call();
 		}
 	}

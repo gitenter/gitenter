@@ -13,7 +13,7 @@ import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitTag;
 
 public class GitBareRepository extends GitRepository {
-
+	
 	/*
 	 * TODO:
 	 * Further wrap JGit exceptions.
@@ -33,6 +33,11 @@ public class GitBareRepository extends GitRepository {
 		}
 		
 		buildJGitRepository();
+	}
+	
+	@Override
+	Git getJGitGit() {
+		return new Git(jGitRepository);
 	}
 	
 	@Override

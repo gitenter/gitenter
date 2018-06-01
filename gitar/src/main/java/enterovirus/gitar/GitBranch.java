@@ -6,9 +6,6 @@ import java.util.List;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRefNameException;
-import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.lib.Ref;
 
 public class GitBranch {
@@ -29,9 +26,9 @@ public class GitBranch {
 		jGitBranch = repository.jGitRepository.exactRef("refs/heads/"+name);
 	}
 	
-	public boolean exist() throws GitAPIException {
+	public boolean exist() throws IOException, GitAPIException {
 		
-		try (Git git = new Git(repository.jGitRepository)) {
+		try (Git git = repository.getJGitGit()) {
 			List<Ref> call = git.branchList().call();
 			for (Ref ref : call) {
 				if (name.equals(ref.getName().split("/")[2])) {
@@ -46,9 +43,22 @@ public class GitBranch {
 		return new GitCommit(repository, jGitBranch.getObjectId().getName());
 	}
 	
-	public void checkoutTo() throws CheckoutConflictException, GitAPIException {
-		try (Git git = new Git(repository.jGitRepository)) {
-			git.checkout().setName(name).call();
+	public GitWorkspace checkoutTo() throws CheckoutConflictException, GitAPIException, IOException {
+		
+		if (repository.isEmpty()) {
+			/*
+			 * For empty repository, no branch exists. so there is no reason
+			 * to do any real checkout. Just return the home directory.
+			 */
+			;
 		}
+		else {
+			try (Git git = repository.getJGitGit()) {
+				git.checkout().setName(name).call();
+			}
+		}
+		
+		assert repository instanceof GitNormalRepository;
+		return new GitWorkspace(this, (GitNormalRepository)repository);
 	}
 }

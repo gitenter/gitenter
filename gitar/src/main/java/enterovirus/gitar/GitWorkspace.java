@@ -1,6 +1,7 @@
 package enterovirus.gitar;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -23,27 +24,27 @@ public class GitWorkspace extends File {
 		this.repository = repository;
 	}
 	
-	public void add(String pathspec) throws NoFilepatternException, GitAPIException {
-		try (Git git = new Git(repository.jGitRepository)) {
+	public void add(String pathspec) throws IOException, NoFilepatternException, GitAPIException {
+		try (Git git = repository.getJGitGit()) {
 			git.add().addFilepattern(pathspec).call();
 		}
 	}
 	
-	public void add() throws GitAPIException {
+	public void add() throws IOException, GitAPIException {
 		add(".");
 	}
 	
-	public void commit(String message) throws NoMessageException, GitAPIException {
-		try (Git git = new Git(repository.jGitRepository)) {
+	public void commit(String message) throws IOException, NoMessageException, GitAPIException {
+		try (Git git = repository.getJGitGit()) {
 			git.commit().setMessage(message).call();
 		}		
 	}
 	
-	public void push(GitRemote remote) throws TransportException, GitAPIException {
+	public void push(GitRemote remote) throws IOException, TransportException, GitAPIException {
 		
 		assert repository.equals(remote.repository);
 		
-		try (Git git = new Git(repository.jGitRepository)) {
+		try (Git git = repository.getJGitGit()) {
 			/*
 			 * TODO:
 			 * The JGit logic in here is not the same as the git logic.
@@ -63,7 +64,7 @@ public class GitWorkspace extends File {
 		}
 	}
 	
-	public void push(String remoteName) throws TransportException, GitAPIException {
+	public void push(String remoteName) throws IOException, TransportException, GitAPIException {
 		push(repository.getRemote(remoteName));
 	}
 }

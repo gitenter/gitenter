@@ -20,11 +20,28 @@ import enterovirus.gitar.GitTag;
 public abstract class GitRepository {
 	
 	protected final File directory;
+	
+	/*
+	 * TODO:
+	 * This is mostly for bare repository only. Actions are through
+	 * JGit "Git" class which implements "AutoCloseable" (so always
+	 * need to stay in try blocks.
+	 * 
+	 * Consider at least to move this one to GitBareRepository, but
+	 * still need a universal way to get JGit "git" and handle close()
+	 * of it at the same time.
+	 */
 	Repository jGitRepository;
 
 	public File getDirectory() {
 		return directory;
 	}
+	
+	public GitRepository(File directory) {
+		this.directory = directory;
+	}
+	
+	abstract Git getJGitGit() throws IOException;
 	
 	protected boolean isNormalRepository() {
 		/*
@@ -60,8 +77,22 @@ public abstract class GitRepository {
 		jGitRepository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
 	}
 	
-	public GitRepository(File directory) {
-		this.directory = directory;
+	public boolean isEmpty() throws IOException, GitAPIException {
+		
+		/*
+		 * This is a hack, that a just initialized repository doesn't
+		 * have any branch (even master does not exist).
+		 * 
+		 * TODO:
+		 * Consider using other ways to decide if a repository is empty.
+		 * For example, to check that no HEAD exists yet.
+		 */
+		if (getBranches().isEmpty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public GitCommit getCommit(String shaChecksumHash) throws IOException {
@@ -75,7 +106,7 @@ public abstract class GitRepository {
 	public Collection<GitBranch> getBranches() throws IOException, GitAPIException {
 		
 		Collection<GitBranch> branches = new ArrayList<GitBranch>();
-		try (Git git = new Git(jGitRepository)) {
+		try (Git git = getJGitGit()) {
 			List<Ref> call = git.branchList().call();
 			for (Ref ref : call) {
 				/*
@@ -87,6 +118,10 @@ public abstract class GitRepository {
 		}
 		
 		return branches;
+	}
+	
+	public GitBranch getCurrentBranch() throws IOException {
+		return new GitBranch(this, jGitRepository.getFullBranch());
 	}
 	
 	public GitTag getTag(String tagName) throws IOException {
