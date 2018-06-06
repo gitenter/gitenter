@@ -10,8 +10,8 @@ import org.eclipse.jgit.lib.Ref;
 
 public class GitBranch {
 
-	private final String name;
-	private final GitRepository repository;
+	protected final String name;
+	protected final GitRepository repository;
 	
 	private Ref jGitBranch;
 	
@@ -41,24 +41,5 @@ public class GitBranch {
 	
 	public GitCommit getHead() throws IOException {
 		return new GitCommit(repository, jGitBranch.getObjectId().getName());
-	}
-	
-	public GitWorkspace checkoutTo() throws CheckoutConflictException, GitAPIException, IOException {
-		
-		if (repository.isEmpty()) {
-			/*
-			 * For empty repository, no branch exists. so there is no reason
-			 * to do any real checkout. Just return the home directory.
-			 */
-			;
-		}
-		else {
-			try (Git git = repository.getJGitGit()) {
-				git.checkout().setName(name).call();
-			}
-		}
-		
-		assert repository instanceof GitNormalRepository;
-		return new GitWorkspace(this, (GitNormalRepository)repository);
 	}
 }

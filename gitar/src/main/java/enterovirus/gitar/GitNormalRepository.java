@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -67,6 +68,26 @@ public class GitNormalRepository extends GitRepository {
 	
 	public GitRemote getRemote(String name) {
 		return remotes.get(name);
+	}
+	
+	@Override
+	public GitNormalBranch getBranch(String branchName) throws IOException, CheckoutConflictException, GitAPIException {
+		return new GitNormalBranch(super.getBranch(branchName));
+	}
+	
+	@Override
+	public Collection<GitBranch> getBranches() throws IOException, GitAPIException {
+		
+		/*
+		 * Because `Collection<GitNormalBranch>` is not a superclass of
+		 * `Collection<GitBranch>`, we still need to return the later one.
+		 */
+		Collection<GitBranch> normalBranches = new ArrayList<GitBranch>();
+		for (GitBranch branch : super.getBranches()) {
+			normalBranches.add(new GitNormalBranch(branch));
+		}
+		
+		return normalBranches;
 	}
 	
 	/*

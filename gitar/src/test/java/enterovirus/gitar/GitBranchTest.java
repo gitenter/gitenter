@@ -26,7 +26,7 @@ public class GitBranchTest {
 		
 		GitNormalRepository repository = GitNormalRepositoryTest.getOne(folder);
 		
-		GitBranch master = repository.getBranch("master");
+		GitNormalBranch master = repository.getBranch("master");
 		assertFalse(master.exist());
 		assertEquals(repository.getBranches().size(), 0);
 		assertEquals(repository.getCurrentBranch().getName(), "master");
@@ -44,7 +44,7 @@ public class GitBranchTest {
 		
 		GitNormalRepository repository = GitNormalRepositoryTest.getOne(folder);
 		
-		GitBranch master = repository.getBranch("master");
+		GitNormalBranch master = repository.getBranch("master");
 		GitWorkspace workspace = master.checkoutTo();
 		GitWorkspaceTest.addACommit(workspace);
 		
