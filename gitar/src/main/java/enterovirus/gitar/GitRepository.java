@@ -31,7 +31,7 @@ public abstract class GitRepository {
 	 * still need a universal way to get JGit "git" and handle close()
 	 * of it at the same time.
 	 */
-	Repository jGitRepository;
+	
 
 	public File getDirectory() {
 		return directory;
@@ -42,6 +42,7 @@ public abstract class GitRepository {
 	}
 	
 	abstract Git getJGitGit() throws IOException;
+	abstract Repository getJGitRepository() throws IOException;
 	
 	protected boolean isNormalRepository() {
 		/*
@@ -72,11 +73,6 @@ public abstract class GitRepository {
 		return true;
 	}
 	
-	protected void buildJGitRepository() throws IOException {
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		jGitRepository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
-	}
-	
 	public boolean isEmpty() throws IOException, GitAPIException {
 		
 		/*
@@ -103,6 +99,10 @@ public abstract class GitRepository {
 		return new GitBranch(this, branchName);
 	}
 	
+	/*
+	 * An empty normal/bare repository don't have any branch. After the first
+	 * commit, the "master" branch appears. 
+	 */
 	public Collection<GitBranch> getBranches() throws IOException, GitAPIException {
 		
 		Collection<GitBranch> branches = new ArrayList<GitBranch>();
@@ -120,12 +120,36 @@ public abstract class GitRepository {
 		return branches;
 	}
 	
-	public GitBranch getCurrentBranch() throws IOException {
-		return new GitBranch(this, jGitRepository.getFullBranch());
+	
+	/* 
+	 * Create new branch is not working when when the repository is empty
+	 * (without any commit), with the error message: 
+	 * > fatal: Not a valid object name: 'master'.
+	 * 
+	 * Create new branch works for a normal/bare repository which has at least
+	 * one commit. However, for bare repository one cannot checkout since there
+	 * is no work tree.
+	 */
+	public void createBranch(String branchName) throws IOException, GitAPIException {
+		try (Git git = getJGitGit()) {
+			git.branchCreate().setName(branchName).call();
+		}
 	}
 	
 	public GitTag getTag(String tagName) throws IOException {
 		return new GitTag(this, tagName);
+	}
+	
+	/* 
+	 * Create new tag is not working when when the repository is empty
+	 * (without any commit), with the error message: 
+	 * > fatal: Failed to resolve 'HEAD' as a valid ref.
+	 * 
+	 * Create new tag works for a normal/bare repository which has at least
+	 * one commit. 
+	 */
+	public void createTag(String tagName) {
+		
 	}
 	
 	public void addAHook(File filepath, String hookName) throws IOException {

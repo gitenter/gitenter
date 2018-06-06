@@ -27,7 +27,7 @@ public class GitCommit {
 		
 		objectId = ObjectId.fromString(shaChecksumHash);
 		
-		try (RevWalk revWalk = new RevWalk(repository.jGitRepository)) {
+		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
 			jGitCommit = revWalk.parseCommit(objectId);
 		}
 	}

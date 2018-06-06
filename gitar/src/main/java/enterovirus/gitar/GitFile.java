@@ -21,7 +21,7 @@ public class GitFile extends GitPath {
 		super(commit, relativePath);
 		
 		RevTree revTree = commit.jGitCommit.getTree();
-		try (TreeWalk treeWalk = new TreeWalk(commit.repository.jGitRepository)) {
+		try (TreeWalk treeWalk = new TreeWalk(commit.repository.getJGitRepository())) {
 			
 			treeWalk.addTree(revTree);
 			treeWalk.setRecursive(true);
@@ -40,7 +40,7 @@ public class GitFile extends GitPath {
 				 */
 				throw new FileNotFoundException("Did not find expected file with relative path \""+relativePath+"\".");
 			}
-			ObjectLoader loader = commit.repository.jGitRepository.open(treeWalk.getObjectId(0));
+			ObjectLoader loader = commit.repository.getJGitRepository().open(treeWalk.getObjectId(0));
 			blobContent = loader.getBytes();
 		}
 	}

@@ -16,6 +16,7 @@ import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
@@ -43,13 +44,16 @@ public class GitNormalRepository extends GitRepository {
 		else if (!isNormalRepository()) {
 			Git.init().setDirectory(directory).setBare(false).call();
 		}
-		
-		buildJGitRepository();
 	}
 	
 	@Override
 	Git getJGitGit() throws IOException {
 		return Git.open(directory);
+	}
+	
+	@Override
+	Repository getJGitRepository() throws IOException {
+		return getJGitGit().getRepository();
 	}
 	
 	public void addRemote(String name, String url) {
@@ -65,10 +69,12 @@ public class GitNormalRepository extends GitRepository {
 		return remotes.get(name);
 	}
 	
-	public void createBranch(String branchName) throws IOException, GitAPIException {
-		try (Git git = getJGitGit()) {
-			git.branchCreate().setName(branchName).call();
-		}
+	/*
+	 * Get current branch returns "master" even for an empty repository which 
+	 * `getBranches()` returns zero branch.
+	 */
+	public GitBranch getCurrentBranch() throws IOException {
+		return new GitBranch(this, getJGitRepository().getBranch());
 	}
 	
 	@Override

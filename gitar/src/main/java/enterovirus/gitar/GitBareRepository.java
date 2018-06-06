@@ -7,12 +7,15 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import enterovirus.gitar.GitBranch;
 import enterovirus.gitar.GitTag;
 
 public class GitBareRepository extends GitRepository {
+	
+	private Repository jGitRepository;
 	
 	/*
 	 * TODO:
@@ -35,9 +38,19 @@ public class GitBareRepository extends GitRepository {
 		buildJGitRepository();
 	}
 	
+	private void buildJGitRepository() throws IOException {
+		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+		jGitRepository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
+	}
+	
 	@Override
 	Git getJGitGit() {
 		return new Git(jGitRepository);
+	}
+	
+	@Override
+	Repository getJGitRepository() {
+		return jGitRepository;
 	}
 	
 	@Override

@@ -23,7 +23,7 @@ public class GitBranch {
 		this.repository = repository;
 		this.name = name;
 		
-		jGitBranch = repository.jGitRepository.exactRef("refs/heads/"+name);
+		jGitBranch = repository.getJGitRepository().exactRef("refs/heads/"+name);
 	}
 	
 	public boolean exist() throws IOException, GitAPIException {

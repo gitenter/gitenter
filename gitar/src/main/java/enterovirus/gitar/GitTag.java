@@ -19,7 +19,7 @@ public class GitTag {
 		this.repository = repository;
 		this.name = name;
 		
-		jGitTag = repository.jGitRepository.exactRef("refs/tags/"+name);
+		jGitTag = repository.getJGitRepository().exactRef("refs/tags/"+name);
 	}
 	
 	/*

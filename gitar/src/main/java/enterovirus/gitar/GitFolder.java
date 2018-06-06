@@ -45,7 +45,7 @@ public class GitFolder extends GitPath {
 		super(commit, relativePath);
 		
 		RevTree revTree = commit.jGitCommit.getTree();
-		try (TreeWalk treeWalk = new TreeWalk(commit.repository.jGitRepository)) {
+		try (TreeWalk treeWalk = new TreeWalk(commit.repository.getJGitRepository())) {
 			
 			treeWalk.addTree(revTree);
 			treeWalk.setRecursive(true);

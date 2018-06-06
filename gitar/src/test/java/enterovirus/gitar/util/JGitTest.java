@@ -51,21 +51,22 @@ public class JGitTest {
 		File directory = folder.newFolder("repo");
 		Git.init().setDirectory(directory).setBare(false).call();
 		
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(directory).readEnvironment().findGitDir().build();
-		
-		System.out.println("alalala"+repository.getBranch());
-		
 		new File(directory, "a-file").createNewFile();
 		
 		try (Git git = Git.open(directory)) {
+			
+			Repository repository = git.getRepository();
+			
+			assertEquals(0, git.branchList().call().size());
+			assertEquals("master", repository.getBranch());
+			
 			git.add().addFilepattern(".").call();
 			git.commit().setMessage("a message").call();
 			
-			System.out.println(git.branchList().call().size());
+			assertEquals(0, git.branchList().call().size());
 			git.checkout().setName("master").call();
+			
+			assertEquals("master", repository.getBranch());
 		}
-		
-		System.out.println("alaaalala"+repository.getBranch()); // should return some reasonable thing, but actually return null.
 	}
 }
