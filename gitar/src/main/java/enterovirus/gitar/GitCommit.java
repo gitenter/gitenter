@@ -8,21 +8,33 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public class GitCommit {
 	
+	private final String shaChecksumHash;
 	final GitRepository repository;
 	
-	protected final ObjectId objectId;
 	final RevCommit jGitCommit;
 	
 	public String getShaChecksumHash() {
-		return objectId.getName();
+		return shaChecksumHash;
+	}
+	
+	/*
+	 * Even if RevCommit is a subclass of ObjectId, we cannot remove objectId
+	 * since they are raising different errors. 
+	 * 
+	 * For example, For GitTag.downCasting() to decide whether the tag is 
+	 * annotated or not, by using jGitCommit annotated tags will raise the
+	 * same error. Here we want to clear new ObjectId.
+	 */
+	protected ObjectId getObjectId() {
+		return ObjectId.fromString(shaChecksumHash);
 	}
 	
 	GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
+		this.shaChecksumHash = shaChecksumHash;
 		this.repository = repository;
 		
-		objectId = ObjectId.fromString(shaChecksumHash);
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
-			jGitCommit = revWalk.parseCommit(objectId);
+			jGitCommit = revWalk.parseCommit(getObjectId());
 		}
 	}
 	

@@ -37,5 +37,7 @@ public class GitTagTest {
 		
 		repository.createTag("an-annotated-tag", "tag message");
 		assertTrue(repository.getTag("an-annotated-tag") instanceof GitAnnotatedTag);
+		
+		assertEquals(repository.getTags().size(), 2);
 	}
 }

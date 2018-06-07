@@ -23,7 +23,7 @@ public class GitTag extends GitCommit {
 	GitTag downCasting() throws IOException {
 		
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
-			RevTag jGitTag = revWalk.parseTag(objectId);
+			RevTag jGitTag = revWalk.parseTag(getObjectId());
 			return new GitAnnotatedTag(this, jGitTag);
 		}
 		catch(IncorrectObjectTypeException notAnAnnotatedTag) {
