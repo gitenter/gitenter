@@ -8,19 +8,17 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public class GitCommit {
 	
-	private final String shaChecksumHash;
 	final GitRepository repository;
 	
-	private final ObjectId objectId;
-	RevCommit jGitCommit;
+	protected final ObjectId objectId;
+	final RevCommit jGitCommit;
 	
 	public String getShaChecksumHash() {
-		return shaChecksumHash;
+		return objectId.getName();
 	}
 	
 	GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
 		this.repository = repository;
-		this.shaChecksumHash = shaChecksumHash;
 		
 		objectId = ObjectId.fromString(shaChecksumHash);
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {

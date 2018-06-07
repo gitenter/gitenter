@@ -8,7 +8,7 @@ public class GitAnnotatedTag extends GitTag {
 	
 	private final String message;
 	
-	RevTag jGitTag;
+	final RevTag jGitTag;
 
 	public String getMessage() {
 		return message;

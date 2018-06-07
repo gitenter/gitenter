@@ -9,7 +9,7 @@ public class GitBranch {
 	protected final String name;
 	protected final GitRepository repository;
 	
-	private Ref jGitBranch;
+	private final Ref jGitBranch;
 	
 	public String getName() {
 		return name;
