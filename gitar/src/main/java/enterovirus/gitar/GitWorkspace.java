@@ -63,8 +63,4 @@ public class GitWorkspace extends File {
 			git.push().setRemote(remote.url).setRefSpecs(spec).call();
 		}
 	}
-	
-	public void push(String remoteName) throws IOException, TransportException, GitAPIException {
-		push(repository.getRemote(remoteName));
-	}
 }

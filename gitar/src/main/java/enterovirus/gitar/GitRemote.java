@@ -2,7 +2,7 @@ package enterovirus.gitar;
 
 public class GitRemote {
 
-	private final String name;
+	final String name;
 	final String url;
 
 	final GitRepository repository;

@@ -18,13 +18,24 @@ public class GitNormalRepositoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 	
-	static GitNormalRepository getOne(TemporaryFolder folder) throws IOException, GitAPIException {
+	static GitNormalRepository getOneEmpty(TemporaryFolder folder) throws IOException, GitAPIException {
 		
 		Random rand = new Random();
 		String name = "repo-"+String.valueOf(rand.nextInt(Integer.MAX_VALUE));
 		
 		File directory = folder.newFolder(name);
 		return new GitNormalRepository(directory);
+	}
+	
+	static GitNormalRepository getOneWithCommit(TemporaryFolder folder) throws IOException, GitAPIException {
+		
+		GitNormalRepository repository = getOneEmpty(folder);
+		
+		GitNormalBranch master = repository.getCurrentBranch();
+		GitWorkspace workspace = master.checkoutTo();
+		GitWorkspaceTest.addACommit(workspace);
+		
+		return repository;
 	}
 
 	@Test
@@ -62,41 +73,17 @@ public class GitNormalRepositoryTest {
 	}
 	
 	@Test
-	public void testRemote() throws IOException, GitAPIException {
+	public void testCreateAndUpdateAndGetRemote() throws IOException, GitAPIException {
 	
-		GitNormalRepository repository = getOne(folder);
+		GitNormalRepository repository = getOneEmpty(folder);
 		
-		repository.addRemote("origin", "/fake/url");
-		assertEquals(repository.getRemote("origin").url, "/fake/url");
-	}
-	
-	@Test
-	public void testBranch() throws IOException, GitAPIException {
+		repository.createOrUpdateRemote("origin", "/fake/url");
+		GitRemote origin = repository.getRemote("origin");
+		assertEquals(origin.name, "origin");
+		assertEquals(origin.url, "/fake/url");
 		
-		File directory = folder.newFolder("repo");
-		GitNormalRepository repository = new GitNormalRepository(directory);
-		
-		assertFalse(repository.getBranch("branch-not-exist").exist());
-		
-		/* 
-		 * This behavior is actually the same as git (although some editors
-		 * like atom cheats). 
-		 * 
-		 * No branch exists when there is no commit. After the first commit
-		 * "master" branch appears. Also, one cannot create a new branch
-		 * if no commit exists (so the bug in https://bugs.eclipse.org/bugs/show_bug.cgi?id=349667
-		 * is actually actually not correct).
-		 * 
-		 * After the first commit, "master" branch appears, and user can
-		 * also create a new branch.
-		 */
-		assertFalse(repository.getBranch("master").exist());
-		
-		try {
-			repository.createBranch("new-branch");
-		}
-		catch (RefNotFoundException e) {
-			; //ignore
-		}
+		repository.createOrUpdateRemote("origin", "/another/fake/url");
+		origin = repository.getRemote("origin");
+		assertEquals(origin.url, "/another/fake/url");
 	}
 }

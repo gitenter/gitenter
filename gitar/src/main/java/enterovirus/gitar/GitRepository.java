@@ -8,14 +8,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-
-import enterovirus.gitar.GitBranch;
-import enterovirus.gitar.GitTag;
 
 public abstract class GitRepository {
 	
@@ -95,8 +91,24 @@ public abstract class GitRepository {
 		return new GitCommit(this, shaChecksumHash);
 	}
 
-	public GitBranch getBranch(String branchName) throws IOException, CheckoutConflictException, GitAPIException {
-		return new GitBranch(this, branchName);
+	public GitBranch getBranch(String branchName) throws IOException, GitAPIException {
+		
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.branchList().call();
+			for (Ref ref : call) {
+				if (branchName.equals(ref.getName().split("/")[2])) {
+					return new GitBranch(this, branchName);
+				}
+			}
+		}
+		
+		/*
+		 * TODO:
+		 * 
+		 * Consider raise an error rather than return null if the targeting branch
+		 * is not existed.
+		 */
+		return null;
 	}
 	
 	/*
@@ -113,7 +125,8 @@ public abstract class GitRepository {
 				 * Parse "refs/heads/master" and get the name "master".
 				 * So for other branches.
 				 */
-				branches.add(new GitBranch(this, ref.getName().split("/")[2]));
+				String branchName = ref.getName().split("/")[2];
+				branches.add(new GitBranch(this, branchName));
 			}
 		}
 		
@@ -136,8 +149,32 @@ public abstract class GitRepository {
 		}
 	}
 	
-	public GitTag getTag(String tagName) throws IOException {
-		return new GitTag(this, tagName);
+	public GitTag getTag(String tagName) throws IOException, GitAPIException {
+		
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.tagList().call();
+			for (Ref ref : call) {
+				if (tagName.equals(ref.getName().split("/")[2])) {
+					return new GitTag(this, tagName).downcasting();
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public Collection<GitTag> getTags() throws IOException, GitAPIException {
+		
+		Collection<GitTag> tags = new ArrayList<GitTag>();
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.tagList().call();
+			for (Ref ref : call) {
+				String tagName = ref.getName().split("/")[2];
+				tags.add(new GitTag(this, tagName).downcasting());
+			}
+		}
+		
+		return tags;
 	}
 	
 	/* 
@@ -148,8 +185,23 @@ public abstract class GitRepository {
 	 * Create new tag works for a normal/bare repository which has at least
 	 * one commit. 
 	 */
-	public void createTag(String tagName) {
-		
+	public void createTag(String tagName) throws NoHeadException, GitAPIException, IOException {
+		try (Git git = getJGitGit()) {
+			/*
+			 * It is weird in here. In Git if you
+			 * > git tag -a tag-name
+			 * without "-m", Git will redirect you to a text editor.
+			 * But if I do not have "setAnnotated(false)" in here, will
+			 * JGit redirect me to any kind of editors!?
+			 */
+			git.tag().setName(tagName).setAnnotated(false).call();
+		}
+	}
+
+	public void createTag(String tagName, String message) throws NoHeadException, GitAPIException, IOException {
+		try (Git git = getJGitGit()) {
+			git.tag().setName(tagName).setMessage(message).call();
+		}
 	}
 	
 	public void addAHook(File filepath, String hookName) throws IOException {

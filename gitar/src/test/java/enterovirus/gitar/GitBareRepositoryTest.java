@@ -16,7 +16,7 @@ public class GitBareRepositoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 	
-	static GitBareRepository getOne(TemporaryFolder folder) throws IOException, GitAPIException {
+	static GitBareRepository getOneEmpty(TemporaryFolder folder) throws IOException, GitAPIException {
 		
 		Random rand = new Random();
 		String name = "repo-"+String.valueOf(rand.nextInt(Integer.MAX_VALUE));
@@ -25,6 +25,18 @@ public class GitBareRepositoryTest {
 		return new GitBareRepository(directory);
 	}
 
+	static GitBareRepository getOneWithCommit(TemporaryFolder folder) throws IOException, GitAPIException {
+		
+		GitBareRepository repository = getOneEmpty(folder);
+		
+		GitNormalRepository localRepository = GitNormalRepositoryTest.getOneWithCommit(folder);
+		localRepository.createOrUpdateRemote("origin", repository.directory.toString());
+		GitRemote origin = localRepository.getRemote("origin");
+		localRepository.getCurrentBranch().checkoutTo().push(origin);
+		
+		return repository;
+	}
+	
 	@Test
 	public void testInit() throws IOException, GitAPIException {
 		
@@ -68,7 +80,7 @@ public class GitBareRepositoryTest {
 	@Test
 	public void testAddAHook() throws IOException, GitAPIException {
 		
-		GitRepository repository = getOne(folder);
+		GitRepository repository = getOneEmpty(folder);
 		
 		File hook = folder.newFile("whatever-name-for-the-hook-file");
 		repository.addAHook(hook, "pre-receive");
@@ -81,7 +93,7 @@ public class GitBareRepositoryTest {
 	@Test
 	public void testAddHooks() throws IOException, GitAPIException {
 		
-		GitRepository repository = getOne(folder);
+		GitRepository repository = getOneEmpty(folder);
 		
 		File hooks = folder.newFolder("hooks");
 		new File(hooks, "pre-receive").createNewFile();

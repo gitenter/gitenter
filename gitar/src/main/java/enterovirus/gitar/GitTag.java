@@ -2,14 +2,24 @@ package enterovirus.gitar;
 
 import java.io.IOException;
 
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevTag;
+import org.eclipse.jgit.revwalk.RevWalk;
 
 public class GitTag {
 
-	private final String name;
-	private final GitRepository repository;
+	protected final String name;
+	protected final GitRepository repository;
 	
-	private Ref jGitTag;
+	/*
+	 * TODO:
+	 * 
+	 * As the structure are really similar, should GitTag be actually
+	 * a subclass of GitCommit?
+	 */
+	Ref ref;
 	
 	public String getName() {
 		return name;
@@ -19,7 +29,18 @@ public class GitTag {
 		this.repository = repository;
 		this.name = name;
 		
-		jGitTag = repository.getJGitRepository().exactRef("refs/tags/"+name);
+		ref = repository.getJGitRepository().exactRef("refs/tags/"+name);
+	}
+	
+	GitTag downcasting() throws IOException {
+		
+		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
+			RevTag jGitTag = revWalk.parseTag(ref.getObjectId());
+			return new GitAnnotatedTag(this, jGitTag);
+		}
+		catch(IncorrectObjectTypeException notAnAnnotatedTag) {
+			return new GitLightweightTag(this);
+		}
 	}
 	
 	/*
@@ -28,6 +49,6 @@ public class GitTag {
 	 * Consider to setup some structure later.
 	 */
 	public GitCommit getCommit() throws IOException {
-		return new GitCommit(repository, jGitTag.getObjectId().getName());
+		return new GitCommit(repository, ref.getObjectId().getName());
 	}
 }

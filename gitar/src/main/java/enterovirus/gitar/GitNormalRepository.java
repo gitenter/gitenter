@@ -7,22 +7,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRefNameException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
-import org.eclipse.jgit.api.errors.TransportException;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.StoredConfig;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-
-import enterovirus.gitar.GitBranch;
-import enterovirus.gitar.GitTag;
 
 public class GitNormalRepository extends GitRepository {
 	
@@ -57,13 +45,8 @@ public class GitNormalRepository extends GitRepository {
 		return getJGitGit().getRepository();
 	}
 	
-	public void addRemote(String name, String url) {
-		
+	public void createOrUpdateRemote(String name, String url) {	
 		remotes.put(name, new GitRemote(this, name, url));
-		
-//		StoredConfig config = jGitRepository.getConfig();
-//		config.setString("remote", name, "url", url);
-//		config.save();
 	}
 	
 	public GitRemote getRemote(String name) {
@@ -72,7 +55,13 @@ public class GitNormalRepository extends GitRepository {
 	
 	@Override
 	public GitNormalBranch getBranch(String branchName) throws IOException, CheckoutConflictException, GitAPIException {
-		return new GitNormalBranch(super.getBranch(branchName));
+		GitBranch branch = super.getBranch(branchName);
+		if (branch != null) {
+			return new GitNormalBranch(branch);
+		}
+		else {
+			return null;
+		}
 	}
 	
 	@Override
@@ -94,8 +83,8 @@ public class GitNormalRepository extends GitRepository {
 	 * Get current branch returns "master" even for an empty repository which 
 	 * `getBranches()` returns zero branch.
 	 */
-	public GitBranch getCurrentBranch() throws IOException {
-		return new GitBranch(this, getJGitRepository().getBranch());
+	public GitNormalBranch getCurrentBranch() throws IOException {
+		return new GitNormalBranch(this, getJGitRepository().getBranch());
 	}
 	
 	@Override

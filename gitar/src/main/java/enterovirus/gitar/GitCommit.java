@@ -4,10 +4,7 @@ import java.io.IOException;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 public class GitCommit {
 	
@@ -26,7 +23,6 @@ public class GitCommit {
 		this.shaChecksumHash = shaChecksumHash;
 		
 		objectId = ObjectId.fromString(shaChecksumHash);
-		
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
 			jGitCommit = revWalk.parseCommit(objectId);
 		}
