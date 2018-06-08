@@ -6,9 +6,11 @@ import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.revwalk.RevWalk;
 
-public class GitTag extends GitCommit {
+public class GitTag {
 
 	protected final String name;
+	
+	final GitCommit commit;
 	
 	public String getName() {
 		return name;
@@ -16,18 +18,23 @@ public class GitTag extends GitCommit {
 
 	GitTag(GitRepository repository, String name) throws IOException {
 		
-		super(repository, repository.getJGitRepository().exactRef("refs/tags/"+name).getObjectId().getName());
 		this.name = name;
+		
+		this.commit = repository.getCommit(repository.getJGitRepository().exactRef("refs/tags/"+name).getObjectId().getName());
 	}
 	
 	GitTag downCasting() throws IOException {
 		
-		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
-			RevTag jGitTag = revWalk.parseTag(getObjectId());
+		try (RevWalk revWalk = new RevWalk(commit.repository.getJGitRepository())) {
+			RevTag jGitTag = revWalk.parseTag(commit.getObjectId());
 			return new GitAnnotatedTag(this, jGitTag);
 		}
 		catch(IncorrectObjectTypeException notAnAnnotatedTag) {
 			return new GitLightweightTag(this);
 		}
+	}
+	
+	public GitCommit getHead() {
+		return commit;
 	}
 }

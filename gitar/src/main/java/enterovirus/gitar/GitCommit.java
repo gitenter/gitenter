@@ -23,6 +23,12 @@ public class GitCommit {
 	
 	final GitRepository repository;
 	
+	/*
+	 * TODO:
+	 * 
+	 * Currently GitFile and GitFolder need to use it. Later on to find out
+	 * a way to keep it private.
+	 */
 	final RevCommit jGitCommit;
 	
 	public int getTime() {

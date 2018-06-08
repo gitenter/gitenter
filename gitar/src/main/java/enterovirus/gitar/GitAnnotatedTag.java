@@ -6,18 +6,18 @@ import org.eclipse.jgit.revwalk.RevTag;
 
 public class GitAnnotatedTag extends GitTag {
 	
-	private final String tagMessage;
+	private final String message;
 	
 	private final RevTag jGitTag;
 
 	public String getMessage() {
-		return tagMessage;
+		return message;
 	}
 
 	GitAnnotatedTag(GitTag tag, RevTag jGitTag) throws IOException {
-		super(tag.repository, tag.name);
+		super(tag.commit.repository, tag.name);
 		this.jGitTag = jGitTag;
-		this.tagMessage = jGitTag.getFullMessage();
+		this.message = jGitTag.getFullMessage();
 	}
 
 }
