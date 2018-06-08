@@ -38,7 +38,7 @@ public class GitLog {
 		}
 	}
 
-	public GitLog(File repositoryDirectory, BranchName branchName, Integer maxCount, Integer skip) throws IOException, GitAPIException {
+	public GitLog(File repositoryDirectory, BranchName branchName, int maxCount, int skip) throws IOException, GitAPIException {
 		
 		/*
 		 * The JGit function is compatible with branch name with the form

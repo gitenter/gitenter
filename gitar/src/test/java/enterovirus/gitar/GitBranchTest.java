@@ -94,7 +94,7 @@ public class GitBranchTest {
 	}
 	
 	@Test
-	public void testGetLogNormalRepository() throws IOException, GitAPIException  {
+	public void testGetLogNormalRepository() throws IOException, GitAPIException {
 		
 		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
 		
@@ -102,15 +102,23 @@ public class GitBranchTest {
 		GitWorkspace workspace = master.checkoutTo();
 		GitWorkspaceTest.addACommit(workspace, "First commit message to test getLog()");
 		GitWorkspaceTest.addACommit(workspace, "Second commit message to test getLog()");
+		GitWorkspaceTest.addACommit(workspace, "Third commit message to test getLog()");
 		
 		List<GitCommit> log = master.getLog();
-		assertEquals(log.size(), 2);
+		assertEquals(log.size(), 3);
+		assertEquals(log.get(0).getMessage(), "Third commit message to test getLog()");
+		assertEquals(log.get(1).getMessage(), "Second commit message to test getLog()");
+		assertEquals(log.get(2).getMessage(), "First commit message to test getLog()");
+		
+		log = master.getLog(1, 1);
+		assertEquals(log.size(), 1);
 		assertEquals(log.get(0).getMessage(), "Second commit message to test getLog()");
-		assertEquals(log.get(1).getMessage(), "First commit message to test getLog()");
 		
 		/*
 		 * TODO:
 		 * A way to overwrite system (git, not jGit) setup of user and email?
+		 * Try to use Mockito but not successful yet. I don't know how to mock a method
+		 * hidden inside of the class method logic.
 		 */
 //		System.out.println(log.get(0).getAuthor().getName());
 	}

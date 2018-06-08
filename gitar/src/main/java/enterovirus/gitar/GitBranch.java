@@ -37,17 +37,35 @@ public class GitBranch {
 	 */
 	public List<GitCommit> getLog() throws IOException, NoHeadException, GitAPIException {
 		
-		List<GitCommit> commits = new ArrayList<GitCommit>();
 		try (Git git = repository.getJGitGit()) {
 			Iterable<RevCommit> jGitCommits = git.log()
 					.add(repository.getJGitRepository().resolve(name))
 					.call();
 			
-			for (RevCommit jGitCommit : jGitCommits) {
-				commits.add(new GitCommit(repository, jGitCommit));
-			}
-			
-			return commits;
+			return buildCommits(jGitCommits);
 		}
+	}
+	
+	public List<GitCommit> getLog(Integer maxCount, Integer skip) throws IOException, NoHeadException, GitAPIException {
+		
+		try (Git git = repository.getJGitGit()) {
+			Iterable<RevCommit> jGitCommits = git.log()
+					.add(repository.getJGitRepository().resolve(name))
+					.setMaxCount(maxCount)
+					.setSkip(skip)
+					.call();
+			
+			return buildCommits(jGitCommits);
+		}
+	}
+	
+	private List<GitCommit> buildCommits(Iterable<RevCommit> jGitCommits) {
+		
+		List<GitCommit> commits = new ArrayList<GitCommit>();
+		for (RevCommit jGitCommit : jGitCommits) {
+			commits.add(new GitCommit(repository, jGitCommit));
+		}
+		
+		return commits;
 	}
 }
