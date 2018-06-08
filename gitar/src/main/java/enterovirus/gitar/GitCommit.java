@@ -1,6 +1,7 @@
 package enterovirus.gitar;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -8,20 +9,12 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public class GitCommit {
 	
-	/* 
-	 * TODO:
-	 * Consider another Java class for date/time operations? 
-	 */
-	private final int time;
+	private final Date time;
 	private final String message;
 	private final String shaChecksumHash;
 	
-	/*
-	 * TODO:
-	 * Add commit user information.
-	 */
-	
 	final GitRepository repository;
+	final GitAuthor author;
 	
 	/*
 	 * TODO:
@@ -31,7 +24,7 @@ public class GitCommit {
 	 */
 	final RevCommit jGitCommit;
 	
-	public int getTime() {
+	public Date getTime() {
 		return time;
 	}
 
@@ -41,6 +34,10 @@ public class GitCommit {
 	
 	public String getShaChecksumHash() {
 		return shaChecksumHash;
+	}
+	
+	public GitAuthor getAuthor() {
+		return author;
 	}
 	
 	/*
@@ -61,8 +58,19 @@ public class GitCommit {
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
 			jGitCommit = revWalk.parseCommit(getObjectId());
 			
-			this.time = jGitCommit.getCommitTime();
+			/*
+			 * JGit getCommitTime(): time, expressed as seconds since the epoch.
+			 * http://download.eclipse.org/jgit/docs/jgit-2.0.0.201206130900-r/apidocs/org/eclipse/jgit/revwalk/RevCommit.html#getCommitTime()
+			 * 
+			 * java.sql.Timestamp(long time): Constructs a Timestamp object using a milliseconds time value.
+			 * https://docs.oracle.com/javase/8/docs/api/java/sql/Timestamp.html
+			 * 
+			 * So here need to do the transformation.
+			 */
+			this.time = new Date(jGitCommit.getCommitTime()*1000L);
 			this.message = jGitCommit.getFullMessage();
+			
+			this.author = new GitAuthor(this, jGitCommit.getAuthorIdent());
 		}
 		
 		this.repository = repository;
@@ -70,11 +78,12 @@ public class GitCommit {
 	
 	GitCommit (GitRepository repository, RevCommit jGitCommit) {
 		
-		this.time = jGitCommit.getCommitTime();
+		this.time = new Date(jGitCommit.getCommitTime()*1000L);
 		this.message = jGitCommit.getFullMessage();
 		this.shaChecksumHash = jGitCommit.getName();
 		
 		this.repository = repository;
+		this.author = new GitAuthor(this, jGitCommit.getAuthorIdent());
 		
 		this.jGitCommit = jGitCommit;
 	}

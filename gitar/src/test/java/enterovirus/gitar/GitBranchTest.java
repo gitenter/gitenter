@@ -107,5 +107,11 @@ public class GitBranchTest {
 		assertEquals(log.size(), 2);
 		assertEquals(log.get(0).getMessage(), "Second commit message to test getLog()");
 		assertEquals(log.get(1).getMessage(), "First commit message to test getLog()");
+		
+		/*
+		 * TODO:
+		 * A way to overwrite system (git, not jGit) setup of user and email?
+		 */
+//		System.out.println(log.get(0).getAuthor().getName());
 	}
 }
