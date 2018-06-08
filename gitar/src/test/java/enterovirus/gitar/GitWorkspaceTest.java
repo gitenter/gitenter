@@ -11,14 +11,14 @@ import org.junit.Test;
 
 public class GitWorkspaceTest {
 
-	static void addACommit(GitWorkspace workspace) throws IOException, GitAPIException {
+	static void addACommit(GitWorkspace workspace, String commitMessage) throws IOException, GitAPIException {
 		
 		Random rand = new Random();
 		String name = "file-"+String.valueOf(rand.nextInt(Integer.MAX_VALUE));
 		
 		new File(workspace, name).createNewFile();
 		workspace.add(name);
-		workspace.commit("commit message");
+		workspace.commit(commitMessage);
 	}
 	
 	@Test

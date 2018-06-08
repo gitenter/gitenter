@@ -8,10 +8,30 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public class GitCommit {
 	
+	/* 
+	 * TODO:
+	 * Consider another Java class for date/time operations? 
+	 */
+	private final int time;
+	private final String message;
 	private final String shaChecksumHash;
+	
+	/*
+	 * TODO:
+	 * Add commit user information.
+	 */
+	
 	final GitRepository repository;
 	
 	final RevCommit jGitCommit;
+	
+	public int getTime() {
+		return time;
+	}
+
+	public String getMessage() {
+		return message;
+	}
 	
 	public String getShaChecksumHash() {
 		return shaChecksumHash;
@@ -30,12 +50,27 @@ public class GitCommit {
 	}
 	
 	GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
-		this.shaChecksumHash = shaChecksumHash;
-		this.repository = repository;
 		
+		this.shaChecksumHash = shaChecksumHash;
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
 			jGitCommit = revWalk.parseCommit(getObjectId());
+			
+			this.time = jGitCommit.getCommitTime();
+			this.message = jGitCommit.getFullMessage();
 		}
+		
+		this.repository = repository;
+	}
+	
+	GitCommit (GitRepository repository, RevCommit jGitCommit) {
+		
+		this.time = jGitCommit.getCommitTime();
+		this.message = jGitCommit.getFullMessage();
+		this.shaChecksumHash = jGitCommit.getName();
+		
+		this.repository = repository;
+		
+		this.jGitCommit = jGitCommit;
 	}
 	
 	/*

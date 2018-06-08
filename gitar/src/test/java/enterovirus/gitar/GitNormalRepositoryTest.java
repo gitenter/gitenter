@@ -33,7 +33,7 @@ public class GitNormalRepositoryTest {
 		
 		GitNormalBranch master = repository.getCurrentBranch();
 		GitWorkspace workspace = master.checkoutTo();
-		GitWorkspaceTest.addACommit(workspace);
+		GitWorkspaceTest.addACommit(workspace, "First commit message");
 		
 		return repository;
 	}

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
@@ -49,7 +50,7 @@ public class GitBranchTest {
 		assertEquals(repository.getBranch("master"), null);
 		
 		GitWorkspace workspace = currentBranch.checkoutTo();
-		GitWorkspaceTest.addACommit(workspace);
+		GitWorkspaceTest.addACommit(workspace, "First commit message");
 		
 		assertEquals(currentBranch.getName(), "master");
 		assertEquals(repository.getBranches().size(), 1);
@@ -90,6 +91,21 @@ public class GitBranchTest {
 		assertEquals(repository.getBranches().size(), 3);
 		assertNotEquals(repository.getBranch("a-branch"), null);
 		assertNotEquals(repository.getBranch("another-branch"), null);
+	}
+	
+	@Test
+	public void testGetLogNormalRepository() throws IOException, GitAPIException  {
 		
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		
+		GitNormalBranch master = repository.getCurrentBranch();
+		GitWorkspace workspace = master.checkoutTo();
+		GitWorkspaceTest.addACommit(workspace, "First commit message to test getLog()");
+		GitWorkspaceTest.addACommit(workspace, "Second commit message to test getLog()");
+		
+		List<GitCommit> log = master.getLog();
+		assertEquals(log.size(), 2);
+		assertEquals(log.get(0).getMessage(), "Second commit message to test getLog()");
+		assertEquals(log.get(1).getMessage(), "First commit message to test getLog()");
 	}
 }

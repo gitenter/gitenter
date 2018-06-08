@@ -27,7 +27,6 @@ public abstract class GitRepository {
 	 * still need a universal way to get JGit "git" and handle close()
 	 * of it at the same time.
 	 */
-	
 
 	public File getDirectory() {
 		return directory;
