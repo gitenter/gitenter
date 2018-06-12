@@ -5,15 +5,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
 import enterovirus.gitar.*;
-import enterovirus.gitar.temp.GitBlob;
-import enterovirus.gitar.wrap.BranchName;
-import enterovirus.gitar.wrap.CommitSha;
 
 @Repository
 class DocumentImpl implements DocumentRepository {
@@ -22,7 +20,7 @@ class DocumentImpl implements DocumentRepository {
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private GitSource gitSource;
 
-	public DocumentBean findById(Integer id) throws IOException {
+	public DocumentBean findById(Integer id) throws IOException, GitAPIException {
 	
 	Optional<DocumentBean> documents = documentDbRepository.findById(id);
 	
@@ -36,7 +34,7 @@ class DocumentImpl implements DocumentRepository {
 	return document;
 }
 
-	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException {
+	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException, GitAPIException {
 
 		List<DocumentBean> documents = documentDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);	
 		
@@ -56,7 +54,7 @@ class DocumentImpl implements DocumentRepository {
 		return document;
 	}
 	
-	public List<DocumentBean> findByCommitIdAndRelativeFilepathIn(Integer commitId, List<String> relativeFilepaths) throws IOException {
+	public List<DocumentBean> findByCommitIdAndRelativeFilepathIn(Integer commitId, List<String> relativeFilepaths) throws IOException, GitAPIException {
 	
 		List<DocumentBean> documents = documentDbRepository.findByCommitIdAndRelativeFilepathIn(commitId, relativeFilepaths);
 		for (DocumentBean document : documents) {
@@ -65,15 +63,15 @@ class DocumentImpl implements DocumentRepository {
 		return documents;
 	}
 	
-	public DocumentBean findByCommitShaAndRelativeFilepath(CommitSha commitSha, String relativeFilepath) throws IOException {
+	public DocumentBean findByCommitShaAndRelativeFilepath(String commitSha, String relativeFilepath) throws IOException, GitAPIException {
 
-		List<DocumentBean> documents = documentDbRepository.findByShaChecksumHashAndRelativeFilepath(commitSha.getShaChecksumHash(), relativeFilepath);
+		List<DocumentBean> documents = documentDbRepository.findByShaChecksumHashAndRelativeFilepath(commitSha, relativeFilepath);
 		
 		if (documents.size() > 1) {
-			throw new IOException ("Cannot locate an unique file from commitSha \""+commitSha.getShaChecksumHash()+"\" and relativeFilepath! \""+relativeFilepath+"\"");
+			throw new IOException ("Cannot locate an unique file from commitSha \""+commitSha+"\" and relativeFilepath! \""+relativeFilepath+"\"");
 		}
 		else if (documents.size() == 0) {
-			throw new IOException ("There is no file under commitSha \""+commitSha.getShaChecksumHash()+"\" and relativeFilepath \""+relativeFilepath+"\"!");
+			throw new IOException ("There is no file under commitSha \""+commitSha+"\" and relativeFilepath \""+relativeFilepath+"\"!");
 		}
 		
 		DocumentBean document = documents.get(0);
@@ -81,33 +79,28 @@ class DocumentImpl implements DocumentRepository {
 		return document; 
 	}
 	
-	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchName branchName, String relativeFilepath) throws IOException {
+	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchBean branch, String relativeFilepath) throws IOException, GitAPIException {
 		
 		/*
 		 * TODO:
 		 * Should be a better way rather than query the database twice?
 		 * It is pretty hard, since "branch" is not saved in database.
 		 */
-		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branchName);
+		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branch);
 		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
 	}
 	
-	private void updateGitMaterial (DocumentBean document) throws IOException {
-		
-		String organizationName = document.getCommit().getRepository().getOrganization().getName();
-		String repositoryName = document.getCommit().getRepository().getName();
+	private void updateGitMaterial (DocumentBean document) throws IOException, GitAPIException {
 
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+				document.getCommit().getRepository().getOrganization().getName(), 
+				document.getCommit().getRepository().getName());
 		
-		CommitSha commitSha = new CommitSha(document.getCommit().getShaChecksumHash());
-		String filepath = document.getRelativeFilepath();
+		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getShaChecksumHash());
+		GitFile gitFile = gitCommit.getFile(document.getRelativeFilepath());
 		
-		/*
-		 * As we know this is a text file, so we can change the
-		 * "byte[]" type to String.
-		 */
-		GitBlob blob = new GitBlob(repositoryDirectory, commitSha, filepath);
-		document.setBlobContent(blob.getBlobContent());
+		document.setBlobContent(gitFile.getBlobContent());
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {

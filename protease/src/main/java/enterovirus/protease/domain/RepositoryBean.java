@@ -62,25 +62,6 @@ public class RepositoryBean {
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
-	/*
-	 * Lazy loaded by calling
-	 * RepositoryGitDAO.loadBranchNames(repository)
-	 * 
-	 * TODO:
-	 * Is there a way to lazily load them when call getter?
-	 * If I don't want to wire RepositoryGitDAO to here to
-	 * make this class no longer POJO... 
-	 */
-	@Transient
-	private List<BranchName> branchNames;
-	
-	/*
-	 * Lazy loaded by calling
-	 * RepositoryGitDAO.loadCommitLog(repository, branch)
-	 */
-	@Transient
-	private Map<CommitInfo,CommitBean> commitLogMap;
-	
 	public void addCommit (CommitBean commit) {
 		commits.add(commit);
 	}

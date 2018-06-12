@@ -1,9 +1,11 @@
 package enterovirus.protease.database;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +15,7 @@ import enterovirus.protease.domain.*;
 class RepositoryImpl implements RepositoryRepository {
 
 	@Autowired private RepositoryDatabaseRepository repositoryDbRepository;
+	@Autowired private RepositoryGitDAO repositoryGitDAO;
 	
 	public RepositoryBean findById(Integer id) throws IOException {
 		
@@ -38,6 +41,14 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		return repositories.get(0);
+	}
+	
+	public Collection<BranchBean> getBranches(RepositoryBean repository) throws IOException, GitAPIException {
+		return repositoryGitDAO.getBranches(repository);
+	}
+	
+	public List<CommitBean> getLog(RepositoryBean repository, BranchBean branch, Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		return repositoryGitDAO.getLog(repository, branch, maxCount, skip);
 	}
 
 	public RepositoryBean saveAndFlush(RepositoryBean repository) {

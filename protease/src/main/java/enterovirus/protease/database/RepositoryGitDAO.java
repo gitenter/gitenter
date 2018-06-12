@@ -3,20 +3,20 @@ package enterovirus.protease.database;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import enterovirus.gitar.temp.GitBranch;
-import enterovirus.gitar.temp.GitLog;
-import enterovirus.gitar.wrap.BranchName;
-import enterovirus.gitar.wrap.CommitInfo;
-import enterovirus.gitar.wrap.CommitSha;
+import enterovirus.gitar.GitBareRepository;
+import enterovirus.gitar.GitBranch;
+import enterovirus.gitar.GitCommit;
+import enterovirus.gitar.GitRepository;
+import enterovirus.protease.domain.AuthorBean;
+import enterovirus.protease.domain.BranchBean;
 import enterovirus.protease.domain.CommitBean;
 import enterovirus.protease.domain.RepositoryBean;
 import enterovirus.protease.source.GitSource;
@@ -34,45 +34,61 @@ import enterovirus.protease.source.GitSource;
 public class RepositoryGitDAO {
 
 	@Autowired private GitSource gitSource;
-	@Autowired private CommitRepository commitRepository;
+	@Autowired private CommitDatabaseRepository commitDbRepository;
 	
-	public RepositoryBean loadCommitLog(RepositoryBean repository, BranchName branchName, Integer maxCount, Integer skip) throws IOException, GitAPIException {
+	public Collection<BranchBean> getBranches (RepositoryBean repository) throws IOException, GitAPIException {
+		
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+				repository.getOrganization().getName(), 
+				repository.getName());
+		
+		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		Collection<GitBranch> gitBranches = gitRepository.getBranches();
+		
+		Collection<BranchBean> branches = new ArrayList<BranchBean>();
+		for (GitBranch gitBranch : gitBranches) {
+			branches.add(new BranchBean(gitBranch.getName()));
+		}
+		
+		return branches;
+	}
+	
+	public List<CommitBean> getLog(RepositoryBean repository, BranchBean branch, Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+				repository.getOrganization().getName(), 
+				repository.getName());
+		
+		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitBranch gitBranch = gitRepository.getBranch(branch.getName());
+		List<GitCommit> log = gitBranch.getLog(maxCount, skip);
 		
 		/*
-		 * TODO:
-		 * Paging which only load part of the log.
+		 * Keep insert order.
 		 */
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
-		GitLog gitLog = new GitLog(repositoryDirectory, branchName, maxCount, skip);
+		LinkedHashMap <String,GitCommit> logMap = new LinkedHashMap <String,GitCommit>();
+		for (GitCommit gitCommit : log) {
+			logMap.put(gitCommit.getSha(), gitCommit);
+		}
+		/*
+		 * TODO:
+		 * Need to double check whether it indeed keep orders.
+		 */
+		List<String> shas = new ArrayList<>(logMap.keySet());
 
 		/*
 		 * Do it in one single SQL query by performance concerns.
+		 * Also, use directory database query so git information is not
+		 * automatically included.
 		 */
-		List<CommitBean> commits = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), gitLog.getCommitShas());
-		Map<String,CommitBean> commitMap = new HashMap<String,CommitBean>();
+		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHashIn(repository.getId(), shas);
+		
 		for (CommitBean commit : commits) {
-			commitMap.put(commit.getShaChecksumHash(), commit);
+			commit.setTime(logMap.get(commit.getShaChecksumHash()).getTime());
+			commit.setMessage(logMap.get(commit.getShaChecksumHash()).getMessage());
+			commit.setAuthor(new AuthorBean(logMap.get(commit.getShaChecksumHash()).getAuthor()));
 		}
 		
-		/*
-		 * LinkedHashMap to maintain key's order.
-		 */
-		Map<CommitInfo,CommitBean> commitLogMap = new LinkedHashMap<CommitInfo,CommitBean>();
-		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
-			commitLogMap.put(commitInfo, commitMap.get(commitInfo.getCommitSha().getShaChecksumHash()));
-		}
-		
-		repository.setCommitLogMap(commitLogMap);
-		return repository;
+		return commits;
 	}
-	
-	public RepositoryBean loadBranchNames (RepositoryBean repository) throws IOException, GitAPIException {
-		
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(repository.getOrganization().getName(), repository.getName());
-		GitBranch gitBranch = new GitBranch(repositoryDirectory);
-		repository.setBranchNames(gitBranch.getBranchNames());
-		
-		return repository;
-	}
-
 }

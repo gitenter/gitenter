@@ -57,13 +57,13 @@ public class JGitTest {
 			
 			Repository repository = git.getRepository();
 			
-			assertEquals(0, git.branchList().call().size());
+			assertEquals(git.branchList().call().size(), 0);
 			assertEquals("master", repository.getBranch());
 			
 			git.add().addFilepattern(".").call();
 			git.commit().setMessage("a message").call();
 			
-			assertEquals(0, git.branchList().call().size());
+			assertEquals(git.branchList().call().size(), 1);
 			git.checkout().setName("master").call();
 			
 			assertEquals("master", repository.getBranch());
