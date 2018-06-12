@@ -18,8 +18,6 @@ import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
-import enterovirus.gitar.wrap.CommitSha;
-
 /*
  * In SQL, use "Joined" inheritance Strategy out of four strategies
  * (1) Mapped Superclass
@@ -65,9 +63,9 @@ public class CommitBean {
 		
 	}
 	
-	public CommitBean (RepositoryBean repository, CommitSha commitSha) {
+	public CommitBean (RepositoryBean repository, String commitSha) {
 		this.repository = repository;
-		this.shaChecksumHash = commitSha.getShaChecksumHash();
+		this.shaChecksumHash = commitSha;
 	}
 	
 	public static boolean inCommitList (String shaChecksumHash, List<CommitBean> commits) {

@@ -1,7 +1,5 @@
 package enterovirus.protease.database;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +16,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-import enterovirus.gitar.wrap.*;
-import enterovirus.protease.*;
-import enterovirus.protease.domain.*;
+import enterovirus.protease.ProteaseConfig;
+import enterovirus.protease.domain.RepositoryBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "production")

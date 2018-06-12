@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import enterovirus.gitar.wrap.*;
-import enterovirus.protease.domain.*;
+import enterovirus.protease.domain.BranchBean;
+import enterovirus.protease.domain.CommitBean;
 
 public interface CommitRepository {
 

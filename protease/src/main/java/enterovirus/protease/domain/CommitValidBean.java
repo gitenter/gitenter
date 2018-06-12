@@ -12,8 +12,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import enterovirus.gitar.temp.GitFolderStructure;
-import enterovirus.gitar.wrap.CommitSha;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -55,11 +53,11 @@ public class CommitValidBean extends CommitBean {
 	@Transient
 	private Map<String,DocumentBean> documentMap;
 	
-	/*
-	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this).
-	 */
-	@Transient
-	private GitFolderStructure.ListableTreeNode folderStructure;
+//	/*
+//	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this).
+//	 */
+//	@Transient
+//	private GitFolderStructure.ListableTreeNode folderStructure;
 	
 	/*
 	 * This default constructor is needed for Hibernate.
@@ -68,7 +66,7 @@ public class CommitValidBean extends CommitBean {
 		super();
 	}
 	
-	public CommitValidBean (RepositoryBean repository, CommitSha commitSha) {
+	public CommitValidBean (RepositoryBean repository, String commitSha) {
 		super(repository, commitSha);
 	}
 	
