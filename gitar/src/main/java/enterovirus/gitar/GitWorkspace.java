@@ -34,6 +34,16 @@ public class GitWorkspace extends File {
 		add(".");
 	}
 	
+	public void remove(String pathspec) throws IOException, NoFilepatternException, GitAPIException {
+		try (Git git = repository.getJGitGit()) {
+			git.rm().addFilepattern(pathspec).call();
+		}
+	}
+	
+	public void remove() throws IOException, GitAPIException {
+		remove(".");
+	}
+	
 	public void commit(String message) throws IOException, NoMessageException, GitAPIException {
 		try (Git git = repository.getJGitGit()) {
 			git.commit().setMessage(message).call();

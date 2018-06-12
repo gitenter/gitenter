@@ -103,16 +103,34 @@ public class GitBranchTest {
 		GitWorkspaceTest.addACommit(workspace, "First commit message to test getLog()");
 		GitWorkspaceTest.addACommit(workspace, "Second commit message to test getLog()");
 		GitWorkspaceTest.addACommit(workspace, "Third commit message to test getLog()");
+		GitWorkspaceTest.addACommit(workspace, "Fourth commit message to test getLog()");
 		
 		List<GitCommit> log = master.getLog();
-		assertEquals(log.size(), 3);
-		assertEquals(log.get(0).getMessage(), "Third commit message to test getLog()");
-		assertEquals(log.get(1).getMessage(), "Second commit message to test getLog()");
-		assertEquals(log.get(2).getMessage(), "First commit message to test getLog()");
-		
-		log = master.getLog(1, 1);
+		assertEquals(log.size(), 4);
+		assertEquals(log.get(0).getMessage(), "Fourth commit message to test getLog()");
+		assertEquals(log.get(1).getMessage(), "Third commit message to test getLog()");
+		assertEquals(log.get(2).getMessage(), "Second commit message to test getLog()");
+		assertEquals(log.get(3).getMessage(), "First commit message to test getLog()");
+		String[] shas = new String[] {
+				log.get(0).getSha(),
+				log.get(1).getSha(),
+				log.get(2).getSha(),
+				log.get(3).getSha()
+				};
+			
+		log = master.getLog(1, 2);
 		assertEquals(log.size(), 1);
 		assertEquals(log.get(0).getMessage(), "Second commit message to test getLog()");
+		
+		log = master.getLog(GitCommit.EMPTY_SHA, shas[2]);
+		assertEquals(log.size(), 2);
+		assertEquals(log.get(0).getMessage(), "Second commit message to test getLog()");
+		assertEquals(log.get(1).getMessage(), "First commit message to test getLog()");
+		
+		log = master.getLog(shas[3], shas[1]);
+		assertEquals(log.size(), 2);
+		assertEquals(log.get(0).getMessage(), "Third commit message to test getLog()");
+		assertEquals(log.get(1).getMessage(), "Second commit message to test getLog()");
 		
 		/*
 		 * TODO:

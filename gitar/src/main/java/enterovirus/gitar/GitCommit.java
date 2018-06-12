@@ -9,9 +9,18 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public class GitCommit {
 	
+	/*
+	 * "update"/"post-receive" hooks to not correspond to any commit
+	 * (the one before the first commit). 
+	 * 
+	 * This SHA value doesn't corresponding to any concrete commit, 
+	 * because it doesn't have the associated time/message/author/... 
+	 */
+	static final String EMPTY_SHA = "0000000000000000000000000000000000000000";
+	
 	private final Date time;
 	private final String message;
-	private final String shaChecksumHash;
+	private final String sha;
 	
 	final GitRepository repository;
 	final GitAuthor author;
@@ -32,8 +41,8 @@ public class GitCommit {
 		return message;
 	}
 	
-	public String getShaChecksumHash() {
-		return shaChecksumHash;
+	public String getSha() {
+		return sha;
 	}
 	
 	public GitAuthor getAuthor() {
@@ -48,13 +57,13 @@ public class GitCommit {
 	 * annotated or not, by using jGitCommit annotated tags will raise the
 	 * same error. Here we want to clear new ObjectId.
 	 */
-	protected ObjectId getObjectId() {
-		return ObjectId.fromString(shaChecksumHash);
+	ObjectId getObjectId() {
+		return ObjectId.fromString(sha);
 	}
 	
-	GitCommit(GitRepository repository, String shaChecksumHash) throws IOException {
+	GitCommit(GitRepository repository, String sha) throws IOException {
 		
-		this.shaChecksumHash = shaChecksumHash;
+		this.sha = sha;
 		try (RevWalk revWalk = new RevWalk(repository.getJGitRepository())) {
 			jGitCommit = revWalk.parseCommit(getObjectId());
 			
@@ -80,7 +89,7 @@ public class GitCommit {
 		
 		this.time = new Date(jGitCommit.getCommitTime()*1000L);
 		this.message = jGitCommit.getFullMessage();
-		this.shaChecksumHash = jGitCommit.getName();
+		this.sha = jGitCommit.getName();
 		
 		this.repository = repository;
 		this.author = new GitAuthor(this, jGitCommit.getAuthorIdent());
@@ -98,7 +107,7 @@ public class GitCommit {
 		return new GitFile(this, relativePath);
 	}
 	
-	public GitFolder getFolder(String relativePath) throws IOException {
-		return new GitFolder(this, relativePath);
+	public GitRootFolder getRootFolder() throws IOException {
+		return new GitRootFolder(this);
 	}
 }

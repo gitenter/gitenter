@@ -8,8 +8,6 @@ import java.util.Random;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
-import org.eclipse.jgit.lib.Repository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;

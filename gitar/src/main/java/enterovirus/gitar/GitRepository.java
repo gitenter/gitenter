@@ -86,8 +86,8 @@ public abstract class GitRepository {
 		}
 	}
 	
-	public GitCommit getCommit(String shaChecksumHash) throws IOException {
-		return new GitCommit(this, shaChecksumHash);
+	public GitCommit getCommit(String sha) throws IOException {
+		return new GitCommit(this, sha);
 	}
 
 	public GitBranch getBranch(String branchName) throws IOException, GitAPIException {
