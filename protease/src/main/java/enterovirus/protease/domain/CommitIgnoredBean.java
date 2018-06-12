@@ -3,7 +3,6 @@ package enterovirus.protease.domain;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import enterovirus.gitar.wrap.CommitSha;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +19,7 @@ public class CommitIgnoredBean extends CommitBean {
 		super();
 	}
 	
-	public CommitIgnoredBean (RepositoryBean repository, CommitSha commitSha) {
+	public CommitIgnoredBean (RepositoryBean repository, String commitSha) {
 		super(repository, commitSha);
 	}
 }

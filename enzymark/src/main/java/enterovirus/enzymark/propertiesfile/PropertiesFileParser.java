@@ -9,7 +9,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import enterovirus.gitar.GitBlob;
+import enterovirus.gitar.temp.GitBlob;
 import enterovirus.gitar.wrap.CommitSha;
 
 /*

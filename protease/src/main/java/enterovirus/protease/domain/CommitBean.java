@@ -1,5 +1,6 @@
 package enterovirus.protease.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,11 +13,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import enterovirus.gitar.wrap.CommitSha;
 
 /*
  * In SQL, use "Joined" inheritance Strategy out of four strategies
@@ -45,15 +45,27 @@ public class CommitBean {
 	private String shaChecksumHash;
 	
 	/*
+	 * From git.
+	 */
+	@Transient
+	private Date time;
+	
+	@Transient
+	private String message;
+	
+	@Transient
+	private AuthorBean author;
+	
+	/*
 	 * This default constructor is needed for Hibernate.
 	 */
 	public CommitBean () {
 		
 	}
 	
-	public CommitBean (RepositoryBean repository, CommitSha commitSha) {
+	public CommitBean (RepositoryBean repository, String commitSha) {
 		this.repository = repository;
-		this.shaChecksumHash = commitSha.getShaChecksumHash();
+		this.shaChecksumHash = commitSha;
 	}
 	
 	public static boolean inCommitList (String shaChecksumHash, List<CommitBean> commits) {

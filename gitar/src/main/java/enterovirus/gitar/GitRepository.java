@@ -2,101 +2,219 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.RefSpec;
 
-public class GitRepository {
+public abstract class GitRepository {
 	
-	static Repository getRepositoryFromDirectory(File repositoryDirectory) throws IOException {
-		
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(repositoryDirectory).readEnvironment().findGitDir().build();
-		return repository;
+	protected final File directory;
+	
+	/*
+	 * TODO:
+	 * This is mostly for bare repository only. Actions are through
+	 * JGit "Git" class which implements "AutoCloseable" (so always
+	 * need to stay in try blocks.
+	 * 
+	 * Consider at least to move this one to GitBareRepository, but
+	 * still need a universal way to get JGit "git" and handle close()
+	 * of it at the same time.
+	 */
+
+	public File getDirectory() {
+		return directory;
 	}
 	
-	static public void initBare (File repositoryDirectory, File sampleHooksDirectory) throws GitAPIException, IOException {
-		
-		Git.init().setDirectory(repositoryDirectory).setBare(true).call();
-		
-		setupHooks(repositoryDirectory, sampleHooksDirectory);
+	public GitRepository(File directory) {
+		this.directory = directory;
 	}
 	
-	static public void initBareWithConfig (File repositoryDirectory, File sampleHooksDirectory, File configFilesDirectory) throws GitAPIException, IOException {
-		
-		Git.init().setDirectory(repositoryDirectory).setBare(true).call();
+	abstract Git getJGitGit() throws IOException;
+	abstract Repository getJGitRepository() throws IOException;
+	
+	protected boolean isNormalRepository() {
+		/*
+		 * TODO: 
+		 * What about the case if it is a broken git repo with only
+		 * part of the files exist?
+		 */
+		if (!new File(directory, ".git").isDirectory()) {
+			return false;
+		}
+		return true;
+	}
+	
+	protected boolean isBareRepository() {
+		/* 
+		 * There is a git command `git rev-parse --is-bare-repository`
+		 * but JGit does not implement it. Consider directory call that command.
+		 */
+		if (!new File(directory, "branches").isDirectory()
+				|| !new File(directory, "hooks").isDirectory()
+				|| !new File(directory, "logs").isDirectory()
+				|| !new File(directory, "objects").isDirectory()
+				|| !new File(directory, "refs").isDirectory()
+				|| !new File(directory, "config").isFile()
+				|| !new File(directory, "HEAD").isFile()) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean isEmpty() throws IOException, GitAPIException {
 		
 		/*
+		 * This is a hack, that a just initialized repository doesn't
+		 * have any branch (even master does not exist).
+		 * 
 		 * TODO:
-		 * Seems cannot successfully delete the file yet.
+		 * Consider using other ways to decide if a repository is empty.
+		 * For example, to check that no HEAD exists yet.
 		 */
-		File localRepositoryDirectory = Files.createTempDirectory("git-repo-").toFile();
-		localRepositoryDirectory.deleteOnExit();
+		if (getBranches().isEmpty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public GitCommit getCommit(String sha) throws IOException {
+		return new GitCommit(this, sha);
+	}
+
+	public GitBranch getBranch(String branchName) throws IOException, GitAPIException {
 		
-		try (Git git = Git.cloneRepository()
-				.setURI(repositoryDirectory.getAbsolutePath())
-				.setDirectory(localRepositoryDirectory).call()) {
-		
-			FileUtils.copyDirectory(configFilesDirectory, localRepositoryDirectory);
-			git.add().addFilepattern(".").call();
-			git.commit().setMessage("Initialization with system setup files.").call();
-			
-			String branch = "master";
-			RefSpec spec = new RefSpec(branch + ":" + branch);
-			git.push().setRemote(repositoryDirectory.getAbsolutePath()).setRefSpecs(spec).call();
-			/*
-			 * TODO:
-			 * 
-			 * First commit need to go BEFORE setup hooks, because otherwise "git push"
-			 * will trigger the post-receive hook, but the repository row doesn't exist
-			 * in SQL yet. The hook then raise error (I haven't see the error yet, because
-			 * it is neither in capsid console or terminal console).
-			 * 
-			 * However, in this way we can only write to the database manually.
-			 * That need to use protease, but gitar doesn't depend on protease. So currently
-			 * we can only do it through AdminController rather than GitRepository.
-			 * 
-			 * It is really dirty. Consider a better way to handle that.
-			 */
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.branchList().call();
+			for (Ref ref : call) {
+				if (branchName.equals(ref.getName().split("/")[2])) {
+					return new GitBranch(this, branchName);
+				}
+			}
 		}
 		
-		setupHooks(repositoryDirectory, sampleHooksDirectory);
+		/*
+		 * TODO:
+		 * 
+		 * Consider raise an error rather than return null if the targeting branch
+		 * is not existed.
+		 */
+		return null;
 	}
 	
-	static private void setupHooks (File repositoryDirectory, File sampleHooksDirectory) throws IOException {
+	/*
+	 * An empty normal/bare repository don't have any branch. After the first
+	 * commit, the "master" branch appears. 
+	 */
+	public Collection<GitBranch> getBranches() throws IOException, GitAPIException {
 		
-		/*
-		 * Copy Git server-side hooks to the desired directory.
-		 * 
-		 * TODO:
-		 * Rather than manually make the hooks, and do it in git,
-		 * consider doing hook inside of JGit.
-		 * May refer to:
-		 * (1) Using Git hooks together with JGit / Egit: https://zauner.nllk.net/post/0001-git-hooks-currently-supported-by-jgit/
-		 * (2) jgit does not support the same hooks that 'man githooks' talks about: http://gitolite.com/gitolite/overview/
-		 * 
-		 * TODO:
-		 * What about using symlink rather than physically copy
-		 * the inside materials?
-		 */
-		File hookDirectory = new File(repositoryDirectory, "hooks");
-		FileUtils.copyDirectory(sampleHooksDirectory, hookDirectory);
+		Collection<GitBranch> branches = new ArrayList<GitBranch>();
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.branchList().call();
+			for (Ref ref : call) {
+				/*
+				 * Parse "refs/heads/master" and get the name "master".
+				 * So for other branches.
+				 */
+				String branchName = ref.getName().split("/")[2];
+				branches.add(new GitBranch(this, branchName));
+			}
+		}
 		
-		/*
-		 * See the following link for a list of possible server side hooks:
-		 * https://git-scm.com/docs/githooks
-		 * 
-		 * In here, I just set them all. If some is not needed, we can just
-		 * write blank in the corresponding hook.
-		 */
-		new File(hookDirectory, "pre-receive").setExecutable(true);
-		new File(hookDirectory, "update").setExecutable(true);
-		new File(hookDirectory, "post-receive").setExecutable(true);
-		new File(hookDirectory, "post-update").setExecutable(true);
+		return branches;
 	}
+	
+	
+	/* 
+	 * Create new branch is not working when when the repository is empty
+	 * (without any commit), with the error message: 
+	 * > fatal: Not a valid object name: 'master'.
+	 * 
+	 * Create new branch works for a normal/bare repository which has at least
+	 * one commit. However, for bare repository one cannot checkout since there
+	 * is no work tree.
+	 */
+	public void createBranch(String branchName) throws IOException, GitAPIException {
+		try (Git git = getJGitGit()) {
+			git.branchCreate().setName(branchName).call();
+		}
+	}
+	
+	public GitTag getTag(String tagName) throws IOException, GitAPIException {
+		
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.tagList().call();
+			for (Ref ref : call) {
+				if (tagName.equals(ref.getName().split("/")[2])) {
+					return new GitTag(this, tagName).downCasting();
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public Collection<GitTag> getTags() throws IOException, GitAPIException {
+		
+		Collection<GitTag> tags = new ArrayList<GitTag>();
+		try (Git git = getJGitGit()) {
+			List<Ref> call = git.tagList().call();
+			for (Ref ref : call) {
+				String tagName = ref.getName().split("/")[2];
+				tags.add(new GitTag(this, tagName).downCasting());
+			}
+		}
+		
+		return tags;
+	}
+	
+	/* 
+	 * Create new tag is not working when when the repository is empty
+	 * (without any commit), with the error message: 
+	 * > fatal: Failed to resolve 'HEAD' as a valid ref.
+	 * 
+	 * Create new tag works for a normal/bare repository which has at least
+	 * one commit. 
+	 */
+	public void createTag(String tagName) throws NoHeadException, GitAPIException, IOException {
+		try (Git git = getJGitGit()) {
+			/*
+			 * It is weird in here. In Git if you
+			 * > git tag -a tag-name
+			 * without "-m", Git will redirect you to a text editor.
+			 * But if I do not have "setAnnotated(false)" in here, will
+			 * JGit redirect me to any kind of editors!?
+			 */
+			git.tag().setName(tagName).setAnnotated(false).call();
+		}
+	}
+
+	public void createTag(String tagName, String message) throws NoHeadException, GitAPIException, IOException {
+		try (Git git = getJGitGit()) {
+			git.tag().setName(tagName).setMessage(message).call();
+		}
+	}
+	
+	public void addAHook(File filepath, String hookName) throws IOException {
+		File hookFilepath = new File(getHooksDirectory(), hookName);
+		FileUtils.copyFile(filepath, hookFilepath);
+		hookFilepath.setExecutable(true);
+	}
+	
+	public void addHooks(File folderpath) throws IOException {
+		FileUtils.copyDirectory(folderpath, getHooksDirectory());
+		for(File hookFile : getHooksDirectory().listFiles()) {
+			hookFile.setExecutable(true);
+		}
+	}
+	
+	protected abstract File getHooksDirectory();
 }

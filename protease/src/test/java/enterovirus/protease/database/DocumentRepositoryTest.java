@@ -1,11 +1,5 @@
 package enterovirus.protease.database;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +16,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-import enterovirus.gitar.wrap.BranchName;
-import enterovirus.gitar.wrap.CommitSha;
-import enterovirus.protease.*;
-import enterovirus.protease.domain.*;
+import enterovirus.protease.ProteaseConfig;
+import enterovirus.protease.domain.DocumentBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "production")

@@ -1,19 +1,43 @@
 package enterovirus.gitar;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoHeadException;
+import org.junit.Rule;
 import org.junit.Test;
-
-import enterovirus.gitar.wrap.TagName;
+import org.junit.rules.TemporaryFolder;
 
 public class GitTagTest {
-
+	
+	@Rule public TemporaryFolder folder = new TemporaryFolder();
+	
 	@Test
-	public void test() throws Exception {
-		File repositoryDirectory = new File(System.getProperty("user.home"), "Workspace/enterovirus-test/long_commit_path/org/repo.git");
-		GitTag gitTag = new GitTag(repositoryDirectory);
-		for (TagName name : gitTag.getTagNames()) {
-			System.out.println(name.getName());
-		}
+	public void testTagNotExist() throws IOException, GitAPIException {
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		assertEquals(repository.getTag("tag-not-exist"), null);
+	}
+
+	@Test(expected = NoHeadException.class)
+	public void testCreateTagEmptyNormalRepository() throws IOException, GitAPIException {
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		repository.createTag("a-tag");
+	}
+	
+	@Test
+	public void testCreateAndGetTagNormalRepository() throws IOException, GitAPIException {
+		
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneWithCommit(folder);
+		
+		repository.createTag("a-lightweight-tag");
+		assertTrue(repository.getTag("a-lightweight-tag") instanceof GitLightweightTag);
+		
+		repository.createTag("an-annotated-tag", "tag message");
+		assertTrue(repository.getTag("an-annotated-tag") instanceof GitAnnotatedTag);
+		
+		assertEquals(repository.getTags().size(), 2);
 	}
 }

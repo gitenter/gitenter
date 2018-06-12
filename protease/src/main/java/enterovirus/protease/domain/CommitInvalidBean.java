@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import enterovirus.gitar.wrap.CommitSha;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +28,7 @@ public class CommitInvalidBean extends CommitBean {
 		super();
 	}
 	
-	public CommitInvalidBean (RepositoryBean repository, CommitSha commitSha, String errorMessage) {
+	public CommitInvalidBean (RepositoryBean repository, String commitSha, String errorMessage) {
 		super(repository, commitSha);
 		this.errorMessage = errorMessage;
 	}
