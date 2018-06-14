@@ -46,7 +46,7 @@ public class GitFileTest {
 		GitWorkspaceTest.add(workspace, mimeTypeFiles, "Add mime type file");
 		
 		GitCommit commit = repository.getCurrentBranch().getHead();
-		GitRootFolder folder = commit.getRootFolder();
+		GitFolder folder = commit.getFolder(".");
 		
 		assertEquals(folder.cd("mime-types").getFile("sample.png").getMimeType(), "image/png");
 		assertEquals(folder.cd("mime-types").getFile("sample.jpg").getMimeType(), "image/jpeg");
