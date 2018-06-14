@@ -24,7 +24,7 @@ public class GitFolderTest {
 	@Before 
 	public void setupFileOnRoot() throws IOException, GitAPIException {
 	
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		File file;
@@ -43,7 +43,7 @@ public class GitFolderTest {
 	@Before 
 	public void setupComplicatedFolderStructure() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		File file;
@@ -60,7 +60,7 @@ public class GitFolderTest {
 	@Before
 	public void setupEmptyFolderStructure() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		File file = folder.newFile("file");
@@ -75,7 +75,7 @@ public class GitFolderTest {
 	@Test
 	public void testFilesOnRoot() throws IOException, GitAPIException {
 		
-		GitFolder folder = commitWithFileOnRoot.getFolder(".");
+		GitFolder folder = commitWithFileOnRoot.getRoot();
 		
 		assertEquals(folder.list().size(), 2);
 		assertTrue(folder.hasSubpath("file-1"));
@@ -87,7 +87,7 @@ public class GitFolderTest {
 	@Test
 	public void testComplicatedFolderStructureOnRoot() throws IOException {	
 		
-		GitFolder folder = commitWithComplicatedFolderStructure.getFolder(".");
+		GitFolder folder = commitWithComplicatedFolderStructure.getRoot();
 		
 		assertEquals(folder.list().size(), 1);
 		assertTrue(folder.hasSubpath("top-level-folder"));
@@ -150,7 +150,7 @@ public class GitFolderTest {
 	@Test
 	public void testEmptyFolderStructure() throws IOException {
 		
-		GitFolder folder = commitWithEmptyFolderStructure.getFolder(".");
+		GitFolder folder = commitWithEmptyFolderStructure.getRoot();
 		assertEquals(folder.list().size(), 0);
 	}
 	

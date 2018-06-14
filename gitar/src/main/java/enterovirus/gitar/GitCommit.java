@@ -110,4 +110,8 @@ public class GitCommit {
 	public GitFolder getFolder(String relativePath) throws IOException {
 		return GitFolder.create(this, relativePath);
 	}
+	
+	public GitFolder getRoot() throws IOException {
+		return getFolder(".");
+	}
 }

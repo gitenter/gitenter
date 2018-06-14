@@ -17,13 +17,13 @@ public class GitTagTest {
 	
 	@Test
 	public void testTagNotExist() throws IOException, GitAPIException {
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		assertEquals(repository.getTag("tag-not-exist"), null);
 	}
 
 	@Test(expected = NoHeadException.class)
 	public void testCreateTagEmptyNormalRepository() throws IOException, GitAPIException {
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		repository.createTag("a-tag");
 	}
 	

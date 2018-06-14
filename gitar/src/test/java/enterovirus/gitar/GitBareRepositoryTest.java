@@ -22,7 +22,7 @@ public class GitBareRepositoryTest {
 		String name = "repo-"+String.valueOf(rand.nextInt(Integer.MAX_VALUE));
 		
 		File directory = folder.newFolder(name+".git");
-		return new GitBareRepository(directory);
+		return GitBareRepository.getInstance(directory);
 	}
 
 	static GitBareRepository getOneWithCommit(TemporaryFolder folder) throws IOException, GitAPIException {
@@ -41,7 +41,7 @@ public class GitBareRepositoryTest {
 	public void testInit() throws IOException, GitAPIException {
 		
 		File directory = folder.newFolder("repo.git");
-		new GitBareRepository(directory);
+		GitBareRepository.getInstance(directory);
 		
 		assertTrue(new File(directory, "branches").isDirectory());
 		assertTrue(new File(directory, "hooks").isDirectory());
@@ -56,7 +56,7 @@ public class GitBareRepositoryTest {
 	public void testInitFolderNotExist() throws IOException, GitAPIException {
 		
 		File directory = new File("/a/path/which/does/not/exist");
-		new GitBareRepository(directory);
+		GitBareRepository.getInstance(directory);
 	}
 	
 	@Test(expected = JGitInternalException.class)
@@ -65,7 +65,7 @@ public class GitBareRepositoryTest {
 		File directory = folder.newFolder("repo.git");
 		directory.setReadOnly();
 		
-		new GitBareRepository(directory);
+		GitBareRepository.getInstance(directory);
 	}
 	
 	@Test(expected = IOException.class)
@@ -73,8 +73,8 @@ public class GitBareRepositoryTest {
 		
 		File directory = folder.newFolder("repo");
 
-		new GitNormalRepository(directory);
-		new GitBareRepository(directory);
+		GitNormalRepository.getInstance(directory);
+		GitBareRepository.getInstance(directory);
 	}
 	
 	@Test

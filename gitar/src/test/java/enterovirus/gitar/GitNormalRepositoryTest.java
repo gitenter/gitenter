@@ -16,18 +16,18 @@ public class GitNormalRepositoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 	
-	static GitNormalRepository getOneEmpty(TemporaryFolder folder) throws IOException, GitAPIException {
+	static GitNormalRepository getOneJustInitialized(TemporaryFolder folder) throws IOException, GitAPIException {
 		
 		Random rand = new Random();
 		String name = "repo-"+String.valueOf(rand.nextInt(Integer.MAX_VALUE));
 		
 		File directory = folder.newFolder(name);
-		return new GitNormalRepository(directory);
+		return GitNormalRepository.getInstance(directory);
 	}
 	
 	static GitNormalRepository getOneWithCommit(TemporaryFolder folder) throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = getOneEmpty(folder);
+		GitNormalRepository repository = getOneJustInitialized(folder);
 		
 		GitNormalBranch master = repository.getCurrentBranch();
 		GitWorkspace workspace = master.checkoutTo();
@@ -40,7 +40,7 @@ public class GitNormalRepositoryTest {
 	public void testInit() throws IOException, GitAPIException {
 		
 		File directory = folder.newFolder("repo");
-		new GitNormalRepository(directory);
+		GitNormalRepository.getInstance(directory);
 		
 		assertTrue(new File(directory, ".git").isDirectory());
 	}
@@ -49,7 +49,7 @@ public class GitNormalRepositoryTest {
 	public void testInitFolderNotExist() throws IOException, GitAPIException {
 		
 		File directory = new File("/a/path/which/does/not/exist");
-		new GitNormalRepository(directory);
+		GitNormalRepository.getInstance(directory);
 	}
 	
 	@Test(expected = JGitInternalException.class)
@@ -58,7 +58,7 @@ public class GitNormalRepositoryTest {
 		File directory = folder.newFolder("repo");
 		directory.setReadOnly();
 		
-		new GitBareRepository(directory);
+		GitNormalRepository.getInstance(directory);
 	}
 	
 	@Test(expected = IOException.class)
@@ -66,14 +66,14 @@ public class GitNormalRepositoryTest {
 		
 		File directory = folder.newFolder("repo.git");
 		
-		new GitBareRepository(directory);
-		new GitNormalRepository(directory);
+		GitBareRepository.getInstance(directory);
+		GitNormalRepository.getInstance(directory);
 	}
 	
 	@Test
 	public void testCreateAndUpdateAndGetRemote() throws IOException, GitAPIException {
 	
-		GitNormalRepository repository = getOneEmpty(folder);
+		GitNormalRepository repository = getOneJustInitialized(folder);
 		
 		repository.createOrUpdateRemote("origin", "/fake/url");
 		GitRemote origin = repository.getRemote("origin");

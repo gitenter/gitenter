@@ -18,7 +18,7 @@ public class GitNormalBranch extends GitBranch {
 
 	public GitWorkspace checkoutTo() throws CheckoutConflictException, GitAPIException, IOException {
 		
-		if (repository.isEmpty()) {
+		if (repository.isJustInitialized()) {
 			/*
 			 * For empty repository, no branch exists. so there is no reason
 			 * to do any real checkout. Just return the home directory.

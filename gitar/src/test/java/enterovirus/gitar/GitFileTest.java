@@ -18,7 +18,7 @@ public class GitFileTest {
 	@Test
 	public void testGetBlobContent() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		File file = folder.newFile("file");
@@ -37,7 +37,7 @@ public class GitFileTest {
 	@Test
 	public void testMimeTypes() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		ClassLoader classLoader = getClass().getClassLoader();

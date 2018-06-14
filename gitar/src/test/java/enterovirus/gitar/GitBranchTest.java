@@ -19,7 +19,7 @@ public class GitBranchTest {
 	@Test
 	public void testBranchNotExist() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		assertEquals(repository.getBranch("branch-not-exist"), null);
 	}
 	
@@ -35,14 +35,14 @@ public class GitBranchTest {
 	 */
 	@Test(expected = RefNotFoundException.class)
 	public void testCreateBranchEmptyNormalRepository() throws IOException, GitAPIException {
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		repository.createBranch("a-branch");
 	}
 	
 	@Test
 	public void testCheckoutToFirstCommit() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		
 		GitNormalBranch currentBranch = repository.getCurrentBranch();
 		assertEquals(currentBranch.getName(), "master");
@@ -96,7 +96,7 @@ public class GitBranchTest {
 	@Test
 	public void testGetLogNormalRepository() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		
 		GitNormalBranch master = repository.getCurrentBranch();
 		GitWorkspace workspace = master.checkoutTo();
