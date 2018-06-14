@@ -32,6 +32,6 @@ public class GitNormalBranch extends GitBranch {
 		}
 		
 		assert repository instanceof GitNormalRepository;
-		return new GitWorkspace(this, (GitNormalRepository)repository);
+		return GitWorkspace.getInstance(this, (GitNormalRepository)repository);
 	}
 }

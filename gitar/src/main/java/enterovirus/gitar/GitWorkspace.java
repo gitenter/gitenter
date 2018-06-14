@@ -2,6 +2,8 @@ package enterovirus.gitar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -14,14 +16,40 @@ public class GitWorkspace extends File {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final GitBranch branch;
+	/*
+	 * This is not exactly the singleton pattern, as the instance
+	 * itself is mutable. The only constrain is there can be only
+	 * one workspace existing;
+	 */
+	private static Map<GitNormalRepository,GitWorkspace> instances = new Hashtable<GitNormalRepository,GitWorkspace>();
+	
+	private GitBranch branch;
 	private final GitNormalRepository repository;
 	
-	GitWorkspace(GitBranch branch, GitNormalRepository repository) {
+	public GitBranch getBranch() {
+		return branch;
+	}
+	
+	private GitWorkspace(GitBranch branch, GitNormalRepository repository) {
 		super(repository.directory.getAbsolutePath());
 		
 		this.branch = branch;
 		this.repository = repository;
+	}
+	
+	static GitWorkspace getInstance(GitBranch branch, GitNormalRepository repository) {
+
+		GitWorkspace workspace;
+		if (instances.containsKey(repository)) {
+			workspace = instances.get(repository);
+			workspace.branch = branch;
+		}
+		else {
+			workspace = new GitWorkspace(branch, repository);
+			instances.put(repository, workspace);
+		}
+		
+		return workspace;
 	}
 	
 	public void add(String pathspec) throws IOException, NoFilepatternException, GitAPIException {
