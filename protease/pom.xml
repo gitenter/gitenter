@@ -32,7 +32,7 @@
 	<dependencies>
 		<!-- local packages -->
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.2-prototype</version>
 			<exclusions>

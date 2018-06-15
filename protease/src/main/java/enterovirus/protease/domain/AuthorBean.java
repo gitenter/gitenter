@@ -1,6 +1,7 @@
 package enterovirus.protease.domain;
 
-import enterovirus.gitar.GitAuthor;
+import com.gitenter.gitar.GitAuthor;
+
 import lombok.Getter;
 import lombok.Setter;
 

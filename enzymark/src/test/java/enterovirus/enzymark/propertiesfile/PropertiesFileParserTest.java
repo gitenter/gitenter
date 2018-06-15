@@ -9,9 +9,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.gitenter.gitar.wrap.CommitSha;
+
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
-import enterovirus.gitar.wrap.CommitSha;
 
 public class PropertiesFileParserTest {
 	

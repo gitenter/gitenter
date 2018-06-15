@@ -17,16 +17,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.gitenter.gitar.*;
+import com.gitenter.gitar.temp.GitLog;
+import com.gitenter.gitar.temp.GitRepository;
+import com.gitenter.gitar.wrap.*;
+
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
-import enterovirus.gitar.*;
-import enterovirus.gitar.temp.GitRepository;
-import enterovirus.gitar.temp.GitLog;
-import enterovirus.gitar.wrap.*;
 
 @Controller
 public class ManagerAdminController {

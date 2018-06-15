@@ -7,10 +7,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import enterovirus.gitar.GitBareRepository;
-import enterovirus.gitar.GitCommit;
-import enterovirus.gitar.GitFile;
-import enterovirus.gitar.GitRepository;
+import com.gitenter.gitar.GitBareRepository;
+import com.gitenter.gitar.GitCommit;
+import com.gitenter.gitar.GitFile;
+import com.gitenter.gitar.GitRepository;
+
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
 

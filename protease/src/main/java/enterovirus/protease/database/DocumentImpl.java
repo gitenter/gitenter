@@ -9,9 +9,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gitenter.gitar.*;
+
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;
-import enterovirus.gitar.*;
 
 @Repository
 class DocumentImpl implements DocumentRepository {

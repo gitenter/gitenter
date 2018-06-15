@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.gitenter.gitar.wrap.*;
+
 import enterovirus.capsid.config.WebSource;
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.enzymark.htmlgenerator.HtmlGenerator;
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
-import enterovirus.gitar.wrap.*;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
 import enterovirus.protease.source.GitSource;

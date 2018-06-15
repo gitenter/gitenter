@@ -9,8 +9,8 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import enterovirus.gitar.temp.GitBlob;
-import enterovirus.gitar.wrap.CommitSha;
+import com.gitenter.gitar.temp.GitBlob;
+import com.gitenter.gitar.wrap.CommitSha;
 
 /*
  * The config file is read using the Properties file:
