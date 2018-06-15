@@ -18,7 +18,7 @@ public class GitFileTest {
 	@Test
 	public void testGetBlobContent() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		File file = folder.newFile("file");
@@ -37,7 +37,7 @@ public class GitFileTest {
 	@Test
 	public void testMimeTypes() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -46,7 +46,7 @@ public class GitFileTest {
 		GitWorkspaceTest.add(workspace, mimeTypeFiles, "Add mime type file");
 		
 		GitCommit commit = repository.getCurrentBranch().getHead();
-		GitRootFolder folder = commit.getRootFolder();
+		GitFolder folder = commit.getFolder(".");
 		
 		assertEquals(folder.cd("mime-types").getFile("sample.png").getMimeType(), "image/png");
 		assertEquals(folder.cd("mime-types").getFile("sample.jpg").getMimeType(), "image/jpeg");

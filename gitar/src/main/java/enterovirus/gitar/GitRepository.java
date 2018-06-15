@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
@@ -14,6 +16,15 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 
 public abstract class GitRepository {
+	
+	/*
+	 * It is actually not quite crucial in our case to have all
+	 * subclasses share the same static instance, because a folder
+	 * cannot be at the same time a bare and normal repository
+	 * no matter what (if not in the case that the user come
+	 * to edit the file on the fly, but for that we'll fail anyway).
+	 */
+	protected static Map<File,GitRepository> instances = new Hashtable<File,GitRepository>();
 	
 	protected final File directory;
 	
@@ -32,10 +43,10 @@ public abstract class GitRepository {
 		return directory;
 	}
 	
-	public GitRepository(File directory) {
+	protected GitRepository(File directory) {
 		this.directory = directory;
 	}
-	
+
 	abstract Git getJGitGit() throws IOException;
 	abstract Repository getJGitRepository() throws IOException;
 	
@@ -68,15 +79,15 @@ public abstract class GitRepository {
 		return true;
 	}
 	
-	public boolean isEmpty() throws IOException, GitAPIException {
+	boolean isJustInitialized() throws IOException, GitAPIException {
 		
 		/*
 		 * This is a hack, that a just initialized repository doesn't
 		 * have any branch (even master does not exist).
 		 * 
 		 * TODO:
-		 * Consider using other ways to decide if a repository is empty.
-		 * For example, to check that no HEAD exists yet.
+		 * Consider using other ways to decide if a repository is just
+		 * initialized. For example, to check that no HEAD exists yet.
 		 */
 		if (getBranches().isEmpty()) {
 			return true;

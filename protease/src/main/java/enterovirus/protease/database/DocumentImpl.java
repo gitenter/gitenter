@@ -96,7 +96,7 @@ class DocumentImpl implements DocumentRepository {
 				document.getCommit().getRepository().getOrganization().getName(), 
 				document.getCommit().getRepository().getName());
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getShaChecksumHash());
 		GitFile gitFile = gitCommit.getFile(document.getRelativeFilepath());
 		

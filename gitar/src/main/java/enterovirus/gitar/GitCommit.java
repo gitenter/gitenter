@@ -107,7 +107,11 @@ public class GitCommit {
 		return new GitFile(this, relativePath);
 	}
 	
-	public GitRootFolder getRootFolder() throws IOException {
-		return new GitRootFolder(this);
+	public GitFolder getFolder(String relativePath) throws IOException {
+		return GitFolder.create(this, relativePath);
+	}
+	
+	public GitFolder getRoot() throws IOException {
+		return getFolder(".");
 	}
 }

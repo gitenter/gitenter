@@ -19,7 +19,7 @@ public class GitBranchTest {
 	@Test
 	public void testBranchNotExist() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		assertEquals(repository.getBranch("branch-not-exist"), null);
 	}
 	
@@ -35,14 +35,14 @@ public class GitBranchTest {
 	 */
 	@Test(expected = RefNotFoundException.class)
 	public void testCreateBranchEmptyNormalRepository() throws IOException, GitAPIException {
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		repository.createBranch("a-branch");
 	}
 	
 	@Test
 	public void testCheckoutToFirstCommit() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		
 		GitNormalBranch currentBranch = repository.getCurrentBranch();
 		assertEquals(currentBranch.getName(), "master");
@@ -96,7 +96,7 @@ public class GitBranchTest {
 	@Test
 	public void testGetLogNormalRepository() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneEmpty(folder);
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
 		
 		GitNormalBranch master = repository.getCurrentBranch();
 		GitWorkspace workspace = master.checkoutTo();
@@ -131,13 +131,13 @@ public class GitBranchTest {
 		assertEquals(log.size(), 2);
 		assertEquals(log.get(0).getMessage(), "Third commit message to test getLog()");
 		assertEquals(log.get(1).getMessage(), "Second commit message to test getLog()");
+	}
+	
+	@Test
+	public void testExistCommitEvenEmptyFolderStructureShaNotEmpty() throws IOException, GitAPIException {
 		
-		/*
-		 * TODO:
-		 * A way to overwrite system (git, not jGit) setup of user and email?
-		 * Try to use Mockito but not successful yet. I don't know how to mock a method
-		 * hidden inside of the class method logic.
-		 */
-//		System.out.println(log.get(0).getAuthor().getName());
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneWithCleanWorkspace(folder);
+		GitCommit commit = repository.getCurrentBranch().getHead();
+		assertNotEquals(commit.getSha(), GitCommit.EMPTY_SHA);
 	}
 }

@@ -23,7 +23,7 @@ public class BlobGitDAO {
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(commitSha);
 		GitFile gitFile = gitCommit.getFile(relativeFilepath);
 		
@@ -34,7 +34,7 @@ public class BlobGitDAO {
 
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organizationName, repositoryName);
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 		GitFile gitFile = gitCommit.getFile(relativeFilepath);
 		

@@ -16,7 +16,7 @@ public class GitBareRepository extends GitRepository {
 	 * TODO:
 	 * Further wrap JGit exceptions.
 	 */
-	public GitBareRepository(File directory) throws IOException, GitAPIException {
+	private GitBareRepository(File directory) throws IOException, GitAPIException {
 		super(directory);
 		
 		if (isNormalRepository()) {
@@ -31,6 +31,28 @@ public class GitBareRepository extends GitRepository {
 		}
 		
 		buildJGitRepository();
+	}
+	
+	public static GitBareRepository getInstance(File directory) throws IOException, GitAPIException {
+		
+		if (instances.containsKey(directory)) {
+			GitRepository repository = instances.get(directory);
+			if (repository instanceof GitBareRepository) {
+				return (GitBareRepository)repository;
+			}
+			else {
+				/*
+				 * TODO:
+				 * Consider throw a customized exception.
+				 */
+				throw new IOException("The provided directory is a normal git directory: "+directory);
+			}
+		}
+		else {
+			GitBareRepository repository = new GitBareRepository(directory);
+			instances.put(directory, repository);
+			return repository;
+		}
 	}
 	
 	private void buildJGitRepository() throws IOException {
