@@ -34,7 +34,7 @@ public class GitTag {
 		}
 	}
 	
-	public GitCommit getHead() {
+	public GitCommit getCommit() {
 		return commit;
 	}
 }
