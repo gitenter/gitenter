@@ -35,6 +35,20 @@ public class GitNormalRepositoryTest {
 		
 		return repository;
 	}
+	
+	static GitNormalRepository getOneWithCleanWorkspace(TemporaryFolder folder) throws IOException, GitAPIException {
+		
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
+		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
+		
+		File file = folder.newFile("file");
+		file.createNewFile();
+		GitWorkspaceTest.add(workspace, file, "Add file");
+		
+		GitWorkspaceTest.deleteAll(workspace);
+		
+		return repository;
+	}
 
 	@Test
 	public void testInit() throws IOException, GitAPIException {

@@ -60,15 +60,7 @@ public class GitFolderTest {
 	@Before
 	public void setupEmptyFolderStructure() throws IOException, GitAPIException {
 		
-		GitNormalRepository repository = GitNormalRepositoryTest.getOneJustInitialized(folder);
-		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
-		
-		File file = folder.newFile("file");
-		file.createNewFile();
-		GitWorkspaceTest.add(workspace, file, "Add file");
-		
-		GitWorkspaceTest.deleteAll(workspace);
-		
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneWithCleanWorkspace(folder);	
 		commitWithEmptyFolderStructure = repository.getCurrentBranch().getHead();
 	}
 	
@@ -175,14 +167,4 @@ public class GitFolderTest {
 //			}
 //		}
 //	}
-	
-	/*
-	 * TODO:
-	 * Should move this test case to some other place.
-	 */
-	@Test
-	public void testExistCommitEvenEmptyFolderStructureShaNotEmpty() throws IOException {
-		
-		assertNotEquals(commitWithEmptyFolderStructure.getSha(), GitCommit.EMPTY_SHA);
-	}
 }

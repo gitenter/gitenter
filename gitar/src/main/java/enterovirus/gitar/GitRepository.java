@@ -86,8 +86,8 @@ public abstract class GitRepository {
 		 * have any branch (even master does not exist).
 		 * 
 		 * TODO:
-		 * Consider using other ways to decide if a repository is empty.
-		 * For example, to check that no HEAD exists yet.
+		 * Consider using other ways to decide if a repository is just
+		 * initialized. For example, to check that no HEAD exists yet.
 		 */
 		if (getBranches().isEmpty()) {
 			return true;

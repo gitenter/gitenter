@@ -140,4 +140,12 @@ public class GitBranchTest {
 		 */
 //		System.out.println(log.get(0).getAuthor().getName());
 	}
+	
+	@Test
+	public void testExistCommitEvenEmptyFolderStructureShaNotEmpty() throws IOException, GitAPIException {
+		
+		GitNormalRepository repository = GitNormalRepositoryTest.getOneWithCleanWorkspace(folder);
+		GitCommit commit = repository.getCurrentBranch().getHead();
+		assertNotEquals(commit.getSha(), GitCommit.EMPTY_SHA);
+	}
 }
