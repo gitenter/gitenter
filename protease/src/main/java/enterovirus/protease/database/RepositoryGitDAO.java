@@ -42,7 +42,7 @@ public class RepositoryGitDAO {
 				repository.getOrganization().getName(), 
 				repository.getName());
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		Collection<GitBranch> gitBranches = gitRepository.getBranches();
 		
 		Collection<BranchBean> branches = new ArrayList<BranchBean>();
@@ -59,7 +59,7 @@ public class RepositoryGitDAO {
 				repository.getOrganization().getName(), 
 				repository.getName());
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitBranch gitBranch = gitRepository.getBranch(branch.getName());
 		List<GitCommit> log = gitBranch.getLog(maxCount, skip);
 		

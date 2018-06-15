@@ -78,7 +78,7 @@ public class CommitImpl implements CommitRepository {
 				repositoryBean.getOrganization().getName(), 
 				repositoryBean.getName());
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 		
 		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHash(repositoryId, gitCommit.getSha());
@@ -102,7 +102,7 @@ public class CommitImpl implements CommitRepository {
 				commit.getRepository().getOrganization().getName(), 
 				commit.getRepository().getName());
 		
-		GitRepository gitRepository = new GitBareRepository(repositoryDirectory);
+		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(commit.getShaChecksumHash());
 		
 		updateFromGitCommit(commit, gitCommit);
