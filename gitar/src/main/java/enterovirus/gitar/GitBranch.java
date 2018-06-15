@@ -29,6 +29,12 @@ public class GitBranch {
 		jGitBranch = repository.getJGitRepository().exactRef("refs/heads/"+name);
 	}
 	
+	/*
+	 * TODO:
+	 * May have a "refresh()", but it is kind of replace itself, so
+	 * not sure whether it can be done or not.
+	 */
+	
 	public GitCommit getHead() throws IOException {
 		return new GitCommit(repository, jGitBranch.getObjectId().getName());
 	}

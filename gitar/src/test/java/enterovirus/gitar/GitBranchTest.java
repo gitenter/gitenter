@@ -131,14 +131,6 @@ public class GitBranchTest {
 		assertEquals(log.size(), 2);
 		assertEquals(log.get(0).getMessage(), "Third commit message to test getLog()");
 		assertEquals(log.get(1).getMessage(), "Second commit message to test getLog()");
-		
-		/*
-		 * TODO:
-		 * A way to overwrite system (git, not jGit) setup of user and email?
-		 * Try to use Mockito but not successful yet. I don't know how to mock a method
-		 * hidden inside of the class method logic.
-		 */
-//		System.out.println(log.get(0).getAuthor().getName());
 	}
 	
 	@Test

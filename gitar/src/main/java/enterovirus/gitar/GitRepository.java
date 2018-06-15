@@ -79,7 +79,7 @@ public abstract class GitRepository {
 		return true;
 	}
 	
-	public boolean isJustInitialized() throws IOException, GitAPIException {
+	boolean isJustInitialized() throws IOException, GitAPIException {
 		
 		/*
 		 * This is a hack, that a just initialized repository doesn't
