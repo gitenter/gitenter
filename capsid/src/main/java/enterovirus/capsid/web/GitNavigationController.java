@@ -18,7 +18,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.gitenter.database.git.BlobGitDAO;
+import com.gitenter.database.git.CommitGitDAO;
+import com.gitenter.database.git.CommitRepository;
+import com.gitenter.database.git.DocumentRepository;
+import com.gitenter.database.settings.RepositoryGitDAO;
+import com.gitenter.database.settings.RepositoryRepository;
+import com.gitenter.domain.git.BlobBean;
+import com.gitenter.domain.git.CommitBean;
+import com.gitenter.domain.git.CommitInvalidBean;
+import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.DocumentBean;
+import com.gitenter.domain.settings.OrganizationBean;
+import com.gitenter.domain.settings.RepositoryBean;
+import com.gitenter.domain.settings.RepositoryMemberRole;
 import com.gitenter.gitar.wrap.*;
+import com.gitenter.protease.source.GitSource;
 
 import enterovirus.capsid.config.WebSource;
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
@@ -27,7 +42,6 @@ import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
-import enterovirus.protease.source.GitSource;
 
 @Controller
 public class GitNavigationController {	

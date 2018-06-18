@@ -2,8 +2,9 @@ package enterovirus.capsid.service;
 
 import java.io.IOException;
 
+import com.gitenter.domain.settings.MemberBean;
+
 import enterovirus.capsid.dto.MemberDTO;
-import enterovirus.protease.domain.MemberBean;
 
 public interface MemberService {
 

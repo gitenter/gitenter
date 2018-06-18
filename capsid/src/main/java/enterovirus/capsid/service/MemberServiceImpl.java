@@ -16,9 +16,10 @@ import org.springframework.stereotype.Service;
  */
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.database.settings.MemberRepository;
+import com.gitenter.domain.settings.MemberBean;
+
 import enterovirus.capsid.dto.MemberDTO;
-import enterovirus.protease.database.MemberRepository;
-import enterovirus.protease.domain.MemberBean;
 
 @Service
 @Transactional
