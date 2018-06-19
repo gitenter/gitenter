@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.gitenter.domain.settings.RepositoryBean;
+import com.gitenter.domain.auth.RepositoryBean;
 
 import lombok.Getter;
 import lombok.Setter;

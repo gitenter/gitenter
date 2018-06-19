@@ -12,15 +12,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.settings.MemberRepository;
-import com.gitenter.database.settings.OrganizationRepository;
-import com.gitenter.database.settings.RepositoryMemberMapRepository;
-import com.gitenter.database.settings.RepositoryRepository;
-import com.gitenter.domain.settings.MemberBean;
-import com.gitenter.domain.settings.OrganizationBean;
-import com.gitenter.domain.settings.RepositoryBean;
-import com.gitenter.domain.settings.RepositoryMemberMapBean;
-import com.gitenter.domain.settings.RepositoryMemberRole;
+import com.gitenter.database.auth.MemberRepository;
+import com.gitenter.database.auth.OrganizationRepository;
+import com.gitenter.database.auth.RepositoryMemberMapRepository;
+import com.gitenter.database.auth.RepositoryRepository;
+import com.gitenter.domain.auth.MemberBean;
+import com.gitenter.domain.auth.OrganizationBean;
+import com.gitenter.domain.auth.RepositoryBean;
+import com.gitenter.domain.auth.RepositoryMemberMapBean;
+import com.gitenter.domain.auth.RepositoryMemberRole;
 
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;

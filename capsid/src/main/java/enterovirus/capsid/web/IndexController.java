@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gitenter.database.settings.MemberRepository;
-import com.gitenter.database.settings.OrganizationRepository;
-import com.gitenter.domain.settings.MemberBean;
-import com.gitenter.domain.settings.OrganizationBean;
-import com.gitenter.domain.settings.RepositoryMemberMapBean;
+import com.gitenter.database.auth.MemberRepository;
+import com.gitenter.database.auth.OrganizationRepository;
+import com.gitenter.domain.auth.MemberBean;
+import com.gitenter.domain.auth.OrganizationBean;
+import com.gitenter.domain.auth.RepositoryMemberMapBean;
 
 import org.springframework.ui.Model;
 

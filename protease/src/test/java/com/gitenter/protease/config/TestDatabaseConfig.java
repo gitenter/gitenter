@@ -33,11 +33,11 @@ public class TestDatabaseConfig {
 	}
 	
 	@Bean
-	public DatabaseDataSourceConnectionFactoryBean schemaSettingsDatabaseConnection() {
+	public DatabaseDataSourceConnectionFactoryBean schemaAuthDatabaseConnection() {
 		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
 		dataConnection.setDataSource(dataSource());
 		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
-		dataConnection.setSchema("settings");
+		dataConnection.setSchema("auth");
 		return dataConnection;
 	}
 	

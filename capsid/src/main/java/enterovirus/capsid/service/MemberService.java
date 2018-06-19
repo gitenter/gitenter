@@ -2,7 +2,7 @@ package enterovirus.capsid.service;
 
 import java.io.IOException;
 
-import com.gitenter.domain.settings.MemberBean;
+import com.gitenter.domain.auth.MemberBean;
 
 import enterovirus.capsid.dto.MemberDTO;
 

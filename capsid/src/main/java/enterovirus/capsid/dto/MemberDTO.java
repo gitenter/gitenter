@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
-import com.gitenter.domain.settings.MemberBean;
+import com.gitenter.domain.auth.MemberBean;
 
 import lombok.Getter;
 import lombok.Setter;

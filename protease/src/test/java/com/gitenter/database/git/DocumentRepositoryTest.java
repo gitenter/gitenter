@@ -28,7 +28,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={
-		"schemaSettingsDatabaseConnection",
+		"schemaAuthDatabaseConnection",
 		"schemaGitDatabaseConnection"})
 public class DocumentRepositoryTest {
 
@@ -47,7 +47,7 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
 	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal-schema-git.xml")
 	public void testFindById() throws Exception {
 //		DocumentBean document = repository.findById(1);

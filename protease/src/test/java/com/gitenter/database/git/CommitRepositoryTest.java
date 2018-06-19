@@ -26,7 +26,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={
-		"schemaSettingsDatabaseConnection",
+		"schemaAuthDatabaseConnection",
 		"schemaGitDatabaseConnection"})
 public class CommitRepositoryTest {
 

@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.gitenter.domain.settings.RepositoryBean;
+import com.gitenter.domain.auth.RepositoryBean;
 
 import lombok.Getter;
 import lombok.Setter;

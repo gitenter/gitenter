@@ -9,11 +9,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.database.settings.RepositoryRepository;
+import com.gitenter.database.auth.RepositoryRepository;
+import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.AuthorBean;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
-import com.gitenter.domain.settings.RepositoryBean;
 import com.gitenter.gitar.*;
 import com.gitenter.protease.source.GitSource;
 
