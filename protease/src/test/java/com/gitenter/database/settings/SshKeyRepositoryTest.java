@@ -47,7 +47,7 @@ public class SshKeyRepositoryTest {
 	 * P.S Currently unique key is not setup yet.
 	 */
 	@Test
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="../minimal-schema-settings.xml")
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
 	public void test() throws Exception {
 		
 		MemberBean member = memberRepository.findById(1);

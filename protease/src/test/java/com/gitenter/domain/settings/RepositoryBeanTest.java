@@ -1,4 +1,4 @@
-package com.gitenter.database.settings;
+package com.gitenter.domain.settings;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,15 +32,22 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaSettingsDatabaseConnection"})
-public class RepositoryRepositoryTest {
+public class RepositoryBeanTest {
 
 	@Autowired RepositoryRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="../minimal-schema-settings.xml")
-	public void test() throws IOException {
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
+	public void testDbUnitMinimalQueryWorks() throws IOException {
+		
 		RepositoryBean item = repository.findById(1);
+		
 		assertEquals(item.getName(), "repository");
+		assertEquals(item.getDisplayName(), "Repository");
+		assertEquals(item.getDescription(), "Repo description");
+
+		assertEquals(item.getMembers(RepositoryMemberRole.REVIEWER).size(), 1);
+		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
 	}
 }

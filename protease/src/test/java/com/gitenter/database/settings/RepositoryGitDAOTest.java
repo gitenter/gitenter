@@ -37,7 +37,7 @@ public class RepositoryGitDAOTest {
 	private RepositoryBean repository;
 	
 	@Before
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="../minimal-schema-settings.xml")
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
 	public void init() throws Exception {
 		repository = repositoryRepository.findById(1);
 	}

@@ -1,6 +1,7 @@
 package com.gitenter.domain.settings;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,6 +61,16 @@ public class RepositoryBean {
 
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	
+	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
+		Collection<MemberBean> items = new ArrayList<MemberBean>();
+		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+			if (map.getRole().equals(role)) {
+				items.add(map.getMember());
+			}
+		}
+		return items;
+	}
 	
 	public void addCommit (CommitBean commit) {
 		commits.add(commit);

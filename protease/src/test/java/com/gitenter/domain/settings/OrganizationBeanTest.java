@@ -1,8 +1,6 @@
-package com.gitenter.database.settings;
+package com.gitenter.domain.settings;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +14,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.settings.MemberRepository;
-import com.gitenter.domain.settings.MemberBean;
-import com.gitenter.protease.ProteaseConfig;
+import com.gitenter.database.settings.OrganizationRepository;
+import com.gitenter.domain.settings.OrganizationBean;
+import com.gitenter.domain.settings.OrganizationMemberRole;
+import com.gitenter.protease.*;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -32,16 +31,21 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaSettingsDatabaseConnection"})
-public class MemberRepositoryTest {
+public class OrganizationBeanTest {
 
-	@Autowired MemberRepository repository;
+	@Autowired private OrganizationRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="../minimal-schema-settings.xml")
-	//@DatabaseTearDown("member.xml")
-	public void test() throws IOException {
-		MemberBean item = repository.findById(1);
-		assertEquals(item.getDisplayName(), "Display Name");
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
+	public void testDbUnitMinimalQueryWorks() throws Exception {
+		
+		OrganizationBean item = repository.findById(1);
+		
+		assertEquals(item.getName(), "organization");
+		assertEquals(item.getDisplayName(), "Organization");
+		
+		assertEquals(item.getMembers(OrganizationMemberRole.MANAGER).size(), 1);
+		assertEquals(item.getMembers(OrganizationMemberRole.MEMBER).size(), 0);
 	}
 }

@@ -1,6 +1,7 @@
 package com.gitenter.domain.settings;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -76,13 +77,39 @@ public class MemberBean {
 	@Column(name="registration_timestamp", updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registrationTimestamp;
-	
-//	@ManyToMany(targetEntity=OrganizationBean.class, mappedBy="managers", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-//	private List<OrganizationBean> organizations;
+
+	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
+	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
 	
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<SshKeyBean> sshKeys = new ArrayList<SshKeyBean>();
+	
+	/*
+	 * If later on there is performance concerns, we can have a view for a JOIN
+	 * with fixed role, and map it to a OneToMany relationship in there. And this
+	 * method can contain a switch which queries corresponding list. Will have no
+	 * affect to the outside part.
+	 */
+	public Collection<OrganizationBean> getOrganizations(OrganizationMemberRole role) {
+		Collection<OrganizationBean> items = new ArrayList<OrganizationBean>();
+		for (OrganizationMemberMapBean map : organizationMemberMaps) {
+			if (map.getRole().equals(role)) {
+				items.add(map.getOrganization());
+			}
+		}
+		return items;
+	}
+	
+	public Collection<RepositoryBean> getRepositories(RepositoryMemberRole role) {
+		Collection<RepositoryBean> items = new ArrayList<RepositoryBean>();
+		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+			if (map.getRole().equals(role)) {
+				items.add(map.getRepository());
+			}
+		}
+		return items;
+	}
 }

@@ -3,6 +3,7 @@ package com.gitenter.domain.settings;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,11 +23,11 @@ public class RepositoryMemberMapBean {
 	@Column(name="id", updatable=false)
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="repository_id")
 	private RepositoryBean repository;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="member_id")
 	private MemberBean member;
 	

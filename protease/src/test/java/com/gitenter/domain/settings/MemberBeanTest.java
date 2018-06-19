@@ -1,6 +1,8 @@
-package com.gitenter.database.settings;
+package com.gitenter.domain.settings;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +16,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.settings.OrganizationRepository;
-import com.gitenter.domain.settings.OrganizationBean;
-import com.gitenter.protease.*;
+import com.gitenter.database.settings.MemberRepository;
+import com.gitenter.domain.settings.MemberBean;
+import com.gitenter.domain.settings.OrganizationMemberRole;
+import com.gitenter.domain.settings.RepositoryMemberRole;
+import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -30,15 +34,28 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaSettingsDatabaseConnection"})
-public class OrganizationRepositoryTest {
+public class MemberBeanTest {
 
-	@Autowired private OrganizationRepository repository;
+	@Autowired MemberRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="../minimal-schema-settings.xml")
-	public void findByUsername() throws Exception {
-		OrganizationBean item = repository.findByName("organization");
-		assertEquals(item.getDisplayName(), "Organization");
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
+	//@DatabaseTearDown("member.xml")
+	public void testDbUnitMinimalQueryWorks() throws IOException {
+		
+		MemberBean item = repository.findById(1);
+		
+		assertEquals(item.getUsername(), "username");
+		assertEquals(item.getPassword(), "password");
+		assertEquals(item.getDisplayName(), "Display Name");
+		assertEquals(item.getEmail(), "email@email.com");
+		assertTrue(item.getRegistrationTimestamp() != null);
+		
+		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
+		assertEquals(item.getOrganizations(OrganizationMemberRole.MEMBER).size(), 0);
+
+		assertEquals(item.getRepositories(RepositoryMemberRole.REVIEWER).size(), 1);
+		assertEquals(item.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
 	}
 }

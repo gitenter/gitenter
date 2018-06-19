@@ -17,13 +17,14 @@ CREATE TABLE settings.organization (
 
 CREATE TABLE settings.organization_member_map (
 	id serial PRIMARY KEY,
-	member_id serial REFERENCES settings.member (id) ON DELETE RESTRICT,
-	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
+	
 	/*
 	 * With this constrain, a member can at most have one role
 	 * in a particular organization.
 	 */
-	UNIQUE (member_id, organization_id),
+	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
+	member_id serial REFERENCES settings.member (id) ON DELETE RESTRICT,
+	UNIQUE (organization_id, member_id),
 
 	/*
 	 * Rather than a lookup table in SQL, we define the enum types

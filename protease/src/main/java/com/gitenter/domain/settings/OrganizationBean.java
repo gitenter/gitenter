@@ -1,6 +1,8 @@
 package com.gitenter.domain.settings;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,13 +46,19 @@ public class OrganizationBean {
 
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<RepositoryBean> repositories;
+
+	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
+	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
 	
-//	@ManyToMany(targetEntity=MemberBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-//	@JoinTable(
-//			schema = "settings", name="organization_manager_map",		
-//			joinColumns=@JoinColumn(name="organization_id", referencedColumnName="id"), 
-//			inverseJoinColumns=@JoinColumn(name="member_id", referencedColumnName="id"))
-//	private List<MemberBean> managers;
+	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
+		Collection<MemberBean> items = new ArrayList<MemberBean>();
+		for (OrganizationMemberMapBean map : organizationMemberMaps) {
+			if (map.getRole().equals(role)) {
+				items.add(map.getMember());
+			}
+		}
+		return items;
+	}
 	
 	/*
 	 * TODO:

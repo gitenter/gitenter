@@ -47,8 +47,8 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="../minimal-schema-settings.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="../minimal-schema-git.xml")
+	@DatabaseSetup(connection="schemaSettingsDatabaseConnection", value="classpath:dbunit/minimal-schema-settings.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal-schema-git.xml")
 	public void testFindById() throws Exception {
 //		DocumentBean document = repository.findById(1);
 //		
