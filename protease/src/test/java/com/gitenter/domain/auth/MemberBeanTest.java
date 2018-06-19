@@ -16,7 +16,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.auth.MemberRepository;
+import com.gitenter.dao.auth.MemberRepository;
 import com.gitenter.domain.auth.MemberBean;
 import com.gitenter.domain.auth.OrganizationMemberRole;
 import com.gitenter.domain.auth.RepositoryMemberRole;
@@ -44,7 +44,7 @@ public class MemberBeanTest {
 	//@DatabaseTearDown("member.xml")
 	public void testDbUnitMinimalQueryWorks() throws IOException {
 		
-		MemberBean item = repository.findById(1);
+		MemberBean item = repository.findById(1).get();
 		
 		assertEquals(item.getUsername(), "username");
 		assertEquals(item.getPassword(), "password");

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gitenter.database.auth.MemberRepository;
-import com.gitenter.database.auth.SshKeyRepository;
+import com.gitenter.dao.auth.MemberRepository;
+import com.gitenter.dao.auth.SshKeyRepository;
 import com.gitenter.domain.auth.MemberBean;
 import com.gitenter.domain.auth.SshKeyBean;
 

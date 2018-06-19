@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,8 +25,6 @@ import com.gitenter.domain.git.CommitBean;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
 @Entity
 @Table(schema = "auth", name = "repository")
 public class RepositoryBean {
@@ -33,33 +32,49 @@ public class RepositoryBean {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id", updatable=false)
+	@Getter
+	@Setter
 	private Integer id;
 	
 	@ManyToOne
 	@JoinColumn(name="organization_id")
+	@Getter
+	@Setter
 	private OrganizationBean organization;
 
 	@NotNull
 	@Size(min=2, max=16)
 	@Column(name="name")
+	@Getter
+	@Setter
 	private String name;
 
 	@NotNull
 	@Size(min=2, max=64)
 	@Column(name="display_name")
+	@Getter
+	@Setter
 	private String displayName;
 
 	@Column(name="description")
+	@Getter
+	@Setter
 	private String description;
 	
 	@NotNull
 	@Column(name="is_public")
+	@Getter
+	@Setter
 	private Boolean isPublic;
 	
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	@Getter
+	@Setter
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	@Getter
+	@Setter
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {

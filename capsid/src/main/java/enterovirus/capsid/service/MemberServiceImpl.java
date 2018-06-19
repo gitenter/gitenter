@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  */
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.auth.MemberRepository;
+import com.gitenter.dao.auth.MemberRepository;
 import com.gitenter.domain.auth.MemberBean;
 
 import enterovirus.capsid.dto.MemberDTO;

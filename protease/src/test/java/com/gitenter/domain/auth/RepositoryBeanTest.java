@@ -16,7 +16,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.auth.RepositoryRepository;
+import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.protease.*;
@@ -47,6 +47,7 @@ public class RepositoryBeanTest {
 		assertEquals(item.getName(), "repository");
 		assertEquals(item.getDisplayName(), "Repository");
 		assertEquals(item.getDescription(), "Repo description");
+		assertEquals(item.getIsPublic(), true);
 
 		assertEquals(item.getMembers(RepositoryMemberRole.REVIEWER).size(), 1);
 		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);

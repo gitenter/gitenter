@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.gitenter.database.auth.RepositoryGitDAO;
-import com.gitenter.database.auth.RepositoryRepository;
-import com.gitenter.database.git.BlobGitDAO;
-import com.gitenter.database.git.CommitGitDAO;
-import com.gitenter.database.git.CommitRepository;
-import com.gitenter.database.git.DocumentRepository;
+import com.gitenter.dao.auth.RepositoryGitDAO;
+import com.gitenter.dao.auth.RepositoryRepository;
+import com.gitenter.dao.git.BlobGitDAO;
+import com.gitenter.dao.git.CommitGitDAO;
+import com.gitenter.dao.git.CommitRepository;
+import com.gitenter.dao.git.DocumentRepository;
 import com.gitenter.domain.auth.OrganizationBean;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;

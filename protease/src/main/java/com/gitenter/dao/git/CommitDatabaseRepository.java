@@ -1,4 +1,4 @@
-package com.gitenter.database.git;
+package com.gitenter.dao.git;
 
 import java.util.Optional;
 import java.util.List;

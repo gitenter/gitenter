@@ -1,4 +1,4 @@
-package com.gitenter.database.git;
+package com.gitenter.dao.git;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.git.DocumentRepository;
+import com.gitenter.dao.git.DocumentRepository;
 import com.gitenter.domain.git.DocumentBean;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;

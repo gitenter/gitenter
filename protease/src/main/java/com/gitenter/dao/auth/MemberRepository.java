@@ -1,4 +1,4 @@
-package com.gitenter.database.auth;
+package com.gitenter.dao.auth;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.gitenter.domain.auth.MemberBean;
 
-interface MemberDatabaseRepository extends PagingAndSortingRepository<MemberBean, Integer> {
+public interface MemberRepository extends PagingAndSortingRepository<MemberBean, Integer> {
 
 	Optional<MemberBean> findById(Integer id);
 	List<MemberBean> findByUsername(String username);

@@ -50,7 +50,7 @@ public class CommitBean {
 	 * From git.
 	 */
 	@Transient
-	private Date time;
+	private Date timestamp;
 	
 	@Transient
 	private String message;

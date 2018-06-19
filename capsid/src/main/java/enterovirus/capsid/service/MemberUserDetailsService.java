@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.gitenter.database.auth.MemberRepository;
+import com.gitenter.dao.auth.MemberRepository;
 import com.gitenter.domain.auth.MemberBean;
 
 import enterovirus.protease.database.*;

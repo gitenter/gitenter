@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.gitenter.database.auth.OrganizationRepository;
+import com.gitenter.dao.auth.OrganizationRepository;
 import com.gitenter.domain.auth.OrganizationBean;
 
 /*
@@ -21,7 +21,7 @@ public class ProteaseApplication {
 	@Autowired private OrganizationRepository organizationRepository;
 	
 	private void run () throws IOException {	
-		OrganizationBean organization = organizationRepository.findByName("org1");
+		OrganizationBean organization = organizationRepository.findByName("org1").get(0);
 		System.out.println(organization.getDisplayName());
 	}
 	

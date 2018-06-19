@@ -14,7 +14,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.database.auth.OrganizationRepository;
+import com.gitenter.dao.auth.OrganizationRepository;
 import com.gitenter.domain.auth.OrganizationBean;
 import com.gitenter.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.*;
@@ -40,7 +40,7 @@ public class OrganizationBeanTest {
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
 	public void testDbUnitMinimalQueryWorks() throws Exception {
 		
-		OrganizationBean item = repository.findById(1);
+		OrganizationBean item = repository.findById(1).get();
 		
 		assertEquals(item.getName(), "organization");
 		assertEquals(item.getDisplayName(), "Organization");

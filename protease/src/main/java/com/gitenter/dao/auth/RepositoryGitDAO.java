@@ -1,4 +1,4 @@
-package com.gitenter.database.auth;
+package com.gitenter.dao.auth;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.database.git.CommitDatabaseRepository;
+import com.gitenter.dao.git.CommitDatabaseRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.AuthorBean;
 import com.gitenter.domain.git.BranchBean;
@@ -85,7 +85,7 @@ public class RepositoryGitDAO {
 		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHashIn(repository.getId(), shas);
 		
 		for (CommitBean commit : commits) {
-			commit.setTime(logMap.get(commit.getShaChecksumHash()).getTime());
+			commit.setTimestamp(logMap.get(commit.getShaChecksumHash()).getTimestamp());
 			commit.setMessage(logMap.get(commit.getShaChecksumHash()).getMessage());
 			commit.setAuthor(new AuthorBean(logMap.get(commit.getShaChecksumHash()).getAuthor()));
 		}

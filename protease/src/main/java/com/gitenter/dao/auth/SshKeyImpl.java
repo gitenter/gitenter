@@ -1,4 +1,4 @@
-package com.gitenter.database.auth;
+package com.gitenter.dao.auth;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gitenter.database.auth.MemberRepository;
-import com.gitenter.database.auth.OrganizationRepository;
-import com.gitenter.database.auth.RepositoryMemberMapRepository;
-import com.gitenter.database.auth.RepositoryRepository;
+import com.gitenter.dao.auth.MemberRepository;
+import com.gitenter.dao.auth.OrganizationRepository;
+import com.gitenter.dao.auth.RepositoryMemberMapRepository;
+import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.auth.MemberBean;
 import com.gitenter.domain.auth.OrganizationBean;
 import com.gitenter.domain.auth.RepositoryBean;

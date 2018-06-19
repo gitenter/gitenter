@@ -1,4 +1,4 @@
-package com.gitenter.database.git;
+package com.gitenter.dao.git;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +11,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.gitenter.database.git.CommitGitDAO;
-import com.gitenter.database.git.CommitRepository;
+import com.gitenter.dao.git.CommitGitDAO;
+import com.gitenter.dao.git.CommitRepository;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;

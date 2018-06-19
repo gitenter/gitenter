@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * "DatabaseConfig" and "GitConfig" is needed), I don't under why.
  */
 @Configuration
-@EnableJpaRepositories(basePackages="com.gitenter.database")
+@EnableJpaRepositories(basePackages="com.gitenter.dao")
 @EnableTransactionManagement
 public class JpaConfig {
 

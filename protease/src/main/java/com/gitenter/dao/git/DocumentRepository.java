@@ -1,4 +1,4 @@
-package com.gitenter.database.git;
+package com.gitenter.dao.git;
 
 import java.io.IOException;
 import java.util.List;

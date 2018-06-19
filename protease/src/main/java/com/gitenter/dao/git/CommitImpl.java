@@ -1,4 +1,4 @@
-package com.gitenter.database.git;
+package com.gitenter.dao.git;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.database.auth.RepositoryRepository;
+import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.AuthorBean;
 import com.gitenter.domain.git.BranchBean;
@@ -114,7 +114,7 @@ public class CommitImpl implements CommitRepository {
 	
 	private void updateFromGitCommit(CommitBean commit, GitCommit gitCommit) {
 		
-		commit.setTime(gitCommit.getTime());
+		commit.setTimestamp(gitCommit.getTimestamp());
 		commit.setMessage(gitCommit.getMessage());
 		commit.setAuthor(new AuthorBean(gitCommit.getAuthor()));
 	}

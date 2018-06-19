@@ -1,6 +1,11 @@
-package com.gitenter.database.auth;
+package com.gitenter.dao.auth;
 
-import org.junit.Before;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +17,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.gitenter.database.auth.RepositoryGitDAO;
-import com.gitenter.database.auth.RepositoryRepository;
-import com.gitenter.domain.auth.RepositoryBean;
-import com.gitenter.protease.ProteaseConfig;
+import com.gitenter.dao.auth.MemberRepository;
+import com.gitenter.dao.auth.SshKeyRepository;
+import com.gitenter.domain.auth.MemberBean;
+import com.gitenter.domain.auth.SshKeyBean;
+import com.gitenter.protease.*;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -29,42 +35,38 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection"})
-public class RepositoryGitDAOTest {
+public class SshKeyRepositoryTest {
 
-	@Autowired private RepositoryRepository repositoryRepository;
-	@Autowired private RepositoryGitDAO repositoryGitDAO;
+	@Autowired MemberRepository memberRepository;
+	@Autowired SshKeyRepository sshKeyRepository;
 	
-	private RepositoryBean repository;
-	
-	@Before
+	/*
+	 * Ignored, because otherwise the database complains error:
+	 * > ERROR: duplicate key value violates unique constraint "ssh_key_key_key"
+	 * 
+	 * P.S Currently unique key is not setup yet.
+	 */
+	@Test
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
-	public void init() throws Exception {
-		repository = repositoryRepository.findById(1);
+	public void test() throws Exception {
+		
+		MemberBean member = memberRepository.findById(1).get();
+		
+		Path publicKeyFile = Paths.get(System.getProperty("user.home"), ".ssh/id_rsa.pub");
+		
+		/*
+		 * Read the first line, as it has only one line.
+		 */
+		String publicKeyLine = Files.lines(publicKeyFile).collect(Collectors.toList()).get(0);
+		
+		SshKeyBean sshKey = new SshKeyBean(publicKeyLine);
+		sshKey.setMember(member);
+		
+		sshKeyRepository.saveAndFlush(sshKey, "user");
 	}
 	
 	@Test
-	public void test1() throws Exception {
-//
-//		BranchName branchName = new BranchName("master");
-//		repositoryGitDAO.loadCommitLog(repository, branchName, 10, 0);
-//		for (Map.Entry<CommitInfo,CommitBean> entry : repository.getCommitLogMap().entrySet()) {
-//			
-//			CommitInfo commitInfo = entry.getKey();
-//			CommitBean commit = entry.getValue();
-//			
-//			System.out.println(commitInfo.getCommitSha().getShaChecksumHash());
-//			System.out.println(commitInfo.getFullMessage());
-//			System.out.println(commit.getClass());
-//		}
+	public void testDummy () {
+		
 	}
-	
-//	@Test
-//	public void test2() throws Exception {
-//		
-//		repositoryGitDAO.loadBranchNames(repository);
-//		for (BranchName name : repository.getBranchNames()) {
-//			System.out.println(name.getName());
-//		}
-//	}
-
 }
