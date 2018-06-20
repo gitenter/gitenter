@@ -1,9 +1,13 @@
 package com.gitenter.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;
+import com.gitenter.domain.git.BranchBean;
 import com.gitenter.protease.*;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -40,9 +45,9 @@ public class RepositoryBeanTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
-	public void testDbUnitMinimalQueryWorks() throws IOException {
+	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException {
 		
-		RepositoryBean item = repository.findById(1);
+		RepositoryBean item = repository.findById(1).get();
 		
 		assertEquals(item.getName(), "repository");
 		assertEquals(item.getDisplayName(), "Repository");
@@ -51,5 +56,15 @@ public class RepositoryBeanTest {
 
 		assertEquals(item.getMembers(RepositoryMemberRole.REVIEWER).size(), 1);
 		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
+		
+		List<String> expectBranchNames = new ArrayList<String>();
+		expectBranchNames.add("master");
+		expectBranchNames.add("another-branch");
+		List<String> branchNames = new ArrayList<String>();
+		for (BranchBean branch : item.getBranches()) {
+			branchNames.add(branch.getName());
+		}
+		assertTrue(branchNames.containsAll(expectBranchNames));
+		assertTrue(expectBranchNames.containsAll(branchNames));
 	}
 }

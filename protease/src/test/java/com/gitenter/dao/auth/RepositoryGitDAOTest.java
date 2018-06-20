@@ -39,7 +39,7 @@ public class RepositoryGitDAOTest {
 	@Before
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
 	public void init() throws Exception {
-		repository = repositoryRepository.findById(1);
+		repository = repositoryRepository.findById(1).get();
 	}
 	
 	@Test
