@@ -20,7 +20,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "production")
+@ActiveProfiles(profiles = "minimal")
 @ContextConfiguration(classes={ProteaseConfig.class})
 @TestExecutionListeners({
 	DependencyInjectionTestExecutionListener.class,
@@ -47,8 +47,8 @@ public class DocumentRepositoryTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal-schema-git.xml")
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
 	public void testFindById() throws Exception {
 //		DocumentBean document = repository.findById(1);
 //		

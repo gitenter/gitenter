@@ -21,7 +21,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "production")
+@ActiveProfiles(profiles = "minimal")
 @ContextConfiguration(classes=ProteaseConfig.class)
 @TestExecutionListeners({
 	DependencyInjectionTestExecutionListener.class,
@@ -37,7 +37,7 @@ public class RepositoryGitDAOTest {
 	private RepositoryBean repository;
 	
 	@Before
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void init() throws Exception {
 		repository = repositoryRepository.findById(1).get();
 	}

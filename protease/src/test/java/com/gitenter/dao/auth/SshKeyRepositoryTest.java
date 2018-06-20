@@ -27,7 +27,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "production")
+@ActiveProfiles(profiles = "minimal")
 @ContextConfiguration(classes=ProteaseConfig.class)
 @TestExecutionListeners({
 	DependencyInjectionTestExecutionListener.class,
@@ -47,7 +47,7 @@ public class SshKeyRepositoryTest {
 	 * P.S Currently unique key is not setup yet.
 	 */
 	@Test
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal-schema-auth.xml")
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void test() throws Exception {
 		
 		MemberBean member = memberRepository.findById(1).get();

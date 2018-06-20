@@ -1,11 +1,13 @@
-package com.gitenter.domain.auth;
+package com.gitenter.domain.git;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -22,6 +24,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.dao.auth.RepositoryRepository;
+import com.gitenter.dao.git.CommitRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.domain.git.BranchBean;
@@ -38,28 +41,25 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection"})
-public class RepositoryBeanTest {
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection"})
+public class CommitBeanTest {
 
-	@Autowired RepositoryRepository repository;
+	@Autowired CommitRepository repository;
 	
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException {
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException, ParseException {
 		
-		RepositoryBean item = repository.findById(1).get();
+		CommitBean item = repository.findById(1).get();
 		
-		assertEquals(item.getName(), "repository");
-		assertEquals(item.getDisplayName(), "Repository");
-		assertEquals(item.getDescription(), "Repo description");
-		assertEquals(item.getIsPublic(), true);
-
-		assertEquals(item.getMembers(RepositoryMemberRole.REVIEWER).size(), 1);
-		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
-		
-		Collection<BranchBean> branches = item.getBranches();
-		assertEquals(branches.size(), 1);
-		assertEquals(branches.iterator().next().getName(), "master");
+		assertEquals(item.getMessage(), "file\n");
+//		assertTrue(
+//				item.getTimestamp().getTime()
+//				- new SimpleDateFormat("EEE MMM dd HH:mm:ss YYYY ZZZZZ").parse("Wed Jun 20 18:55:41 2018 -0400").getTime()
+//				< 1000);
+		assertEquals(item.getAuthor().getName(), "Cong-Xin Qiu");
+		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 	}
 }

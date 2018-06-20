@@ -18,7 +18,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "production")
+@ActiveProfiles(profiles = "minimal")
 @ContextConfiguration(classes={ProteaseConfig.class})
 @TestExecutionListeners({
 	DependencyInjectionTestExecutionListener.class,

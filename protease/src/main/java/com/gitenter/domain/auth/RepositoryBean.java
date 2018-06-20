@@ -26,6 +26,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -70,6 +71,7 @@ public class RepositoryBean {
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	@Transient
+	@Getter(AccessLevel.NONE)
 	private BranchList branchList;
 	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
@@ -99,30 +101,30 @@ public class RepositoryBean {
 	 * Not working, because repositoryRepository.saveAndFlush() cannot 
 	 * really follow this change. Need to go with RepositoryMemberMapRepository.delete().
 	 */
-	public boolean removeMember (Integer memberId) {
-		
-		Iterator<RepositoryMemberMapBean> i = repositoryMemberMaps.iterator();
-		while (i.hasNext()) {
-			RepositoryMemberMapBean map = i.next();
-			System.out.println(memberId+":"+map.getMember().getId());
-			if (map.getMember().getId().equals(memberId)) {
-				System.out.println("bingo");
-				i.remove();
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	public RepositoryMemberMapBean getRepositoryMemberMap (Integer memberId) {
-		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
-			if (map.getMember().getId().equals(memberId)) {
-				return map;
-			}
-		}
-		return null;
-	}
+//	public boolean removeMember (Integer memberId) {
+//		
+//		Iterator<RepositoryMemberMapBean> i = repositoryMemberMaps.iterator();
+//		while (i.hasNext()) {
+//			RepositoryMemberMapBean map = i.next();
+//			System.out.println(memberId+":"+map.getMember().getId());
+//			if (map.getMember().getId().equals(memberId)) {
+//				System.out.println("bingo");
+//				i.remove();
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
+//	
+//	public RepositoryMemberMapBean getRepositoryMemberMap (Integer memberId) {
+//		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+//			if (map.getMember().getId().equals(memberId)) {
+//				return map;
+//			}
+//		}
+//		return null;
+//	}
 	
 	public interface BranchList {
 		Collection<BranchBean> getBranches() throws IOException, GitAPIException;

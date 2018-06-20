@@ -24,51 +24,43 @@ public class CommitImpl implements CommitRepository {
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private GitSource gitSource;
 	
-	public CommitBean findById(Integer id) throws IOException, GitAPIException {
+	public Optional<CommitBean> findById(Integer id) throws IOException, GitAPIException {
 		
-		Optional<CommitBean> commits = commitDbRepository.findById(id);
+		Optional<CommitBean> items = commitDbRepository.findById(id);
 		
-		if (!commits.isPresent()) {
-			throw new IOException ("Commit id "+id+" is not correct!");
+		if (items.isPresent()) {
+			CommitBean item = items.get();
+			updateFromGit(item);
 		}
 		
-		CommitBean commit = commits.get();
-		updateFromGit(commit);
-		
-		return commit;
+		return items;
 	}
 	
-	public CommitBean findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
+	public List<CommitBean> findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
 		
-		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHash(repositoryId, commitSha);
-		
-		if (commits.size() == 0) {
-			throw new IOException ("In repository No."+repositoryId+", SHA checksum hash "+commitSha+" is not correct!");
-		}
-		if (commits.size() > 1) {
-			throw new IOException ("In repository No."+repositoryId+", SHA checksum hash "+commitSha+" is not unique!");
-		}
-		
-		CommitBean commit = commits.get(0);
-		updateFromGit(commit);
-		
-		return commit;
-	}
-	
-	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas) throws IOException, GitAPIException {
-		
-		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHashIn(repositoryId, commitShas);
+		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndShaChecksumHash(repositoryId, commitSha);
 		
 		/*
 		 * TODO:
 		 * This approach is not good, as it will query from git multiple times.
 		 * think about a way that it can be done in one single git query.
 		 */
-		for (CommitBean commit : commits) {
-			updateFromGit(commit);
+		for (CommitBean item : items) {
+			updateFromGit(item);
 		}
 		
-		return commits;
+		return items;
+	}
+	
+	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas) throws IOException, GitAPIException {
+		
+		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndShaChecksumHashIn(repositoryId, commitShas);
+		
+		for (CommitBean item : items) {
+			updateFromGit(item);
+		}
+		
+		return items;
 	}
 	
 	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, BranchBean branch) throws IOException, GitAPIException {

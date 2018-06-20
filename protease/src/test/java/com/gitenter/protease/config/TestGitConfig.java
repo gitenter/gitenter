@@ -1,6 +1,11 @@
 package com.gitenter.protease.config;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
@@ -10,6 +15,7 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.util.ResourceUtils;
 
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitNormalBranch;
@@ -53,63 +59,85 @@ public class TestGitConfig {
 //	}
 //	
 	
-	@Profile("production")
+	/*
+	 * Minimal includes one single commit on master branch:
+	 * 
+	 * $ git log
+	 * 
+	 * commit d9b8d42ed9d9be25e7a49ff910e7bb5c48b6a485 (HEAD -> master)
+	 * Author: Cong-Xin Qiu <ozoox.o@gmail.com>
+	 * Date:   Wed Jun 20 18:55:41 2018 -0400
+	 * 
+     * file
+	 */
+	@Profile("minimal")
 	@Bean
-	public GitSource gitSource() throws IOException, GitAPIException {
+	public GitSource minimalGitSource() throws FileNotFoundException {
 		
-		/*
-		 * TODO:
-		 * Optimize it so it execute once per run, rather than once when this
-		 * method is being called.
-		 * 
-		 * TODO:
-		 * Consider move it to a real temporary folder ("TemporaryFolder" class
-		 * can only be used in JUnit test cases).
-		 */
-		File rootDirectory = new File("/tmp/protease");
-		if (rootDirectory.exists()) {
-			FileUtils.forceDelete(rootDirectory);
-		}
-		rootDirectory.mkdirs();
-		File normalDirectory = new File(rootDirectory, "normal-repo");
-		/*
-		 * The "bareDirectory" definition matches the dbunit setup
-		 * of minimal case.
-		 */
-		File bareDirectory = new File(rootDirectory, "organization/repository.git");
-		normalDirectory.mkdir();
-		bareDirectory.mkdir();
+		GitSource gitSource = mock(GitSource.class);
+		when(gitSource.getBareRepositoryDirectory(any(String.class), any(String.class)))
+			.thenReturn(ResourceUtils.getFile("classpath:repo/minimal.git"));
 		
-		GitNormalRepository normalRepository = GitNormalRepository.getInstance(normalDirectory);
-		GitBareRepository.getInstance(bareDirectory);
-		
-		normalRepository.createOrUpdateRemote("origin", bareDirectory.toString());
-		GitRemote origin = normalRepository.getRemote("origin");
-		
-		GitWorkspace workspace = normalRepository.getCurrentBranch().checkoutTo();
-		new File(normalDirectory, "file1").createNewFile();
-		workspace.add();
-		workspace.commit("file1");
-		normalRepository.getCurrentBranch().checkoutTo().push(origin);
-		
-		normalRepository.createBranch("another-branch");
-		normalRepository.getBranch("another-branch").checkoutTo().push(origin);
-		
-		workspace = normalRepository.getBranch("master").checkoutTo();
-		new File(normalDirectory, "file2").createNewFile();
-		workspace.add();
-		workspace.commit("file2");
-		normalRepository.getCurrentBranch().checkoutTo().push(origin);
-		/*
-		 * empty
-		 *   |
-		 * file1  <-- another-branch
-		 *   |
-		 * file1&file2  <-- master
-		 */
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath(rootDirectory);
 		return gitSource;
 	}
+
+//	@Profile("production")
+//	@Bean
+//	public GitSource gitSource() throws IOException, GitAPIException {
+//		
+//		/*
+//		 * TODO:
+//		 * Optimize it so it execute once per run, rather than once when this
+//		 * method is being called.
+//		 * 
+//		 * TODO:
+//		 * Consider move it to a real temporary folder ("TemporaryFolder" class
+//		 * can only be used in JUnit test cases).
+//		 */
+//		File rootDirectory = new File("/tmp/protease");
+//		if (rootDirectory.exists()) {
+//			FileUtils.forceDelete(rootDirectory);
+//		}
+//		rootDirectory.mkdirs();
+//		File normalDirectory = new File(rootDirectory, "normal-repo");
+//		/*
+//		 * The "bareDirectory" definition matches the dbunit setup
+//		 * of minimal case.
+//		 */
+//		File bareDirectory = new File(rootDirectory, "organization/repository.git");
+//		normalDirectory.mkdir();
+//		bareDirectory.mkdir();
+//		
+//		GitNormalRepository normalRepository = GitNormalRepository.getInstance(normalDirectory);
+//		GitBareRepository.getInstance(bareDirectory);
+//		
+//		normalRepository.createOrUpdateRemote("origin", bareDirectory.toString());
+//		GitRemote origin = normalRepository.getRemote("origin");
+//		
+//		GitWorkspace workspace = normalRepository.getCurrentBranch().checkoutTo();
+//		new File(normalDirectory, "file1").createNewFile();
+//		workspace.add();
+//		workspace.commit("file1");
+//		normalRepository.getCurrentBranch().checkoutTo().push(origin);
+//		
+//		normalRepository.createBranch("another-branch");
+//		normalRepository.getBranch("another-branch").checkoutTo().push(origin);
+//		
+//		workspace = normalRepository.getBranch("master").checkoutTo();
+//		new File(normalDirectory, "file2").createNewFile();
+//		workspace.add();
+//		workspace.commit("file2");
+//		normalRepository.getCurrentBranch().checkoutTo().push(origin);
+//		/*
+//		 * empty
+//		 *   |
+//		 * file1  <-- another-branch
+//		 *   |
+//		 * file1&file2  <-- master
+//		 */
+//		
+//		GitSource gitSource = new GitSource();
+//		gitSource.setRootFolderPath(rootDirectory);
+//		return gitSource;
+//	}
 }
