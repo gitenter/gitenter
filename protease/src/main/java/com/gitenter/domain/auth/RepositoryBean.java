@@ -23,7 +23,6 @@ import javax.validation.constraints.Size;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import com.gitenter.dao.auth.BranchList;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 
@@ -123,5 +122,9 @@ public class RepositoryBean {
 			}
 		}
 		return null;
+	}
+	
+	public interface BranchList {
+		Collection<BranchBean> getBranches() throws IOException, GitAPIException;
 	}
 }
