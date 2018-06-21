@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,7 +121,8 @@ class RepositoryImpl implements RepositoryRepository {
 				branches.add(new BranchBean(
 						gitBranch.getName(), 
 						repository, 
-						new ProxyHeadPlaceholder(repository, gitBranch.getName())));
+						new ProxyHeadPlaceholder(repository, gitBranch.getName()),
+						new ProxyLogPlaceholder(repository, gitBranch.getName())));
 			}
 			
 			this.branches = branches;
@@ -139,12 +141,6 @@ class RepositoryImpl implements RepositoryRepository {
 		private RepositoryBean repository;
 		private String branchName;
 		
-		/*
-		 * TODO:
-		 * 
-		 * No need for "gitSource" as input. Could remove it in this file
-		 * as it is the instance variable of the outer class.
-		 */
 		public ProxyHeadPlaceholder(RepositoryBean repository, String branchName) {
 			this.repository = repository;
 			this.branchName = branchName;
@@ -157,10 +153,6 @@ class RepositoryImpl implements RepositoryRepository {
 				placeholder = new RealHeadPlaceholder(repository, branchName);
 			}
 			
-			/*
-			 * TODO:
-			 * This is not right. Should set "Head" to null and set proxy.
-			 */
 			return placeholder.getHead();
 		}
 	}
@@ -170,7 +162,7 @@ class RepositoryImpl implements RepositoryRepository {
 		private RepositoryBean repository;
 		private String branchName;
 		
-		private CommitBean commit;
+		private CommitBean head;
 		
 		public RealHeadPlaceholder(RepositoryBean repository, String branchName) throws IOException, GitAPIException {
 			this.repository = repository;
@@ -187,12 +179,82 @@ class RepositoryImpl implements RepositoryRepository {
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(repository.getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
-			this.commit = commit;
+			this.head = commit;
 		}
 		
 		@Override
 		public CommitBean getHead() {
-			return commit;
+			return head;
+		}
+	}
+	
+	private class ProxyLogPlaceholder implements BranchBean.LogPlaceholder {
+
+		private RealLogPlaceholder placeholder = null;
+
+		private RepositoryBean repository;
+		private String branchName;
+		
+		public ProxyLogPlaceholder(RepositoryBean repository, String branchName) {
+			this.repository = repository;
+			this.branchName = branchName;
+		}
+		
+		@Override
+		public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+			
+			if (placeholder == null) {
+				placeholder = new RealLogPlaceholder(repository, branchName);
+			}
+			
+			return placeholder.getLog(maxCount, skip);
+		}
+	}
+	
+	private class RealLogPlaceholder implements BranchBean.LogPlaceholder {
+
+		private RepositoryBean repository;
+		private String branchName;
+		
+		public RealLogPlaceholder(RepositoryBean repository, String branchName) {
+			this.repository = repository;
+			this.branchName = branchName;
+		}
+		
+		/*
+		 * When input is different, this method just need to run again (git will be queried 
+		 * again). There's no way to avoid that. 
+		 */
+		@Override
+		public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(repository);
+			List<GitCommit> gitLog = gitRepository.getBranch(branchName).getLog();
+			
+			/*
+			 * Keep insert order.
+			 */
+			LinkedHashMap <String,GitCommit> logMap = new LinkedHashMap <String,GitCommit>();
+			for (GitCommit gitCommit : gitLog) {
+				logMap.put(gitCommit.getSha(), gitCommit);
+			}
+			/*
+			 * TODO:
+			 * Need to double check whether it indeed keep orders.
+			 */
+			List<String> shas = new ArrayList<>(logMap.keySet());
+			
+			/*
+			 * Do it in one single SQL query by performance concerns.
+			 * Also, use directory database query so git information is not
+			 * automatically included.
+			 */
+			List<CommitBean> log = commitDatabaseRepository.findByRepositoryIdAndShaIn(repository.getId(), shas);
+			
+			for (CommitBean commit : log) {
+				commit.updateFromGitCommit(logMap.get(commit.getSha()));
+			}
+			
+			return log;
 		}
 	}
 	

@@ -27,19 +27,19 @@ public class BranchBean {
 		return headPlaceholder.getHead();
 	}
 	
-	public List<CommitBean> getLog() throws IOException, GitAPIException {
-		return logPlaceholder.getLog();
+	public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		return logPlaceholder.getLog(maxCount, skip);
 	}
 	
 	public BranchBean(
 			String name, 
 			RepositoryBean repository, 
-			HeadPlaceholder headPlaceholder) {//,
-//			LogPlaceholder logPlaceholder) {
+			HeadPlaceholder headPlaceholder,
+			LogPlaceholder logPlaceholder) {
 		this.repository = repository;
 		this.name = name;
 		this.headPlaceholder = headPlaceholder;
-//		this.logPlaceholder = logPlaceholder;
+		this.logPlaceholder = logPlaceholder;
 	}
 
 	public interface HeadPlaceholder {
@@ -47,6 +47,6 @@ public class BranchBean {
 	}
 	
 	public interface LogPlaceholder {
-		List<CommitBean> getLog() throws IOException, GitAPIException;
+		List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException;
 	}
 }

@@ -65,7 +65,11 @@ public class RepositoryBeanTest {
 		BranchBean branch = branches.iterator().next();
 		assertEquals(branch.getName(), "master");
 		
-		CommitBean commit = branch.getHead();
-		assertEquals(commit.getMessage(), "file\n");
+		CommitBean head = branch.getHead();
+		assertEquals(head.getMessage(), "file\n");
+		
+		List<CommitBean> log = branch.getLog(5, 0);
+		assertEquals(log.size(), 1);
+		assertEquals(log.get(0).getMessage(), "file\n");
 	}
 }
