@@ -112,11 +112,7 @@ class RepositoryImpl implements RepositoryRepository {
 		
 		private void loadBranches() throws IOException, GitAPIException {
 			
-			File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-					repository.getOrganization().getName(), 
-					repository.getName());
-			
-			GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
+			GitRepository gitRepository = getGitRepository(repository);
 			Collection<GitBranch> gitBranches = gitRepository.getBranches();
 			
 			Collection<BranchBean> branches = new ArrayList<BranchBean>();
@@ -185,15 +181,11 @@ class RepositoryImpl implements RepositoryRepository {
 		
 		private void loadHead() throws IOException, GitAPIException {
 			
-			File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-					repository.getOrganization().getName(), 
-					repository.getName());
-			
-			GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
+			GitRepository gitRepository = getGitRepository(repository);
 			GitCommit gitCommit = gitRepository.getBranch(branchName).getHead();
 			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndShaChecksumHash(repository.getId(), gitCommit.getSha()).get(0);
-			CommitImpl.updateFromGitCommit(commit, gitCommit);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(repository.getId(), gitCommit.getSha()).get(0);
+			commit.updateFromGitCommit(gitCommit);
 			
 			this.commit = commit;
 		}
@@ -202,5 +194,14 @@ class RepositoryImpl implements RepositoryRepository {
 		public CommitBean getHead() {
 			return commit;
 		}
+	}
+	
+	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
+		
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+				repository.getOrganization().getName(), 
+				repository.getName());
+		
+		return GitBareRepository.getInstance(repositoryDirectory);
 	}
 }

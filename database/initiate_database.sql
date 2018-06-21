@@ -124,7 +124,7 @@ CREATE SCHEMA git;
 CREATE TABLE git.git_commit (
 	id serial PRIMARY KEY,
 	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
-	sha_checksum_hash text NOT NULL,
+	sha text NOT NULL,
 
 	/*
 	 * It is not save to make "sha_checksum_hash" itself unique,
@@ -139,7 +139,7 @@ CREATE TABLE git.git_commit (
 	 * (Automatic code with add something commit and delete something and
 	 * commit again may have problem, but that's not a natural case).
 	 */
-	UNIQUE(repository_id, sha_checksum_hash)
+	UNIQUE(repository_id, sha)
 );
 
 CREATE TABLE git.git_commit_valid (

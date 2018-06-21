@@ -67,7 +67,7 @@ class DocumentImpl implements DocumentRepository {
 	
 	public DocumentBean findByCommitShaAndRelativeFilepath(String commitSha, String relativeFilepath) throws IOException, GitAPIException {
 
-		List<DocumentBean> documents = documentDbRepository.findByShaChecksumHashAndRelativeFilepath(commitSha, relativeFilepath);
+		List<DocumentBean> documents = documentDbRepository.findByShaAndRelativeFilepath(commitSha, relativeFilepath);
 		
 		if (documents.size() > 1) {
 			throw new IOException ("Cannot locate an unique file from commitSha \""+commitSha+"\" and relativeFilepath! \""+relativeFilepath+"\"");
@@ -99,7 +99,7 @@ class DocumentImpl implements DocumentRepository {
 				document.getCommit().getRepository().getName());
 		
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getShaChecksumHash());
+		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
 		GitFile gitFile = gitCommit.getFile(document.getRelativeFilepath());
 		
 		document.setBlobContent(gitFile.getBlobContent());

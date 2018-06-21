@@ -84,6 +84,21 @@ public class RepositoryBean {
 		return items;
 	}
 	
+	/*
+	 * TODO:
+	 * 
+	 * Define unchecked:
+	 * > public BranchBean getBranch(String branchName);
+	 * 
+	 * So right now if we need the head of one branch, we need to first 
+	 * getBranches(), and then choose from the list, then get BranchBean
+	 * and getHead(). But actually we only need the branchName to get it
+	 * (no need to load all branches at all -- one more git query).
+	 * 
+	 * However, since BranchBean constructor include several placeholders,
+	 * and the placeholder values are only know by RepositoryImpl,
+	 * there's no easy way initialize an unchecked BranchBean in here.
+	 */
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
 		return branchesPlaceholder.getBranches();
 	}

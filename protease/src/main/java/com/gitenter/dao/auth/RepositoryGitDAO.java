@@ -82,12 +82,12 @@ public class RepositoryGitDAO {
 		 * Also, use directory database query so git information is not
 		 * automatically included.
 		 */
-		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHashIn(repository.getId(), shas);
+		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaIn(repository.getId(), shas);
 		
 		for (CommitBean commit : commits) {
-			commit.setTimestamp(logMap.get(commit.getShaChecksumHash()).getTimestamp());
-			commit.setMessage(logMap.get(commit.getShaChecksumHash()).getMessage());
-			commit.setAuthor(new AuthorBean(logMap.get(commit.getShaChecksumHash()).getAuthor()));
+			commit.setTimestamp(logMap.get(commit.getSha()).getTimestamp());
+			commit.setMessage(logMap.get(commit.getSha()).getMessage());
+			commit.setAuthor(new AuthorBean(logMap.get(commit.getSha()).getAuthor()));
 		}
 		
 		return commits;

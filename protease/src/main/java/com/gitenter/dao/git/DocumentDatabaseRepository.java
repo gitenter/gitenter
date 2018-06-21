@@ -20,8 +20,8 @@ interface DocumentDatabaseRepository extends PagingAndSortingRepository<Document
 	List<DocumentBean> findByCommitIdAndRelativeFilepathIn(Integer commitId, List<String> relativeFilepaths);
 	@Query("select dc "
 			+ "from DocumentBean dc join dc.commit cm "
-			+ "where cm.shaChecksumHash = :shaChecksumHash and dc.relativeFilepath = :relativeFilepath")
-	List<DocumentBean> findByShaChecksumHashAndRelativeFilepath(@Param("shaChecksumHash") String shaChecksumHash, @Param("relativeFilepath") String relativeFilepath);
+			+ "where cm.sha = :sha and dc.relativeFilepath = :relativeFilepath")
+	List<DocumentBean> findByShaAndRelativeFilepath(@Param("sha") String sha, @Param("relativeFilepath") String relativeFilepath);
 	
 	DocumentBean saveAndFlush(DocumentBean document);
 }

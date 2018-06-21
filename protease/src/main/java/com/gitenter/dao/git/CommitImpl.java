@@ -38,7 +38,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndShaChecksumHash(repositoryId, commitSha);
+		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
 		
 		/*
 		 * TODO:
@@ -54,7 +54,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndShaChecksumHashIn(repositoryId, commitShas);
+		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
 		
 		for (CommitBean item : items) {
 			updateFromGit(item);
@@ -77,7 +77,7 @@ public class CommitImpl implements CommitRepository {
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 		
-		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndShaChecksumHash(repositoryId, gitCommit.getSha());
+		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndSha(repositoryId, gitCommit.getSha());
 		
 		if (commits.size() == 0) {
 			throw new IOException ("SHA checksum hash "+gitCommit.getSha()+" is not correct!");
@@ -87,7 +87,7 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		CommitBean commit = commits.get(0);
-		updateFromGitCommit(commit, gitCommit);
+		commit.updateFromGitCommit(gitCommit);
 		
 		return commit;
 	}
@@ -99,16 +99,9 @@ public class CommitImpl implements CommitRepository {
 				commit.getRepository().getName());
 		
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		GitCommit gitCommit = gitRepository.getCommit(commit.getShaChecksumHash());
+		GitCommit gitCommit = gitRepository.getCommit(commit.getSha());
 		
-		updateFromGitCommit(commit, gitCommit);
-	}
-	
-	public static void updateFromGitCommit(CommitBean commit, GitCommit gitCommit) {
-		
-		commit.setTimestamp(gitCommit.getTimestamp());
-		commit.setMessage(gitCommit.getMessage());
-		commit.setAuthor(new AuthorBean(gitCommit.getAuthor()));
+		commit.updateFromGitCommit(gitCommit);
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {

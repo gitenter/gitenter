@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.gitenter.domain.auth.RepositoryBean;
+import com.gitenter.gitar.GitCommit;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -43,8 +44,8 @@ public class CommitBean {
 	@JoinColumn(name="repository_id")
 	private RepositoryBean repository;
 	
-	@Column(name="sha_checksum_hash", updatable=false)
-	private String shaChecksumHash;
+	@Column(name="sha", updatable=false)
+	private String sha;
 	
 	/*
 	 * From git.
@@ -65,15 +66,21 @@ public class CommitBean {
 		
 	}
 	
-	public CommitBean (RepositoryBean repository, String commitSha) {
+	public CommitBean (RepositoryBean repository, String sha) {
 		this.repository = repository;
-		this.shaChecksumHash = commitSha;
+		this.sha = sha;
 	}
 	
-	public static boolean inCommitList (String shaChecksumHash, List<CommitBean> commits) {
+	public void updateFromGitCommit(GitCommit gitCommit) {
+		timestamp = gitCommit.getTimestamp();
+		message = gitCommit.getMessage();
+		author = new AuthorBean(gitCommit.getAuthor());
+	}
+	
+	public static boolean inCommitList (String sha, List<CommitBean> commits) {
 		
 		for (CommitBean commit : commits) {
-			if (commit.shaChecksumHash.equals(shaChecksumHash)) {
+			if (commit.sha.equals(sha)) {
 				return true;
 			}
 		}
