@@ -37,22 +37,22 @@ public class RepositoryGitDAO {
 	@Autowired private GitSource gitSource;
 	@Autowired private CommitDatabaseRepository commitDbRepository;
 	
-	public Collection<BranchBean> getBranches (RepositoryBean repository) throws IOException, GitAPIException {
-		
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				repository.getOrganization().getName(), 
-				repository.getName());
-		
-		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		Collection<GitBranch> gitBranches = gitRepository.getBranches();
-		
-		Collection<BranchBean> branches = new ArrayList<BranchBean>();
-		for (GitBranch gitBranch : gitBranches) {
-			branches.add(new BranchBean(gitBranch.getName()));
-		}
-		
-		return branches;
-	}
+//	public Collection<BranchBean> getBranches (RepositoryBean repository) throws IOException, GitAPIException {
+//		
+//		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+//				repository.getOrganization().getName(), 
+//				repository.getName());
+//		
+//		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
+//		Collection<GitBranch> gitBranches = gitRepository.getBranches();
+//		
+//		Collection<BranchBean> branches = new ArrayList<BranchBean>();
+//		for (GitBranch gitBranch : gitBranches) {
+//			branches.add(new BranchBean(repository, gitBranch.getName()));
+//		}
+//		
+//		return branches;
+//	}
 	
 	public List<CommitBean> getLog(RepositoryBean repository, BranchBean branch, Integer maxCount, Integer skip) throws IOException, GitAPIException {
 		

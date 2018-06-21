@@ -104,7 +104,7 @@ public class CommitImpl implements CommitRepository {
 		updateFromGitCommit(commit, gitCommit);
 	}
 	
-	private void updateFromGitCommit(CommitBean commit, GitCommit gitCommit) {
+	public static void updateFromGitCommit(CommitBean commit, GitCommit gitCommit) {
 		
 		commit.setTimestamp(gitCommit.getTimestamp());
 		commit.setMessage(gitCommit.getMessage());

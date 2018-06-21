@@ -72,7 +72,7 @@ public class RepositoryBean {
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
-	private BranchList branchList;
+	private BranchesPlaceholder branchesPlaceholder;
 	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();
@@ -85,7 +85,7 @@ public class RepositoryBean {
 	}
 	
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
-		return branchList.getBranches();
+		return branchesPlaceholder.getBranches();
 	}
 	
 	public void addCommit (CommitBean commit) {
@@ -126,7 +126,7 @@ public class RepositoryBean {
 //		return null;
 //	}
 	
-	public interface BranchList {
+	public interface BranchesPlaceholder {
 		Collection<BranchBean> getBranches() throws IOException, GitAPIException;
 	}
 }

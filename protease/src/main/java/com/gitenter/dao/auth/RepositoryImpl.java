@@ -11,27 +11,31 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gitenter.dao.git.CommitDatabaseRepository;
+import com.gitenter.dao.git.CommitImpl;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitBranch;
+import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
 class RepositoryImpl implements RepositoryRepository {
 
-	@Autowired private RepositoryDatabaseRepository repositoryDbRepository;
+	@Autowired private RepositoryDatabaseRepository repositoryDatabaseRepository;
+	@Autowired private CommitDatabaseRepository commitDatabaseRepository;
 	@Autowired private GitSource gitSource;
 	
 	public Optional<RepositoryBean> findById(Integer id) throws IOException {
 		
-		Optional<RepositoryBean> items = repositoryDbRepository.findById(id); 
+		Optional<RepositoryBean> items = repositoryDatabaseRepository.findById(id); 
 		
 		if (items.isPresent()) {
 			RepositoryBean item = items.get();
-			item.setBranchList(new ProxyBranchList(gitSource, item));
+			item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
 		}
 		
 		return items;
@@ -39,17 +43,17 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	public List<RepositoryBean> findByOrganizationNameAndRepositoryName(String organizationName, String repositoryName) throws IOException {
 		
-		List<RepositoryBean> items = repositoryDbRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
+		List<RepositoryBean> items = repositoryDatabaseRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
 		
 		for (RepositoryBean item : items) {
-			item.setBranchList(new ProxyBranchList(gitSource, item));
+			item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
 		}
 		
 		return items;
 	}
 	
 	public RepositoryBean saveAndFlush(RepositoryBean repository) {
-		return repositoryDbRepository.saveAndFlush(repository);
+		return repositoryDatabaseRepository.saveAndFlush(repository);
 	}
 	
 //	public Collection<BranchBean> getBranches(RepositoryBean repository) throws IOException, GitAPIException {
@@ -60,48 +64,53 @@ class RepositoryImpl implements RepositoryRepository {
 //		return repositoryGitDAO.getLog(repository, branch, maxCount, skip);
 //	}
 	
-	private class ProxyBranchList implements RepositoryBean.BranchList {
+	private class ProxyBranchesPlaceholder implements RepositoryBean.BranchesPlaceholder {
 
-		private RealBranchList branchList = null;
+		private RealBranchesPlaceholder placeholder = null;
 
-		private GitSource gitSource;
 		private RepositoryBean repository;
 		
-		public ProxyBranchList(GitSource gitSource, RepositoryBean repository) {
-			this.gitSource = gitSource;
+		public ProxyBranchesPlaceholder(RepositoryBean repository) {
 			this.repository = repository;
 		}
 		
 		@Override
 		public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
 			
-			if (branchList == null) {
-				branchList = new RealBranchList(gitSource, repository);
+			if (placeholder == null) {
+				placeholder = new RealBranchesPlaceholder(repository);
 			}
 			
-			return branchList.getBranches();
+			return placeholder.getBranches();
 		}
 	}
 	
-	private class RealBranchList implements RepositoryBean.BranchList {
+	private class RealBranchesPlaceholder implements RepositoryBean.BranchesPlaceholder {
 
 		/*
-		 * Technically we cannot @Autowired "gitSource" in here
-		 * (because Spring @Component doesn't accept a non-trivial
-		 * constructor with >=1 arguments. So we get gitSource from
+		 * Technically we cannot @Autowired "gitSource" in this 
+		 * class (no matter whether it is a normal class or inner class)
+		 * because Spring @Component doesn't accept a non-trivial
+		 * constructor with >=1 arguments. 
+		 * 
+		 * So if it is a normal class, we need to get gitSource from
 		 * repository/DAO and pass the information all the way done
 		 * to here.
+		 * 
+		 * As a inner class, we can simply get the value of gitSource
+		 * from an outer class instance variable.
 		 */
-		private GitSource gitSource;
 		private RepositoryBean repository;
 		
-		public RealBranchList(GitSource gitSource, RepositoryBean repository) {
-			this.gitSource = gitSource;
+		private Collection<BranchBean> branches;
+		
+		public RealBranchesPlaceholder(RepositoryBean repository) throws IOException, GitAPIException {
 			this.repository = repository;
+			
+			loadBranches();
 		}
 		
-		@Override
-		public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
+		private void loadBranches() throws IOException, GitAPIException {
 			
 			File repositoryDirectory = gitSource.getBareRepositoryDirectory(
 					repository.getOrganization().getName(), 
@@ -112,10 +121,86 @@ class RepositoryImpl implements RepositoryRepository {
 			
 			Collection<BranchBean> branches = new ArrayList<BranchBean>();
 			for (GitBranch gitBranch : gitBranches) {
-				branches.add(new BranchBean(gitBranch.getName()));
+				branches.add(new BranchBean(
+						gitBranch.getName(), 
+						repository, 
+						new ProxyHeadPlaceholder(repository, gitBranch.getName())));
 			}
 			
+			this.branches = branches;
+		}
+		
+		@Override
+		public Collection<BranchBean> getBranches() {
 			return branches;
+		}
+	}
+	
+	private class ProxyHeadPlaceholder implements BranchBean.HeadPlaceholder {
+
+		private RealHeadPlaceholder placeholder = null;
+
+		private RepositoryBean repository;
+		private String branchName;
+		
+		/*
+		 * TODO:
+		 * 
+		 * No need for "gitSource" as input. Could remove it in this file
+		 * as it is the instance variable of the outer class.
+		 */
+		public ProxyHeadPlaceholder(RepositoryBean repository, String branchName) {
+			this.repository = repository;
+			this.branchName = branchName;
+		}
+		
+		@Override
+		public CommitBean getHead() throws IOException, GitAPIException {
+			
+			if (placeholder == null) {
+				placeholder = new RealHeadPlaceholder(repository, branchName);
+			}
+			
+			/*
+			 * TODO:
+			 * This is not right. Should set "Head" to null and set proxy.
+			 */
+			return placeholder.getHead();
+		}
+	}
+	
+	private class RealHeadPlaceholder implements BranchBean.HeadPlaceholder {
+
+		private RepositoryBean repository;
+		private String branchName;
+		
+		private CommitBean commit;
+		
+		public RealHeadPlaceholder(RepositoryBean repository, String branchName) throws IOException, GitAPIException {
+			this.repository = repository;
+			this.branchName = branchName;
+			
+			loadHead();
+		}
+		
+		private void loadHead() throws IOException, GitAPIException {
+			
+			File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+					repository.getOrganization().getName(), 
+					repository.getName());
+			
+			GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
+			GitCommit gitCommit = gitRepository.getBranch(branchName).getHead();
+			
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndShaChecksumHash(repository.getId(), gitCommit.getSha()).get(0);
+			CommitImpl.updateFromGitCommit(commit, gitCommit);
+			
+			this.commit = commit;
+		}
+		
+		@Override
+		public CommitBean getHead() {
+			return commit;
 		}
 	}
 }

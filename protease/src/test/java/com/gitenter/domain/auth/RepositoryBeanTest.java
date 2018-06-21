@@ -25,6 +25,7 @@ import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.domain.git.BranchBean;
+import com.gitenter.domain.git.CommitBean;
 import com.gitenter.protease.*;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -38,7 +39,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection"})
 public class RepositoryBeanTest {
 
 	@Autowired RepositoryRepository repository;
@@ -46,6 +47,7 @@ public class RepositoryBeanTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
 	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
@@ -60,6 +62,10 @@ public class RepositoryBeanTest {
 		
 		Collection<BranchBean> branches = item.getBranches();
 		assertEquals(branches.size(), 1);
-		assertEquals(branches.iterator().next().getName(), "master");
+		BranchBean branch = branches.iterator().next();
+		assertEquals(branch.getName(), "master");
+		
+		CommitBean commit = branch.getHead();
+		assertEquals(commit.getMessage(), "file\n");
 	}
 }
