@@ -41,7 +41,6 @@ public class MemberBeanTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	//@DatabaseTearDown("member.xml")
 	public void testDbUnitMinimalQueryWorks() throws IOException {
 		
 		MemberBean item = repository.findById(1).get();

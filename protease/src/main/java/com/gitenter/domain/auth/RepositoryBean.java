@@ -3,7 +3,6 @@ package com.gitenter.domain.auth;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -72,6 +71,10 @@ public class RepositoryBean {
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
+	private BranchPlaceholder branchPlaceholder;
+	
+	@Transient
+	@Getter(AccessLevel.NONE)
 	private BranchesPlaceholder branchesPlaceholder;
 	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
@@ -85,20 +88,13 @@ public class RepositoryBean {
 	}
 	
 	/*
-	 * TODO:
-	 * 
-	 * Define unchecked:
-	 * > public BranchBean getBranch(String branchName);
-	 * 
-	 * So right now if we need the head of one branch, we need to first 
-	 * getBranches(), and then choose from the list, then get BranchBean
-	 * and getHead(). But actually we only need the branchName to get it
-	 * (no need to load all branches at all -- one more git query).
-	 * 
-	 * However, since BranchBean constructor include several placeholders,
-	 * and the placeholder values are only know by RepositoryImpl,
-	 * there's no easy way initialize an unchecked BranchBean in here.
+	 * Return the desired "BranchBean" object based on the input name. No need to
+	 * query the git storage to confirm the branch's existence.
 	 */
+	public BranchBean getBranch(String branchName) {
+		return branchPlaceholder.getBranch(branchName);
+	}
+	
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
 		return branchesPlaceholder.getBranches();
 	}
@@ -140,6 +136,10 @@ public class RepositoryBean {
 //		}
 //		return null;
 //	}
+
+	public interface BranchPlaceholder {
+		BranchBean getBranch(String branchName);
+	}
 	
 	public interface BranchesPlaceholder {
 		Collection<BranchBean> getBranches() throws IOException, GitAPIException;

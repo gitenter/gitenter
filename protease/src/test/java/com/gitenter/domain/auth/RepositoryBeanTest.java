@@ -1,10 +1,8 @@
 package com.gitenter.domain.auth;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,11 +20,9 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.dao.auth.RepositoryRepository;
-import com.gitenter.domain.auth.RepositoryBean;
-import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
-import com.gitenter.protease.*;
+import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -48,7 +44,7 @@ public class RepositoryBeanTest {
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
-	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException {
+	public void testMinimalRepositoryInfomation() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
 		
@@ -59,12 +55,38 @@ public class RepositoryBeanTest {
 
 		assertEquals(item.getMembers(RepositoryMemberRole.REVIEWER).size(), 1);
 		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
+	}
+	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalRepositoryGetBranches() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
 		
 		Collection<BranchBean> branches = item.getBranches();
 		assertEquals(branches.size(), 1);
 		BranchBean branch = branches.iterator().next();
 		assertEquals(branch.getName(), "master");
 		
+		CommitBean head = branch.getHead();
+		assertEquals(head.getMessage(), "file\n");
+		
+		List<CommitBean> log = branch.getLog(5, 0);
+		assertEquals(log.size(), 1);
+		assertEquals(log.get(0).getMessage(), "file\n");
+	}
+	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalRepositoryGetBranch() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
+		
+		BranchBean branch = item.getBranch("master");
 		CommitBean head = branch.getHead();
 		assertEquals(head.getMessage(), "file\n");
 		

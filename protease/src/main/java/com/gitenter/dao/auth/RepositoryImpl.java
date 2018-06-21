@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gitenter.dao.git.CommitDatabaseRepository;
-import com.gitenter.dao.git.CommitImpl;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
@@ -36,7 +35,7 @@ class RepositoryImpl implements RepositoryRepository {
 		
 		if (items.isPresent()) {
 			RepositoryBean item = items.get();
-			item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
+			updatePlaceholders(item);
 		}
 		
 		return items;
@@ -47,24 +46,47 @@ class RepositoryImpl implements RepositoryRepository {
 		List<RepositoryBean> items = repositoryDatabaseRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
 		
 		for (RepositoryBean item : items) {
-			item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
+			updatePlaceholders(item);
 		}
 		
 		return items;
+	}
+	
+	private void updatePlaceholders(RepositoryBean item) {
+		item.setBranchPlaceholder(new BranchPlaceholderImpl(item));
+		item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
 	}
 	
 	public RepositoryBean saveAndFlush(RepositoryBean repository) {
 		return repositoryDatabaseRepository.saveAndFlush(repository);
 	}
 	
-//	public Collection<BranchBean> getBranches(RepositoryBean repository) throws IOException, GitAPIException {
-//		return repositoryGitDAO.getBranches(repository);
-//	}
-//	
-//	public List<CommitBean> getLog(RepositoryBean repository, BranchBean branch, Integer maxCount, Integer skip) throws IOException, GitAPIException {
-//		return repositoryGitDAO.getLog(repository, branch, maxCount, skip);
-//	}
+	/*
+	 * No need to use proxy pattern in here, since to execute the constructor
+	 * is so cheap. The reason not implement the logic in "RepositoryBean", 
+	 * is because we want to keep "RepositoryBean" to have no knowledge on
+	 * "ProxyHeadPlaceholder" or "ProxyLogPlaceholder".
+	 */
+	private class BranchPlaceholderImpl implements RepositoryBean.BranchPlaceholder {
+
+		private RepositoryBean repository;
+		
+		public BranchPlaceholderImpl(RepositoryBean repository) {
+			this.repository = repository;
+		}
+		
+		@Override
+		public BranchBean getBranch(String branchName) {
+			return getBranchBean(repository, branchName);
+		}
+		
+	}
 	
+	/*
+	 * TODO:
+	 * Here are a lot of boilerplate code which follows the same pattern.
+	 * Consider refactoring to reuse most setups. 
+	 */
 	private class ProxyBranchesPlaceholder implements RepositoryBean.BranchesPlaceholder {
 
 		private RealBranchesPlaceholder placeholder = null;
@@ -118,11 +140,7 @@ class RepositoryImpl implements RepositoryRepository {
 			
 			Collection<BranchBean> branches = new ArrayList<BranchBean>();
 			for (GitBranch gitBranch : gitBranches) {
-				branches.add(new BranchBean(
-						gitBranch.getName(), 
-						repository, 
-						new ProxyHeadPlaceholder(repository, gitBranch.getName()),
-						new ProxyLogPlaceholder(repository, gitBranch.getName())));
+				branches.add(getBranchBean(repository, gitBranch.getName()));
 			}
 			
 			this.branches = branches;
@@ -188,43 +206,26 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyLogPlaceholder implements BranchBean.LogPlaceholder {
-
-		private RealLogPlaceholder placeholder = null;
-
-		private RepositoryBean repository;
-		private String branchName;
-		
-		public ProxyLogPlaceholder(RepositoryBean repository, String branchName) {
-			this.repository = repository;
-			this.branchName = branchName;
-		}
-		
-		@Override
-		public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
-			
-			if (placeholder == null) {
-				placeholder = new RealLogPlaceholder(repository, branchName);
-			}
-			
-			return placeholder.getLog(maxCount, skip);
-		}
-	}
-	
-	private class RealLogPlaceholder implements BranchBean.LogPlaceholder {
+	/*
+	 * No need to use proxy pattern in here, since to execute the constructor
+	 * is so cheap. 
+	 * 
+	 * When input is different, the implemented method just need to run again (git 
+	 * will be queried again). There's no easy way to avoid that (the other possibility 
+	 * is to has a caching layer in this class -- a hashtable -- to save the existing 
+	 * queries and reuse them if possible, but we still cannot promote it to the 
+	 * constructor and use proxy pattern to optimized an easy evaluation). 
+	 */
+	private class LogPlaceholderImpl implements BranchBean.LogPlaceholder {
 
 		private RepositoryBean repository;
 		private String branchName;
 		
-		public RealLogPlaceholder(RepositoryBean repository, String branchName) {
+		public LogPlaceholderImpl(RepositoryBean repository, String branchName) {
 			this.repository = repository;
 			this.branchName = branchName;
 		}
 		
-		/*
-		 * When input is different, this method just need to run again (git will be queried 
-		 * again). There's no way to avoid that. 
-		 */
 		@Override
 		public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
 			GitRepository gitRepository = getGitRepository(repository);
@@ -256,6 +257,14 @@ class RepositoryImpl implements RepositoryRepository {
 			
 			return log;
 		}
+	}
+	
+	private BranchBean getBranchBean(RepositoryBean repository, String branchName) {
+		return new BranchBean(
+				branchName, 
+				repository, 
+				new ProxyHeadPlaceholder(repository, branchName),
+				new LogPlaceholderImpl(repository, branchName));
 	}
 	
 	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
