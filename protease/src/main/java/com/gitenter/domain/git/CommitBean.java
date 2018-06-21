@@ -74,7 +74,7 @@ public class CommitBean {
 	public void updateFromGitCommit(GitCommit gitCommit) {
 		timestamp = gitCommit.getTimestamp();
 		message = gitCommit.getMessage();
-		author = new AuthorBean(gitCommit.getAuthor());
+		author = AuthorBean.getInstance(gitCommit.getAuthor());
 	}
 	
 	public static boolean inCommitList (String sha, List<CommitBean> commits) {

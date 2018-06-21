@@ -1,6 +1,7 @@
 package com.gitenter.domain.git;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -62,4 +63,21 @@ public class CommitBeanTest {
 		assertEquals(item.getAuthor().getName(), "Cong-Xin Qiu");
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 	}
+	
+	/*
+	 * TODO:
+	 * 
+	 * Need to have a git repository with at least two commits by the same user.
+	 */
+//	@Test
+//	@Transactional
+//	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+//	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+//	public void testAuthorBeanShareObjectsWhenEmailIsTheSame() throws IOException, GitAPIException, ParseException {
+//		
+//		CommitBean item1 = repository.findById(1).get();
+//		CommitBean item2 = repository.findById(1).get();
+//		assertFalse(item1 == item2);
+//		assertTrue(item1.getAuthor() == item2.getAuthor);
+//	}		
 }
