@@ -7,20 +7,18 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.domain.auth.RepositoryBean;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
-@Getter
 public class BranchBean {
-
+	
+	@Getter
 	final private String name;
 	
+	@Getter
 	final private RepositoryBean repository;
-	
-	@Getter(AccessLevel.NONE)
+
 	private HeadPlaceholder headPlaceholder;
 
-	@Getter(AccessLevel.NONE)
 	private LogPlaceholder logPlaceholder;
 	
 	public CommitBean getHead() throws IOException, GitAPIException {

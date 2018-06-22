@@ -24,6 +24,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
+import com.gitenter.domain.git.TagBean;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -77,6 +78,14 @@ public class RepositoryBean {
 	@Getter(AccessLevel.NONE)
 	private BranchesPlaceholder branchesPlaceholder;
 	
+	@Transient
+	@Getter(AccessLevel.NONE)
+	private TagPlaceholder tagPlaceholder;
+	
+	@Transient
+	@Getter(AccessLevel.NONE)
+	private TagsPlaceholder tagsPlaceholder;
+	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();
 		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
@@ -97,6 +106,14 @@ public class RepositoryBean {
 	
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
 		return branchesPlaceholder.getBranches();
+	}
+	
+	public TagBean getTag(String tagName) {
+		return tagPlaceholder.getTag(tagName);
+	}
+	
+	public Collection<TagBean> getTags() throws IOException, GitAPIException {
+		return tagsPlaceholder.getTags();
 	}
 	
 	public void addCommit (CommitBean commit) {
@@ -143,5 +160,13 @@ public class RepositoryBean {
 	
 	public interface BranchesPlaceholder {
 		Collection<BranchBean> getBranches() throws IOException, GitAPIException;
+	}
+	
+	public interface TagPlaceholder {
+		TagBean getTag(String tagName);
+	}
+	
+	public interface TagsPlaceholder {
+		Collection<TagBean> getTags() throws IOException, GitAPIException;
 	}
 }

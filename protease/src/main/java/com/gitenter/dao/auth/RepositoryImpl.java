@@ -16,10 +16,12 @@ import com.gitenter.dao.git.CommitDatabaseRepository;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
+import com.gitenter.domain.git.TagBean;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitBranch;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitRepository;
+import com.gitenter.gitar.GitTag;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
@@ -52,13 +54,24 @@ class RepositoryImpl implements RepositoryRepository {
 		return items;
 	}
 	
+	public RepositoryBean saveAndFlush(RepositoryBean repository) {
+		return repositoryDatabaseRepository.saveAndFlush(repository);
+	}
+	
+	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
+		
+		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
+				repository.getOrganization().getName(), 
+				repository.getName());
+		
+		return GitBareRepository.getInstance(repositoryDirectory);
+	}
+	
 	private void updatePlaceholders(RepositoryBean item) {
 		item.setBranchPlaceholder(new BranchPlaceholderImpl(item));
 		item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
-	}
-	
-	public RepositoryBean saveAndFlush(RepositoryBean repository) {
-		return repositoryDatabaseRepository.saveAndFlush(repository);
+		item.setTagPlaceholder(new TagPlaceholderImpl(item));
+		item.setTagsPlaceholder(new ProxyTagsPlaceholder(item));
 	}
 	
 	/*
@@ -79,7 +92,6 @@ class RepositoryImpl implements RepositoryRepository {
 		public BranchBean getBranch(String branchName) {
 			return getBranchBean(repository, branchName);
 		}
-		
 	}
 	
 	/*
@@ -130,10 +142,10 @@ class RepositoryImpl implements RepositoryRepository {
 		public RealBranchesPlaceholder(RepositoryBean repository) throws IOException, GitAPIException {
 			this.repository = repository;
 			
-			loadBranches();
+			load();
 		}
 		
-		private void loadBranches() throws IOException, GitAPIException {
+		private void load() throws IOException, GitAPIException {
 			
 			GitRepository gitRepository = getGitRepository(repository);
 			Collection<GitBranch> gitBranches = gitRepository.getBranches();
@@ -186,10 +198,10 @@ class RepositoryImpl implements RepositoryRepository {
 			this.repository = repository;
 			this.branchName = branchName;
 			
-			loadHead();
+			load();
 		}
 		
-		private void loadHead() throws IOException, GitAPIException {
+		private void load() throws IOException, GitAPIException {
 			
 			GitRepository gitRepository = getGitRepository(repository);
 			GitCommit gitCommit = gitRepository.getBranch(branchName).getHead();
@@ -267,12 +279,140 @@ class RepositoryImpl implements RepositoryRepository {
 				new LogPlaceholderImpl(repository, branchName));
 	}
 	
-	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
+	private class TagPlaceholderImpl implements RepositoryBean.TagPlaceholder {
+
+		private RepositoryBean repository;
 		
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				repository.getOrganization().getName(), 
-				repository.getName());
+		public TagPlaceholderImpl(RepositoryBean repository) {
+			this.repository = repository;
+		}
 		
-		return GitBareRepository.getInstance(repositoryDirectory);
+		@Override
+		public TagBean getTag(String tagName) {
+			return getTagBean(repository, tagName);
+		}
+	}
+	
+	private class ProxyTagsPlaceholder implements RepositoryBean.TagsPlaceholder {
+
+		private RealTagsPlaceholder placeholder = null;
+
+		private RepositoryBean repository;
+		
+		public ProxyTagsPlaceholder(RepositoryBean repository) {
+			this.repository = repository;
+		}
+		
+		@Override
+		public Collection<TagBean> getTags() throws IOException, GitAPIException {
+			
+			if (placeholder == null) {
+				placeholder = new RealTagsPlaceholder(repository);
+			}
+			
+			return placeholder.getTags();
+		}
+	}
+	
+	private class RealTagsPlaceholder implements RepositoryBean.TagsPlaceholder {
+
+		private RepositoryBean repository;
+		
+		private Collection<TagBean> tags;
+		
+		public RealTagsPlaceholder(RepositoryBean repository) throws IOException, GitAPIException {
+			this.repository = repository;
+			
+			load();
+		}
+		
+		private void load() throws IOException, GitAPIException {
+			
+			GitRepository gitRepository = getGitRepository(repository);
+			Collection<GitTag> gitTags = gitRepository.getTags();
+			/*
+			 * TODO:
+			 * 
+			 * Right now, the code is sufficient. "GitTag" actually includes the whole
+			 * copy of "GitCommit" as a component, and it is by default loaded when
+			 * we do "gitRepository.getTags()". So we can always either (1) in here
+			 * boost the "getCommit()" to its real value, so it doesn't need to be 
+			 * reload again if queried, or (2) change gitar to some proxy pattern so
+			 * "GitCommit" doesn't need to be loaded by default.
+			 */
+			
+			Collection<TagBean> tags = new ArrayList<TagBean>();
+			for (GitTag gitTag : gitTags) {
+				tags.add(getTagBean(repository, gitTag.getName()));
+			}
+			
+			this.tags = tags;
+		}
+		
+		@Override
+		public Collection<TagBean> getTags() {
+			return tags;
+		}
+	}
+	
+	private class ProxyCommitPlaceholder implements TagBean.CommitPlaceholder {
+
+		private RealCommitPlaceholder placeholder = null;
+
+		private RepositoryBean repository;
+		private String tagName;
+		
+		public ProxyCommitPlaceholder(RepositoryBean repository, String tagName) {
+			this.repository = repository;
+			this.tagName = tagName;
+		}
+		
+		@Override
+		public CommitBean getCommit() throws IOException, GitAPIException {
+			
+			if (placeholder == null) {
+				placeholder = new RealCommitPlaceholder(repository, tagName);
+			}
+			
+			return placeholder.getCommit();
+		}
+	}
+	
+	private class RealCommitPlaceholder implements TagBean.CommitPlaceholder {
+
+		private RepositoryBean repository;
+		private String tagName;
+		
+		private CommitBean commit;
+		
+		public RealCommitPlaceholder(RepositoryBean repository, String tagName) throws IOException, GitAPIException {
+			this.repository = repository;
+			this.tagName = tagName;
+			
+			load();
+		}
+		
+		private void load() throws IOException, GitAPIException {
+			
+			GitRepository gitRepository = getGitRepository(repository);
+			GitCommit gitCommit = gitRepository.getTag(tagName).getCommit();
+			
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(repository.getId(), gitCommit.getSha()).get(0);
+			commit.updateFromGitCommit(gitCommit);
+			
+			this.commit = commit;
+		}
+		
+		@Override
+		public CommitBean getCommit() {
+			return commit;
+		}
+	}
+	
+	private TagBean getTagBean(RepositoryBean repository, String tagName) {
+		return new TagBean(
+				tagName, 
+				repository, 
+				new ProxyCommitPlaceholder(repository, tagName));
 	}
 }

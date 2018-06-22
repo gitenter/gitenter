@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
+import com.gitenter.domain.git.TagBean;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -93,5 +94,32 @@ public class RepositoryBeanTest {
 		List<CommitBean> log = branch.getLog(5, 0);
 		assertEquals(log.size(), 1);
 		assertEquals(log.get(0).getMessage(), "file\n");
+	}
+	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalRepositoryGetTags() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
+		
+		Collection<TagBean> tags = item.getTags();
+		assertEquals(tags.size(), 1);
+		TagBean tag = tags.iterator().next();
+		assertEquals(tag.getName(), "tag");
+	}
+	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalRepositoryGetTag() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
+		
+		TagBean tag = item.getTag("tag");
+		CommitBean commit = tag.getCommit();
+		assertEquals(commit.getMessage(), "file\n");
 	}
 }
