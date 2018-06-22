@@ -330,17 +330,7 @@ class RepositoryImpl implements RepositoryRepository {
 			
 			GitRepository gitRepository = getGitRepository(repository);
 			Collection<GitTag> gitTags = gitRepository.getTags();
-			/*
-			 * TODO:
-			 * 
-			 * Right now, the code is sufficient. "GitTag" actually includes the whole
-			 * copy of "GitCommit" as a component, and it is by default loaded when
-			 * we do "gitRepository.getTags()". So we can always either (1) in here
-			 * boost the "getCommit()" to its real value, so it doesn't need to be 
-			 * reload again if queried, or (2) change gitar to some proxy pattern so
-			 * "GitCommit" doesn't need to be loaded by default.
-			 */
-			
+
 			Collection<TagBean> tags = new ArrayList<TagBean>();
 			for (GitTag gitTag : gitTags) {
 				tags.add(getTagBean(repository, gitTag.getName()));

@@ -8,6 +8,10 @@ import com.gitenter.domain.auth.RepositoryBean;
 
 import lombok.Getter;
 
+/*
+ * TODO:
+ * Implement the annotated/lightweight hierarchy in here.
+ */
 @Getter
 public class TagBean {
 
