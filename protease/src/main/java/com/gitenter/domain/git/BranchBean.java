@@ -8,6 +8,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import com.gitenter.domain.auth.RepositoryBean;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class BranchBean {
 	
@@ -17,34 +18,30 @@ public class BranchBean {
 	@Getter
 	final private RepositoryBean repository;
 
+	@Setter
 	private HeadPlaceholder headPlaceholder;
 
+	@Setter
 	private LogPlaceholder logPlaceholder;
 	
 	public CommitBean getHead() throws IOException, GitAPIException {
-		return headPlaceholder.getHead();
+		return headPlaceholder.get();
 	}
 	
 	public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
-		return logPlaceholder.getLog(maxCount, skip);
+		return logPlaceholder.get(maxCount, skip);
 	}
 	
-	public BranchBean(
-			String name, 
-			RepositoryBean repository, 
-			HeadPlaceholder headPlaceholder,
-			LogPlaceholder logPlaceholder) {
+	public BranchBean(String name, RepositoryBean repository) {
 		this.repository = repository;
 		this.name = name;
-		this.headPlaceholder = headPlaceholder;
-		this.logPlaceholder = logPlaceholder;
 	}
 
 	public interface HeadPlaceholder {
-		CommitBean getHead() throws IOException, GitAPIException;
+		CommitBean get() throws IOException, GitAPIException;
 	}
 	
 	public interface LogPlaceholder {
-		List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException;
+		List<CommitBean> get(Integer maxCount, Integer skip) throws IOException, GitAPIException;
 	}
 }

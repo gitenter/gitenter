@@ -89,7 +89,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public BranchBean getBranch(String branchName) {
+		public BranchBean get(String branchName) {
 			return getBranchBean(repository, branchName);
 		}
 	}
@@ -110,13 +110,13 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
+		public Collection<BranchBean> get() throws IOException, GitAPIException {
 			
 			if (placeholder == null) {
 				placeholder = new RealBranchesPlaceholder(repository);
 			}
 			
-			return placeholder.getBranches();
+			return placeholder.get();
 		}
 	}
 	
@@ -159,7 +159,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public Collection<BranchBean> getBranches() {
+		public Collection<BranchBean> get() {
 			return branches;
 		}
 	}
@@ -168,52 +168,47 @@ class RepositoryImpl implements RepositoryRepository {
 
 		private RealHeadPlaceholder placeholder = null;
 
-		private RepositoryBean repository;
-		private String branchName;
+		private BranchBean branch;
 		
-		public ProxyHeadPlaceholder(RepositoryBean repository, String branchName) {
-			this.repository = repository;
-			this.branchName = branchName;
+		public ProxyHeadPlaceholder(BranchBean branch) {
+			this.branch = branch;
 		}
 		
 		@Override
-		public CommitBean getHead() throws IOException, GitAPIException {
+		public CommitBean get() throws IOException, GitAPIException {
 			
 			if (placeholder == null) {
-				placeholder = new RealHeadPlaceholder(repository, branchName);
+				placeholder = new RealHeadPlaceholder(branch);
 			}
 			
-			return placeholder.getHead();
+			return placeholder.get();
 		}
 	}
 	
 	private class RealHeadPlaceholder implements BranchBean.HeadPlaceholder {
 
-		private RepositoryBean repository;
-		private String branchName;
+		private BranchBean branch;
 		
 		private CommitBean head;
 		
-		public RealHeadPlaceholder(RepositoryBean repository, String branchName) throws IOException, GitAPIException {
-			this.repository = repository;
-			this.branchName = branchName;
-			
+		public RealHeadPlaceholder(BranchBean branch) throws IOException, GitAPIException {
+			this.branch = branch;
 			load();
 		}
 		
 		private void load() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(repository);
-			GitCommit gitCommit = gitRepository.getBranch(branchName).getHead();
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(repository.getId(), gitCommit.getSha()).get(0);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
 			this.head = commit;
 		}
 		
 		@Override
-		public CommitBean getHead() {
+		public CommitBean get() {
 			return head;
 		}
 	}
@@ -239,7 +234,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public List<CommitBean> getLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		public List<CommitBean> get(Integer maxCount, Integer skip) throws IOException, GitAPIException {
 			GitRepository gitRepository = getGitRepository(repository);
 			List<GitCommit> gitLog = gitRepository.getBranch(branchName).getLog();
 			
@@ -272,11 +267,12 @@ class RepositoryImpl implements RepositoryRepository {
 	}
 	
 	private BranchBean getBranchBean(RepositoryBean repository, String branchName) {
-		return new BranchBean(
-				branchName, 
-				repository, 
-				new ProxyHeadPlaceholder(repository, branchName),
-				new LogPlaceholderImpl(repository, branchName));
+		BranchBean branch = new BranchBean(branchName, repository);
+		
+		branch.setHeadPlaceholder(new ProxyHeadPlaceholder(branch));
+		branch.setLogPlaceholder(new LogPlaceholderImpl(repository, branchName));
+		
+		return branch;
 	}
 	
 	private class TagPlaceholderImpl implements RepositoryBean.TagPlaceholder {
@@ -288,7 +284,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public TagBean getTag(String tagName) {
+		public TagBean get(String tagName) {
 			return getTagBean(repository, tagName);
 		}
 	}
@@ -304,13 +300,13 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public Collection<TagBean> getTags() throws IOException, GitAPIException {
+		public Collection<TagBean> get() throws IOException, GitAPIException {
 			
 			if (placeholder == null) {
 				placeholder = new RealTagsPlaceholder(repository);
 			}
 			
-			return placeholder.getTags();
+			return placeholder.get();
 		}
 	}
 	
@@ -340,7 +336,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public Collection<TagBean> getTags() {
+		public Collection<TagBean> get() {
 			return tags;
 		}
 	}
@@ -358,13 +354,13 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public CommitBean getCommit() throws IOException, GitAPIException {
+		public CommitBean get() throws IOException, GitAPIException {
 			
 			if (placeholder == null) {
 				placeholder = new RealCommitPlaceholder(repository, tagName);
 			}
 			
-			return placeholder.getCommit();
+			return placeholder.get();
 		}
 	}
 	
@@ -394,7 +390,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public CommitBean getCommit() {
+		public CommitBean get() {
 			return commit;
 		}
 	}

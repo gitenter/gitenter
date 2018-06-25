@@ -101,19 +101,19 @@ public class RepositoryBean {
 	 * query the git storage to confirm the branch's existence.
 	 */
 	public BranchBean getBranch(String branchName) {
-		return branchPlaceholder.getBranch(branchName);
+		return branchPlaceholder.get(branchName);
 	}
 	
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
-		return branchesPlaceholder.getBranches();
+		return branchesPlaceholder.get();
 	}
 	
 	public TagBean getTag(String tagName) {
-		return tagPlaceholder.getTag(tagName);
+		return tagPlaceholder.get(tagName);
 	}
 	
 	public Collection<TagBean> getTags() throws IOException, GitAPIException {
-		return tagsPlaceholder.getTags();
+		return tagsPlaceholder.get();
 	}
 	
 	public void addCommit (CommitBean commit) {
@@ -155,18 +155,18 @@ public class RepositoryBean {
 //	}
 
 	public interface BranchPlaceholder {
-		BranchBean getBranch(String branchName);
+		BranchBean get(String branchName);
 	}
 	
 	public interface BranchesPlaceholder {
-		Collection<BranchBean> getBranches() throws IOException, GitAPIException;
+		Collection<BranchBean> get() throws IOException, GitAPIException;
 	}
 	
 	public interface TagPlaceholder {
-		TagBean getTag(String tagName);
+		TagBean get(String tagName);
 	}
 	
 	public interface TagsPlaceholder {
-		Collection<TagBean> getTags() throws IOException, GitAPIException;
+		Collection<TagBean> get() throws IOException, GitAPIException;
 	}
 }

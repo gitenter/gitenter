@@ -30,10 +30,10 @@ public class TagBean {
 	}
 	
 	public CommitBean getCommit() throws IOException, GitAPIException {
-		return commitPlaceholder.getCommit();
+		return commitPlaceholder.get();
 	}
 
 	public interface CommitPlaceholder {
-		CommitBean getCommit() throws IOException, GitAPIException;
+		CommitBean get() throws IOException, GitAPIException;
 	}
 }
