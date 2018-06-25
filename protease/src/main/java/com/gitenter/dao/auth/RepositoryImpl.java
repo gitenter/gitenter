@@ -58,6 +58,16 @@ class RepositoryImpl implements RepositoryRepository {
 		return repositoryDatabaseRepository.saveAndFlush(repository);
 	}
 	
+	/*
+	 * Technically we cannot @Autowired "gitSource" in the inner 
+	 * classes such as the placeholders, because Spring @Component 
+	 * doesn't accept a non-trivial constructor with >=1 arguments. 
+	 * 
+	 * So we want the outer class to @Autowired gitSource, and
+	 * pass the related information down to the real git access
+	 * operations all in the scope of this outer class (with the
+	 * usage of this helper method).
+	 */
 	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
@@ -91,6 +101,31 @@ class RepositoryImpl implements RepositoryRepository {
 		return tag;
 	}
 	
+	private interface Placeholder<T> {
+		public T get() throws IOException, GitAPIException;
+	}
+	
+	abstract private class ProxyPlaceholder<T,K> implements Placeholder<T> {
+		
+		protected K anchor;
+		private T proxyValue;
+		
+		public ProxyPlaceholder(K anchor) {
+			this.anchor = anchor;
+		}
+		
+		@Override
+		public T get() throws IOException, GitAPIException {
+			
+			if (proxyValue == null) {
+				proxyValue = getReal();
+			}
+			return proxyValue;
+		}
+		
+		abstract protected T getReal() throws IOException, GitAPIException;
+	}
+	
 	/*
 	 * No need to use proxy pattern in here, since to execute the constructor
 	 * is so cheap. The reason not implement the logic in "RepositoryBean", 
@@ -111,125 +146,46 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	/*
-	 * TODO:
-	 * Here are a lot of boilerplate code which follows the same pattern.
-	 * Consider refactoring to reuse most setups. 
-	 */
-	private class ProxyBranchesPlaceholder implements RepositoryBean.BranchesPlaceholder {
-
-		private RealBranchesPlaceholder placeholder = null;
-
-		private RepositoryBean repository;
+	private class ProxyBranchesPlaceholder extends ProxyPlaceholder<Collection<BranchBean>,RepositoryBean> implements RepositoryBean.BranchesPlaceholder {
 		
 		public ProxyBranchesPlaceholder(RepositoryBean repository) {
-			this.repository = repository;
+			super(repository);
 		}
-		
-		@Override
-		public Collection<BranchBean> get() throws IOException, GitAPIException {
-			
-			if (placeholder == null) {
-				placeholder = new RealBranchesPlaceholder(repository);
-			}
-			
-			return placeholder.get();
-		}
-	}
-	
-	private class RealBranchesPlaceholder implements RepositoryBean.BranchesPlaceholder {
 
-		/*
-		 * Technically we cannot @Autowired "gitSource" in this 
-		 * class (no matter whether it is a normal class or inner class)
-		 * because Spring @Component doesn't accept a non-trivial
-		 * constructor with >=1 arguments. 
-		 * 
-		 * So if it is a normal class, we need to get gitSource from
-		 * repository/DAO and pass the information all the way done
-		 * to here.
-		 * 
-		 * As a inner class, we can simply get the value of gitSource
-		 * from an outer class instance variable.
-		 */
-		private RepositoryBean repository;
-		
-		private Collection<BranchBean> branches;
-		
-		public RealBranchesPlaceholder(RepositoryBean repository) throws IOException, GitAPIException {
-			this.repository = repository;
+		@Override
+		protected Collection<BranchBean> getReal() throws IOException, GitAPIException {
 			
-			load();
-		}
-		
-		private void load() throws IOException, GitAPIException {
-			
-			GitRepository gitRepository = getGitRepository(repository);
+			GitRepository gitRepository = getGitRepository(anchor);
 			Collection<GitBranch> gitBranches = gitRepository.getBranches();
 			
 			Collection<BranchBean> branches = new ArrayList<BranchBean>();
 			for (GitBranch gitBranch : gitBranches) {
-				branches.add(getBranchBean(repository, gitBranch.getName()));
+				branches.add(getBranchBean(anchor, gitBranch.getName()));
 			}
 			
-			this.branches = branches;
-		}
-		
-		@Override
-		public Collection<BranchBean> get() {
 			return branches;
 		}
 	}
 	
-	private class ProxyHeadPlaceholder implements BranchBean.HeadPlaceholder {
+	private class ProxyHeadPlaceholder extends ProxyPlaceholder<CommitBean,BranchBean> implements BranchBean.HeadPlaceholder {
 
-		private RealHeadPlaceholder placeholder = null;
-
-		private BranchBean branch;
-		
 		public ProxyHeadPlaceholder(BranchBean branch) {
-			this.branch = branch;
+			super(branch);
 		}
 		
 		@Override
-		public CommitBean get() throws IOException, GitAPIException {
+		public CommitBean getReal() throws IOException, GitAPIException {
 			
-			if (placeholder == null) {
-				placeholder = new RealHeadPlaceholder(branch);
-			}
+			GitRepository gitRepository = getGitRepository(anchor.getRepository());
+			GitCommit gitCommit = gitRepository.getBranch(anchor.getName()).getHead();
 			
-			return placeholder.get();
-		}
-	}
-	
-	private class RealHeadPlaceholder implements BranchBean.HeadPlaceholder {
-
-		private BranchBean branch;
-		
-		private CommitBean head;
-		
-		public RealHeadPlaceholder(BranchBean branch) throws IOException, GitAPIException {
-			this.branch = branch;
-			load();
-		}
-		
-		private void load() throws IOException, GitAPIException {
-			
-			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
-			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(anchor.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
-			this.head = commit;
-		}
-		
-		@Override
-		public CommitBean get() {
-			return head;
+			return commit;
 		}
 	}
-	
+
 	/*
 	 * No need to use proxy pattern in here, since to execute the constructor
 	 * is so cheap. 
@@ -297,104 +253,42 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyTagsPlaceholder implements RepositoryBean.TagsPlaceholder {
-
-		private RealTagsPlaceholder placeholder = null;
-
-		private RepositoryBean repository;
+	private class ProxyTagsPlaceholder extends ProxyPlaceholder<Collection<TagBean>,RepositoryBean> implements RepositoryBean.TagsPlaceholder {
 		
 		public ProxyTagsPlaceholder(RepositoryBean repository) {
-			this.repository = repository;
+			super(repository);
 		}
 		
 		@Override
-		public Collection<TagBean> get() throws IOException, GitAPIException {
+		public Collection<TagBean> getReal() throws IOException, GitAPIException {
 			
-			if (placeholder == null) {
-				placeholder = new RealTagsPlaceholder(repository);
-			}
-			
-			return placeholder.get();
-		}
-	}
-	
-	private class RealTagsPlaceholder implements RepositoryBean.TagsPlaceholder {
-
-		private RepositoryBean repository;
-		
-		private Collection<TagBean> tags;
-		
-		public RealTagsPlaceholder(RepositoryBean repository) throws IOException, GitAPIException {
-			this.repository = repository;
-			
-			load();
-		}
-		
-		private void load() throws IOException, GitAPIException {
-			
-			GitRepository gitRepository = getGitRepository(repository);
+			GitRepository gitRepository = getGitRepository(anchor);
 			Collection<GitTag> gitTags = gitRepository.getTags();
 
 			Collection<TagBean> tags = new ArrayList<TagBean>();
 			for (GitTag gitTag : gitTags) {
-				tags.add(getTagBean(repository, gitTag.getName()));
+				tags.add(getTagBean(anchor, gitTag.getName()));
 			}
 			
-			this.tags = tags;
-		}
-		
-		@Override
-		public Collection<TagBean> get() {
 			return tags;
 		}
 	}
 	
-	private class ProxyCommitPlaceholder implements TagBean.CommitPlaceholder {
+	private class ProxyCommitPlaceholder extends ProxyPlaceholder<CommitBean,TagBean> implements TagBean.CommitPlaceholder {
 
-		private RealCommitPlaceholder placeholder = null;
-
-		private TagBean tag;
-		
 		public ProxyCommitPlaceholder(TagBean tag) {
-			this.tag = tag;
+			super(tag);
 		}
 		
 		@Override
-		public CommitBean get() throws IOException, GitAPIException {
+		public CommitBean getReal() throws IOException, GitAPIException {
 			
-			if (placeholder == null) {
-				placeholder = new RealCommitPlaceholder(tag);
-			}
+			GitRepository gitRepository = getGitRepository(anchor.getRepository());
+			GitCommit gitCommit = gitRepository.getTag(anchor.getName()).getCommit();
 			
-			return placeholder.get();
-		}
-	}
-	
-	private class RealCommitPlaceholder implements TagBean.CommitPlaceholder {
-
-		private TagBean tag;
-		
-		private CommitBean commit;
-		
-		public RealCommitPlaceholder(TagBean tag) throws IOException, GitAPIException {
-			this.tag = tag;
-			
-			load();
-		}
-		
-		private void load() throws IOException, GitAPIException {
-			
-			GitRepository gitRepository = getGitRepository(tag.getRepository());
-			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
-			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(anchor.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
-			this.commit = commit;
-		}
-		
-		@Override
-		public CommitBean get() {
 			return commit;
 		}
 	}
