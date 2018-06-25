@@ -7,6 +7,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import com.gitenter.domain.auth.RepositoryBean;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /*
  * TODO:
@@ -21,12 +22,12 @@ public class TagBean {
 	@Getter
 	final private RepositoryBean repository;
 	
+	@Setter
 	private CommitPlaceholder commitPlaceholder;
 	
-	public TagBean(String name, RepositoryBean repository, CommitPlaceholder commitPlaceholder) {
+	public TagBean(String name, RepositoryBean repository) {
 		this.name = name;
 		this.repository = repository;
-		this.commitPlaceholder = commitPlaceholder;
 	}
 	
 	public CommitBean getCommit() throws IOException, GitAPIException {

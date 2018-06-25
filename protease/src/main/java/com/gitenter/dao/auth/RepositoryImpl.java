@@ -74,6 +74,23 @@ class RepositoryImpl implements RepositoryRepository {
 		item.setTagsPlaceholder(new ProxyTagsPlaceholder(item));
 	}
 	
+	private BranchBean getBranchBean(RepositoryBean repository, String branchName) {
+		
+		BranchBean branch = new BranchBean(branchName, repository);
+		branch.setHeadPlaceholder(new ProxyHeadPlaceholder(branch));
+		branch.setLogPlaceholder(new LogPlaceholderImpl(repository, branchName));
+		
+		return branch;
+	}
+	
+	private TagBean getTagBean(RepositoryBean repository, String tagName) {
+		
+		TagBean tag = new TagBean(tagName, repository);
+		tag.setCommitPlaceholder(new ProxyCommitPlaceholder(tag));
+		
+		return tag;
+	}
+	
 	/*
 	 * No need to use proxy pattern in here, since to execute the constructor
 	 * is so cheap. The reason not implement the logic in "RepositoryBean", 
@@ -266,15 +283,6 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private BranchBean getBranchBean(RepositoryBean repository, String branchName) {
-		BranchBean branch = new BranchBean(branchName, repository);
-		
-		branch.setHeadPlaceholder(new ProxyHeadPlaceholder(branch));
-		branch.setLogPlaceholder(new LogPlaceholderImpl(repository, branchName));
-		
-		return branch;
-	}
-	
 	private class TagPlaceholderImpl implements RepositoryBean.TagPlaceholder {
 
 		private RepositoryBean repository;
@@ -345,19 +353,17 @@ class RepositoryImpl implements RepositoryRepository {
 
 		private RealCommitPlaceholder placeholder = null;
 
-		private RepositoryBean repository;
-		private String tagName;
+		private TagBean tag;
 		
-		public ProxyCommitPlaceholder(RepositoryBean repository, String tagName) {
-			this.repository = repository;
-			this.tagName = tagName;
+		public ProxyCommitPlaceholder(TagBean tag) {
+			this.tag = tag;
 		}
 		
 		@Override
 		public CommitBean get() throws IOException, GitAPIException {
 			
 			if (placeholder == null) {
-				placeholder = new RealCommitPlaceholder(repository, tagName);
+				placeholder = new RealCommitPlaceholder(tag);
 			}
 			
 			return placeholder.get();
@@ -366,24 +372,22 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class RealCommitPlaceholder implements TagBean.CommitPlaceholder {
 
-		private RepositoryBean repository;
-		private String tagName;
+		private TagBean tag;
 		
 		private CommitBean commit;
 		
-		public RealCommitPlaceholder(RepositoryBean repository, String tagName) throws IOException, GitAPIException {
-			this.repository = repository;
-			this.tagName = tagName;
+		public RealCommitPlaceholder(TagBean tag) throws IOException, GitAPIException {
+			this.tag = tag;
 			
 			load();
 		}
 		
 		private void load() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(repository);
-			GitCommit gitCommit = gitRepository.getTag(tagName).getCommit();
+			GitRepository gitRepository = getGitRepository(tag.getRepository());
+			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
 			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(repository.getId(), gitCommit.getSha()).get(0);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
 			this.commit = commit;
@@ -393,12 +397,5 @@ class RepositoryImpl implements RepositoryRepository {
 		public CommitBean get() {
 			return commit;
 		}
-	}
-	
-	private TagBean getTagBean(RepositoryBean repository, String tagName) {
-		return new TagBean(
-				tagName, 
-				repository, 
-				new ProxyCommitPlaceholder(repository, tagName));
 	}
 }
