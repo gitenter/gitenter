@@ -88,7 +88,7 @@ class RepositoryImpl implements RepositoryRepository {
 		
 		BranchBean branch = new BranchBean(branchName, repository);
 		branch.setHeadPlaceholder(new ProxyHeadPlaceholder(branch));
-		branch.setLogPlaceholder(new LogPlaceholderImpl(repository, branchName));
+		branch.setLogPlaceholder(new LogPlaceholderImpl(branch));
 		
 		return branch;
 	}
@@ -107,10 +107,10 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	abstract private class ProxyPlaceholder<T,K> implements Placeholder<T> {
 		
-		protected K anchor;
+		final protected K anchor;
 		private T proxyValue;
 		
-		public ProxyPlaceholder(K anchor) {
+		protected ProxyPlaceholder(K anchor) {
 			this.anchor = anchor;
 		}
 		
@@ -134,9 +134,9 @@ class RepositoryImpl implements RepositoryRepository {
 	 */
 	private class BranchPlaceholderImpl implements RepositoryBean.BranchPlaceholder {
 
-		private RepositoryBean repository;
+		final private RepositoryBean repository;
 		
-		public BranchPlaceholderImpl(RepositoryBean repository) {
+		private BranchPlaceholderImpl(RepositoryBean repository) {
 			this.repository = repository;
 		}
 		
@@ -148,7 +148,7 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyBranchesPlaceholder extends ProxyPlaceholder<Collection<BranchBean>,RepositoryBean> implements RepositoryBean.BranchesPlaceholder {
 		
-		public ProxyBranchesPlaceholder(RepositoryBean repository) {
+		private ProxyBranchesPlaceholder(RepositoryBean repository) {
 			super(repository);
 		}
 
@@ -169,12 +169,12 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyHeadPlaceholder extends ProxyPlaceholder<CommitBean,BranchBean> implements BranchBean.HeadPlaceholder {
 
-		public ProxyHeadPlaceholder(BranchBean branch) {
+		private ProxyHeadPlaceholder(BranchBean branch) {
 			super(branch);
 		}
 		
 		@Override
-		public CommitBean getReal() throws IOException, GitAPIException {
+		protected CommitBean getReal() throws IOException, GitAPIException {
 			
 			GitRepository gitRepository = getGitRepository(anchor.getRepository());
 			GitCommit gitCommit = gitRepository.getBranch(anchor.getName()).getHead();
@@ -198,18 +198,16 @@ class RepositoryImpl implements RepositoryRepository {
 	 */
 	private class LogPlaceholderImpl implements BranchBean.LogPlaceholder {
 
-		private RepositoryBean repository;
-		private String branchName;
+		final private BranchBean branch;
 		
-		public LogPlaceholderImpl(RepositoryBean repository, String branchName) {
-			this.repository = repository;
-			this.branchName = branchName;
+		private LogPlaceholderImpl(BranchBean branch) {
+			this.branch = branch;
 		}
 		
 		@Override
 		public List<CommitBean> get(Integer maxCount, Integer skip) throws IOException, GitAPIException {
-			GitRepository gitRepository = getGitRepository(repository);
-			List<GitCommit> gitLog = gitRepository.getBranch(branchName).getLog();
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog();
 			
 			/*
 			 * Keep insert order.
@@ -229,7 +227,7 @@ class RepositoryImpl implements RepositoryRepository {
 			 * Also, use directory database query so git information is not
 			 * automatically included.
 			 */
-			List<CommitBean> log = commitDatabaseRepository.findByRepositoryIdAndShaIn(repository.getId(), shas);
+			List<CommitBean> log = commitDatabaseRepository.findByRepositoryIdAndShaIn(branch.getRepository().getId(), shas);
 			
 			for (CommitBean commit : log) {
 				commit.updateFromGitCommit(logMap.get(commit.getSha()));
@@ -241,9 +239,9 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class TagPlaceholderImpl implements RepositoryBean.TagPlaceholder {
 
-		private RepositoryBean repository;
+		final private RepositoryBean repository;
 		
-		public TagPlaceholderImpl(RepositoryBean repository) {
+		private TagPlaceholderImpl(RepositoryBean repository) {
 			this.repository = repository;
 		}
 		
@@ -255,12 +253,12 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyTagsPlaceholder extends ProxyPlaceholder<Collection<TagBean>,RepositoryBean> implements RepositoryBean.TagsPlaceholder {
 		
-		public ProxyTagsPlaceholder(RepositoryBean repository) {
+		private ProxyTagsPlaceholder(RepositoryBean repository) {
 			super(repository);
 		}
 		
 		@Override
-		public Collection<TagBean> getReal() throws IOException, GitAPIException {
+		protected Collection<TagBean> getReal() throws IOException, GitAPIException {
 			
 			GitRepository gitRepository = getGitRepository(anchor);
 			Collection<GitTag> gitTags = gitRepository.getTags();
@@ -276,12 +274,12 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyCommitPlaceholder extends ProxyPlaceholder<CommitBean,TagBean> implements TagBean.CommitPlaceholder {
 
-		public ProxyCommitPlaceholder(TagBean tag) {
+		private ProxyCommitPlaceholder(TagBean tag) {
 			super(tag);
 		}
 		
 		@Override
-		public CommitBean getReal() throws IOException, GitAPIException {
+		protected CommitBean getReal() throws IOException, GitAPIException {
 			
 			GitRepository gitRepository = getGitRepository(anchor.getRepository());
 			GitCommit gitCommit = gitRepository.getTag(anchor.getName()).getCommit();
