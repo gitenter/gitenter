@@ -81,19 +81,20 @@ public class CommitImpl implements CommitRepository {
 		}
 	}
 	
-	private class ProxyRootPlaceholder extends ProxyPlaceholder<FolderBean,CommitBean> implements CommitValidBean.RootPlaceholder {
+	private class ProxyRootPlaceholder extends ProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
 
+		final private CommitBean commit;
 		final private GitCommit gitCommit;
 		
-		protected ProxyRootPlaceholder(CommitBean anchor, GitCommit gitCommit) {
-			super(anchor);
+		protected ProxyRootPlaceholder(CommitBean commit, GitCommit gitCommit) {
+			this.commit = commit;
 			this.gitCommit = gitCommit;
 		}
 
 		@Override
 		protected FolderBean getReal() throws IOException, GitAPIException {
 			GitFolder gitFolder = gitCommit.getRoot();
-			return new FolderBean(gitFolder, anchor);
+			return new FolderBean(gitFolder, commit);
 		}
 	}
 	

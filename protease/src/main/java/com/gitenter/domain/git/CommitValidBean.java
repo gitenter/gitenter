@@ -25,14 +25,6 @@ import lombok.Setter;
 @Table(schema = "git", name = "git_commit_valid")
 public class CommitValidBean extends CommitBean {
 	
-	/*
-	 * TODO:
-	 * Get a more complicated Object inside of "TreeNode",
-	 * and let it link to "DocumentBean" when needed.
-	 * 
-	 * Define a function which only show the part of the
-	 * folder structure that include design document files.
-	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
 	
@@ -40,6 +32,11 @@ public class CommitValidBean extends CommitBean {
 	@Getter(AccessLevel.NONE)
 	private RootPlaceholder rootPlaceholder;
 	
+	/*
+	 * TODO:
+	 * Define a function which only show the part of the
+	 * folder structure that include design document files.
+	 */
 	public FolderBean getRoot() throws IOException, GitAPIException {
 		return rootPlaceholder.get();
 	}

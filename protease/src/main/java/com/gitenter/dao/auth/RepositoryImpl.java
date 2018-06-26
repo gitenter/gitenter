@@ -122,40 +122,44 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyBranchesPlaceholder extends ProxyPlaceholder<Collection<BranchBean>,RepositoryBean> implements RepositoryBean.BranchesPlaceholder {
+	private class ProxyBranchesPlaceholder extends ProxyPlaceholder<Collection<BranchBean>> implements RepositoryBean.BranchesPlaceholder {
 		
-		private ProxyBranchesPlaceholder(RepositoryBean anchor) {
-			super(anchor);
+		final private RepositoryBean repository;
+		
+		private ProxyBranchesPlaceholder(RepositoryBean repository) {
+			this.repository = repository;
 		}
 
 		@Override
 		protected Collection<BranchBean> getReal() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(anchor);
+			GitRepository gitRepository = getGitRepository(repository);
 			Collection<GitBranch> gitBranches = gitRepository.getBranches();
 			
 			Collection<BranchBean> branches = new ArrayList<BranchBean>();
 			for (GitBranch gitBranch : gitBranches) {
-				branches.add(getBranchBean(anchor, gitBranch.getName()));
+				branches.add(getBranchBean(repository, gitBranch.getName()));
 			}
 			
 			return branches;
 		}
 	}
 	
-	private class ProxyHeadPlaceholder extends ProxyPlaceholder<CommitBean,BranchBean> implements BranchBean.HeadPlaceholder {
+	private class ProxyHeadPlaceholder extends ProxyPlaceholder<CommitBean> implements BranchBean.HeadPlaceholder {
 
-		private ProxyHeadPlaceholder(BranchBean anchor) {
-			super(anchor);
+		final private BranchBean branch;
+		
+		private ProxyHeadPlaceholder(BranchBean branch) {
+			this.branch = branch;
 		}
 		
 		@Override
 		protected CommitBean getReal() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(anchor.getRepository());
-			GitCommit gitCommit = gitRepository.getBranch(anchor.getName()).getHead();
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(anchor.getRepository().getId(), gitCommit.getSha()).get(0);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
 			return commit;
@@ -227,40 +231,44 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyTagsPlaceholder extends ProxyPlaceholder<Collection<TagBean>,RepositoryBean> implements RepositoryBean.TagsPlaceholder {
+	private class ProxyTagsPlaceholder extends ProxyPlaceholder<Collection<TagBean>> implements RepositoryBean.TagsPlaceholder {
 		
-		private ProxyTagsPlaceholder(RepositoryBean anchor) {
-			super(anchor);
+		final private RepositoryBean repository;
+		
+		private ProxyTagsPlaceholder(RepositoryBean repository) {
+			this.repository = repository;
 		}
 		
 		@Override
 		protected Collection<TagBean> getReal() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(anchor);
+			GitRepository gitRepository = getGitRepository(repository);
 			Collection<GitTag> gitTags = gitRepository.getTags();
 
 			Collection<TagBean> tags = new ArrayList<TagBean>();
 			for (GitTag gitTag : gitTags) {
-				tags.add(getTagBean(anchor, gitTag.getName()));
+				tags.add(getTagBean(repository, gitTag.getName()));
 			}
 			
 			return tags;
 		}
 	}
 	
-	private class ProxyCommitPlaceholder extends ProxyPlaceholder<CommitBean,TagBean> implements TagBean.CommitPlaceholder {
+	private class ProxyCommitPlaceholder extends ProxyPlaceholder<CommitBean> implements TagBean.CommitPlaceholder {
 
-		private ProxyCommitPlaceholder(TagBean anchor) {
-			super(anchor);
+		final private TagBean tag;
+		
+		private ProxyCommitPlaceholder(TagBean tag) {
+			this.tag = tag;
 		}
 		
 		@Override
 		protected CommitBean getReal() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(anchor.getRepository());
-			GitCommit gitCommit = gitRepository.getTag(anchor.getName()).getCommit();
+			GitRepository gitRepository = getGitRepository(tag.getRepository());
+			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
 			
-			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(anchor.getRepository().getId(), gitCommit.getSha()).get(0);
+			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.updateFromGitCommit(gitCommit);
 			
 			return commit;
