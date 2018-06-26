@@ -1,10 +1,12 @@
 package com.gitenter.domain.git;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.domain.auth.RepositoryBean;
+import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +36,7 @@ public class TagBean {
 		return commitPlaceholder.get();
 	}
 
-	public interface CommitPlaceholder {
+	public interface CommitPlaceholder extends GitPlaceholder<CommitBean> {
 		CommitBean get() throws IOException, GitAPIException;
 	}
 }

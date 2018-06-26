@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gitenter.dao.git.CommitDatabaseRepository;
-import com.gitenter.dao.util.ProxyPlaceholder;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
@@ -23,6 +22,7 @@ import com.gitenter.gitar.GitBranch;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.GitTag;
+import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
@@ -122,7 +122,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyBranchesPlaceholder extends ProxyPlaceholder<Collection<BranchBean>> implements RepositoryBean.BranchesPlaceholder {
+	private class ProxyBranchesPlaceholder extends GitProxyPlaceholder<Collection<BranchBean>> implements RepositoryBean.BranchesPlaceholder {
 		
 		final private RepositoryBean repository;
 		
@@ -145,7 +145,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyHeadPlaceholder extends ProxyPlaceholder<CommitBean> implements BranchBean.HeadPlaceholder {
+	private class ProxyHeadPlaceholder extends GitProxyPlaceholder<CommitBean> implements BranchBean.HeadPlaceholder {
 
 		final private BranchBean branch;
 		
@@ -231,7 +231,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyTagsPlaceholder extends ProxyPlaceholder<Collection<TagBean>> implements RepositoryBean.TagsPlaceholder {
+	private class ProxyTagsPlaceholder extends GitProxyPlaceholder<Collection<TagBean>> implements RepositoryBean.TagsPlaceholder {
 		
 		final private RepositoryBean repository;
 		
@@ -254,7 +254,7 @@ class RepositoryImpl implements RepositoryRepository {
 		}
 	}
 	
-	private class ProxyCommitPlaceholder extends ProxyPlaceholder<CommitBean> implements TagBean.CommitPlaceholder {
+	private class ProxyCommitPlaceholder extends GitProxyPlaceholder<CommitBean> implements TagBean.CommitPlaceholder {
 
 		final private TagBean tag;
 		

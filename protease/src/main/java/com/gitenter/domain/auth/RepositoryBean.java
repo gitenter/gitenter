@@ -25,6 +25,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.TagBean;
+import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -158,7 +159,7 @@ public class RepositoryBean {
 		BranchBean get(String branchName);
 	}
 	
-	public interface BranchesPlaceholder {
+	public interface BranchesPlaceholder extends GitPlaceholder<Collection<BranchBean>> {
 		Collection<BranchBean> get() throws IOException, GitAPIException;
 	}
 	
@@ -166,7 +167,7 @@ public class RepositoryBean {
 		TagBean get(String tagName);
 	}
 	
-	public interface TagsPlaceholder {
+	public interface TagsPlaceholder extends GitPlaceholder<Collection<TagBean>> {
 		Collection<TagBean> get() throws IOException, GitAPIException;
 	}
 }

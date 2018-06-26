@@ -1,11 +1,13 @@
 package com.gitenter.domain.git;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.domain.auth.RepositoryBean;
+import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +39,7 @@ public class BranchBean {
 		this.name = name;
 	}
 
-	public interface HeadPlaceholder {
+	public interface HeadPlaceholder extends GitPlaceholder<CommitBean> {
 		CommitBean get() throws IOException, GitAPIException;
 	}
 	

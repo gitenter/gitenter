@@ -9,7 +9,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.dao.util.ProxyPlaceholder;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.CommitValidBean;
 import com.gitenter.domain.git.FolderBean;
@@ -17,6 +16,7 @@ import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitFolder;
 import com.gitenter.gitar.GitRepository;
+import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
@@ -81,7 +81,7 @@ public class CommitImpl implements CommitRepository {
 		}
 	}
 	
-	private class ProxyRootPlaceholder extends ProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
+	private class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
 
 		final private CommitBean commit;
 		final private GitCommit gitCommit;

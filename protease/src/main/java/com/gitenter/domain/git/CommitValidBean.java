@@ -2,6 +2,7 @@ package com.gitenter.domain.git;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+
+import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -94,7 +97,7 @@ public class CommitValidBean extends CommitBean {
 		return documents.add(document);
 	}
 	
-	public interface RootPlaceholder {
+	public interface RootPlaceholder extends GitPlaceholder<FolderBean> {
 		FolderBean get() throws IOException, GitAPIException;
 	}
 }
