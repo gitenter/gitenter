@@ -64,6 +64,26 @@ public class CommitBeanTest {
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 	}
 	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalFolderStructure() throws IOException, GitAPIException {
+		
+		CommitBean item = repository.findById(1).get();
+		
+		assert item instanceof CommitValidBean;
+		CommitValidBean validItem = (CommitValidBean)item;
+		
+		FolderBean root = validItem.getRoot();
+		assertEquals(root.getSubpath().size(), 1);
+		
+		PathBean subpath = root.getSubpath().iterator().next();
+		assert subpath instanceof FilepathBean;
+		assertEquals(subpath.getRelativePath(), "file");
+	}
+	
+	
 	/*
 	 * TODO:
 	 * 

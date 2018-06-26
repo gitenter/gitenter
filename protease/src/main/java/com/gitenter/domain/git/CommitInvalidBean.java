@@ -23,15 +23,15 @@ public class CommitInvalidBean extends CommitBean {
 	@Column(name="error_message", updatable=false)
 	private String errorMessage;
 	
-	/*
-	 * This default constructor is needed for Hibernate.
-	 */
-	public CommitInvalidBean () {
-		super();
-	}
-	
-	public CommitInvalidBean (RepositoryBean repository, String commitSha, String errorMessage) {
-		super(repository, commitSha);
-		this.errorMessage = errorMessage;
-	}
+//	/*
+//	 * This default constructor is needed for Hibernate.
+//	 */
+//	public CommitInvalidBean () {
+//		super();
+//	}
+//	
+//	public CommitInvalidBean (RepositoryBean repository, String commitSha, String errorMessage) {
+//		super(repository, commitSha);
+//		this.errorMessage = errorMessage;
+//	}
 }

@@ -9,24 +9,25 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.dao.auth.RepositoryRepository;
-import com.gitenter.domain.auth.RepositoryBean;
-import com.gitenter.domain.git.AuthorBean;
-import com.gitenter.domain.git.BranchBean;
+import com.gitenter.dao.util.ProxyPlaceholder;
 import com.gitenter.domain.git.CommitBean;
-import com.gitenter.gitar.*;
+import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.FolderBean;
+import com.gitenter.gitar.GitBareRepository;
+import com.gitenter.gitar.GitCommit;
+import com.gitenter.gitar.GitFolder;
+import com.gitenter.gitar.GitRepository;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
 public class CommitImpl implements CommitRepository {
 
-	@Autowired private CommitDatabaseRepository commitDbRepository;
-	@Autowired private RepositoryRepository repositoryRepository;
+	@Autowired private CommitDatabaseRepository commitDatabaseRepository;
 	@Autowired private GitSource gitSource;
 	
 	public Optional<CommitBean> findById(Integer id) throws IOException, GitAPIException {
 		
-		Optional<CommitBean> items = commitDbRepository.findById(id);
+		Optional<CommitBean> items = commitDatabaseRepository.findById(id);
 		
 		if (items.isPresent()) {
 			CommitBean item = items.get();
@@ -38,7 +39,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
+		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
 		
 		/*
 		 * TODO:
@@ -54,42 +55,13 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDbRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
+		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
 		
 		for (CommitBean item : items) {
 			updateFromGit(item);
 		}
 		
 		return items;
-	}
-	
-	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, BranchBean branch) throws IOException, GitAPIException {
-
-		/*
-		 * TODO:
-		 * Should be a better way rather than query the database twice?
-		 */
-		RepositoryBean repositoryBean = repositoryRepository.findById(repositoryId).get();
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				repositoryBean.getOrganization().getName(), 
-				repositoryBean.getName());
-		
-		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
-		
-		List<CommitBean> commits = commitDbRepository.findByRepositoryIdAndSha(repositoryId, gitCommit.getSha());
-		
-		if (commits.size() == 0) {
-			throw new IOException ("SHA checksum hash "+gitCommit.getSha()+" is not correct!");
-		}
-		if (commits.size() > 1) {
-			throw new IOException ("SHA checksum hash "+gitCommit.getSha()+" is not unique!");
-		}
-		
-		CommitBean commit = commits.get(0);
-		commit.updateFromGitCommit(gitCommit);
-		
-		return commit;
 	}
 	
 	private void updateFromGit(CommitBean commit) throws IOException, GitAPIException {
@@ -102,9 +74,30 @@ public class CommitImpl implements CommitRepository {
 		GitCommit gitCommit = gitRepository.getCommit(commit.getSha());
 		
 		commit.updateFromGitCommit(gitCommit);
+		
+		if (commit instanceof CommitValidBean) {
+			CommitValidBean validCommit = (CommitValidBean)commit;
+			validCommit.setRootPlaceholder(new ProxyRootPlaceholder(validCommit, gitCommit));
+		}
+	}
+	
+	private class ProxyRootPlaceholder extends ProxyPlaceholder<FolderBean,CommitBean> implements CommitValidBean.RootPlaceholder {
+
+		final private GitCommit gitCommit;
+		
+		protected ProxyRootPlaceholder(CommitBean anchor, GitCommit gitCommit) {
+			super(anchor);
+			this.gitCommit = gitCommit;
+		}
+
+		@Override
+		protected FolderBean getReal() throws IOException, GitAPIException {
+			GitFolder gitFolder = gitCommit.getRoot();
+			return new FolderBean(gitFolder, anchor);
+		}
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {
-		return commitDbRepository.saveAndFlush(commit);
+		return commitDatabaseRepository.saveAndFlush(commit);
 	}
 }

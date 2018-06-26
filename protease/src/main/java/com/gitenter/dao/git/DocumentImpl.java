@@ -9,6 +9,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.DocumentBean;
@@ -19,6 +20,7 @@ import com.gitenter.protease.source.GitSource;
 class DocumentImpl implements DocumentRepository {
 
 	@Autowired private DocumentDatabaseRepository documentDbRepository;
+	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private CommitRepository commitRepository;
 	@Autowired private GitSource gitSource;
 
@@ -88,7 +90,7 @@ class DocumentImpl implements DocumentRepository {
 		 * Should be a better way rather than query the database twice?
 		 * It is pretty hard, since "branch" is not saved in database.
 		 */
-		CommitBean commit = commitRepository.findByRepositoryIdAndBranch(repositoryId, branch);
+		CommitBean commit = branch.getHead();
 		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
 	}
 	

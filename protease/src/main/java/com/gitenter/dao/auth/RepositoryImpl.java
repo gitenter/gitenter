@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gitenter.dao.git.CommitDatabaseRepository;
+import com.gitenter.dao.util.ProxyPlaceholder;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
@@ -101,31 +102,6 @@ class RepositoryImpl implements RepositoryRepository {
 		return tag;
 	}
 	
-	private interface Placeholder<T> {
-		public T get() throws IOException, GitAPIException;
-	}
-	
-	abstract private class ProxyPlaceholder<T,K> implements Placeholder<T> {
-		
-		final protected K anchor;
-		private T proxyValue;
-		
-		protected ProxyPlaceholder(K anchor) {
-			this.anchor = anchor;
-		}
-		
-		@Override
-		public T get() throws IOException, GitAPIException {
-			
-			if (proxyValue == null) {
-				proxyValue = getReal();
-			}
-			return proxyValue;
-		}
-		
-		abstract protected T getReal() throws IOException, GitAPIException;
-	}
-	
 	/*
 	 * No need to use proxy pattern in here, since to execute the constructor
 	 * is so cheap. The reason not implement the logic in "RepositoryBean", 
@@ -148,8 +124,8 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyBranchesPlaceholder extends ProxyPlaceholder<Collection<BranchBean>,RepositoryBean> implements RepositoryBean.BranchesPlaceholder {
 		
-		private ProxyBranchesPlaceholder(RepositoryBean repository) {
-			super(repository);
+		private ProxyBranchesPlaceholder(RepositoryBean anchor) {
+			super(anchor);
 		}
 
 		@Override
@@ -169,8 +145,8 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyHeadPlaceholder extends ProxyPlaceholder<CommitBean,BranchBean> implements BranchBean.HeadPlaceholder {
 
-		private ProxyHeadPlaceholder(BranchBean branch) {
-			super(branch);
+		private ProxyHeadPlaceholder(BranchBean anchor) {
+			super(anchor);
 		}
 		
 		@Override
@@ -253,8 +229,8 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyTagsPlaceholder extends ProxyPlaceholder<Collection<TagBean>,RepositoryBean> implements RepositoryBean.TagsPlaceholder {
 		
-		private ProxyTagsPlaceholder(RepositoryBean repository) {
-			super(repository);
+		private ProxyTagsPlaceholder(RepositoryBean anchor) {
+			super(anchor);
 		}
 		
 		@Override
@@ -274,8 +250,8 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private class ProxyCommitPlaceholder extends ProxyPlaceholder<CommitBean,TagBean> implements TagBean.CommitPlaceholder {
 
-		private ProxyCommitPlaceholder(TagBean tag) {
-			super(tag);
+		private ProxyCommitPlaceholder(TagBean anchor) {
+			super(anchor);
 		}
 		
 		@Override

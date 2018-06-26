@@ -15,7 +15,5 @@ public interface CommitRepository {
 	public List<CommitBean> findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException;
 	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas)  throws IOException, GitAPIException;
 	
-	public CommitBean findByRepositoryIdAndBranch(Integer repositoryId, BranchBean branch) throws IOException, GitAPIException;
-	
 	public CommitBean saveAndFlush(CommitBean commit);
 }
