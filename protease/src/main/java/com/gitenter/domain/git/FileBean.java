@@ -1,11 +1,9 @@
 package com.gitenter.domain.git;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import com.gitenter.gitar.GitFilepath;
 import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.Getter;

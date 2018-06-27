@@ -55,7 +55,7 @@ public class CommitBeanTest {
 		
 		CommitBean item = repository.findById(1).get();
 		
-		assertEquals(item.getMessage(), "file\n");
+		assertEquals(item.getMessage(), "commit\n");
 //		assertTrue(
 //				item.getTimestamp().getTime()
 //				- new SimpleDateFormat("EEE MMM dd HH:mm:ss YYYY ZZZZZ").parse("Wed Jun 20 18:55:41 2018 -0400").getTime()
@@ -80,7 +80,10 @@ public class CommitBeanTest {
 		
 		PathBean subpath = root.getSubpath().iterator().next();
 		assert subpath instanceof FileBean;
-		assertEquals(subpath.getRelativePath(), "file");
+		FileBean file = (FileBean)subpath;
+		assertEquals(file.getRelativePath(), "file");
+		assertEquals(file.getName(), "file");
+		assertEquals(new String(file.getBlobContent()), "content");
 	}
 	
 	

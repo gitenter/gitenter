@@ -64,11 +64,12 @@ public class TestGitConfig {
 	 * 
 	 * $ git log
 	 * 
-	 * commit d9b8d42ed9d9be25e7a49ff910e7bb5c48b6a485 (HEAD -> master, tag: tag)
+	 * commit c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73 (HEAD -> master, tag: tag, tag: annotated-tag, origin/master)
 	 * Author: Cong-Xin Qiu <ozoox.o@gmail.com>
-	 * Date:   Wed Jun 20 18:55:41 2018 -0400
-	 * 
-     * file
+	 * Date:   Wed Jun 27 07:35:06 2018 -0400
+	 *
+     * 	commit
+	 * (END)
 	 */
 	@Profile("minimal")
 	@Bean

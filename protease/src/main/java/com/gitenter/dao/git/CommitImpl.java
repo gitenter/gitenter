@@ -18,7 +18,7 @@ import com.gitenter.domain.git.FolderBean;
 import com.gitenter.domain.git.PathBean;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
-import com.gitenter.gitar.GitFilepath;
+import com.gitenter.gitar.GitFile;
 import com.gitenter.gitar.GitFolder;
 import com.gitenter.gitar.GitPath;
 import com.gitenter.gitar.GitRepository;
@@ -108,10 +108,11 @@ public class CommitImpl implements CommitRepository {
 		}
 	}
 	
-	private static FileBean getFileBean(GitFilepath gitFilepath, CommitBean commit) {
+	private static FileBean getFileBean(GitFile gitFilepath, CommitBean commit) {
 		
 		FileBean file = new FileBean();
 		file.setRelativePath(gitFilepath.getRelativePath());
+		file.setName(gitFilepath.getName());
 		file.setCommit(commit);
 		file.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFilepath));
 		
@@ -130,8 +131,8 @@ public class CommitImpl implements CommitRepository {
 				subpath.add(getFolderBean((GitFolder)path, commit));
 			}
 			else {
-				assert path instanceof GitFilepath;
-				subpath.add(getFileBean((GitFilepath)path, commit));
+				assert path instanceof GitFile;
+				subpath.add(getFileBean((GitFile)path, commit));
 			}
 			folder.setSubpath(subpath);
 		}
@@ -141,21 +142,15 @@ public class CommitImpl implements CommitRepository {
 	
 	private static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
 
-		final private GitFilepath gitFilepath;
+		final private GitFile gitFile;
 		
-		private ProxyBlobContentPlaceholder(GitFilepath gitFilepath) {
-			this.gitFilepath = gitFilepath;
+		private ProxyBlobContentPlaceholder(GitFile gitFile) {
+			this.gitFile = gitFile;
 		}
 
 		@Override
 		protected byte[] getReal() throws IOException, GitAPIException {
-			/*
-			 * TODO:
-			 * Should either let gitFilepath not doing down casting (can use proxy to get 
-			 * the data), or public "downCasting()"
-			 */
-//			GitFile gitFile = gitCommit.getFile()
-			return null;
+			return gitFile.getBlobContent();
 		}
 	}
 }

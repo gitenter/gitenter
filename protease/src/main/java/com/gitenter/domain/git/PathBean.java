@@ -9,5 +9,7 @@ public abstract class PathBean {
 
 	protected String relativePath;
 	
+	protected String name;
+	
 	protected CommitBean commit;
 }

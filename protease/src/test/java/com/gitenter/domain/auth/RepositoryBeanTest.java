@@ -1,9 +1,12 @@
 package com.gitenter.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -72,11 +75,11 @@ public class RepositoryBeanTest {
 		assertEquals(branch.getName(), "master");
 		
 		CommitBean head = branch.getHead();
-		assertEquals(head.getMessage(), "file\n");
+		assertEquals(head.getMessage(), "commit\n");
 		
 		List<CommitBean> log = branch.getLog(5, 0);
 		assertEquals(log.size(), 1);
-		assertEquals(log.get(0).getMessage(), "file\n");
+		assertEquals(log.get(0).getMessage(), "commit\n");
 	}
 	
 	@Test
@@ -89,11 +92,11 @@ public class RepositoryBeanTest {
 		
 		BranchBean branch = item.getBranch("master");
 		CommitBean head = branch.getHead();
-		assertEquals(head.getMessage(), "file\n");
+		assertEquals(head.getMessage(), "commit\n");
 		
 		List<CommitBean> log = branch.getLog(5, 0);
 		assertEquals(log.size(), 1);
-		assertEquals(log.get(0).getMessage(), "file\n");
+		assertEquals(log.get(0).getMessage(), "commit\n");
 	}
 	
 	@Test
@@ -105,9 +108,19 @@ public class RepositoryBeanTest {
 		RepositoryBean item = repository.findById(1).get();
 		
 		Collection<TagBean> tags = item.getTags();
-		assertEquals(tags.size(), 1);
-		TagBean tag = tags.iterator().next();
-		assertEquals(tag.getName(), "tag");
+		assertEquals(tags.size(), 2);
+		
+		List<String> tagNames = new ArrayList<String>();
+		Iterator<TagBean> tagIterator = tags.iterator();
+		tagNames.add(tagIterator.next().getName());
+		tagNames.add(tagIterator.next().getName());
+		
+		List<String> expectedTagNames = new ArrayList<String>();
+		expectedTagNames.add("tag");
+		expectedTagNames.add("annotated-tag");
+		
+		assertTrue(tagNames.containsAll(expectedTagNames));
+		assertTrue(expectedTagNames.containsAll(tagNames));
 	}
 	
 	@Test
@@ -120,6 +133,6 @@ public class RepositoryBeanTest {
 		
 		TagBean tag = item.getTag("tag");
 		CommitBean commit = tag.getCommit();
-		assertEquals(commit.getMessage(), "file\n");
+		assertEquals(commit.getMessage(), "commit\n");
 	}
 }
