@@ -23,4 +23,9 @@ public class FileBean extends PathBean {
 	public interface BlobContentPlaceholder extends GitPlaceholder<byte[]> {
 		byte[] get() throws IOException, GitAPIException;
 	}
+	
+	/*
+	 * TODO:
+	 * getMimeType()
+	 */
 }

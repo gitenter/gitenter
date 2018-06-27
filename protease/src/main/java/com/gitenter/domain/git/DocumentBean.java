@@ -1,5 +1,6 @@
 package com.gitenter.domain.git;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +35,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "document")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class DocumentBean extends BlobBean {
+public class DocumentBean extends FileBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -43,8 +46,8 @@ public class DocumentBean extends BlobBean {
 	@JoinColumn(name="commit_id")
 	private CommitValidBean commit;
 	
-	@Column(name="relative_filepath", updatable=false)
-	private String relativeFilepath;
+	@Column(name="relative_path", updatable=false)
+	private String relativePath;
 	
 	@OneToMany(targetEntity=TraceableItemBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="document")
 	private List<TraceableItemBean> traceableItems = new ArrayList<TraceableItemBean>();
@@ -58,15 +61,15 @@ public class DocumentBean extends BlobBean {
 	/*
 	 * This default constructor is needed for Hibernate.
 	 */
-	public DocumentBean () {
-		
-	}
-	
-	public DocumentBean (CommitValidBean commit, String relativeFilepath) {
-		this.commit = commit;
-		this.relativeFilepath = relativeFilepath;
-	}
-	
+//	public DocumentBean () {
+//		
+//	}
+//	
+//	public DocumentBean (CommitValidBean commit, String relativeFilepath) {
+//		this.commit = commit;
+//		this.relativeFilepath = relativeFilepath;
+//	}
+//	
 	public boolean addTraceableItem(TraceableItemBean traceableItem) {
 		return traceableItems.add(traceableItem);
 	}
@@ -78,12 +81,8 @@ public class DocumentBean extends BlobBean {
 //	public void setContent (String content) {
 //		blobContent = content.getBytes();
 //	}
-	public String getContent () {
+	public String getContent () throws IOException, GitAPIException {
 		return new String(getBlobContent());
-	}
-	
-	public void setContent (String content) {
-		setBlobContent(content.getBytes());
 	}
 	
 	/*
@@ -92,50 +91,50 @@ public class DocumentBean extends BlobBean {
 	 * than the just modified ones. However, that depends on the
 	 * detail of markdown visualization strategy.
 	 */
-	public List<LineContent> getLineContents () {
-
-		List<LineContent> lineContents = new ArrayList<LineContent>();
-	
-		/*
-		 * TODO: 
-		 * Split by "newline" which is compatible to Windows
-		 * or Linux formats.
-		 */
-		int lineNumber = 1;
-		for (String content : getContent().split("\n")) {
-			lineContents.add(new LineContent(new Integer(lineNumber), content));
-			++lineNumber;
-		}
-		
-		return lineContents;
-	}
-	
-	/*
-	 * "static" because otherwise there may be potential memory 
-	 * leaking (when "DocumentBean" is discarded after "LineContent" 
-	 * is created). 
-	 */
-	@Getter
-	@Setter
-	public static class LineContent {
-
-		private Integer lineNumber;
-		private String content;
-		
-		/*
-		 * TODO:
-		 * 
-		 * LineContentBean should link back to DocumentBean.
-		 * But that will cause error of Jackson 2 to transfer to JSON
-		 * because loop exists. Should setup Jaskson (maybe by annotation?)
-		 * to specify that.
-		 */
-		
-		public LineContent(Integer lineNumber, String content) {
-			this.lineNumber = lineNumber;
-			this.content = content;
-		}
-	}
+//	public List<LineContent> getLineContents () throws IOException, GitAPIException {
+//
+//		List<LineContent> lineContents = new ArrayList<LineContent>();
+//	
+//		/*
+//		 * TODO: 
+//		 * Split by "newline" which is compatible to Windows
+//		 * or Linux formats.
+//		 */
+//		int lineNumber = 1;
+//		for (String content : getContent().split("\n")) {
+//			lineContents.add(new LineContent(new Integer(lineNumber), content));
+//			++lineNumber;
+//		}
+//		
+//		return lineContents;
+//	}
+//	
+//	/*
+//	 * "static" because otherwise there may be potential memory 
+//	 * leaking (when "DocumentBean" is discarded after "LineContent" 
+//	 * is created). 
+//	 */
+//	@Getter
+//	@Setter
+//	public static class LineContent {
+//
+//		private Integer lineNumber;
+//		private String content;
+//		
+//		/*
+//		 * TODO:
+//		 * 
+//		 * LineContentBean should link back to DocumentBean.
+//		 * But that will cause error of Jackson 2 to transfer to JSON
+//		 * because loop exists. Should setup Jaskson (maybe by annotation?)
+//		 * to specify that.
+//		 */
+//		
+//		public LineContent(Integer lineNumber, String content) {
+//			this.lineNumber = lineNumber;
+//			this.content = content;
+//		}
+//	}
 	
 	/*
 	 * Use together with buildTraceableItemIndex()

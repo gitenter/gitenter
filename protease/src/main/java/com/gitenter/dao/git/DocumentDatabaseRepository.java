@@ -16,12 +16,12 @@ import com.gitenter.domain.git.DocumentBean;
 interface DocumentDatabaseRepository extends PagingAndSortingRepository<DocumentBean, Integer> {
 
 	Optional<DocumentBean> findById(Integer id);
-	List<DocumentBean> findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath);
-	List<DocumentBean> findByCommitIdAndRelativeFilepathIn(Integer commitId, List<String> relativeFilepaths);
+	List<DocumentBean> findByCommitIdAndRelativePath(Integer commitId, String relativeFilepath);
+	List<DocumentBean> findByCommitIdAndRelativePathIn(Integer commitId, List<String> relativeFilepaths);
 	@Query("select dc "
 			+ "from DocumentBean dc join dc.commit cm "
-			+ "where cm.sha = :sha and dc.relativeFilepath = :relativeFilepath")
-	List<DocumentBean> findByShaAndRelativeFilepath(@Param("sha") String sha, @Param("relativeFilepath") String relativeFilepath);
+			+ "where cm.sha = :sha and dc.relativePath = :relativePath")
+	List<DocumentBean> findByShaAndRelativePath(@Param("sha") String sha, @Param("relativePath") String relativePath);
 	
 	DocumentBean saveAndFlush(DocumentBean document);
 }

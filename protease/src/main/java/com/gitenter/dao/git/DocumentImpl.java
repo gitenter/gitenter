@@ -13,88 +13,74 @@ import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.DocumentBean;
+import com.gitenter.domain.git.FileBean;
 import com.gitenter.gitar.*;
+import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
 class DocumentImpl implements DocumentRepository {
 
-	@Autowired private DocumentDatabaseRepository documentDbRepository;
-	@Autowired private RepositoryRepository repositoryRepository;
-	@Autowired private CommitRepository commitRepository;
+	@Autowired private DocumentDatabaseRepository documentDatabaseRepository;
 	@Autowired private GitSource gitSource;
 
-	public DocumentBean findById(Integer id) throws IOException, GitAPIException {
+	public Optional<DocumentBean> findById(Integer id) throws IOException, GitAPIException {
 	
-	Optional<DocumentBean> documents = documentDbRepository.findById(id);
+	Optional<DocumentBean> items = documentDatabaseRepository.findById(id);
 	
-	if (!documents.isPresent()) {
-		throw new IOException ("Id is not correct!");
+	if (items.isPresent()) {
+		DocumentBean item = items.get();
+		updateFromGit(item);
 	}
-	
-	DocumentBean document = documents.get();
-	updateGitMaterial(document);
 
-	return document;
+	return items;
 }
 
-	public DocumentBean findByCommitIdAndRelativeFilepath(Integer commitId, String relativeFilepath) throws IOException, GitAPIException {
+	public List<DocumentBean> findByCommitIdAndRelativePath(Integer commitId, String relativePath) throws IOException, GitAPIException {
 
-		List<DocumentBean> documents = documentDbRepository.findByCommitIdAndRelativeFilepath(commitId, relativeFilepath);	
+		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePath(commitId, relativePath);	
 		
-		/*
-		 * This condition is stronger than what SQL and PL/pgSQL can define.
-		 * But for a consistent and valid git input, it should be correct.
-		 */
-		if (documents.size() > 1) {
-			throw new IOException ("Cannot locate an unique file from commitId \""+commitId+"\" and relativeFilepath! \""+relativeFilepath+"\"");
-		}
-		else if (documents.size() == 0) {
-			throw new IOException ("There is no file under commitId \""+commitId+"\" and relativeFilepath \""+relativeFilepath+"\"!");
+		for (DocumentBean item : items) {
+			updateFromGit(item);
 		}
 		
-		DocumentBean document = documents.get(0);
-		updateGitMaterial(document);
-		return document;
+		return items;
 	}
 	
-	public List<DocumentBean> findByCommitIdAndRelativeFilepathIn(Integer commitId, List<String> relativeFilepaths) throws IOException, GitAPIException {
+	public List<DocumentBean> findByCommitIdAndRelativePathIn(Integer commitId, List<String> relativePaths) throws IOException, GitAPIException {
 	
-		List<DocumentBean> documents = documentDbRepository.findByCommitIdAndRelativeFilepathIn(commitId, relativeFilepaths);
-		for (DocumentBean document : documents) {
-			updateGitMaterial(document);
+		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePathIn(commitId, relativePaths);
+		
+		for (DocumentBean item : items) {
+			updateFromGit(item);
 		}
-		return documents;
+		
+		return items;
 	}
 	
-	public DocumentBean findByCommitShaAndRelativeFilepath(String commitSha, String relativeFilepath) throws IOException, GitAPIException {
+	public List<DocumentBean> findByCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException {
 
-		List<DocumentBean> documents = documentDbRepository.findByShaAndRelativeFilepath(commitSha, relativeFilepath);
+		List<DocumentBean> items = documentDatabaseRepository.findByShaAndRelativePath(commitSha, relativePath);
 		
-		if (documents.size() > 1) {
-			throw new IOException ("Cannot locate an unique file from commitSha \""+commitSha+"\" and relativeFilepath! \""+relativeFilepath+"\"");
-		}
-		else if (documents.size() == 0) {
-			throw new IOException ("There is no file under commitSha \""+commitSha+"\" and relativeFilepath \""+relativeFilepath+"\"!");
+		for (DocumentBean item : items) {
+			updateFromGit(item);
 		}
 		
-		DocumentBean document = documents.get(0);
-		updateGitMaterial(document);
-		return document; 
+		return items; 
 	}
 	
-	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchBean branch, String relativeFilepath) throws IOException, GitAPIException {
-		
-		/*
-		 * TODO:
-		 * Should be a better way rather than query the database twice?
-		 * It is pretty hard, since "branch" is not saved in database.
-		 */
-		CommitBean commit = branch.getHead();
-		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
-	}
+//	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchBean branch, String relativeFilepath) throws IOException, GitAPIException {
+//		
+//		/*
+//		 * TODO:
+//		 * Should be a better way rather than query the database twice?
+//		 * It is pretty hard, since "branch" is not saved in database.
+//		 */
+//		CommitBean commit = branch.getHead();
+//		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
+//	}
 	
-	private void updateGitMaterial (DocumentBean document) throws IOException, GitAPIException {
+	private void updateFromGit(DocumentBean document) throws IOException, GitAPIException {
 
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
 				document.getCommit().getRepository().getOrganization().getName(), 
@@ -102,13 +88,35 @@ class DocumentImpl implements DocumentRepository {
 		
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
-		GitFile gitFile = gitCommit.getFile(document.getRelativeFilepath());
+		GitFile gitFile = gitCommit.getFile(document.getRelativePath());
 		
-		document.setBlobContent(gitFile.getBlobContent());
+		document.setName(gitFile.getName());
+		assert document.getRelativePath().equals(gitFile.getRelativePath());
+		assert document.getCommit().getSha().equals(gitCommit.getSha());
+		document.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFile));
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {
 		
-		return documentDbRepository.saveAndFlush(document);
+		return documentDatabaseRepository.saveAndFlush(document);
+	}
+	
+	/*
+	 * TODO:
+	 * Used by here and "CommitImpl", but it seems to put it in either place is not
+	 * a good idea. Check where is a better place to put it.
+	 */
+	static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
+
+		final private GitFile gitFile;
+		
+		ProxyBlobContentPlaceholder(GitFile gitFile) {
+			this.gitFile = gitFile;
+		}
+
+		@Override
+		protected byte[] getReal() throws IOException, GitAPIException {
+			return gitFile.getBlobContent();
+		}
 	}
 }

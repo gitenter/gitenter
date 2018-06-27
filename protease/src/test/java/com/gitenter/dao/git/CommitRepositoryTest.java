@@ -11,7 +11,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.gitenter.dao.git.CommitGitDAO;
 import com.gitenter.dao.git.CommitRepository;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -31,7 +30,6 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 public class CommitRepositoryTest {
 
 	@Autowired private CommitRepository commitRepository;
-	@Autowired private CommitGitDAO commitGitDAO;
 	
 	@Test
 	public void test() {

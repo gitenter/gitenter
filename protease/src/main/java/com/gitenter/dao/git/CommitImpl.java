@@ -93,10 +93,10 @@ public class CommitImpl implements CommitRepository {
 	
 	private static class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
 
-		final private CommitBean commit;
+		final private CommitValidBean commit;
 		final private GitCommit gitCommit;
 		
-		protected ProxyRootPlaceholder(CommitBean commit, GitCommit gitCommit) {
+		protected ProxyRootPlaceholder(CommitValidBean commit, GitCommit gitCommit) {
 			this.commit = commit;
 			this.gitCommit = gitCommit;
 		}
@@ -108,18 +108,18 @@ public class CommitImpl implements CommitRepository {
 		}
 	}
 	
-	private static FileBean getFileBean(GitFile gitFilepath, CommitBean commit) {
+	private static FileBean getFileBean(GitFile gitFile, CommitValidBean commit) {
 		
 		FileBean file = new FileBean();
-		file.setRelativePath(gitFilepath.getRelativePath());
-		file.setName(gitFilepath.getName());
+		file.setRelativePath(gitFile.getRelativePath());
+		file.setName(gitFile.getName());
 		file.setCommit(commit);
-		file.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFilepath));
+		file.setBlobContentPlaceholder(new DocumentImpl.ProxyBlobContentPlaceholder(gitFile));
 		
 		return file;
 	}
 	
-	private static FolderBean getFolderBean(GitFolder gitFolder, CommitBean commit) {
+	private static FolderBean getFolderBean(GitFolder gitFolder, CommitValidBean commit) {
 		
 		FolderBean folder = new FolderBean();
 		folder.setRelativePath(gitFolder.getRelativePath());
@@ -138,19 +138,5 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		return folder;
-	}
-	
-	private static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
-
-		final private GitFile gitFile;
-		
-		private ProxyBlobContentPlaceholder(GitFile gitFile) {
-			this.gitFile = gitFile;
-		}
-
-		@Override
-		protected byte[] getReal() throws IOException, GitAPIException {
-			return gitFile.getBlobContent();
-		}
 	}
 }

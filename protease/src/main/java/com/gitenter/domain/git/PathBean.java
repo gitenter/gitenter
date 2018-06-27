@@ -11,5 +11,5 @@ public abstract class PathBean {
 	
 	protected String name;
 	
-	protected CommitBean commit;
+	protected CommitValidBean commit;
 }

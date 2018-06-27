@@ -1,5 +1,8 @@
 package com.gitenter.dao.git;
 
+import java.io.IOException;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +30,18 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={
-		"schemaAuthDatabaseConnection",
-		"schemaGitDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection"})
 public class DocumentRepositoryTest {
 
 	@Autowired private DocumentRepository repository;
 
-	private void showDocumentBean (DocumentBean document) {
+	private void showDocumentBean (DocumentBean document) throws IOException, GitAPIException {
 		System.out.println("This document is a: "+document.getClass());
 		System.out.println("Organization: "+document.getCommit().getRepository().getOrganization().getName());
 		System.out.println("Repository Name: "+document.getCommit().getRepository().getName());
 		System.out.println("Commit SHA: "+document.getCommit().getSha());
 		
-		System.out.println("Relative Filepath: "+document.getRelativeFilepath());
+		System.out.println("Relative Filepath: "+document.getRelativePath());
 		System.out.println("Content: ");
 		System.out.println(document.getContent());
 	}

@@ -163,8 +163,8 @@ CREATE TABLE git.git_commit_ignored (
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
 	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE,
-	relative_filepath text NOT NULL,
-	UNIQUE(commit_id, relative_filepath)
+	relative_path text NOT NULL,
+	UNIQUE(commit_id, relative_path)
 );
 
 CREATE FUNCTION git.commit_id_from_document (integer)
