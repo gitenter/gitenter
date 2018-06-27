@@ -2,6 +2,8 @@ package com.gitenter.dao.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,10 +13,14 @@ import org.springframework.stereotype.Repository;
 
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.FileBean;
 import com.gitenter.domain.git.FolderBean;
+import com.gitenter.domain.git.PathBean;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
+import com.gitenter.gitar.GitFilepath;
 import com.gitenter.gitar.GitFolder;
+import com.gitenter.gitar.GitPath;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
@@ -81,7 +87,11 @@ public class CommitImpl implements CommitRepository {
 		}
 	}
 	
-	private class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
+	public CommitBean saveAndFlush(CommitBean commit) {
+		return commitDatabaseRepository.saveAndFlush(commit);
+	}
+	
+	private static class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
 
 		final private CommitBean commit;
 		final private GitCommit gitCommit;
@@ -94,11 +104,58 @@ public class CommitImpl implements CommitRepository {
 		@Override
 		protected FolderBean getReal() throws IOException, GitAPIException {
 			GitFolder gitFolder = gitCommit.getRoot();
-			return new FolderBean(gitFolder, commit);
+			return getFolderBean(gitFolder, commit);
 		}
 	}
 	
-	public CommitBean saveAndFlush(CommitBean commit) {
-		return commitDatabaseRepository.saveAndFlush(commit);
+	private static FileBean getFileBean(GitFilepath gitFilepath, CommitBean commit) {
+		
+		FileBean file = new FileBean();
+		file.setRelativePath(gitFilepath.getRelativePath());
+		file.setCommit(commit);
+		file.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFilepath));
+		
+		return file;
+	}
+	
+	private static FolderBean getFolderBean(GitFolder gitFolder, CommitBean commit) {
+		
+		FolderBean folder = new FolderBean();
+		folder.setRelativePath(gitFolder.getRelativePath());
+		folder.setCommit(commit);
+		
+		Collection<PathBean> subpath = new ArrayList<PathBean>();
+		for (GitPath path : gitFolder.list()) {
+			if (path instanceof GitFolder) {
+				subpath.add(getFolderBean((GitFolder)path, commit));
+			}
+			else {
+				assert path instanceof GitFilepath;
+				subpath.add(getFileBean((GitFilepath)path, commit));
+			}
+			folder.setSubpath(subpath);
+		}
+		
+		return folder;
+	}
+	
+	private static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
+
+		final private GitFilepath gitFilepath;
+		
+		private ProxyBlobContentPlaceholder(GitFilepath gitFilepath) {
+			this.gitFilepath = gitFilepath;
+		}
+
+		@Override
+		protected byte[] getReal() throws IOException, GitAPIException {
+			/*
+			 * TODO:
+			 * Should either let gitFilepath not doing down casting (can use proxy to get 
+			 * the data), or public "downCasting()"
+			 */
+//			GitFile gitFile = gitCommit.getFile()
+			return null;
+		}
 	}
 }

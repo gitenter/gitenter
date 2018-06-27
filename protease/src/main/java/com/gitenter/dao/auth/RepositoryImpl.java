@@ -78,6 +78,11 @@ class RepositoryImpl implements RepositoryRepository {
 		return GitBareRepository.getInstance(repositoryDirectory);
 	}
 	
+	/*
+	 * TODO:
+	 * Move this boilerplate to bean definition. Maybe by an annotation
+	 * @Proxy or @Lazy and it will wrap the correct placeholder implementation.
+	 */
 	private void updatePlaceholders(RepositoryBean item) {
 		item.setBranchPlaceholder(new BranchPlaceholderImpl(item));
 		item.setBranchesPlaceholder(new ProxyBranchesPlaceholder(item));
@@ -87,7 +92,9 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private BranchBean getBranchBean(RepositoryBean repository, String branchName) {
 		
-		BranchBean branch = new BranchBean(branchName, repository);
+		BranchBean branch = new BranchBean();
+		branch.setName(branchName);
+		branch.setRepository(repository);
 		branch.setHeadPlaceholder(new ProxyHeadPlaceholder(branch));
 		branch.setLogPlaceholder(new LogPlaceholderImpl(branch));
 		
@@ -96,7 +103,9 @@ class RepositoryImpl implements RepositoryRepository {
 	
 	private TagBean getTagBean(RepositoryBean repository, String tagName) {
 		
-		TagBean tag = new TagBean(tagName, repository);
+		TagBean tag = new TagBean();
+		tag.setName(tagName);
+		tag.setRepository(repository);
 		tag.setCommitPlaceholder(new ProxyCommitPlaceholder(tag));
 		
 		return tag;

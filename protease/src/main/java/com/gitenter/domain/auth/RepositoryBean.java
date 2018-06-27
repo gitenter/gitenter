@@ -75,17 +75,53 @@ public class RepositoryBean {
 	@Getter(AccessLevel.NONE)
 	private BranchPlaceholder branchPlaceholder;
 	
+	/*
+	 * Return the desired "BranchBean" object based on the input name. No need to
+	 * query the git storage to confirm the branch's existence.
+	 */
+	public BranchBean getBranch(String branchName) {
+		return branchPlaceholder.get(branchName);
+	}
+	
+	public interface BranchPlaceholder {
+		BranchBean get(String branchName);
+	}
+	
 	@Transient
 	@Getter(AccessLevel.NONE)
 	private BranchesPlaceholder branchesPlaceholder;
+	
+	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
+		return branchesPlaceholder.get();
+	}
+	
+	public interface BranchesPlaceholder extends GitPlaceholder<Collection<BranchBean>> {
+		Collection<BranchBean> get() throws IOException, GitAPIException;
+	}
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
 	private TagPlaceholder tagPlaceholder;
 	
+	public TagBean getTag(String tagName) {
+		return tagPlaceholder.get(tagName);
+	}
+	
+	public interface TagPlaceholder {
+		TagBean get(String tagName);
+	}
+	
 	@Transient
 	@Getter(AccessLevel.NONE)
 	private TagsPlaceholder tagsPlaceholder;
+	
+	public Collection<TagBean> getTags() throws IOException, GitAPIException {
+		return tagsPlaceholder.get();
+	}
+	
+	public interface TagsPlaceholder extends GitPlaceholder<Collection<TagBean>> {
+		Collection<TagBean> get() throws IOException, GitAPIException;
+	}
 	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();
@@ -95,26 +131,6 @@ public class RepositoryBean {
 			}
 		}
 		return items;
-	}
-	
-	/*
-	 * Return the desired "BranchBean" object based on the input name. No need to
-	 * query the git storage to confirm the branch's existence.
-	 */
-	public BranchBean getBranch(String branchName) {
-		return branchPlaceholder.get(branchName);
-	}
-	
-	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
-		return branchesPlaceholder.get();
-	}
-	
-	public TagBean getTag(String tagName) {
-		return tagPlaceholder.get(tagName);
-	}
-	
-	public Collection<TagBean> getTags() throws IOException, GitAPIException {
-		return tagsPlaceholder.get();
 	}
 	
 	public void addCommit (CommitBean commit) {
@@ -154,20 +170,4 @@ public class RepositoryBean {
 //		}
 //		return null;
 //	}
-
-	public interface BranchPlaceholder {
-		BranchBean get(String branchName);
-	}
-	
-	public interface BranchesPlaceholder extends GitPlaceholder<Collection<BranchBean>> {
-		Collection<BranchBean> get() throws IOException, GitAPIException;
-	}
-	
-	public interface TagPlaceholder {
-		TagBean get(String tagName);
-	}
-	
-	public interface TagsPlaceholder extends GitPlaceholder<Collection<TagBean>> {
-		Collection<TagBean> get() throws IOException, GitAPIException;
-	}
 }

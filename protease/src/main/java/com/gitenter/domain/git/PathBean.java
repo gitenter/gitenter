@@ -1,19 +1,13 @@
 package com.gitenter.domain.git;
 
-import com.gitenter.gitar.GitPath;
-
 import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class PathBean {
 
-	@Getter
-	final protected String relativePath;
+	protected String relativePath;
 	
-	@Getter
-	final protected CommitBean commit;
-
-	public PathBean(GitPath gitPath, CommitBean commit) {
-		this.relativePath = gitPath.getRelativePath();
-		this.commit = commit;
-	}
+	protected CommitBean commit;
 }

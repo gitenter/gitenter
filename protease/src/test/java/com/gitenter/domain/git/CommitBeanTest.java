@@ -79,7 +79,7 @@ public class CommitBeanTest {
 		assertEquals(root.getSubpath().size(), 1);
 		
 		PathBean subpath = root.getSubpath().iterator().next();
-		assert subpath instanceof FilepathBean;
+		assert subpath instanceof FileBean;
 		assertEquals(subpath.getRelativePath(), "file");
 	}
 	

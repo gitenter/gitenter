@@ -44,6 +44,10 @@ public class CommitValidBean extends CommitBean {
 		return rootPlaceholder.get();
 	}
 	
+	public interface RootPlaceholder extends GitPlaceholder<FolderBean> {
+		FolderBean get() throws IOException, GitAPIException;
+	}
+	
 //	/*
 //	 * Used to map "folderStructure" leaves to actual "DocumentBean".
 //	 * Initialized by initDocumentMap()
@@ -95,9 +99,5 @@ public class CommitValidBean extends CommitBean {
 	
 	public boolean addDocument (DocumentBean document) {
 		return documents.add(document);
-	}
-	
-	public interface RootPlaceholder extends GitPlaceholder<FolderBean> {
-		FolderBean get() throws IOException, GitAPIException;
 	}
 }
