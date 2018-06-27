@@ -53,36 +53,40 @@ public class DocumentBean extends FileBean {
 	private List<TraceableItemBean> traceableItems = new ArrayList<TraceableItemBean>();
 	
 	/*
-	 * @Transient is to specify that the property or field is not persistent.
+	 * Attributes in superclass act exactly the same as attributes
+	 * with annotation @Transient.
 	 */
-//	@Transient
-//	private byte[] blobContent;
-
+	
+	public String getContent () throws IOException, GitAPIException {
+		return new String(getBlobContent());
+	}
+	
 	/*
-	 * This default constructor is needed for Hibernate.
+	 * Use together with buildTraceableItemIndex()
 	 */
-//	public DocumentBean () {
-//		
-//	}
-//	
-//	public DocumentBean (CommitValidBean commit, String relativeFilepath) {
-//		this.commit = commit;
-//		this.relativeFilepath = relativeFilepath;
-//	}
-//	
+	@Transient
+	private Map<String,TraceableItemBean> traceableItemMap;
+	
+	public void buildTraceableItemIndex() {
+		
+		traceableItemMap = new HashMap<String,TraceableItemBean>();
+		
+		for (TraceableItemBean item : traceableItems) {
+			traceableItemMap.put(item.getItemTag(), item);
+		}
+	}
+	
 	public boolean addTraceableItem(TraceableItemBean traceableItem) {
 		return traceableItems.add(traceableItem);
 	}
 	
-//	public String getContent () {
-//		return new String(blobContent);
-//	}
-//	
-//	public void setContent (String content) {
-//		blobContent = content.getBytes();
-//	}
-	public String getContent () throws IOException, GitAPIException {
-		return new String(getBlobContent());
+	/*
+	 * TODO:
+	 * Build "traceableItemMap" by some proxy pattern triggered by this method.
+	 * Remove "buildTraceableItemIndex".
+	 */
+	public TraceableItemBean getTraceableItem(String itemTag) {
+		return traceableItemMap.get(itemTag);
 	}
 	
 	/*
@@ -135,23 +139,4 @@ public class DocumentBean extends FileBean {
 //			this.content = content;
 //		}
 //	}
-	
-	/*
-	 * Use together with buildTraceableItemIndex()
-	 */
-	@Transient
-	private Map<String,TraceableItemBean> traceableItemMap;
-	
-	public void buildTraceableItemIndex() {
-		
-		traceableItemMap = new HashMap<String,TraceableItemBean>();
-		
-		for (TraceableItemBean item : traceableItems) {
-			traceableItemMap.put(item.getItemTag(), item);
-		}
-	}
-	
-	public TraceableItemBean getTraceableItem (String itemTag) {
-		return traceableItemMap.get(itemTag);
-	}
 }

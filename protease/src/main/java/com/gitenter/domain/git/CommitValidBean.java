@@ -28,6 +28,18 @@ import lombok.Setter;
 @Table(schema = "git", name = "git_commit_valid")
 public class CommitValidBean extends CommitBean {
 	
+	/*
+	 * TODO:
+	 * One-to-many objects will not be git-refreshed, unless we setup the 
+	 * placeholders in beans (rather than in impl's). However, that is
+	 * contradict with the desire for beans to be POJO. Think about a way
+	 * how to handle that.
+	 * 
+	 * Possibility:
+	 * To have a GitDAO which only @autowired gitSource, and define 
+	 * placeholders in there (maybe in version 2 make them as annotations
+	 * just like the JPA ones). Import those placeholders in beans.
+	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
 	
@@ -48,48 +60,30 @@ public class CommitValidBean extends CommitBean {
 		FolderBean get() throws IOException, GitAPIException;
 	}
 	
-//	/*
-//	 * Used to map "folderStructure" leaves to actual "DocumentBean".
-//	 * Initialized by initDocumentMap()
-//	 * 
-//	 * NOTE:
-//	 * 
-//	 * The other possibility is to have a "TreeNode(Object arg0)" which 
-//	 * instead to have "String" (filepath) in it, but have a "DocumentBean"
-//	 * in it. It is not done that way, because
-//	 * 
-//	 * (1) It is technically annoying (and maybe also have performance overhead)
-//	 * to copy tree structure. I am too lazy to do it.
-//	 * 
-//	 * (2) Some leaves in "folderStructure" (e.g. the image files) doesn't
-//	 * have the corresponding "DocumentBean". In the map we may simply set
-//	 * the value to be null, but in the other approach we can only have a
-//	 * complicated structure so it can still wrap filepath.
-//	 */
+	@Transient
+	@Getter(AccessLevel.NONE)
+	private FilePlaceholder filePlaceholder;
+	
+	public FileBean getFile(String relativePath) throws IOException, GitAPIException {
+		return filePlaceholder.get(relativePath);
+	}
+	
+	public interface FilePlaceholder {
+		FileBean get(String relativePath) throws IOException, GitAPIException;
+	}
+	
+	/*
+	 * TODO:
+	 * Is it possible to setup "DocumentBean" (rather than "FileBean") when
+	 * "getRoot()"?
+	 */
 //	@Transient
 //	private Map<String,DocumentBean> documentMap;
 	
-//	/*
-//	 * Lazily load by calling CommitGitDAO.loadFolderStructure(this).
-//	 */
-//	@Transient
-//	private GitFolderStructure.ListableTreeNode folderStructure;
-	
-//	/*
-//	 * This default constructor is needed for Hibernate.
-//	 */
-//	public CommitValidBean () {
-//		super();
-//	}
-//	
-//	public CommitValidBean (RepositoryBean repository, String commitSha) {
-//		super(repository, commitSha);
-//	}
-	
-//	/*
-//	 * TODO:
-//	 * Any way like @PostReceive? But this is not a spring Bean. 
-//	 */
+	/*
+	 * TODO:
+	 * Make it lazy when getDocument().
+	 */
 //	public void initDocumentMap() throws Exception {
 //		documentMap = new HashMap<String,DocumentBean>();
 //		for (DocumentBean document : documents) {

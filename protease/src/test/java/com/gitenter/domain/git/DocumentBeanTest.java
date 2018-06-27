@@ -1,12 +1,11 @@
 package com.gitenter.domain.git;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.text.ParseException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,35 +48,35 @@ public class DocumentBeanTest {
 		assertEquals(item.getRelativePath(), "file");
 		assertEquals(item.getContent(), "content");
 		
-		assertEquals(item.getCommit().getSha(), "c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73");
+		assertEquals(item.getCommit().getId(), new Integer(1));
+		assertEquals(item.getTraceableItems().size(), 1);
+		TraceableItemBean traceableItem = item.getTraceableItems().get(0);
+		assertEquals(traceableItem.getItemTag(), "tag");
+		assertEquals(traceableItem.getContent(), "content");
+		assertEquals(traceableItem.getDownstreamItems().size(), 1);
+		assertEquals(traceableItem.getUpstreamItems().size(), 1);
+		assertEquals(traceableItem.getDownstreamItems().get(0).getItemTag(), traceableItem.getItemTag());
+		assertEquals(traceableItem.getUpstreamItems().get(0).getItemTag(), traceableItem.getItemTag());
 	}
 	
-//	private DocumentBean document;
-//
-//	@Before
-//	public void init() {
-//		
-//		CommitValidBean commit = new CommitValidBean();
-//		String relativeFilepath = "/fake/path/to/a/document.md";
-//		document = new DocumentBean(commit, relativeFilepath);
-//		
-//		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
-//		TraceableItemBean traceableItem2 = new TraceableItemBean(document, "tag-2", "content-2");
-//		document.addTraceableItem(traceableItem1);
-//		document.addTraceableItem(traceableItem2);
-//		
-//		traceableItem1.addDownstreamItem(traceableItem2);
-//		traceableItem2.addUpstreamItem(traceableItem1);
-//		
-//		document.buildTraceableItemIndex();
-//	}
-//	
-//	@Test
-//	public void test() {
-//		
-//		assertEquals("content-1", document.getTraceableItem("tag-1").getContent());
-//		assertEquals("content-2", document.getTraceableItem("tag-2").getContent());
-//		assertEquals("tag-2", document.getTraceableItem("tag-1").getDownstreamItems().get(0).getItemTag());
-//		assertEquals("tag-1", document.getTraceableItem("tag-2").getUpstreamItems().get(0).getItemTag());
-//	}
+	@Test
+	public void testAddTraceableItem() {
+		
+		DocumentBean document = new DocumentBean();
+		
+		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
+		TraceableItemBean traceableItem2 = new TraceableItemBean(document, "tag-2", "content-2");
+		document.addTraceableItem(traceableItem1);
+		document.addTraceableItem(traceableItem2);
+		
+		traceableItem1.addDownstreamItem(traceableItem2);
+		traceableItem2.addUpstreamItem(traceableItem1);
+		
+		document.buildTraceableItemIndex();
+		
+		assertEquals("content-1", document.getTraceableItem("tag-1").getContent());
+		assertEquals("content-2", document.getTraceableItem("tag-2").getContent());
+		assertEquals("tag-2", document.getTraceableItem("tag-1").getDownstreamItems().get(0).getItemTag());
+		assertEquals("tag-1", document.getTraceableItem("tag-2").getUpstreamItems().get(0).getItemTag());
+	}
 }

@@ -93,30 +93,10 @@ class DocumentImpl implements DocumentRepository {
 		document.setName(gitFile.getName());
 		assert document.getRelativePath().equals(gitFile.getRelativePath());
 		assert document.getCommit().getSha().equals(gitCommit.getSha());
-		document.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFile));
+		document.setBlobContentPlaceholder(new CommitImpl.ProxyBlobContentPlaceholder(gitFile));
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {
-		
 		return documentDatabaseRepository.saveAndFlush(document);
-	}
-	
-	/*
-	 * TODO:
-	 * Used by here and "CommitImpl", but it seems to put it in either place is not
-	 * a good idea. Check where is a better place to put it.
-	 */
-	static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
-
-		final private GitFile gitFile;
-		
-		ProxyBlobContentPlaceholder(GitFile gitFile) {
-			this.gitFile = gitFile;
-		}
-
-		@Override
-		protected byte[] getReal() throws IOException, GitAPIException {
-			return gitFile.getBlobContent();
-		}
 	}
 }

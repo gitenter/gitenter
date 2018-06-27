@@ -62,6 +62,8 @@ public class CommitBeanTest {
 //				< 1000);
 		assertEquals(item.getAuthor().getName(), "Cong-Xin Qiu");
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
+		
+		assertEquals(item.getRepository().getId(), new Integer(1));
 	}
 	
 	@Test
@@ -86,6 +88,21 @@ public class CommitBeanTest {
 		assertEquals(new String(file.getBlobContent()), "content");
 	}
 	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalFile() throws IOException, GitAPIException {
+	
+		CommitBean item = repository.findById(1).get();
+		
+		assert item instanceof CommitValidBean;
+		CommitValidBean validItem = (CommitValidBean)item;
+		
+		FileBean file = validItem.getFile("file");
+		assertEquals(file.getName(), "file");
+		assertEquals(new String(file.getBlobContent()), "content");
+	}
 	
 	/*
 	 * TODO:
