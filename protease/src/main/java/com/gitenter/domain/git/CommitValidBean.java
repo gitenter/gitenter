@@ -74,6 +74,11 @@ public class CommitValidBean extends CommitBean {
 	 * TODO:
 	 * Is it possible to setup "DocumentBean" (rather than "FileBean") when
 	 * "getRoot()"? And/or say combine "getFile()" and "getDocument()".
+	 * 
+	 * TODO:
+	 * Should it be in here at all? Or should we just use 
+	 * "DocumentRepository.findByCommitIdAndRelativePath()"
+	 * or "DocumentRepository.findByCommitShaAndRelativePath()"?
 	 */
 	public DocumentBean getDocument(String relativePath) throws IOException, GitAPIException {
 		
@@ -92,11 +97,15 @@ public class CommitValidBean extends CommitBean {
 				/*
 				 * TODO:
 				 * This is now working. At directly call "getDocments()" makes it not
-				 * persistent to the git material. Don't know if there's a better solution...
+				 * persistent to the git material. However, there's duplicated logic
+				 * and code with other places.
+				 * 
+				 * Don't know if there's a better solution...
 				 */
 				FileBean file = this.getFile(relativePath);
 				item.setName(file.name);
 				item.setBlobContentPlaceholder(file.getBlobContentPlaceholder());
+				item.setMimeTypePlaceholder(file.getMimeTypePlaceholder());
 				
 				return item;
 			}

@@ -67,17 +67,6 @@ class DocumentImpl implements DocumentRepository {
 		return items; 
 	}
 	
-//	public DocumentBean findByRepositoryIdAndBranchAndRelativeFilepath(Integer repositoryId, BranchBean branch, String relativeFilepath) throws IOException, GitAPIException {
-//		
-//		/*
-//		 * TODO:
-//		 * Should be a better way rather than query the database twice?
-//		 * It is pretty hard, since "branch" is not saved in database.
-//		 */
-//		CommitBean commit = branch.getHead();
-//		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
-//	}
-	
 	private void updateFromGit(DocumentBean document) throws IOException, GitAPIException {
 
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
@@ -88,10 +77,8 @@ class DocumentImpl implements DocumentRepository {
 		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
 		GitFile gitFile = gitCommit.getFile(document.getRelativePath());
 		
-		document.setName(gitFile.getName());
-		document.setBlobContentPlaceholder(new CommitImpl.ProxyBlobContentPlaceholder(gitFile));
-
 		assert document.getRelativePath().equals(gitFile.getRelativePath());
+		document.setFromGit(gitFile);
 
 		/*
 		 * TODO:

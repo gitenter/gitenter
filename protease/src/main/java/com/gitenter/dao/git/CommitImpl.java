@@ -47,11 +47,6 @@ public class CommitImpl implements CommitRepository {
 		
 		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
 		
-		/*
-		 * TODO:
-		 * This approach is not good, as it will query from git multiple times.
-		 * think about a way that it can be done in one single git query.
-		 */
 		for (CommitBean item : items) {
 			updateFromGit(item);
 		}
@@ -63,6 +58,11 @@ public class CommitImpl implements CommitRepository {
 		
 		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
 		
+		/*
+		 * TODO:
+		 * This approach is not good, as it will query from git multiple times.
+		 * think about a way that it can be done in one single git query.
+		 */
 		for (CommitBean item : items) {
 			updateFromGit(item);
 		}
@@ -133,7 +133,6 @@ public class CommitImpl implements CommitRepository {
 		FileBean file = new FileBean();
 		file.setFromGit(gitFile);
 		file.setCommit(commit);
-		file.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFile));
 		
 		return file;
 	}
@@ -157,24 +156,5 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		return folder;
-	}
-	
-	/*
-	 * TODO:
-	 * Used by here and "DocumentImpl", but it seems to put it in either place is not
-	 * a good idea. Check where is a better place to put it.
-	 */
-	static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
-
-		final private GitFile gitFile;
-		
-		ProxyBlobContentPlaceholder(GitFile gitFile) {
-			this.gitFile = gitFile;
-		}
-
-		@Override
-		protected byte[] getReal() throws IOException, GitAPIException {
-			return gitFile.getBlobContent();
-		}
 	}
 }
