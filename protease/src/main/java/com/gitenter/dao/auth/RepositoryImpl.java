@@ -169,7 +169,7 @@ class RepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.updateFromGitCommit(gitCommit);
+			commit.setFromGit(gitCommit);
 			
 			return commit;
 		}
@@ -219,7 +219,7 @@ class RepositoryImpl implements RepositoryRepository {
 			List<CommitBean> log = commitDatabaseRepository.findByRepositoryIdAndShaIn(branch.getRepository().getId(), shas);
 			
 			for (CommitBean commit : log) {
-				commit.updateFromGitCommit(logMap.get(commit.getSha()));
+				commit.setFromGit(logMap.get(commit.getSha()));
 			}
 			
 			return log;
@@ -278,7 +278,7 @@ class RepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.updateFromGitCommit(gitCommit);
+			commit.setFromGit(gitCommit);
 			
 			return commit;
 		}

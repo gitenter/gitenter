@@ -117,8 +117,8 @@ public class CommitBeanTest {
 		
 		DocumentBean file = validItem.getDocument("file");
 		assertEquals(file.getRelativePath(), "file");
-//		assertEquals(file.getName(), "file");
-//		assertEquals(new String(file.getBlobContent()), "content");
+		assertEquals(file.getName(), "file");
+		assertEquals(new String(file.getBlobContent()), "content");
 		
 		assertEquals(file.getCommit().getId(), new Integer(1));
 		assertEquals(file.getTraceableItems().size(), 1);

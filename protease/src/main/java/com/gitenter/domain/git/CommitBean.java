@@ -59,19 +59,7 @@ public class CommitBean {
 	@Transient
 	private AuthorBean author;
 	
-//	/*
-//	 * This default constructor is needed for Hibernate.
-//	 */
-//	public CommitBean () {
-//		
-//	}
-//	
-//	public CommitBean (RepositoryBean repository, String sha) {
-//		this.repository = repository;
-//		this.sha = sha;
-//	}
-	
-	public void updateFromGitCommit(GitCommit gitCommit) {
+	public void setFromGit(GitCommit gitCommit) {
 		timestamp = gitCommit.getTimestamp();
 		message = gitCommit.getMessage();
 		author = AuthorBean.getInstance(gitCommit.getAuthor());

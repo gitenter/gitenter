@@ -79,7 +79,7 @@ public class CommitImpl implements CommitRepository {
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(commit.getSha());
 		
-		commit.updateFromGitCommit(gitCommit);
+		commit.setFromGit(gitCommit);
 		
 		if (commit instanceof CommitValidBean) {
 			CommitValidBean validCommit = (CommitValidBean)commit;
@@ -131,8 +131,7 @@ public class CommitImpl implements CommitRepository {
 	private static FileBean getFileBean(GitFile gitFile, CommitValidBean commit) {
 		
 		FileBean file = new FileBean();
-		file.setRelativePath(gitFile.getRelativePath());
-		file.setName(gitFile.getName());
+		file.setFromGit(gitFile);
 		file.setCommit(commit);
 		file.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFile));
 		
@@ -142,7 +141,7 @@ public class CommitImpl implements CommitRepository {
 	private static FolderBean getFolderBean(GitFolder gitFolder, CommitValidBean commit) {
 		
 		FolderBean folder = new FolderBean();
-		folder.setRelativePath(gitFolder.getRelativePath());
+		folder.setFromGit(gitFolder);
 		folder.setCommit(commit);
 		
 		Collection<PathBean> subpath = new ArrayList<PathBean>();

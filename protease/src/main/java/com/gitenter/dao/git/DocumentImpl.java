@@ -9,13 +9,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.dao.auth.RepositoryRepository;
-import com.gitenter.domain.git.BranchBean;
-import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.DocumentBean;
-import com.gitenter.domain.git.FileBean;
-import com.gitenter.gitar.*;
-import com.gitenter.gitar.util.GitProxyPlaceholder;
+import com.gitenter.gitar.GitBareRepository;
+import com.gitenter.gitar.GitCommit;
+import com.gitenter.gitar.GitFile;
+import com.gitenter.gitar.GitRepository;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
@@ -91,9 +89,16 @@ class DocumentImpl implements DocumentRepository {
 		GitFile gitFile = gitCommit.getFile(document.getRelativePath());
 		
 		document.setName(gitFile.getName());
-		assert document.getRelativePath().equals(gitFile.getRelativePath());
-		assert document.getCommit().getSha().equals(gitCommit.getSha());
 		document.setBlobContentPlaceholder(new CommitImpl.ProxyBlobContentPlaceholder(gitFile));
+
+		assert document.getRelativePath().equals(gitFile.getRelativePath());
+
+		/*
+		 * TODO:
+		 * But validCommit placeholders is not setup yet.
+		 */
+		assert document.getCommit().getSha().equals(gitCommit.getSha());
+		document.getCommit().setFromGit(gitCommit);
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {

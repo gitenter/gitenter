@@ -64,8 +64,11 @@ public class RepositoryBean {
 	private Boolean isPublic;
 	
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	@Getter
-	@Setter
+	/*
+	 * Since to access through here, the commits are not persistent
+	 * to git materials.
+	 */
+	@Getter(AccessLevel.NONE)
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")

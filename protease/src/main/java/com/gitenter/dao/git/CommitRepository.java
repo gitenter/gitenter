@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 
 public interface CommitRepository {
