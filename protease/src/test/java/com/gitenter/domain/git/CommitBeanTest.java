@@ -104,6 +104,26 @@ public class CommitBeanTest {
 		assertEquals(new String(file.getBlobContent()), "content");
 	}
 	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalDocument() throws IOException, GitAPIException {
+	
+		CommitBean item = repository.findById(1).get();
+		
+		assert item instanceof CommitValidBean;
+		CommitValidBean validItem = (CommitValidBean)item;
+		
+		DocumentBean file = validItem.getDocument("file");
+		assertEquals(file.getRelativePath(), "file");
+//		assertEquals(file.getName(), "file");
+//		assertEquals(new String(file.getBlobContent()), "content");
+		
+		assertEquals(file.getCommit().getId(), new Integer(1));
+		assertEquals(file.getTraceableItems().size(), 1);
+	}
+	
 	/*
 	 * TODO:
 	 * 

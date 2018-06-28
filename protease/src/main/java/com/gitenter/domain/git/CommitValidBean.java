@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.concurrent.ConcurrentException;
+import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.util.GitPlaceholder;
@@ -75,23 +77,30 @@ public class CommitValidBean extends CommitBean {
 	/*
 	 * TODO:
 	 * Is it possible to setup "DocumentBean" (rather than "FileBean") when
-	 * "getRoot()"?
+	 * "getRoot()"? And/or say combine "getFile()" and "getDocument()".
 	 */
-//	@Transient
-//	private Map<String,DocumentBean> documentMap;
+	public DocumentBean getDocument(String relativePath) {
+		
+		/*
+		 * TODO:
+		 * Setup a lazy evaluated index "Map<String,DocumentBean>" to handle that,
+		 * rather than iterate the list every single time.
+		 * 
+		 * Naive common-lang LazyInitializer doesn't work, because:
+		 * (1) It raises ConcurrentException, nor sure whether we need this complicity.
+		 * (2) Its initialized is protected, so cannot refresh after "addDocument()".
+		 */
+		for (DocumentBean item : documents) {
+			if (item.getRelativePath().equals(relativePath)) {
+				return item;
+			}
+		}
+		
+		return null;
+	}
 	
-	/*
-	 * TODO:
-	 * Make it lazy when getDocument().
-	 */
-//	public void initDocumentMap() throws Exception {
-//		documentMap = new HashMap<String,DocumentBean>();
-//		for (DocumentBean document : documents) {
-//			documentMap.put(document.getRelativeFilepath(), document);
-//		}		
-//	}
-	
-	public boolean addDocument (DocumentBean document) {
-		return documents.add(document);
+	public boolean addDocument(DocumentBean document) {
+		boolean result = documents.add(document);
+		return result;
 	}
 }
