@@ -134,7 +134,7 @@ public class CommitImpl implements CommitRepository {
 		file.setRelativePath(gitFile.getRelativePath());
 		file.setName(gitFile.getName());
 		file.setCommit(commit);
-		file.setBlobContentPlaceholder(new ProxyBlobContentPlaceholder(gitFile));
+		file.setBlobContentPlaceholder(new FilePlaceholder().new ProxyBlobContentPlaceholder(gitFile));
 		
 		return file;
 	}
@@ -158,24 +158,5 @@ public class CommitImpl implements CommitRepository {
 		}
 		
 		return folder;
-	}
-	
-	/*
-	 * TODO:
-	 * Used by here and "DocumentImpl", but it seems to put it in either place is not
-	 * a good idea. Check where is a better place to put it.
-	 */
-	static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
-
-		final private GitFile gitFile;
-		
-		ProxyBlobContentPlaceholder(GitFile gitFile) {
-			this.gitFile = gitFile;
-		}
-
-		@Override
-		protected byte[] getReal() throws IOException, GitAPIException {
-			return gitFile.getBlobContent();
-		}
 	}
 }

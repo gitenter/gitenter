@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import com.gitenter.dao.git.FilePlaceholder;
 import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.Getter;
@@ -14,14 +15,10 @@ import lombok.Setter;
 public class FileBean extends PathBean {
 	
 	@Setter
-	private BlobContentPlaceholder blobContentPlaceholder;
+	private FilePlaceholder.BlobContentPlaceholder blobContentPlaceholder;
 	
 	public byte[] getBlobContent() throws IOException, GitAPIException {
 		return blobContentPlaceholder.get();
-	}
-	
-	public interface BlobContentPlaceholder extends GitPlaceholder<byte[]> {
-		byte[] get() throws IOException, GitAPIException;
 	}
 	
 	/*

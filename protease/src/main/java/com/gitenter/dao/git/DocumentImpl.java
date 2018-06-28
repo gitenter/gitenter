@@ -27,45 +27,24 @@ class DocumentImpl implements DocumentRepository {
 	public Optional<DocumentBean> findById(Integer id) throws IOException, GitAPIException {
 	
 	Optional<DocumentBean> items = documentDatabaseRepository.findById(id);
-	
-	if (items.isPresent()) {
-		DocumentBean item = items.get();
-		updateFromGit(item);
-	}
-
 	return items;
 }
 
 	public List<DocumentBean> findByCommitIdAndRelativePath(Integer commitId, String relativePath) throws IOException, GitAPIException {
 
 		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePath(commitId, relativePath);	
-		
-		for (DocumentBean item : items) {
-			updateFromGit(item);
-		}
-		
 		return items;
 	}
 	
 	public List<DocumentBean> findByCommitIdAndRelativePathIn(Integer commitId, List<String> relativePaths) throws IOException, GitAPIException {
 	
 		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePathIn(commitId, relativePaths);
-		
-		for (DocumentBean item : items) {
-			updateFromGit(item);
-		}
-		
 		return items;
 	}
 	
 	public List<DocumentBean> findByCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException {
 
 		List<DocumentBean> items = documentDatabaseRepository.findByShaAndRelativePath(commitSha, relativePath);
-		
-		for (DocumentBean item : items) {
-			updateFromGit(item);
-		}
-		
 		return items; 
 	}
 	
@@ -79,22 +58,6 @@ class DocumentImpl implements DocumentRepository {
 //		CommitBean commit = branch.getHead();
 //		return findByCommitIdAndRelativeFilepath(commit.getId(), relativeFilepath);
 //	}
-	
-	private void updateFromGit(DocumentBean document) throws IOException, GitAPIException {
-
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				document.getCommit().getRepository().getOrganization().getName(), 
-				document.getCommit().getRepository().getName());
-		
-		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
-		GitFile gitFile = gitCommit.getFile(document.getRelativePath());
-		
-		document.setName(gitFile.getName());
-		assert document.getRelativePath().equals(gitFile.getRelativePath());
-		assert document.getCommit().getSha().equals(gitCommit.getSha());
-		document.setBlobContentPlaceholder(new CommitImpl.ProxyBlobContentPlaceholder(gitFile));
-	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {
 		return documentDatabaseRepository.saveAndFlush(document);

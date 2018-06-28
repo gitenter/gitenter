@@ -23,6 +23,9 @@ import javax.persistence.Transient;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import com.gitenter.dao.git.FilePlaceholder;
+
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,8 +57,22 @@ public class DocumentBean extends FileBean {
 	
 	/*
 	 * Attributes in superclass act exactly the same as attributes
-	 * with annotation @Transient.
+	 * with annotation @Transient. When need to override it can be defined
+	 * again in subclasses.
 	 */
+	@Transient
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FilePlaceholder.BlobContentPlaceholder blobContentPlaceholder = new FilePlaceholder().new ProxyBlobContentPlaceholder(this);
+	
+	/*
+	 * Need to do it again, since otherwise it will call "blobContentPlaceholder"
+	 * in the superclass, which is null.
+	 */
+	@Override
+	public byte[] getBlobContent() throws IOException, GitAPIException {
+		return blobContentPlaceholder.get();
+	}
 	
 	public String getContent () throws IOException, GitAPIException {
 		return new String(getBlobContent());
