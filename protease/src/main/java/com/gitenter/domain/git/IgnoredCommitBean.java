@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "git", name = "git_commit_ignored")
-public class CommitIgnoredBean extends CommitBean {
+@Table(schema = "git", name = "ignored_commit")
+public class IgnoredCommitBean extends CommitBean {
 
 }

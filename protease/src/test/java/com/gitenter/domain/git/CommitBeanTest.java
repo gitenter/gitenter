@@ -74,8 +74,8 @@ public class CommitBeanTest {
 		
 		CommitBean item = repository.findById(1).get();
 		
-		assert item instanceof CommitValidBean;
-		CommitValidBean validItem = (CommitValidBean)item;
+		assert item instanceof ValidCommitBean;
+		ValidCommitBean validItem = (ValidCommitBean)item;
 		
 		FolderBean root = validItem.getRoot();
 		assertEquals(root.getSubpath().size(), 1);
@@ -96,8 +96,8 @@ public class CommitBeanTest {
 	
 		CommitBean item = repository.findById(1).get();
 		
-		assert item instanceof CommitValidBean;
-		CommitValidBean validItem = (CommitValidBean)item;
+		assert item instanceof ValidCommitBean;
+		ValidCommitBean validItem = (ValidCommitBean)item;
 		
 		FileBean file = validItem.getFile("file");
 		assertEquals(file.getName(), "file");
@@ -112,8 +112,8 @@ public class CommitBeanTest {
 	
 		CommitBean item = repository.findById(1).get();
 		
-		assert item instanceof CommitValidBean;
-		CommitValidBean validItem = (CommitValidBean)item;
+		assert item instanceof ValidCommitBean;
+		ValidCommitBean validItem = (ValidCommitBean)item;
 		
 		DocumentBean file = validItem.getDocument("file");
 		assertEquals(file.getRelativePath(), "file");

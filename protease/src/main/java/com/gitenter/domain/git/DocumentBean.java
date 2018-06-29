@@ -44,7 +44,7 @@ public class DocumentBean extends FileBean {
 	
 	@ManyToOne
 	@JoinColumn(name="commit_id")
-	private CommitValidBean commit;
+	private ValidCommitBean commit;
 	
 	@Column(name="relative_path", updatable=false)
 	private String relativePath;

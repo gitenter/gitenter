@@ -10,8 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "git", name = "git_commit_invalid")
-public class CommitInvalidBean extends CommitBean {
+@Table(schema = "git", name = "invalid_commit")
+public class InvalidCommitBean extends CommitBean {
 
 	/*
 	 * TODO:

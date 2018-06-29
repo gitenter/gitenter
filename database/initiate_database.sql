@@ -17,7 +17,7 @@ CREATE TABLE auth.organization (
 
 CREATE TABLE auth.organization_member_map (
 	id serial PRIMARY KEY,
-	
+
 	/*
 	 * With this constrain, a member can at most have one role
 	 * in a particular organization.
@@ -93,7 +93,7 @@ CREATE TABLE auth.ssh_key (
 	 * but that is not user defined, so should not be set in here.
 	 */
 	key_type text NOT NULL,
-	key_data bytea NOT NULL, /* Should be unique. But I loose the constrain a little bit at this moment. */
+	key_data bytea NOT NULL UNIQUE, /* Should be unique. But I loose the constrain a little bit at this moment. */
 	comment text
 );
 
@@ -142,27 +142,27 @@ CREATE TABLE git.git_commit (
 	UNIQUE(repository_id, sha)
 );
 
-CREATE TABLE git.git_commit_valid (
+CREATE TABLE git.valid_commit (
 	/*
-	 * There is a constrain that the "id" of table "git_commit_valid",
-	 * "git_commit_invalid", and "git_commit_ignored" are mutually exclusive,
+	 * There is a constrain that the "id" of table "valid_commit",
+	 * "invalid_commit", and "ignored_commit" are mutually exclusive,
 	 * but there seems no easy way to define it in PostgreSQL.
 	 */
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
-CREATE TABLE git.git_commit_invalid (
+CREATE TABLE git.invalid_commit (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE,
 	error_message text NOT NULL
 );
 
-CREATE TABLE git.git_commit_ignored (
+CREATE TABLE git.ignored_commit (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
-	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE,
+	commit_id serial REFERENCES git.valid_commit (id) ON DELETE CASCADE,
 	relative_path text NOT NULL,
 	UNIQUE(commit_id, relative_path)
 );

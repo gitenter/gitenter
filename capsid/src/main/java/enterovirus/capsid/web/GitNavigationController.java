@@ -29,8 +29,8 @@ import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.domain.git.BlobBean;
 import com.gitenter.domain.git.CommitBean;
-import com.gitenter.domain.git.CommitInvalidBean;
-import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.InvalidCommitBean;
+import com.gitenter.domain.git.ValidCommitBean;
 import com.gitenter.domain.git.DocumentBean;
 import com.gitenter.gitar.wrap.*;
 import com.gitenter.protease.source.GitSource;
@@ -209,9 +209,9 @@ public class GitNavigationController {
 		
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 		
-		if (commit instanceof CommitValidBean) {
+		if (commit instanceof ValidCommitBean) {
 			
-			CommitValidBean commitValid = (CommitValidBean)commit;
+			ValidCommitBean commitValid = (ValidCommitBean)commit;
 			
 			/*
 			 * TODO:
@@ -249,13 +249,13 @@ public class GitNavigationController {
 			
 			return "git-navigation/commit";
 		}
-		else if (commit instanceof CommitInvalidBean) {
+		else if (commit instanceof InvalidCommitBean) {
 			/*
 			 * TODO:
 			 * Can it show all the parsing exceptions at the same time?
 			 * Or a better way is to have a client-side hook to handle that?
 			 */
-			model.addAttribute("errorMessage", ((CommitInvalidBean)commit).getErrorMessage());
+			model.addAttribute("errorMessage", ((InvalidCommitBean)commit).getErrorMessage());
 			return "git-navigation/invalid-commit";
 		}
 		else if (commit instanceof CommitIgnoredBean) {

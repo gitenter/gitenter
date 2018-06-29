@@ -13,7 +13,7 @@ public abstract class PathBean {
 	
 	protected String name;
 	
-	protected CommitValidBean commit;
+	protected ValidCommitBean commit;
 	
 	public void setFromGit(GitPath gitPath) {
 		relativePath = gitPath.getRelativePath();
