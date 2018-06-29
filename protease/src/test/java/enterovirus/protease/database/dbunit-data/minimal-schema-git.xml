@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-    <git_commit id="1" repository_id="1" sha_checksum_hash="sha_checksum_hash" />
-    <git_commit_valid id="1" />
-    <document id="1" commit_id="1" relative_filepath="/fake/document/filepath" />
-    <traceable_item id="1" document_id="1" item_tag="tag" content="content" />
-    <traceability_map upstream_item_id="1" downstream_item_id="1" />
-</dataset>

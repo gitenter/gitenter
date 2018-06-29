@@ -1,6 +1,6 @@
-CREATE SCHEMA settings;
+CREATE SCHEMA auth;
 
-CREATE TABLE settings.member (
+CREATE TABLE auth.member (
 	id serial PRIMARY KEY,
 	username text NOT NULL UNIQUE,
 	password text NOT NULL,
@@ -9,21 +9,22 @@ CREATE TABLE settings.member (
 	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE settings.organization (
+CREATE TABLE auth.organization (
 	id serial PRIMARY KEY,
 	name text NOT NULL UNIQUE,
 	display_name text NOT NULL
 );
 
-CREATE TABLE settings.organization_member_map (
+CREATE TABLE auth.organization_member_map (
 	id serial PRIMARY KEY,
-	member_id serial REFERENCES settings.member (id) ON DELETE RESTRICT,
-	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
+	
 	/*
 	 * With this constrain, a member can at most have one role
 	 * in a particular organization.
 	 */
-	UNIQUE (member_id, organization_id),
+	organization_id serial REFERENCES auth.organization (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE RESTRICT,
+	UNIQUE (organization_id, member_id),
 
 	/*
 	 * Rather than a lookup table in SQL, we define the enum types
@@ -42,10 +43,10 @@ CREATE TABLE settings.organization_member_map (
 	role_shortname char(1) NOT NULL CHECK (role_shortname='G' OR role_shortname='M')
 );
 
-CREATE TABLE settings.repository (
+CREATE TABLE auth.repository (
 	id serial PRIMARY KEY,
 
-	organization_id serial REFERENCES settings.organization (id) ON DELETE CASCADE,
+	organization_id serial REFERENCES auth.organization (id) ON DELETE CASCADE,
 	name text NOT NULL,
 	display_name text NOT NULL,
 	description text,
@@ -54,11 +55,11 @@ CREATE TABLE settings.repository (
 	is_public boolean NOT NULL
 );
 
-CREATE TABLE settings.repository_member_map (
+CREATE TABLE auth.repository_member_map (
 	id serial PRIMARY KEY,
 
-	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
-	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
+	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
 	/*
 	 * With this constrain, a user can at most have one role on
 	 * some particular repository.
@@ -72,12 +73,12 @@ CREATE TABLE settings.repository_member_map (
 	 * R: document reviewer
 	 * B: blacklist
 	 */
-	role_shortname char(1) NOT NULL CHECK (role='O' OR role='E' OR role='R' OR role='B')
+	role_shortname char(1) NOT NULL CHECK (role_shortname='O' OR role_shortname='E' OR role_shortname='R' OR role_shortname='B')
 );
 
-CREATE TABLE settings.ssh_key (
+CREATE TABLE auth.ssh_key (
 	id serial PRIMARY KEY,
-	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
 
 	/*
 	 * Key type has limited possibilities of “ecdsa-sha2-nistp256”,
@@ -96,9 +97,9 @@ CREATE TABLE settings.ssh_key (
 	comment text
 );
 
-CREATE TABLE settings.member_feature_toggle (
+CREATE TABLE auth.member_feature_toggle (
 	id serial PRIMARY KEY,
-	member_id serial REFERENCES settings.member (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
 
 	feature_shortname char(1) NOT NULL,
 	UNIQUE(member_id, feature_shortname),
@@ -106,9 +107,9 @@ CREATE TABLE settings.member_feature_toggle (
 	is_on boolean NOT NULL
 );
 
-CREATE TABLE settings.repository_feature_toggle (
+CREATE TABLE auth.repository_feature_toggle (
 	id serial PRIMARY KEY,
-	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
+	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
 
 	feature_shortname char(1) NOT NULL,
 	UNIQUE(repository_id, feature_shortname),
@@ -122,8 +123,8 @@ CREATE SCHEMA git;
 
 CREATE TABLE git.git_commit (
 	id serial PRIMARY KEY,
-	repository_id serial REFERENCES settings.repository (id) ON DELETE CASCADE,
-	sha_checksum_hash text NOT NULL,
+	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
+	sha text NOT NULL,
 
 	/*
 	 * It is not save to make "sha_checksum_hash" itself unique,
@@ -138,7 +139,7 @@ CREATE TABLE git.git_commit (
 	 * (Automatic code with add something commit and delete something and
 	 * commit again may have problem, but that's not a natural case).
 	 */
-	UNIQUE(repository_id, sha_checksum_hash)
+	UNIQUE(repository_id, sha)
 );
 
 CREATE TABLE git.git_commit_valid (
@@ -162,8 +163,8 @@ CREATE TABLE git.git_commit_ignored (
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
 	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE,
-	relative_filepath text NOT NULL,
-	UNIQUE(commit_id, relative_filepath)
+	relative_path text NOT NULL,
+	UNIQUE(commit_id, relative_path)
 );
 
 CREATE FUNCTION git.commit_id_from_document (integer)

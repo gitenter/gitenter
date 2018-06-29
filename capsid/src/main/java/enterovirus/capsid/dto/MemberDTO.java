@@ -5,7 +5,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
-import enterovirus.protease.domain.MemberBean;
+import com.gitenter.domain.auth.MemberBean;
+
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<member id="1" username="username" password="password" display_name="Display Name" email="email@email.com" />
+	<ssh_key id="1" member_id="1" key_type="ssh-rsa" key_data="[BASE64]VGhpcyBpcyBteSB0ZXh0Lg==" comment="comment" />
+	<organization id="1" name="organization" display_name="Organization" />
+	<organization_member_map id="1" member_id="1" organization_id="1" role_shortname="G"/>
+	<repository id="1" organization_id="1" name="repository" display_name="Repository" description="Repo description" is_public="true" />
+	<repository_member_map id="1" repository_id="1" member_id="1" role_shortname="R" />
+</dataset>

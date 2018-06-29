@@ -18,17 +18,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gitenter.dao.auth.MemberRepository;
+import com.gitenter.dao.auth.OrganizationRepository;
+import com.gitenter.dao.auth.RepositoryMemberMapRepository;
+import com.gitenter.dao.auth.RepositoryRepository;
+import com.gitenter.domain.auth.MemberBean;
+import com.gitenter.domain.auth.OrganizationBean;
+import com.gitenter.domain.auth.RepositoryBean;
+import com.gitenter.domain.auth.RepositoryMemberRole;
+import com.gitenter.domain.git.CommitBean;
+import com.gitenter.domain.git.CommitValidBean;
 import com.gitenter.gitar.*;
 import com.gitenter.gitar.temp.GitLog;
 import com.gitenter.gitar.temp.GitRepository;
 import com.gitenter.gitar.wrap.*;
+import com.gitenter.protease.source.GitSource;
 
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
 import enterovirus.protease.database.*;
 import enterovirus.protease.domain.*;
-import enterovirus.protease.source.GitSource;
 
 @Controller
 public class ManagerAdminController {

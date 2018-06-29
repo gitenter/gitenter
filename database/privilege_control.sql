@@ -1,16 +1,16 @@
-GRANT USAGE ON SCHEMA settings TO enterovirus_apps;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA settings TO enterovirus_apps;
+GRANT USAGE ON SCHEMA auth TO enterovirus_apps;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA auth TO enterovirus_apps;
 
-GRANT SELECT ON ALL TABLES IN SCHEMA settings TO enterovirus_gitar;
-GRANT SELECT ON ALL TABLES IN SCHEMA settings TO enterovirus_capsid;
+GRANT SELECT ON ALL TABLES IN SCHEMA auth TO enterovirus_gitar;
+GRANT SELECT ON ALL TABLES IN SCHEMA auth TO enterovirus_capsid;
 
 --------------------------------------------------------------------------------
 
-GRANT USAGE ON SCHEMA settings TO enterovirus_apps;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA settings TO enterovirus_apps;
+GRANT USAGE ON SCHEMA auth TO enterovirus_apps;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA auth TO enterovirus_apps;
 
-GRANT SELECT ON ALL TABLES IN SCHEMA settings TO enterovirus_gitar;
-GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA settings TO enterovirus_capsid;
+GRANT SELECT ON ALL TABLES IN SCHEMA auth TO enterovirus_gitar;
+GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA auth TO enterovirus_capsid;
 
 --------------------------------------------------------------------------------
 

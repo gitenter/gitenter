@@ -2,6 +2,10 @@ package enterovirus.enzymark.htmlgenerator;
 
 import org.junit.Test;
 
+import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.DocumentBean;
+import com.gitenter.domain.git.TraceableItemBean;
+
 import enterovirus.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import enterovirus.protease.domain.*;
 

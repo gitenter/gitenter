@@ -12,7 +12,7 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import enterovirus.protease.domain.DocumentBean;
+import com.gitenter.domain.git.DocumentBean;
 
 class ImageNodeRenderer implements NodeRenderer {
 	

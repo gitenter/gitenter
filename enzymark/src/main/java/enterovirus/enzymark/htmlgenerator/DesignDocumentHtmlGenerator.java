@@ -13,6 +13,8 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlNodeRendererFactory;
 import org.commonmark.renderer.html.HtmlRenderer;
 
+import com.gitenter.domain.git.DocumentBean;
+
 import enterovirus.protease.domain.*;
 
 public class DesignDocumentHtmlGenerator implements HtmlGenerator {

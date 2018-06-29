@@ -15,6 +15,9 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 
+import com.gitenter.domain.git.DocumentBean;
+import com.gitenter.domain.git.TraceableItemBean;
+
 import enterovirus.enzymark.TraceableItemParser;
 import enterovirus.protease.domain.*;
 
