@@ -6,5 +6,5 @@ import com.gitenter.domain.auth.SshKeyBean;
 
 public interface SshKeyRepository {
 
-	public SshKeyBean saveAndFlush(SshKeyBean sshKey, String username) throws IOException;
+	public SshKeyBean saveAndFlush(SshKeyBean sshKey) throws IOException;
 }

@@ -111,4 +111,8 @@ public class MemberBean {
 		}
 		return items;
 	}
+	
+	public boolean addSshKey(SshKeyBean sshKey) {
+		return sshKeys.add(sshKey);
+	}
 }

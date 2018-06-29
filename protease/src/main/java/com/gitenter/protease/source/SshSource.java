@@ -3,7 +3,6 @@ package com.gitenter.protease.source;
 import java.io.File;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class SshSource {

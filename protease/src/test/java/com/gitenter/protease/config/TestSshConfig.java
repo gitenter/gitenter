@@ -4,9 +4,7 @@ import java.io.File;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-import com.gitenter.protease.source.GitSource;
 import com.gitenter.protease.source.SshSource;
 
 @Configuration

@@ -3,6 +3,7 @@ package com.gitenter.domain.auth;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class MemberBeanTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	public void testDbUnitMinimalQueryWorks() throws IOException {
+	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
 		
 		MemberBean item = repository.findById(1).get();
 		
@@ -50,6 +51,12 @@ public class MemberBeanTest {
 		assertEquals(item.getDisplayName(), "Display Name");
 		assertEquals(item.getEmail(), "email@email.com");
 		assertTrue(item.getRegistrationTimestamp() != null);
+		
+		assertEquals(item.getSshKeys().size(), 1);
+		SshKeyBean sshKey = item.getSshKeys().get(0);
+		assertEquals(sshKey.getKeyType(), "ssh-rsa");
+		assertEquals(sshKey.getKeyDataToString(), "VGhpcyBpcyBteSB0ZXh0Lg==");
+		assertEquals(sshKey.getComment(), "comment");
 		
 		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
 		assertEquals(item.getOrganizations(OrganizationMemberRole.MEMBER).size(), 0);

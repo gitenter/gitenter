@@ -50,11 +50,7 @@ public class SshKeyBean {
 	 * but that is not user defined, so should not be set in here.
 	 */
 	
-	public SshKeyBean () {
-		
-	}
-	
-	public SshKeyBean (String line) throws GeneralSecurityException,IOException {
+	public void setBean(String line) throws GeneralSecurityException, IOException {
 		
 		AuthorizedKeyEntry entry = AuthorizedKeyEntry.parseAuthorizedKeyEntry(line);
 		
