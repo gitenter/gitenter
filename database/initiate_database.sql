@@ -142,6 +142,17 @@ CREATE TABLE git.git_commit (
 	UNIQUE(repository_id, sha)
 );
 
+CREATE FUNCTION git.repository_id_from_commit (integer)
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT cmt.repository_id INTO return_id FROM git.commit AS cmt
+	WHERE cmt.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
 CREATE TABLE git.valid_commit (
 	/*
 	 * There is a constrain that the "id" of table "valid_commit",
@@ -216,6 +227,139 @@ CREATE TABLE git.traceability_map (
 --------------------------------------------------------------------------------
 
 CREATE SCHEMA review;
+
+CREATE TABLE review.review (
+	id serial PRIMARY KEY,
+	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
+
+	version_number text NOT NULL,
+	description text,
+	UNIQUE (repository_id, version_number)
+);
+
+CREATE FUNCTION review.repository_id_from_review (integer)
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT rev.repository_id INTO return_id FROM review.review AS rev
+	WHERE rev.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
+CREATE TABLE review.attendee (
+	id serial PRIMARY KEY,
+	review_id serial REFERENCES review.review (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
+	UNIQUE (review_id, member_id)
+);
+
+-- CREATE TABLE review.author (
+-- 	id serial PRIMARY KEY REFERENCES review.attendee (id) ON DELETE CASCADE
+-- );
+
+CREATE TABLE review.reviewer (
+	id serial PRIMARY KEY REFERENCES review.attendee (id) ON DELETE CASCADE,
+	liability_description text
+);
+
+CREATE TABLE review.subsection (
+	id serial PRIMARY KEY REFERENCES git.valid_commit (id) ON DELETE CASCADE,
+	review_id serial REFERENCES review.review (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE RESTRICT,
+	CHECK (git.repository_id_from_commit(id) = review.repository_id_from_review(review_id)),
+
+	create_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.discussion_subsection (
+	id serial PRIMARY KEY REFERENCES review.subsection (id) ON DELETE CASCADE,
+
+	deadline timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.finalization_subsection (
+	id serial PRIMARY KEY REFERENCES review.subsection (id) ON DELETE CASCADE
+);
+
+CREATE TABLE review.in_review_document (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
+	subsection_id serial REFERENCES review.subsection (id) ON DELETE CASCADE,
+	CHECK (git.commit_id_from_document(id) = subsection_id),
+
+	previous_version_id integer REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+
+	/*
+	 * A: approved
+	 * P: approved with postscripts
+	 * R: request changes
+	 * D: denied
+	 */
+	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D'),
+	status_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CREATE TABLE review.author_map (
+-- 	author_id serial REFERENCES review.author (id) ON DELETE CASCADE,
+-- 	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+-- 	PRIMARY KEY (author_id, document_id)
+-- );
+
+CREATE TABLE review.review_meeting (
+	id serial PRIMARY KEY,
+	subsection_id serial REFERENCES review.subsection (id) ON DELETE CASCADE,
+	start_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.attendee_map (
+	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
+	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
+	PRIMARY KEY (attendee_id, review_meeting_id)
+);
+
+CREATE TABLE review.discussion_topic (
+	id serial PRIMARY KEY,
+	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	line_number integer NOT NULL
+);
+
+CREATE TABLE review.review_meeting_record (
+	id serial PRIMARY KEY REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
+	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
+	context text
+);
+
+CREATE TABLE review.comment (
+	id serial PRIMARY KEY,
+	discussion_topic_id serial REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
+	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
+
+	context text,
+	comment_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.vote (
+	id serial PRIMARY KEY,
+	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	reviewer_id serial REFERENCES review.reviewer (id) ON DELETE CASCADE,
+	UNIQUE (document_id, reviewer_id),
+
+	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D')
+);
+
+/*
+ * TODO:
+ * A general notification system for all kinds of events?
+ */
+-- CREATE TABLE review.notification (
+-- 	id serial PRIMARY KEY,
+-- 	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
+-- 	discussion_topic_id serial REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
+--
+-- 	is_read boolean NOT NULL DEFAULT FALSE,
+-- 	notification_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- );
 
 --------------------------------------------------------------------------------
 
