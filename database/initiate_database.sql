@@ -146,7 +146,7 @@ CREATE FUNCTION git.repository_id_from_commit (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT cmt.repository_id INTO return_id FROM git.commit AS cmt
+	SELECT cmt.repository_id INTO return_id FROM git.git_commit AS cmt
 	WHERE cmt.id = $1;
 	RETURN return_id;
 END;
@@ -304,6 +304,21 @@ CREATE TABLE review.in_review_document (
 	status_setup_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE review.vote (
+	id serial PRIMARY KEY,
+	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	reviewer_id serial REFERENCES review.reviewer (id) ON DELETE CASCADE,
+	UNIQUE (document_id, reviewer_id),
+
+	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D')
+);
+
+CREATE TABLE review.discussion_topic (
+	id serial PRIMARY KEY,
+	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	line_number integer NOT NULL
+);
+
 -- CREATE TABLE review.author_map (
 -- 	author_id serial REFERENCES review.author (id) ON DELETE CASCADE,
 -- 	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
@@ -320,12 +335,6 @@ CREATE TABLE review.review_meeting_attendee_map (
 	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
 	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
 	PRIMARY KEY (attendee_id, review_meeting_id)
-);
-
-CREATE TABLE review.discussion_topic (
-	id serial PRIMARY KEY,
-	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
-	line_number integer NOT NULL
 );
 
 CREATE TABLE review.review_meeting_record (
@@ -347,15 +356,6 @@ CREATE TABLE review.comment (
 
 	context text,
 	comment_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE review.vote (
-	id serial PRIMARY KEY,
-	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
-	reviewer_id serial REFERENCES review.reviewer (id) ON DELETE CASCADE,
-	UNIQUE (document_id, reviewer_id),
-
-	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D')
 );
 
 /*

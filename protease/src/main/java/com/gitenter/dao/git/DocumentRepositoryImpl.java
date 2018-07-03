@@ -17,14 +17,14 @@ import com.gitenter.gitar.GitRepository;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
-class DocumentImpl implements DocumentRepository {
+class DocumentRepositoryImpl implements DocumentRepository {
 
-	@Autowired private DocumentDatabaseRepository documentDatabaseRepository;
+	@Autowired private DocumentDatabaseRepository databaseRepository;
 	@Autowired private GitSource gitSource;
 
 	public Optional<DocumentBean> findById(Integer id) throws IOException, GitAPIException {
 	
-	Optional<DocumentBean> items = documentDatabaseRepository.findById(id);
+	Optional<DocumentBean> items = databaseRepository.findById(id);
 	
 	if (items.isPresent()) {
 		DocumentBean item = items.get();
@@ -36,7 +36,7 @@ class DocumentImpl implements DocumentRepository {
 
 	public List<DocumentBean> findByCommitIdAndRelativePath(Integer commitId, String relativePath) throws IOException, GitAPIException {
 
-		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePath(commitId, relativePath);	
+		List<DocumentBean> items = databaseRepository.findByCommitIdAndRelativePath(commitId, relativePath);	
 		
 		for (DocumentBean item : items) {
 			updateFromGit(item);
@@ -47,7 +47,7 @@ class DocumentImpl implements DocumentRepository {
 	
 	public List<DocumentBean> findByCommitIdAndRelativePathIn(Integer commitId, List<String> relativePaths) throws IOException, GitAPIException {
 	
-		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePathIn(commitId, relativePaths);
+		List<DocumentBean> items = databaseRepository.findByCommitIdAndRelativePathIn(commitId, relativePaths);
 		
 		for (DocumentBean item : items) {
 			updateFromGit(item);
@@ -58,7 +58,7 @@ class DocumentImpl implements DocumentRepository {
 	
 	public List<DocumentBean> findByCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException {
 
-		List<DocumentBean> items = documentDatabaseRepository.findByShaAndRelativePath(commitSha, relativePath);
+		List<DocumentBean> items = databaseRepository.findByShaAndRelativePath(commitSha, relativePath);
 		
 		for (DocumentBean item : items) {
 			updateFromGit(item);
@@ -89,6 +89,6 @@ class DocumentImpl implements DocumentRepository {
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {
-		return documentDatabaseRepository.saveAndFlush(document);
+		return databaseRepository.saveAndFlush(document);
 	}
 }

@@ -26,14 +26,14 @@ import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
-public class CommitImpl implements CommitRepository {
+public class CommitRepositoryImpl implements CommitRepository {
 
-	@Autowired private CommitDatabaseRepository commitDatabaseRepository;
+	@Autowired private CommitDatabaseRepository databaseRepository;
 	@Autowired private GitSource gitSource;
 	
 	public Optional<CommitBean> findById(Integer id) throws IOException, GitAPIException {
 		
-		Optional<CommitBean> items = commitDatabaseRepository.findById(id);
+		Optional<CommitBean> items = databaseRepository.findById(id);
 		
 		if (items.isPresent()) {
 			CommitBean item = items.get();
@@ -45,7 +45,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
+		List<CommitBean> items = databaseRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
 		
 		for (CommitBean item : items) {
 			updateFromGit(item);
@@ -56,7 +56,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
+		List<CommitBean> items = databaseRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
 		
 		/*
 		 * TODO:
@@ -89,7 +89,7 @@ public class CommitImpl implements CommitRepository {
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {
-		return commitDatabaseRepository.saveAndFlush(commit);
+		return databaseRepository.saveAndFlush(commit);
 	}
 	
 	private static class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements ValidCommitBean.RootPlaceholder {

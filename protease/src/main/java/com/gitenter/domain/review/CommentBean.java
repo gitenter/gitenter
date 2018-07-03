@@ -21,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "review", name = "review_meeting_record")
+@Table(schema = "review", name = "comment")
 public class CommentBean {
 
 	@Id

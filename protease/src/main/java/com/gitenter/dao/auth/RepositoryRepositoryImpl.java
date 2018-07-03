@@ -26,7 +26,7 @@ import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
-class RepositoryImpl implements RepositoryRepository {
+class RepositoryRepositoryImpl implements RepositoryRepository {
 
 	@Autowired private RepositoryDatabaseRepository repositoryDatabaseRepository;
 	@Autowired private CommitDatabaseRepository commitDatabaseRepository;

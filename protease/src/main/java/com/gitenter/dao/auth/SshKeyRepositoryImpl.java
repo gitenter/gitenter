@@ -12,7 +12,7 @@ import com.gitenter.domain.auth.SshKeyBean;
 import com.gitenter.protease.source.SshSource;
 
 @Repository
-class SshKeyImpl implements SshKeyRepository {
+class SshKeyRepositoryImpl implements SshKeyRepository {
 
 	@Autowired private SshKeyDatabaseRepository sshKeyDbRepository;
 	@Autowired private SshSource sshSource;

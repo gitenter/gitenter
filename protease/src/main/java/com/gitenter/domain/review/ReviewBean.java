@@ -50,6 +50,6 @@ public class ReviewBean {
 	@OneToMany(targetEntity=SubsectionBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="review")
 	private List<SubsectionBean> subsections;
 	
-	@OneToMany(targetEntity=SubsectionBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="review")
+	@OneToMany(targetEntity=AttendeeBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="review")
 	private List<AttendeeBean> attendees;
 }

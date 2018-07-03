@@ -1,0 +1,53 @@
+package com.gitenter.domain.review;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.gitenter.annotation.DbUnitMinimalData;
+import com.gitenter.dao.review.ReviewMeetingRepository;
+import com.gitenter.protease.ProteaseConfig;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles(profiles = "minimal")
+@ContextConfiguration(classes=ProteaseConfig.class)
+@TestExecutionListeners({
+	DependencyInjectionTestExecutionListener.class,
+	DirtiesContextTestExecutionListener.class,
+	TransactionalTestExecutionListener.class,
+	DbUnitTestExecutionListener.class })
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+public class ReviewMeetingBeanTest {
+	
+	@Autowired ReviewMeetingRepository repository;
+
+	@Test
+	@Transactional
+	@DbUnitMinimalData
+	public void testDbUnitMinimal() {
+		
+		ReviewMeetingBean item = repository.findById(1).get();
+		
+		/*
+		 * TODO:
+		 * 
+		 * Subsection doesn't load git data.
+		 */
+		assertEquals(item.getSubsection().getRepository().getName(), "repository");
+		
+		assertEquals(item.getAttendees().size(), 1);
+	}
+
+}

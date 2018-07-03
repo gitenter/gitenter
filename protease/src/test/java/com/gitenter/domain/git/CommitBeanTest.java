@@ -139,5 +139,10 @@ public class CommitBeanTest {
 //		CommitBean item2 = repository.findById(1).get();
 //		assertFalse(item1 == item2);
 //		assertTrue(item1.getAuthor() == item2.getAuthor);
-//	}		
+//	}
+	
+	/*
+	 * TODO:
+	 * Use a non-minimal setting to test the InvalidCommitBean and IgnoredCommitBean.
+	 */
 }
