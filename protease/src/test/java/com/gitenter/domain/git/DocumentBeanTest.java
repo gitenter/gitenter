@@ -59,6 +59,12 @@ public class DocumentBeanTest {
 		assertEquals(traceableItem.getUpstreamItems().get(0).getItemTag(), traceableItem.getItemTag());
 	}
 	
+	/*
+	 * TODO:
+	 * Should we remove the nontrivial constructor of "TraceableItemBean",
+	 * and initialize "DocumentBean" only through the ORM (so
+	 * "List<TraceableItemBean> traceableItems" is naturally initialized)?
+	 */
 	@Test
 	public void testAddTraceableItem() {
 		

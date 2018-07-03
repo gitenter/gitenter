@@ -6,7 +6,7 @@ CREATE TABLE auth.member (
 	password text NOT NULL,
 	display_name text NOT NULL,
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)'),
-	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	register_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE auth.organization (
@@ -194,7 +194,7 @@ CREATE TABLE git.traceable_item (
 
 	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	item_tag text NOT NULL,
-	content text NOT NULL,
+	content text,
 	UNIQUE (document_id, item_tag)
 );
 
@@ -220,6 +220,10 @@ CREATE TABLE git.traceability_map (
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	PRIMARY KEY (upstream_item_id, downstream_item_id),
 
+	/*
+	 * Here is a double-JOIN. If becomes so slow, may create another
+	 * method to do JOIN inside, or even remove this constrain.
+	 */
 	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id))
 		= git.commit_id_from_document(git.document_id_from_traceable_item(downstream_item_id)))
 );
@@ -270,7 +274,7 @@ CREATE TABLE review.subsection (
 	member_id serial REFERENCES auth.member (id) ON DELETE RESTRICT,
 	CHECK (git.repository_id_from_commit(id) = review.repository_id_from_review(review_id)),
 
-	create_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE review.discussion_subsection (
@@ -297,7 +301,7 @@ CREATE TABLE review.in_review_document (
 	 * D: denied
 	 */
 	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D'),
-	status_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	status_setup_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CREATE TABLE review.author_map (
@@ -308,11 +312,11 @@ CREATE TABLE review.in_review_document (
 
 CREATE TABLE review.review_meeting (
 	id serial PRIMARY KEY,
-	subsection_id serial REFERENCES review.subsection (id) ON DELETE CASCADE,
-	start_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	subsection_id serial REFERENCES review.discussion_subsection (id) ON DELETE CASCADE,
+	start_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE review.attendee_map (
+CREATE TABLE review.review_meeting_attendee_map (
 	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
 	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
 	PRIMARY KEY (attendee_id, review_meeting_id)
@@ -327,16 +331,22 @@ CREATE TABLE review.discussion_topic (
 CREATE TABLE review.review_meeting_record (
 	id serial PRIMARY KEY REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
 	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
-	context text
+
+	context text,
+	record_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.online_discussion_topic (
+	id serial PRIMARY KEY REFERENCES review.discussion_topic (id) ON DELETE CASCADE
 );
 
 CREATE TABLE review.comment (
 	id serial PRIMARY KEY,
-	discussion_topic_id serial REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
+	discussion_topic_id serial REFERENCES review.online_discussion_topic (id) ON DELETE CASCADE,
 	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
 
 	context text,
-	comment_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	comment_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE review.vote (
@@ -358,7 +368,7 @@ CREATE TABLE review.vote (
 -- 	discussion_topic_id serial REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
 --
 -- 	is_read boolean NOT NULL DEFAULT FALSE,
--- 	notification_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- 	notify_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 -- );
 
 --------------------------------------------------------------------------------

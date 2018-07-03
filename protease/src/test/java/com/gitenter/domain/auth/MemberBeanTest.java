@@ -50,7 +50,7 @@ public class MemberBeanTest {
 		assertEquals(item.getPassword(), "password");
 		assertEquals(item.getDisplayName(), "Display Name");
 		assertEquals(item.getEmail(), "email@email.com");
-		assertTrue(item.getRegistrationTimestamp() != null);
+		assertTrue(item.getRegisterAt() != null);
 		
 		assertEquals(item.getSshKeys().size(), 1);
 		SshKeyBean sshKey = item.getSshKeys().get(0);
