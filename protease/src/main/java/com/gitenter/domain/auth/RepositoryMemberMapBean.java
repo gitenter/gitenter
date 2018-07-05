@@ -5,6 +5,7 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,10 +24,12 @@ public class RepositoryMemberMapBean {
 	@Column(name="id", updatable=false)
 	private Integer id;
 
+	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="repository_id")
 	private RepositoryBean repository;
 	
+	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="member_id")
 	private MemberBean member;
@@ -48,14 +51,4 @@ public class RepositoryMemberMapBean {
 	@Column(name="role_shortname")
 	@Convert(converter = RepositoryMemberRoleConventer.class)
 	private RepositoryMemberRole role;
-	
-	public RepositoryMemberMapBean () {
-		
-	}
-
-	public RepositoryMemberMapBean(RepositoryBean repository, MemberBean member, RepositoryMemberRole role) {
-		this.repository = repository;
-		this.member = member;
-		this.role = role;
-	}
 }

@@ -1,27 +1,33 @@
-package com.gitenter.domain.auth;
+package com.gitenter.annotation;
 
-import static org.junit.Assert.assertEquals;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.dao.auth.OrganizationRepository;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
+/*
+ * TODO:
+ * 
+ * Not working. No matter using "RetentionPolicy.RUNTIME" or
+ * "RetentionPolicy.CLASS".
+ * 
+ * "@DbUnitConfiguration" is not working, is because the annotation
+ * cannot properly handle bean injection ("Unable to find connection 
+ * named schemaAuthDatabaseConnection"). Unknown reasons for others
+ * but may need to go inside to see what those annotations are doing.
+ */
+@Retention(RetentionPolicy.RUNTIME)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "minimal")
 @ContextConfiguration(classes=ProteaseConfig.class)
 @TestExecutionListeners({
 	DependencyInjectionTestExecutionListener.class,
@@ -29,21 +35,6 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
-public class OrganizationBeanTest {
+public @interface RunWithSpringDbUnit {
 
-	@Autowired private OrganizationRepository repository;
-	
-	@Test
-	@Transactional
-	@DbUnitMinimalDataSetup
-	public void testDbUnitMinimalQueryWorks() throws Exception {
-		
-		OrganizationBean item = repository.findById(1).get();
-		
-		assertEquals(item.getName(), "organization");
-		assertEquals(item.getDisplayName(), "Organization");
-		
-		assertEquals(item.getMembers(OrganizationMemberRole.MANAGER).size(), 1);
-		assertEquals(item.getMembers(OrganizationMemberRole.MEMBER).size(), 0);
-	}
 }

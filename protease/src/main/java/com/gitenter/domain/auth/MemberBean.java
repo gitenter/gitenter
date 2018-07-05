@@ -73,18 +73,18 @@ public class MemberBean {
 	private String email;
 	
 	@NotNull
-	@Column(name="registration_timestamp", updatable=false)
+	@Column(name="register_at", updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date registrationTimestamp;
+	private Date registerAt;
 
 	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
-	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
+	private List<OrganizationMemberMapBean> organizationMemberMaps;
 	
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	private List<RepositoryMemberMapBean> repositoryMemberMaps;
 	
 	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
-	private List<SshKeyBean> sshKeys = new ArrayList<SshKeyBean>();
+	private List<SshKeyBean> sshKeys;
 	
 	/*
 	 * If later on there is performance concerns, we can have a view for a JOIN

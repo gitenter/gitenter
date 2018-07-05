@@ -6,7 +6,7 @@ CREATE TABLE auth.member (
 	password text NOT NULL,
 	display_name text NOT NULL,
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)'),
-	registration_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+	register_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE auth.organization (
@@ -17,7 +17,7 @@ CREATE TABLE auth.organization (
 
 CREATE TABLE auth.organization_member_map (
 	id serial PRIMARY KEY,
-	
+
 	/*
 	 * With this constrain, a member can at most have one role
 	 * in a particular organization.
@@ -93,7 +93,7 @@ CREATE TABLE auth.ssh_key (
 	 * but that is not user defined, so should not be set in here.
 	 */
 	key_type text NOT NULL,
-	key_data bytea NOT NULL, /* Should be unique. But I loose the constrain a little bit at this moment. */
+	key_data bytea NOT NULL UNIQUE, /* Should be unique. But I loose the constrain a little bit at this moment. */
 	comment text
 );
 
@@ -142,27 +142,38 @@ CREATE TABLE git.git_commit (
 	UNIQUE(repository_id, sha)
 );
 
-CREATE TABLE git.git_commit_valid (
+CREATE FUNCTION git.repository_id_from_commit (integer)
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT cmt.repository_id INTO return_id FROM git.git_commit AS cmt
+	WHERE cmt.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
+CREATE TABLE git.valid_commit (
 	/*
-	 * There is a constrain that the "id" of table "git_commit_valid",
-	 * "git_commit_invalid", and "git_commit_ignored" are mutually exclusive,
+	 * There is a constrain that the "id" of table "valid_commit",
+	 * "invalid_commit", and "ignored_commit" are mutually exclusive,
 	 * but there seems no easy way to define it in PostgreSQL.
 	 */
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
-CREATE TABLE git.git_commit_invalid (
+CREATE TABLE git.invalid_commit (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE,
 	error_message text NOT NULL
 );
 
-CREATE TABLE git.git_commit_ignored (
+CREATE TABLE git.ignored_commit (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
 CREATE TABLE git.document (
 	id serial PRIMARY KEY,
-	commit_id serial REFERENCES git.git_commit_valid (id) ON DELETE CASCADE,
+	commit_id serial REFERENCES git.valid_commit (id) ON DELETE CASCADE,
 	relative_path text NOT NULL,
 	UNIQUE(commit_id, relative_path)
 );
@@ -183,7 +194,7 @@ CREATE TABLE git.traceable_item (
 
 	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
 	item_tag text NOT NULL,
-	content text NOT NULL,
+	content text,
 	UNIQUE (document_id, item_tag)
 );
 
@@ -209,6 +220,10 @@ CREATE TABLE git.traceability_map (
 	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
 	PRIMARY KEY (upstream_item_id, downstream_item_id),
 
+	/*
+	 * Here is a double-JOIN. If becomes so slow, may create another
+	 * method to do JOIN inside, or even remove this constrain.
+	 */
 	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id))
 		= git.commit_id_from_document(git.document_id_from_traceable_item(downstream_item_id)))
 );
@@ -216,6 +231,145 @@ CREATE TABLE git.traceability_map (
 --------------------------------------------------------------------------------
 
 CREATE SCHEMA review;
+
+CREATE TABLE review.review (
+	id serial PRIMARY KEY,
+	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
+
+	version_number text NOT NULL,
+	description text,
+	UNIQUE (repository_id, version_number)
+);
+
+CREATE FUNCTION review.repository_id_from_review (integer)
+RETURNS integer AS $return_id$
+DECLARE return_id integer;
+BEGIN
+	SELECT rev.repository_id INTO return_id FROM review.review AS rev
+	WHERE rev.id = $1;
+	RETURN return_id;
+END;
+$return_id$ LANGUAGE plpgsql
+IMMUTABLE;
+
+CREATE TABLE review.attendee (
+	id serial PRIMARY KEY,
+	review_id serial REFERENCES review.review (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
+	UNIQUE (review_id, member_id)
+);
+
+-- CREATE TABLE review.author (
+-- 	id serial PRIMARY KEY REFERENCES review.attendee (id) ON DELETE CASCADE
+-- );
+
+CREATE TABLE review.reviewer (
+	id serial PRIMARY KEY REFERENCES review.attendee (id) ON DELETE CASCADE,
+	liability_description text
+);
+
+CREATE TABLE review.subsection (
+	id serial PRIMARY KEY REFERENCES git.valid_commit (id) ON DELETE CASCADE,
+	review_id serial REFERENCES review.review (id) ON DELETE CASCADE,
+	member_id serial REFERENCES auth.member (id) ON DELETE RESTRICT,
+	CHECK (git.repository_id_from_commit(id) = review.repository_id_from_review(review_id)),
+
+	create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.discussion_subsection (
+	id serial PRIMARY KEY REFERENCES review.subsection (id) ON DELETE CASCADE,
+
+	deadline timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.finalization_subsection (
+	id serial PRIMARY KEY REFERENCES review.subsection (id) ON DELETE CASCADE
+);
+
+CREATE TABLE review.in_review_document (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
+	subsection_id serial REFERENCES review.subsection (id) ON DELETE CASCADE,
+	CHECK (git.commit_id_from_document(id) = subsection_id),
+
+	previous_version_id integer REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+
+	/*
+	 * A: approved
+	 * P: approved with postscripts
+	 * R: request changes
+	 * D: denied
+	 */
+	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D'),
+	status_setup_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.vote (
+	id serial PRIMARY KEY,
+	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	reviewer_id serial REFERENCES review.reviewer (id) ON DELETE CASCADE,
+	UNIQUE (document_id, reviewer_id),
+
+	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D')
+);
+
+CREATE TABLE review.discussion_topic (
+	id serial PRIMARY KEY,
+	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	line_number integer NOT NULL
+);
+
+-- CREATE TABLE review.author_map (
+-- 	author_id serial REFERENCES review.author (id) ON DELETE CASCADE,
+-- 	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+-- 	PRIMARY KEY (author_id, document_id)
+-- );
+
+CREATE TABLE review.review_meeting (
+	id serial PRIMARY KEY,
+	subsection_id serial REFERENCES review.discussion_subsection (id) ON DELETE CASCADE,
+	start_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.review_meeting_attendee_map (
+	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
+	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
+	PRIMARY KEY (attendee_id, review_meeting_id)
+);
+
+CREATE TABLE review.review_meeting_record (
+	id serial PRIMARY KEY REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
+	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
+
+	content text,
+	record_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE review.online_discussion_topic (
+	id serial PRIMARY KEY REFERENCES review.discussion_topic (id) ON DELETE CASCADE
+);
+
+CREATE TABLE review.comment (
+	id serial PRIMARY KEY,
+	discussion_topic_id serial REFERENCES review.online_discussion_topic (id) ON DELETE CASCADE,
+	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
+
+	content text,
+	comment_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+/*
+ * TODO:
+ * A general notification system for all kinds of events?
+ */
+-- CREATE TABLE review.notification (
+-- 	id serial PRIMARY KEY,
+-- 	member_id serial REFERENCES auth.member (id) ON DELETE CASCADE,
+-- 	discussion_topic_id serial REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
+--
+-- 	is_read boolean NOT NULL DEFAULT FALSE,
+-- 	notify_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- );
 
 --------------------------------------------------------------------------------
 

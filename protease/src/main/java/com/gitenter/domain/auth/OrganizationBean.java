@@ -45,7 +45,7 @@ public class OrganizationBean {
 	private List<RepositoryBean> repositories;
 
 	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
+	private List<OrganizationMemberMapBean> organizationMemberMaps;
 	
 	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();

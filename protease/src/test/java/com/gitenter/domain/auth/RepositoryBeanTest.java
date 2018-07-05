@@ -22,6 +22,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.auth.RepositoryRepository;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
@@ -39,15 +40,14 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
 public class RepositoryBeanTest {
 
 	@Autowired RepositoryRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testMinimalRepositoryInfomation() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();

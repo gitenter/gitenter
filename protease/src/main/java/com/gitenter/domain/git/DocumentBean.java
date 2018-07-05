@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -42,10 +43,12 @@ public class DocumentBean extends FileBean {
 	@Column(name="id", updatable=false)
 	private Integer id;
 	
-	@ManyToOne
+	@NotNull
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="commit_id")
-	private CommitValidBean commit;
+	private ValidCommitBean commit;
 	
+	@NotNull
 	@Column(name="relative_path", updatable=false)
 	private String relativePath;
 	

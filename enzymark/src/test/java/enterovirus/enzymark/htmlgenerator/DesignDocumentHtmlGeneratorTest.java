@@ -2,7 +2,7 @@ package enterovirus.enzymark.htmlgenerator;
 
 import org.junit.Test;
 
-import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.ValidCommitBean;
 import com.gitenter.domain.git.DocumentBean;
 import com.gitenter.domain.git.TraceableItemBean;
 
@@ -14,7 +14,7 @@ public class DesignDocumentHtmlGeneratorTest {
 	@Test
 	public void test() {
 		
-		CommitValidBean commit = new CommitValidBean();
+		ValidCommitBean commit = new ValidCommitBean();
 		String relativeFilepath = "fake-path-for-a-document.md";
 		DocumentBean document = new DocumentBean(commit, relativeFilepath);
 		

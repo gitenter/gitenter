@@ -1,10 +1,6 @@
-package com.gitenter.domain.auth;
+package com.gitenter.domain.review;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +15,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.dao.auth.MemberRepository;
+import com.gitenter.dao.review.AttendeeRepository;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -33,33 +29,20 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
-public class MemberBeanTest {
-
-	@Autowired MemberRepository repository;
+public class AttendeeBeanTest {
 	
+	@Autowired AttendeeRepository repository;
+
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
+	public void testDbUnitMinimal() {
 		
-		MemberBean item = repository.findById(1).get();
+		AttendeeBean item = repository.findById(1).get();
 		
-		assertEquals(item.getUsername(), "username");
-		assertEquals(item.getPassword(), "password");
-		assertEquals(item.getDisplayName(), "Display Name");
-		assertEquals(item.getEmail(), "email@email.com");
-		assertTrue(item.getRegisterAt() != null);
-		
-		assertEquals(item.getSshKeys().size(), 1);
-		SshKeyBean sshKey = item.getSshKeys().get(0);
-		assertEquals(sshKey.getKeyType(), "ssh-rsa");
-		assertEquals(sshKey.getKeyDataToString(), "VGhpcyBpcyBteSB0ZXh0Lg==");
-		assertEquals(sshKey.getComment(), "comment");
-		
-		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
-		assertEquals(item.getOrganizations(OrganizationMemberRole.MEMBER).size(), 0);
-
-		assertEquals(item.getRepositories(RepositoryMemberRole.REVIEWER).size(), 1);
-		assertEquals(item.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
+		assertEquals(item.getReview().getVersionNumber(), "v1");
+		assertEquals(item.getMember().getUsername(), "username");
+		assertEquals(item.getReviewMeetings().size(), 1);
 	}
+
 }

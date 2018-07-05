@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -22,8 +24,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "git", name = "git_commit_valid")
-public class CommitValidBean extends CommitBean {
+@Table(schema = "git", name = "valid_commit")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class ValidCommitBean extends CommitBean {
 	
 	/*
 	 * TODO:

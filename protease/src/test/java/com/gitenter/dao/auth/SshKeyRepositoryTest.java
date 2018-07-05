@@ -49,15 +49,20 @@ public class SshKeyRepositoryTest {
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 	
 	/*
-	 * Ignored, because otherwise the database complains error:
-	 * > ERROR: duplicate key value violates unique constraint "ssh_key_key_key"
+	 * TODO:
 	 * 
-	 * P.S Currently unique key is not setup yet.
+	 * Every time after the database setup (remove the table and re-create them
+	 * again), this test will raise the following error:
+	 * 
+	 * > WARN [main] (SqlExceptionHelper.java:129) - SQL Error: 0, SQLState: 23505
+	 * > ERROR [main] (SqlExceptionHelper.java:131) - ERROR: duplicate key value violates unique constraint "ssh_key_pkey"
+	 * > Detail: Key (id)=(1) already exists.
+	 * 
+	 * But the second run it will be fine. Should investigate why.
 	 */
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void test() throws Exception {
 		
 		File file = folder.newFile("authorized_keys");

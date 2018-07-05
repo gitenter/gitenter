@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.*;
 
@@ -29,10 +30,12 @@ public class TraceableItemBean {
 	@Column(name="id", updatable=false)
 	private Integer id;
 	
-	@ManyToOne
+	@NotNull
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="document_id")
 	private DocumentBean document;
 	
+	@NotNull
 	@Column(name="item_tag", updatable=false)
 	private String itemTag;
 	

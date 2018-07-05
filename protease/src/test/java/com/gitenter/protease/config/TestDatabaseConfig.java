@@ -48,4 +48,13 @@ public class TestDatabaseConfig {
 		dataConnection.setSchema("git");
 		return dataConnection;
 	}
+	
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaReviewDatabaseConnection() {
+		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dataConnection.setDataSource(dataSource());
+		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
+		dataConnection.setSchema("review");
+		return dataConnection;
+	}
 }

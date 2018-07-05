@@ -1,11 +1,11 @@
-package com.gitenter.domain.auth;
+package com.gitenter.domain.review;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,8 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.dao.auth.MemberRepository;
+import com.gitenter.dao.git.CommitRepository;
+import com.gitenter.domain.git.CommitBean;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -33,33 +34,32 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
-public class MemberBeanTest {
-
-	@Autowired MemberRepository repository;
+public class SubsectionBeanTest {
 	
+	/*
+	 * TODO:
+	 * 
+	 * Cannot go with e.g. "SubsectionRepository", as then the git material
+	 * will not be loaded. Thinking about a better way of doing it, e.g., to
+	 * make "CommitRepositoryImpl" be a generic class, and to let the actual
+	 * CRUD repository to be its generic type.
+	 */
+	@Autowired CommitRepository repository;
+
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
+	public void testDbUnitMinimal() throws IOException, GitAPIException {
 		
-		MemberBean item = repository.findById(1).get();
+		CommitBean item = repository.findById(1).get();
+		assertTrue(item instanceof DiscussionSubsectionBean);
 		
-		assertEquals(item.getUsername(), "username");
-		assertEquals(item.getPassword(), "password");
-		assertEquals(item.getDisplayName(), "Display Name");
-		assertEquals(item.getEmail(), "email@email.com");
-		assertTrue(item.getRegisterAt() != null);
+		DiscussionSubsectionBean subsection = (DiscussionSubsectionBean)item;
 		
-		assertEquals(item.getSshKeys().size(), 1);
-		SshKeyBean sshKey = item.getSshKeys().get(0);
-		assertEquals(sshKey.getKeyType(), "ssh-rsa");
-		assertEquals(sshKey.getKeyDataToString(), "VGhpcyBpcyBteSB0ZXh0Lg==");
-		assertEquals(sshKey.getComment(), "comment");
-		
-		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
-		assertEquals(item.getOrganizations(OrganizationMemberRole.MEMBER).size(), 0);
-
-		assertEquals(item.getRepositories(RepositoryMemberRole.REVIEWER).size(), 1);
-		assertEquals(item.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
+		assertEquals(subsection.getReview().getVersionNumber(), "v1");
+		assertEquals(subsection.getProjectOrganizer().getUsername(), "username");
+		assertEquals(subsection.getInReviewDocuments().size(), 1);
+		assertEquals(subsection.getReviewMeetings().size(), 1);
 	}
+
 }

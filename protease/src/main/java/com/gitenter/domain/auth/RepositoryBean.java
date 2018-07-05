@@ -25,6 +25,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import com.gitenter.domain.git.BranchBean;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.domain.git.TagBean;
+import com.gitenter.domain.review.ReviewBean;
 import com.gitenter.gitar.util.GitPlaceholder;
 
 import lombok.AccessLevel;
@@ -42,7 +43,8 @@ public class RepositoryBean {
 	@Column(name="id", updatable=false)
 	private Integer id;
 	
-	@ManyToOne
+	@NotNull
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="organization_id")
 	private OrganizationBean organization;
 
@@ -69,10 +71,10 @@ public class RepositoryBean {
 	 * to git materials.
 	 */
 	@Getter(AccessLevel.NONE)
-	private List<CommitBean> commits = new ArrayList<CommitBean>();
+	private List<CommitBean> commits;
 
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	private List<RepositoryMemberMapBean> repositoryMemberMaps;
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
@@ -126,6 +128,9 @@ public class RepositoryBean {
 		Collection<TagBean> get() throws IOException, GitAPIException;
 	}
 	
+	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	private List<ReviewBean> reviews;
+	
 	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();
 		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
@@ -141,7 +146,10 @@ public class RepositoryBean {
 	}
 	
 	public void addMember (MemberBean member, RepositoryMemberRole role) {
-		RepositoryMemberMapBean map = new RepositoryMemberMapBean(this, member, role);
+		RepositoryMemberMapBean map = new RepositoryMemberMapBean();
+		map.setRepository(this);
+		map.setMember(member);
+		map.setRole(role);
 		repositoryMemberMaps.add(map);
 	}
 	

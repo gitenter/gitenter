@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gitenter.domain.git.CommitBean;
-import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.ValidCommitBean;
 import com.gitenter.domain.git.FileBean;
 import com.gitenter.domain.git.FolderBean;
 import com.gitenter.domain.git.PathBean;
@@ -26,14 +26,14 @@ import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
-public class CommitImpl implements CommitRepository {
+public class CommitRepositoryImpl implements CommitRepository {
 
-	@Autowired private CommitDatabaseRepository commitDatabaseRepository;
+	@Autowired private CommitDatabaseRepository databaseRepository;
 	@Autowired private GitSource gitSource;
 	
 	public Optional<CommitBean> findById(Integer id) throws IOException, GitAPIException {
 		
-		Optional<CommitBean> items = commitDatabaseRepository.findById(id);
+		Optional<CommitBean> items = databaseRepository.findById(id);
 		
 		if (items.isPresent()) {
 			CommitBean item = items.get();
@@ -45,7 +45,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
+		List<CommitBean> items = databaseRepository.findByRepositoryIdAndSha(repositoryId, commitSha);
 		
 		for (CommitBean item : items) {
 			updateFromGit(item);
@@ -56,7 +56,7 @@ public class CommitImpl implements CommitRepository {
 	
 	public List<CommitBean> findByRepositoryIdAndCommitShaIn(Integer repositoryId, List<String> commitShas) throws IOException, GitAPIException {
 		
-		List<CommitBean> items = commitDatabaseRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
+		List<CommitBean> items = databaseRepository.findByRepositoryIdAndShaIn(repositoryId, commitShas);
 		
 		/*
 		 * TODO:
@@ -81,23 +81,23 @@ public class CommitImpl implements CommitRepository {
 		
 		commit.setFromGit(gitCommit);
 		
-		if (commit instanceof CommitValidBean) {
-			CommitValidBean validCommit = (CommitValidBean)commit;
+		if (commit instanceof ValidCommitBean) {
+			ValidCommitBean validCommit = (ValidCommitBean)commit;
 			validCommit.setRootPlaceholder(new ProxyRootPlaceholder(validCommit, gitCommit));
 			validCommit.setFilePlaceholder(new FilePlaceholderImpl(validCommit, gitCommit));
 		}
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {
-		return commitDatabaseRepository.saveAndFlush(commit);
+		return databaseRepository.saveAndFlush(commit);
 	}
 	
-	private static class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements CommitValidBean.RootPlaceholder {
+	private static class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements ValidCommitBean.RootPlaceholder {
 
-		final private CommitValidBean commit;
+		final private ValidCommitBean commit;
 		final private GitCommit gitCommit;
 		
-		protected ProxyRootPlaceholder(CommitValidBean commit, GitCommit gitCommit) {
+		protected ProxyRootPlaceholder(ValidCommitBean commit, GitCommit gitCommit) {
 			this.commit = commit;
 			this.gitCommit = gitCommit;
 		}
@@ -109,12 +109,12 @@ public class CommitImpl implements CommitRepository {
 		}
 	}
 	
-	private static class FilePlaceholderImpl implements CommitValidBean.FilePlaceholder {
+	private static class FilePlaceholderImpl implements ValidCommitBean.FilePlaceholder {
 
-		final private CommitValidBean commit;
+		final private ValidCommitBean commit;
 		final private GitCommit gitCommit;
 		
-		protected FilePlaceholderImpl(CommitValidBean commit, GitCommit gitCommit) {
+		protected FilePlaceholderImpl(ValidCommitBean commit, GitCommit gitCommit) {
 			this.commit = commit;
 			this.gitCommit = gitCommit;
 		}
@@ -128,7 +128,7 @@ public class CommitImpl implements CommitRepository {
 		
 	}
 	
-	private static FileBean getFileBean(GitFile gitFile, CommitValidBean commit) {
+	private static FileBean getFileBean(GitFile gitFile, ValidCommitBean commit) {
 		
 		FileBean file = new FileBean();
 		file.setFromGit(gitFile);
@@ -137,7 +137,7 @@ public class CommitImpl implements CommitRepository {
 		return file;
 	}
 	
-	private static FolderBean getFolderBean(GitFolder gitFolder, CommitValidBean commit) {
+	private static FolderBean getFolderBean(GitFolder gitFolder, ValidCommitBean commit) {
 		
 		FolderBean folder = new FolderBean();
 		folder.setFromGit(gitFolder);

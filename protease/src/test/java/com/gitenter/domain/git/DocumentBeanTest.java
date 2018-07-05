@@ -18,10 +18,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.git.DocumentRepository;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,15 +32,14 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
 public class DocumentBeanTest {
 	
 	@Autowired DocumentRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException, ParseException {
 		
 		DocumentBean item = repository.findById(1).get();
@@ -59,6 +58,12 @@ public class DocumentBeanTest {
 		assertEquals(traceableItem.getUpstreamItems().get(0).getItemTag(), traceableItem.getItemTag());
 	}
 	
+	/*
+	 * TODO:
+	 * Should we remove the nontrivial constructor of "TraceableItemBean",
+	 * and initialize "DocumentBean" only through the ORM (so
+	 * "List<TraceableItemBean> traceableItems" is naturally initialized)?
+	 */
 	@Test
 	public void testAddTraceableItem() {
 		

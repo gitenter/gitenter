@@ -27,7 +27,7 @@ import com.gitenter.domain.auth.OrganizationBean;
 import com.gitenter.domain.auth.RepositoryBean;
 import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.domain.git.CommitBean;
-import com.gitenter.domain.git.CommitValidBean;
+import com.gitenter.domain.git.ValidCommitBean;
 import com.gitenter.gitar.*;
 import com.gitenter.gitar.temp.GitLog;
 import com.gitenter.gitar.temp.GitRepository;
@@ -209,7 +209,7 @@ public class ManagerAdminController {
 			 */
 			GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);
 			CommitSha commitSha = gitLog.getCommitInfos().get(0).getCommitSha();
-			CommitBean commit = new CommitValidBean(repository, commitSha);
+			CommitBean commit = new ValidCommitBean(repository, commitSha);
 			repository.addCommit(commit);
 		}
 		
