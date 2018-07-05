@@ -9,6 +9,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 @DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
 @DatabaseSetup(connection="schemaReviewDatabaseConnection", value="classpath:dbunit/minimal/review.xml")
-public @interface DbUnitMinimalData {
+public @interface DbUnitMinimalDataSetup {
 	
 }

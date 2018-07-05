@@ -341,7 +341,7 @@ CREATE TABLE review.review_meeting_record (
 	id serial PRIMARY KEY REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
 	review_meeting_id serial REFERENCES review.review_meeting (id) ON DELETE CASCADE,
 
-	context text,
+	content text,
 	record_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -354,7 +354,7 @@ CREATE TABLE review.comment (
 	discussion_topic_id serial REFERENCES review.online_discussion_topic (id) ON DELETE CASCADE,
 	attendee_id serial REFERENCES review.attendee (id) ON DELETE CASCADE,
 
-	context text,
+	content text,
 	comment_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

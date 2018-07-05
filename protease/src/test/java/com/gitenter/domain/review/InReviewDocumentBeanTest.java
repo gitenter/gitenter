@@ -18,7 +18,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.annotation.DbUnitMinimalData;
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.git.DocumentRepository;
 import com.gitenter.domain.git.DocumentBean;
 import com.gitenter.protease.ProteaseConfig;
@@ -46,7 +46,7 @@ public class InReviewDocumentBeanTest {
 
 	@Test
 	@Transactional
-	@DbUnitMinimalData
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimal() throws IOException, GitAPIException {
 		
 		DocumentBean item = repository.findById(1).get();
@@ -76,7 +76,7 @@ public class InReviewDocumentBeanTest {
 				assertTrue(discussionTopic instanceof ReviewMeetingRecordBean);
 				ReviewMeetingRecordBean record = (ReviewMeetingRecordBean)discussionTopic;
 				
-				assertEquals(record.getContext(), "review meeting record context");
+				assertEquals(record.getContent(), "review meeting record content");
 			}
 			else if (discussionTopic.getId().equals(2)) {		
 				assertEquals(discussionTopic.getLineNumber(), new Integer(2));
@@ -86,7 +86,7 @@ public class InReviewDocumentBeanTest {
 				
 				assertEquals(onlineTopic.getComments().size(), 1);
 				assertEquals(onlineTopic.getComments().get(0).getAttendee().getMember().getUsername(), "username");
-				assertEquals(onlineTopic.getComments().get(0).getContext(), "comment context");
+				assertEquals(onlineTopic.getComments().get(0).getContent(), "comment content");
 			}
 		}
 	}

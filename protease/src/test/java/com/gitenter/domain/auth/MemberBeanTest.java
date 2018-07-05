@@ -1,6 +1,7 @@
 package com.gitenter.domain.auth;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -17,13 +18,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.auth.MemberRepository;
-import com.gitenter.domain.auth.MemberBean;
-import com.gitenter.domain.auth.OrganizationMemberRole;
-import com.gitenter.domain.auth.RepositoryMemberRole;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,14 +32,14 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
 public class MemberBeanTest {
 
 	@Autowired MemberRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
 		
 		MemberBean item = repository.findById(1).get();

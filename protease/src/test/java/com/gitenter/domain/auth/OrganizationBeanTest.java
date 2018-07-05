@@ -14,12 +14,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.auth.OrganizationRepository;
-import com.gitenter.domain.auth.OrganizationBean;
-import com.gitenter.domain.auth.OrganizationMemberRole;
-import com.gitenter.protease.*;
+import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,14 +28,14 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
 public class OrganizationBeanTest {
 
 	@Autowired private OrganizationRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws Exception {
 		
 		OrganizationBean item = repository.findById(1).get();

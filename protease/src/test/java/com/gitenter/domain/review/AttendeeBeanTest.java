@@ -14,7 +14,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.annotation.DbUnitMinimalData;
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.review.AttendeeRepository;
 import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -35,7 +35,7 @@ public class AttendeeBeanTest {
 
 	@Test
 	@Transactional
-	@DbUnitMinimalData
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimal() {
 		
 		AttendeeBean item = repository.findById(1).get();

@@ -1,15 +1,9 @@
 package com.gitenter.domain.git;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
@@ -24,12 +18,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.dao.auth.RepositoryRepository;
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.git.CommitRepository;
-import com.gitenter.domain.auth.RepositoryBean;
-import com.gitenter.domain.auth.RepositoryMemberRole;
-import com.gitenter.domain.git.BranchBean;
-import com.gitenter.protease.*;
+import com.gitenter.protease.ProteaseConfig;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -42,15 +33,14 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
 public class CommitBeanTest {
 
 	@Autowired CommitRepository repository;
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException, ParseException {
 		
 		CommitBean item = repository.findById(1).get();

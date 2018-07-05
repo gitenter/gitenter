@@ -26,8 +26,8 @@ public class ReviewMeetingRecordBean extends DiscussionTopicBean {
 	@JoinColumn(name="review_meeting_id")
 	private ReviewMeetingBean reviewMeeting;
 	
-	@Column(name="context", updatable=false)
-	private String context;
+	@Column(name="content", updatable=false)
+	private String content;
 	
 	@NotNull
 	@Column(name="record_at", updatable=false)

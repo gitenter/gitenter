@@ -42,8 +42,8 @@ public class CommentBean {
 	@JoinColumn(name="attendee_id")
 	private AttendeeBean attendee;
 	
-	@Column(name="context", updatable=false)
-	private String context;
+	@Column(name="content", updatable=false)
+	private String content;
 	
 	@NotNull
 	@Column(name="comment_at", updatable=false)

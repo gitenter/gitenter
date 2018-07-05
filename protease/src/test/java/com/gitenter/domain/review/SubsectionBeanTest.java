@@ -18,7 +18,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.annotation.DbUnitMinimalData;
+import com.gitenter.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.dao.git.CommitRepository;
 import com.gitenter.domain.git.CommitBean;
 import com.gitenter.protease.ProteaseConfig;
@@ -48,7 +48,7 @@ public class SubsectionBeanTest {
 
 	@Test
 	@Transactional
-	@DbUnitMinimalData
+	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimal() throws IOException, GitAPIException {
 		
 		CommitBean item = repository.findById(1).get();

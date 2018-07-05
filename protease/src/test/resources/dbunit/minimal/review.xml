@@ -13,9 +13,9 @@
     <review_meeting id="1" subsection_id="1" />
     <review_meeting_attendee_map attendee_id="1" review_meeting_id="1" />
     <discussion_topic id="1" document_id="1" line_number="1" />
-    <review_meeting_record id="1" review_meeting_id="1" context="review meeting record context" />
+    <review_meeting_record id="1" review_meeting_id="1" content="review meeting record content" />
 
     <discussion_topic id="2" document_id="1" line_number="2" />
     <online_discussion_topic id="2" />
-    <comment id="1" discussion_topic_id="2" attendee_id="1" context="comment context" />
+    <comment id="1" discussion_topic_id="2" attendee_id="1" content="comment content" />
 </dataset>
