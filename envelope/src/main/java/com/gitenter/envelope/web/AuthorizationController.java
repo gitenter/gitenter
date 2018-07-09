@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.gitenter.envelope.dto.LoginDTO;
 import com.gitenter.envelope.dto.SignUpDTO;
 import com.gitenter.envelope.service.AnonymousService;
 
@@ -18,7 +20,7 @@ public class AuthorizationController {
 	@Autowired private AnonymousService anonymousService;
 
 	@RequestMapping(value="/register", method=RequestMethod.GET)
-	public String registerUser (Model model) {
+	public String showRegisterForm (Model model) {
 		
 		/* 
 		 * The modelAttribute NEED to be the same as the class name,
@@ -46,16 +48,16 @@ public class AuthorizationController {
 		return "redirect:/";
 	}
 	
-//	@RequestMapping(value="/login", method=RequestMethod.GET)
-//	public String showLoginForm (
-//			Model model,
-//			@RequestParam(value="error", required=false) String error) {
-//		
-//		if (error != null) {
-//			model.addAttribute("message", "Invalid username and password!");
-//		}
-//
-//		model.addAttribute("memberLoginBean", new MemberLoginDTO());
-//		return "authorization/login";
-//	}
+	@RequestMapping(value="/login", method=RequestMethod.GET)
+	public String showLoginForm (
+			Model model,
+			@RequestParam(value="error", required=false) String error) {
+		
+		if (error != null) {
+			model.addAttribute("message", "Invalid username and password!");
+		}
+
+		model.addAttribute("loginDTO", new LoginDTO());
+		return "authorization/login";
+	}
 }
