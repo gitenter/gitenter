@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>enterovirus</groupId>
+	<groupId>com.gitenter</groupId>
 	<artifactId>protease</artifactId>
 	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
@@ -16,7 +16,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring-version>5.0.2.RELEASE</spring-version>
+		<spring-version>5.0.6.RELEASE</spring-version>
 		<unitils-version>3.4.6</unitils-version>
 	</properties>
 
