@@ -7,7 +7,6 @@ public enum RepositoryMemberRole {
 
 	ORGANIZER('O', "Project organizer"),
 	EDITOR('E', "Document editor"),
-	REVIEWER('R', "Document reviewer"),
 	BLACKLIST('B', "Blacklist");
 	
 	private Character shortName;
@@ -24,8 +23,6 @@ public enum RepositoryMemberRole {
 			return ORGANIZER;
 		case 'E':
 			return EDITOR;
-		case 'R':
-			return REVIEWER;
 		case 'B':
 			return BLACKLIST;
 		

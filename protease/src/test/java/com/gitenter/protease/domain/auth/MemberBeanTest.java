@@ -63,7 +63,7 @@ public class MemberBeanTest {
 		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
 		assertEquals(item.getOrganizations(OrganizationMemberRole.MEMBER).size(), 0);
 
-		assertEquals(item.getRepositories(RepositoryMemberRole.REVIEWER).size(), 1);
+		assertEquals(item.getRepositories(RepositoryMemberRole.EDITOR).size(), 1);
 		assertEquals(item.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
 	}
 }
