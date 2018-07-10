@@ -45,7 +45,7 @@ public class AuthorizationController {
 		}
 		
 		anonymousService.signUp(signUpDTO);
-		return "redirect:/";
+		return "redirect:/login";
 	}
 	
 	@RequestMapping(value="/login", method=RequestMethod.GET)

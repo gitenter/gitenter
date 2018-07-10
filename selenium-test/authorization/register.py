@@ -1,8 +1,10 @@
 import unittest
 import random
-from urllib.parse import urljoin
+import time
+from urllib.parse import urlparse, urljoin
 
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 root_url = "http://localhost:8887"
 
@@ -15,6 +17,10 @@ class TestSignUp(unittest.TestCase):
     def tearDown(self):
         self.driver.close()
 
+    def test_redirect_to_login_for_authorized_pate(self):
+        self.driver.get(urljoin(root_url, "/"))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
     def test_register_and_successfully_login_fill_form(self):
         distingisher = str(random.randint(0, 10000))
 
@@ -24,12 +30,15 @@ class TestSignUp(unittest.TestCase):
         email = "username"+distingisher+"@email.com"
 
         self.driver.get(urljoin(root_url, "register"))
-
         assert "GitEnter" in self.driver.title
         assert "Register" in self.driver.page_source
 
         self._signup_fill_form(self.driver, username, password, display_name, email)
 
+        # Redirect to login after register
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
+        # Login with just registered username and password
         self.driver.get(urljoin(root_url, "login"))
         assert "Log in" in self.driver.page_source
 
@@ -39,19 +48,25 @@ class TestSignUp(unittest.TestCase):
         # TODO:
         # Check the user can successfully login.
 
-        # print(self.driver.get_cookies())
-
         self.driver.get(urljoin(root_url, "logout"))
 
         # Logout and login again with remember_me checked
         self.driver.get(urljoin(root_url, "login"))
 
         self._login_fill_form(self.driver, username, password, remember_me=True)
-        self.assertEqual(len(self.driver.get_cookies()), 2)
-        self.assertEqual(self.driver.get_cookies()[0]['name'], 'remember-me')
-        self.assertTrue(self.driver.get_cookies()[0]['expiry'] > 0)
 
-        self.driver.get(urljoin(root_url, "login"))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/")
+        self.assertEqual(len(self.driver.get_cookies()), 2)
+
+        find_cookie = False
+        for cookie in self.driver.get_cookies():
+            if cookie["name"] == "remember-me":
+                self.assertEqual(cookie["domain"], urlparse(self.driver.current_url).hostname)
+                self.assertAlmostEqual(cookie["expiry"] - float(time.time()), 2419200, delta=1)
+                find_cookie = True
+        self.assertTrue(find_cookie)
+
+        self.driver.get(urljoin(root_url, "logout"))
 
     def test_login_fill_form_with_nonexistent_user(self):
         username = "nonexistent_username"
@@ -71,6 +86,7 @@ class TestSignUp(unittest.TestCase):
         self.driver.get(urljoin(root_url, "register"))
         self._signup_fill_form(self.driver, username, password, display_name, email)
 
+        self.assertEqual(urlparse(self.driver.current_url).path, "/register")
         assert "size" in self.driver.find_element_by_id("username.errors").text
         assert "size" in self.driver.find_element_by_id("password.errors").text
         assert "size" in self.driver.find_element_by_id("displayName.errors").text
