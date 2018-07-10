@@ -1,10 +1,12 @@
+import unittest
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-import unittest
 from selenium import webdriver
 from urllib.parse import urlparse
 
-from lib.config import *
+from setup.config import (
+    STSConfig
+)
 
 
 class GitEnterTest(unittest.TestCase):
@@ -38,3 +40,5 @@ class GitEnterTest(unittest.TestCase):
             + " WHERE pg_stat_activity.datname = '{}';".format(dbname))
         cursor.execute("DROP DATABASE IF EXISTS {};".format(dbname))
         cursor.execute("CREATE DATABASE {} TEMPLATE {};".format(dbname, template_dbname))
+
+        conn.close()

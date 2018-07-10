@@ -31,5 +31,5 @@ Add add-ons (a.k.a Selenium IDEs) to the existing browsers ([Chrome](https://chr
 ## Run Tests
 
 ```
-python3 -m unittest test.authorization.register
+python3 -m unittest test.authorization
 ```
