@@ -5,17 +5,33 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.dao.auth.MemberRepository;
+import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
+import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
+import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 
+/*
+ * It is quite ironical that Spring @autowired are contradict with
+ * object-oriented programming. Say a more OO approach is we have
+ * a domain class "Member" which:
+ * (1) hold its own information such as its "username", and
+ * (2) can "createOrganization()" so need to @autowired "*Repository" in.
+ * But it seems impossible in the current framework.
+ * 
+ * Therefore, these classes will go with really procedured approach. 
+ */
 @Service
 public class MemberServiceImpl implements MemberService {
 
-	@Autowired private MemberRepository memberRepository;
+	@Autowired MemberRepository memberRepository;
+	@Autowired OrganizationRepository organizationRepository;
+	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
 	@Override
 	public Collection<OrganizationBean> getManagedOrganizations(String username) {
@@ -25,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Collection<OrganizationBean> getAccessibleOrganizations(String username) {
+	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
 		
 		/* 
 		 * I believe that Hibernate should be smart enough that when
@@ -50,10 +66,36 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Collection<RepositoryBean> getEditableRepositories(String username) {
+	public Collection<RepositoryBean> getAuthoredRepositories(String username) {
 		
 		MemberBean member = memberRepository.findByUsername(username).get(0);
 		return member.getRepositories(RepositoryMemberRole.EDITOR);
+	}
+	
+	@Override
+	public void createOrganization(String username, OrganizationDTO organizationDTO) {
+		
+		MemberBean member = memberRepository.findByUsername(username).get(0);
+		
+		OrganizationBean organization = new OrganizationBean();
+		organization.setName(organizationDTO.getName());
+		organization.setDisplayName(organizationDTO.getDisplayName());
+		
+		/*
+		 * Need to save first. Otherwise when saving 
+		 * "OrganizationMemberMapBean", non-null error will
+		 * be raised for "organization_id" column.
+		 */
+		organizationRepository.saveAndFlush(organization);
+		
+		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MANAGER);
+		
+		/*
+		 * Cannot using "memberRepository" or "organizationRepository"
+		 * to save. It will double-insert the target row and cause primary
+		 * key error.
+		 */
+		organizationMemberMapRepository.saveAndFlush(map);
 	}
 
 }

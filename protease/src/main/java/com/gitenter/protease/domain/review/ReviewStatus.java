@@ -1,9 +1,11 @@
 package com.gitenter.protease.domain.review;
 
+import com.gitenter.protease.domain.Role;
+
 import lombok.Getter;
 
 @Getter
-public enum ReviewStatus {
+public enum ReviewStatus implements Role {
 
 	APPROVED('A', "approved"),
 	APPROVED_WITH_POSTSCRIPTS('P', "approved with postscript"),

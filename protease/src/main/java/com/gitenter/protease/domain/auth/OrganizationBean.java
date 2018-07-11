@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "organization")
-public class OrganizationBean {
+public class OrganizationBean extends ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -45,7 +47,7 @@ public class OrganizationBean {
 	private List<RepositoryBean> repositories;
 
 	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<OrganizationMemberMapBean> organizationMemberMaps;
+	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
 	
 	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();
@@ -55,6 +57,10 @@ public class OrganizationBean {
 			}
 		}
 		return items;
+	}
+	
+	void addMap(OrganizationMemberMapBean map) {
+		organizationMemberMaps.add(map);
 	}
 	
 	/*

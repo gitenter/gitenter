@@ -1,9 +1,11 @@
 package com.gitenter.protease.domain.auth;
 
+import com.gitenter.protease.domain.Role;
+
 import lombok.Getter;
 
 @Getter
-public enum OrganizationMemberRole {
+public enum OrganizationMemberRole implements Role {
 
 	MANAGER('G', "Non-professional manager"),
 	MEMBER('M', "Ordinary member");

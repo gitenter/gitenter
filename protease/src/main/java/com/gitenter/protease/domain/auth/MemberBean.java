@@ -21,6 +21,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +30,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "member")
-public class MemberBean {
+public class MemberBean extends ModelBean {
 
 	/*
 	 * @GeneratedValue for automatically generate primary keys.
@@ -110,6 +112,14 @@ public class MemberBean {
 			}
 		}
 		return items;
+	}
+	
+	void addMap(OrganizationMemberMapBean map) {
+		organizationMemberMaps.add(map);
+	}
+	
+	void addMap(RepositoryMemberMapBean map) {
+		repositoryMemberMaps.add(map);
 	}
 	
 	public boolean addSshKey(SshKeyBean sshKey) {

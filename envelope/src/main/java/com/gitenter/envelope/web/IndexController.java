@@ -14,7 +14,7 @@ public class IndexController {
 	@Autowired MemberService memberService;
 
 	@RequestMapping("/")
-	public String main(Model model, Authentication authentication) throws Exception {
+	public String showMainPage(Model model, Authentication authentication) throws Exception {
 		
 		String username = authentication.getName();
 		
@@ -26,9 +26,9 @@ public class IndexController {
 		 * the service layer.
 		 */
 		model.addAttribute("managedOrganizations", memberService.getManagedOrganizations(username));
-		model.addAttribute("accessibleOrganizations", memberService.getAccessibleOrganizations(username));
+		model.addAttribute("belongedOrganizations", memberService.getBelongedOrganizations(username));
 		model.addAttribute("organizedRepositories", memberService.getOrganizedRepositories(username));
-		model.addAttribute("editableRepositories", memberService.getEditableRepositories(username));
+		model.addAttribute("authoredRepositories", memberService.getAuthoredRepositories(username));
 
 		return "index/main";
 	}

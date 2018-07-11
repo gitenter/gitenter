@@ -7,15 +7,15 @@
     </nav>
     <article>
       <div class="left-wide">
-        <h3>Involved repositories</h3>
-        <c:forEach var="map" items="${repositoryMemberMaps}">
-          <c:set var="repository" value="${map.repository}" />
-          <h5>
-            <a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a>
-            <span class="explanation">: <c:out value="${map.role.displayName}" /></span>
-          </h5>
-          <p><c:out value="${repository.description}" /></p>
+        <h3>Organized Repositories</h3>
+        <c:forEach var="repository" items="${organizedRepositories}">
+          <h5><a href="<s:url value="/organizations/${repository.id}" />">${repository.displayName}</a></h5>
         </c:forEach>
+        <h3>Authored Repositories</h3>
+        <c:forEach var="repository" items="${organizedRepositories}">
+          <h5><a href="<s:url value="/organizations/${repository.id}" />">${repository.displayName}</a></h5>
+        </c:forEach>
+        <h3>Currently reviewed repository</h3>
       </div>
       <div class="right-narrow">
         <h3>
@@ -25,7 +25,11 @@
             <input type="submit" value="+" />
           </sf:form>
         </h3>
-        <c:forEach var="organization" items="${organizations}">
+        <c:forEach var="organization" items="${managedOrganizations}">
+          <h5><a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a></h5>
+        </c:forEach>
+        <h3>Belonged organizations</h3>
+        <c:forEach var="organization" items="${belongedOrganizations}">
           <h5><a href="<s:url value="/organizations/${organization.id}" />">${organization.displayName}</a></h5>
         </c:forEach>
       </div>

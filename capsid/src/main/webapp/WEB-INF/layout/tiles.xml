@@ -43,7 +43,7 @@
 
   <definition name="git-navigation/setup-a-new-repository" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/setup-a-new-repository.jsp" />
-  </definition>  
+  </definition>
   <definition name="git-navigation/commit" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/commit.jsp" />
   </definition>

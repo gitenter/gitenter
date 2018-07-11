@@ -1,9 +1,11 @@
 package com.gitenter.protease.domain.auth;
 
+import com.gitenter.protease.domain.Role;
+
 import lombok.Getter;
 
 @Getter
-public enum RepositoryMemberRole {
+public enum RepositoryMemberRole implements Role {
 
 	ORGANIZER('O', "Project organizer"),
 	EDITOR('E', "Document editor"),
