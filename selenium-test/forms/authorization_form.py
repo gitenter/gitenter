@@ -33,7 +33,10 @@ def fill_login_form(driver, username, password, remember_me=False):
     form_start = driver.find_element_by_id("username")
     form_start.send_keys(username)
     driver.find_element_by_id("password").send_keys(password)
-    if remember_me:
+
+    # By default, "remember_me" is clicked. So here is to
+    # unclick it.
+    if not remember_me:
         driver.find_element_by_id("remember_me").click()
 
     form_start.submit()

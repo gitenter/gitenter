@@ -12,11 +12,11 @@
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
- <%--         <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)">--%>
+<%--          <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)">--%>
             <sf:form method="GET" action="${create_repo_url}">
               <input type="submit" value="+" />
             </sf:form>
- <%--         </security:authorize>--%>
+<%--          </security:authorize>--%>
         </h3>
         <c:forEach var="repository" items="${repositories}">
           <h5>
