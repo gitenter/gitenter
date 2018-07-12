@@ -21,7 +21,7 @@
           <tr>
             <td></td>
             <td class="word">
-              <input id="remember_me" name="remember-me" type="checkbox"/>
+              <input id="remember_me" name="remember-me" type="checkbox" checked />
               <label for="remember_me">Remember me</label>
             </td>
           </tr>

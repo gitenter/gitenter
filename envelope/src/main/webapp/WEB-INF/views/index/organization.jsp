@@ -12,20 +12,20 @@
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
-          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
+ <%--         <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)">--%>
             <sf:form method="GET" action="${create_repo_url}">
               <input type="submit" value="+" />
             </sf:form>
-          </security:authorize>
+ <%--         </security:authorize>--%>
         </h3>
-        <c:forEach var="repository" items="${organization.repositories}">
+        <c:forEach var="repository" items="${repositories}">
           <h5>
             <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a>
             <span class="explanation">: 
               <c:if test="${repository.isPublic.equals(true)}">Public</c:if>
               <c:if test="${repository.isPublic.equals(false)}">Private</c:if>
             </span>
-            <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
+ <%--           <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)">--%>
               <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
               <sf:form method="GET" action="${repo_settings_url}">
                 <input type="submit" value="Settings" />
@@ -34,7 +34,7 @@
               <sf:form method="GET" action="${repo_collaborators_url}">
                 <input type="submit" value="Collaborators" />
               </sf:form>
-          	</security:authorize>
+ <%--         	</security:authorize>--%>
           </h5>
           <p><c:out value="${repository.description}" /></p>
         </c:forEach>
@@ -42,15 +42,15 @@
       <div class="right-narrow">
         <h3>
           Managers
-          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
+<%--          <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)"> --%>
             <s:url var="manager_url" value="/organizations/${organization.id}/managers" />
             <sf:form method="GET" action="${manager_url}">
               <input type="submit" value="Settings" />
             </sf:form>
-          </security:authorize>
+<%--          </security:authorize> --%>
         </h3>
         <ul class="user-list">
-          <c:forEach var="member" items="${organization.managers}">
+          <c:forEach var="member" items="${managers}">
             <li><span class="user"><c:out value="${member.displayName}" /></span></li>
           </c:forEach>
         </ul>

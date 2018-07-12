@@ -34,14 +34,12 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
 	@Override
-	public Collection<OrganizationBean> getManagedOrganizations(String username) {
-		
-		MemberBean member = memberRepository.findByUsername(username).get(0);
-		return member.getOrganizations(OrganizationMemberRole.MANAGER);
+	public MemberBean getMember(String username) {
+		return memberRepository.findByUsername(username).get(0);
 	}
-
+	
 	@Override
-	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
+	public Collection<OrganizationBean> getManagedOrganizations(String username) {
 		
 		/* 
 		 * I believe that Hibernate should be smart enough that when
@@ -52,30 +50,38 @@ public class MemberServiceImpl implements MemberService {
 		 * 
 		 * If not, we need to find out a smarter way to handle the case of listing 
 		 * all organizations (we can have it iterated/filtered multiple times 
-		 * when display).
+		 * when display), for example a dirty fix of implement a proxy pattern
+		 * inside of the "getMember()" method
 		 */
-		MemberBean member = memberRepository.findByUsername(username).get(0);
+		MemberBean member = getMember(username);
+		return member.getOrganizations(OrganizationMemberRole.MANAGER);
+	}
+
+	@Override
+	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
+		
+		MemberBean member = getMember(username);
 		return member.getOrganizations(OrganizationMemberRole.MEMBER);
 	}
 
 	@Override
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) {
 		
-		MemberBean member = memberRepository.findByUsername(username).get(0);
+		MemberBean member = getMember(username);
 		return member.getRepositories(RepositoryMemberRole.ORGANIZER);
 	}
 
 	@Override
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) {
 		
-		MemberBean member = memberRepository.findByUsername(username).get(0);
+		MemberBean member = getMember(username);
 		return member.getRepositories(RepositoryMemberRole.EDITOR);
 	}
 	
 	@Override
 	public void createOrganization(String username, OrganizationDTO organizationDTO) {
 		
-		MemberBean member = memberRepository.findByUsername(username).get(0);
+		MemberBean member = getMember(username);
 		
 		OrganizationBean organization = new OrganizationBean();
 		organization.setName(organizationDTO.getName());
@@ -97,5 +103,4 @@ public class MemberServiceImpl implements MemberService {
 		 */
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
-
 }
