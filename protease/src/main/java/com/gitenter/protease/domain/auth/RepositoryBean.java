@@ -74,7 +74,7 @@ public class RepositoryBean {
 	private List<CommitBean> commits;
 
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps;
+	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
@@ -145,13 +145,17 @@ public class RepositoryBean {
 		commits.add(commit);
 	}
 	
-	public void addMember (MemberBean member, RepositoryMemberRole role) {
-		RepositoryMemberMapBean map = new RepositoryMemberMapBean();
-		map.setRepository(this);
-		map.setMember(member);
-		map.setRole(role);
+	void addMap(RepositoryMemberMapBean map) {
 		repositoryMemberMaps.add(map);
 	}
+	
+//	public void addMember (MemberBean member, RepositoryMemberRole role) {
+//		RepositoryMemberMapBean map = new RepositoryMemberMapBean();
+//		map.setRepository(this);
+//		map.setMember(member);
+//		map.setRole(role);
+//		repositoryMemberMaps.add(map);
+//	}
 	
 	/*
 	 * Not working, because repositoryRepository.saveAndFlush() cannot 

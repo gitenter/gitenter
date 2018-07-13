@@ -59,6 +59,11 @@ public class OrganizationBean extends ModelBean {
 		return items;
 	}
 	
+	public void addRepository(RepositoryBean repository) {
+		repository.setOrganization(this);
+		repositories.add(repository);
+	}
+	
 	void addMap(OrganizationMemberMapBean map) {
 		organizationMemberMaps.add(map);
 	}

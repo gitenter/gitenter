@@ -33,4 +33,6 @@ public interface RepositoryMemberMapRepository extends CrudRepository<Repository
 	
 	public void delete (RepositoryMemberMapBean map);
 	public void deleteById (Integer mapId);
+	
+	public RepositoryMemberMapBean saveAndFlush(RepositoryMemberMapBean map);
 }

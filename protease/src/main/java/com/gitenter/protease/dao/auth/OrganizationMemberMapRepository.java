@@ -6,5 +6,5 @@ import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 
 public interface OrganizationMemberMapRepository extends PagingAndSortingRepository<OrganizationMemberMapBean, Integer> {
 
-	OrganizationMemberMapBean saveAndFlush(OrganizationMemberMapBean member);
+	public OrganizationMemberMapBean saveAndFlush(OrganizationMemberMapBean map);
 }

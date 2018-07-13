@@ -59,6 +59,7 @@ public class RepositoryBeanTest {
 		assertEquals(item.getDescription(), "Repo description");
 		assertEquals(item.getIsPublic(), true);
 
+		assertEquals(item.getMembers(RepositoryMemberRole.ORGANIZER).size(), 0);
 		assertEquals(item.getMembers(RepositoryMemberRole.EDITOR).size(), 1);
 		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
 	}

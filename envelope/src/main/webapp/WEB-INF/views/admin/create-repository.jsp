@@ -9,7 +9,7 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" modelAttribute="repositoryBean" >
+      <sf:form method="POST" modelAttribute="repositoryDTO" >
         <table class="fill-in">
           <tr>
             <td>Name</td>
@@ -42,8 +42,8 @@
           <tr>
             <td>Initialization with setup files?</td>
             <td class="word">
-              <input type="radio" name="include_setup_files" id="include_setup_files_yes" value="true" checked /><label for="include_setup_files_yes">Yes</label>
-              <input type="radio" name="include_setup_files" id="include_setup_files_no" value="false" /><label for="include_setup_files_no">No</label>
+              <input type="radio" name="include_setup_files" id="include_setup_files_yes" value="true" /><label for="include_setup_files_yes">Yes</label>
+              <input type="radio" name="include_setup_files" id="include_setup_files_no" value="false" checked /><label for="include_setup_files_no">No</label>
             </td>
           </tr>
           <tr>

@@ -54,5 +54,4 @@ public class OrganizationServiceImpl implements OrganizationService {
 		OrganizationBean organization = getOrganization(organizationId);
 		return organization.getRepositories();
 	}
-
 }

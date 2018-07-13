@@ -21,10 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.domain.auth.MemberBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberRole;
-import com.gitenter.protease.domain.auth.RepositoryMemberRole;
-import com.gitenter.protease.domain.auth.SshKeyBean;
+import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
+import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -39,14 +37,17 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
 public class MemberBeanTest {
 
-	@Autowired MemberRepository repository;
+	@Autowired MemberRepository memberRepository;
+	
+	@Autowired OrganizationRepository organizationRepository;
+	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
 		
-		MemberBean item = repository.findById(1).get();
+		MemberBean item = memberRepository.findById(1).get();
 		
 		assertEquals(item.getUsername(), "username");
 		assertEquals(item.getPassword(), "password");
@@ -65,5 +66,45 @@ public class MemberBeanTest {
 
 		assertEquals(item.getRepositories(RepositoryMemberRole.EDITOR).size(), 1);
 		assertEquals(item.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
+	}
+	
+	/*
+	 * TODO:
+	 * 
+	 * Rewrite this test under "memberService".
+	 */
+	@Test
+	@Transactional
+	@DbUnitMinimalDataSetup
+	public void testAddNewOrganization() {
+		
+		MemberBean member = memberRepository.findById(1).get();
+		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
+
+		OrganizationBean organization = new OrganizationBean();
+		organization.setName("new_organization");
+		organization.setDisplayName("New Organization");
+		assertEquals(organization.getMembers(OrganizationMemberRole.MANAGER).size(), 0);
+		
+		/*
+		 * Need to save first. Otherwise when saving 
+		 * "OrganizationMemberMapBean", non-null error will
+		 * be raised for "organization_id" column.
+		 */
+		organizationRepository.saveAndFlush(organization);
+		
+		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MANAGER);
+		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 2);
+		assertEquals(organization.getMembers(OrganizationMemberRole.MANAGER).size(), 1);
+		
+		/*
+		 * Cannot using "memberRepository" or "organizationRepository"
+		 * to save. It will double-insert the target row and cause primary
+		 * key error.
+		 */
+		organizationMemberMapRepository.saveAndFlush(map);
+		
+		MemberBean updatedMember = memberRepository.findById(1).get();
+		assertEquals(updatedMember.getOrganizations(OrganizationMemberRole.MANAGER).size(), 2);
 	}
 }

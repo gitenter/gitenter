@@ -34,8 +34,8 @@ class TestOrganizationManagement(GitEnterTest):
         super(TestOrganizationManagement, self).tearDown()
 
     def test_create_organization_and_display_managed_organizations(self):
-        org_name = "special_org"
-        org_display_name = "A Special Organization"
+        org_name = "another_org"
+        org_display_name = "Another Organization"
 
         self.driver.get(urljoin(self.root_url, "/"))
         assert "Managed organizations" in self.driver.page_source

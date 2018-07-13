@@ -51,4 +51,17 @@ public class RepositoryMemberMapBean {
 	@Column(name="role_shortname")
 	@Convert(converter = RepositoryMemberRoleConventer.class)
 	private RepositoryMemberRole role;
+	
+	public static RepositoryMemberMapBean link(RepositoryBean repository, MemberBean member, RepositoryMemberRole role) {
+		
+		RepositoryMemberMapBean map = new RepositoryMemberMapBean();
+		map.repository = repository;
+		map.member = member;
+		map.role = role;
+		
+		repository.addMap(map);
+		member.addMap(map);
+		
+		return map;
+	}
 }
