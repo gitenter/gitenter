@@ -9,7 +9,7 @@ from setup.config import (
 )
 
 
-class GitEnterTest(unittest.TestCase):
+class BaseTestSuite(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome()

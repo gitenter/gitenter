@@ -2,14 +2,14 @@ import unittest
 import time
 from urllib.parse import urlparse, urljoin
 
-from test.testcase import GitEnterTest
+from testsuite.base_testsuite import BaseTestSuite
 from forms.authorization_form import (
     fill_signup_form,
     fill_login_form
 )
 
 
-class TestAuthorization(GitEnterTest):
+class TestAuthorization(BaseTestSuite):
 
     def setUp(self):
         super(TestAuthorization, self).setUp()

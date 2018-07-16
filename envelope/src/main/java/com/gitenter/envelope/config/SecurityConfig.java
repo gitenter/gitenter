@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //				 * URL patterns in "ManagerAdminController".
 //				 */
 				.antMatchers("/organizations/create").authenticated()
-//				.antMatchers("/organizations/{organizationId}/managers/**").access("@organizationService.isManagedBy(#organization.id, authentication.username)")
+//				.antMatchers("/organizations/{organizationId}/settings/**").access("@organizationService.isManager(#organization.id, authentication.username)")
 //				.antMatchers("/organizations/{organizationId}/repositories/create").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 //				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/settings").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 //				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/collaborators/**").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")

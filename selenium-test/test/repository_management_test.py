@@ -1,60 +1,19 @@
-import unittest
 from urllib.parse import urlparse, urljoin
 
-from test.testcase import GitEnterTest
-from forms.authorization_form import (
-    fill_signup_form,
-    fill_login_form
-)
-from forms.organization_management_form import (
-    fill_create_organization_form
-)
+from testsuite.organization_created_testsuite import OrganizationCreatedTestSuite
+from forms.authorization_form import fill_login_form
 from forms.repository_management_form import (
     fill_create_repository_form
 )
 
 
-class TestOrganizationManagement(GitEnterTest):
+class TestRepositoryManagement(OrganizationCreatedTestSuite):
 
     def setUp(self):
-        super(TestOrganizationManagement, self).setUp()
-
-        username = "username"
-        password = "password"
-        display_name = "User Name"
-        email = "username@email.com"
-
-        another_username = "another_username"
-        another_password = "another_password"
-        another_display_name = "Another User Name"
-        another_email = "another_username@email.com"
-
-        self.driver.get(urljoin(self.root_url, "register"))
-        fill_signup_form(self.driver, username, password, display_name, email)
-
-        self.driver.get(urljoin(self.root_url, "register"))
-        fill_signup_form(self.driver, another_username, another_password, another_display_name, another_email)
-
-        self.driver.get(urljoin(self.root_url, "login"))
-        fill_login_form(self.driver, username, password)
-
-        org_name = "another_org"
-        org_display_name = "Another Organization"
-
-        self.driver.get(urljoin(self.root_url, "/organizations/create"))
-        fill_create_organization_form(self.driver, org_name, org_display_name)
-        org_link = self.driver.find_element_by_link_text(org_display_name).get_attribute("href")
-        self.org_id = urlparse(org_link).path.split("/")[-1]
-
-        self.username = username
-        self.display_name = display_name
-
-        self.another_username = another_username
-        self.another_password = another_password
-        self.another_display_name = another_display_name
+        super(TestRepositoryManagement, self).setUp()
 
     def tearDown(self):
-        super(TestOrganizationManagement, self).tearDown()
+        super(TestRepositoryManagement, self).tearDown()
 
     def test_create_public_repository_and_view_by_organization_member_and_non_member(self):
         repo_name = "another_repo"

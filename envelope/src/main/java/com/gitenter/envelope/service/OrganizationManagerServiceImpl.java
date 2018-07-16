@@ -11,11 +11,14 @@ import org.springframework.stereotype.Service;
 import com.gitenter.envelope.dto.RepositoryDTO;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.dao.auth.MemberRepository;
+import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
+import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
+import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
@@ -26,10 +29,20 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
+	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired RepositoryMemberMapRepository repositoryMemberMapRepository;
 	
 	@Autowired GitSource gitSource;
+	
+	@Override
+	public void addOrganizationMember(Integer organizationId, String username) {
+		
+		OrganizationBean organization = organizationRepository.findById(organizationId).get();
+		MemberBean member = memberRepository.findByUsername(username).get(0);
+		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MANAGER);
+		organizationMemberMapRepository.saveAndFlush(map);
+	}
 
 	@Override
 	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {

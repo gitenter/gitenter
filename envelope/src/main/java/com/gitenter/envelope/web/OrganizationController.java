@@ -25,7 +25,7 @@ public class OrganizationController {
 	@Autowired OrganizationService organizationService;
 	
 	@Autowired MemberService memberService;
-	@Autowired OrganizationManagerService organizationServiceManager;
+	@Autowired OrganizationManagerService organizationManagerService;
 	
 	@RequestMapping(value="/organizations/{organizationId}", method=RequestMethod.GET)
 	public String showOrganizationPage (
@@ -35,10 +35,8 @@ public class OrganizationController {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
 		model.addAttribute("repositories", organizationService.getVisibleRepositories(organizationId, authentication));
-		model.addAttribute("managers", organizationService.getManagers(organizationId));
-		
-		model.addAttribute("is_manager", organizationService.isManager(organizationId, authentication));
-		
+		model.addAttribute("members", organizationService.getAllMembers(organizationId));
+
 		return "index/organization";
 	}
 
@@ -63,6 +61,57 @@ public class OrganizationController {
 		
 		memberService.createOrganization(authentication.getName(), organizationDTO);
 		return "redirect:/";
+	}
+
+	@RequestMapping(value="/organizations/{organizationId}/settings", method=RequestMethod.GET)
+	public String manageOrganizationManagers (
+			@PathVariable Integer organizationId,
+			Model model) throws Exception {
+		
+		model.addAttribute("organization", organizationService.getOrganization(organizationId));
+		
+		return "organization-management/settings";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
+	public String showMemberManagementForm (
+			@PathVariable Integer organizationId,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		model.addAttribute("organization", organizationService.getOrganization(organizationId));
+		model.addAttribute("members", organizationService.getAllMembers(organizationId));
+		model.addAttribute("myUsername", authentication.getName());
+		
+		return "organization-management/members";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
+	public String addAMemberToOrganization (
+			@PathVariable Integer organizationId,
+			@RequestParam(value="username") String username) throws Exception {
+		
+		organizationManagerService.addOrganizationMember(organizationId, username);		
+		/*
+		 * TODO:
+		 * Raise errors and redirect to the original page,
+		 * if the manager username is invalid.
+		 */
+		
+		return "redirect:/organizations/"+organizationId+"/settings/members";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/managers", method=RequestMethod.GET)
+	public String showManagerManagementForm (
+			@PathVariable Integer organizationId,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		model.addAttribute("organization", organizationService.getOrganization(organizationId));
+		model.addAttribute("managers", organizationService.getManagers(organizationId));
+		model.addAttribute("myUsername", authentication.getName());
+		
+		return "organization-management/managers";
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
@@ -102,7 +151,7 @@ public class OrganizationController {
 			return "admin/create-repository";
 		}
 		
-		organizationServiceManager.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
+		organizationManagerService.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
 
 		return "redirect:/organizations/"+organizationId;
 	}

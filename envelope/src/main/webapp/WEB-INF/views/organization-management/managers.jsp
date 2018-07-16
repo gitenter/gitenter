@@ -7,31 +7,32 @@
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
+      <a href="<s:url value="/organizations/${organization.id}/settings" />">Settings</a> &rarr; 
       <span class="nav-current">Managers</span>
     </nav>
     <article>
       <div class="left-narrow">
         <h5>Managers</h5>
         <ul class="user-list">
-        <c:forEach var="member" items="${organization.managers}">
+        <c:forEach var="manager" items="${managers}">
           <li>
-            <security:authorize access="!@securityService.checkIsMember(authentication,#member.id)">
-              <span class="user-deletable"><c:out value="${member.displayName}" /></span>
-              <s:url var="remove_manager_url" value="/organizations/${organization.id}/managers/remove" />
+            <c:if test="${manager.username != myUsername}">
+              <span class="user-deletable"><c:out value="${manager.displayName}" /></span>
+              <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
-                <input type="hidden" name="member_id" value="${member.id}" /> 
+                <input type="hidden" name="member_id" value="${manager.id}" /> 
                 <input class="delete" type="submit" value="x" />
               </sf:form>
-            </security:authorize>
-            <security:authorize access="@securityService.checkIsMember(authentication,#member.id)">
-              <span class="user"><c:out value="${member.displayName}" /></span>
-            </security:authorize>
+            </c:if>
+            <c:if test="${manager.username == myUsername}">
+              <span class="user"><c:out value="${manager.displayName}" /></span>
+            </c:if>
           </li>
         </c:forEach>
         </ul>
       </div>
       <div class="right-wide">
-        <s:url var="add_manager_url" value="/organizations/${organization.id}/managers/add" />
+        <s:url var="add_manager_url" value="/organizations/${organization.id}/setting/managers/add" />
         <sf:form method="POST" action="${add_manager_url}">
           <table class="fill-in">
             <c:if test="${errorMessage != null}">

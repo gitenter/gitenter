@@ -41,16 +41,16 @@
       </div>
       <div class="right-narrow">
         <h3>
-          Managers
-<%--          <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)"> --%>
-            <s:url var="manager_url" value="/organizations/${organization.id}/managers" />
+          Members
+<%--          <security:authorize access="@organizationService.isManager(#organization.id, authentication)"> --%>
+            <s:url var="manager_url" value="/organizations/${organization.id}/settings" />
             <sf:form method="GET" action="${manager_url}">
               <input type="submit" value="Settings" />
             </sf:form>
 <%--          </security:authorize> --%>
         </h3>
         <ul class="user-list">
-          <c:forEach var="member" items="${managers}">
+          <c:forEach var="member" items="${members}">
             <li><span class="user"><c:out value="${member.displayName}" /></span></li>
           </c:forEach>
         </ul>
