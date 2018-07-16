@@ -49,11 +49,36 @@ public class OrganizationBean extends ModelBean {
 	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
 	
+	/*
+	 * Can be get by a customized JOINed SQL. Will not do it until some performance
+	 * bottleneck is shown. Also, since Hibernate may optimize its query cache so
+	 * this mapped relationship will not be loaded multiple times in the same HTTP
+	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
+	 * actually have not-worse performance.
+	 */
 	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
 		Collection<MemberBean> items = new ArrayList<MemberBean>();
 		for (OrganizationMemberMapBean map : organizationMemberMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map.getMember());
+			}
+		}
+		return items;
+	}
+	
+	public Collection<MemberBean> getMembers() {
+		Collection<MemberBean> items = new ArrayList<MemberBean>();
+		for (OrganizationMemberMapBean map : organizationMemberMaps) {
+			items.add(map.getMember());
+		}
+		return items;
+	}
+	
+	public Collection<RepositoryBean> getRepositories(Boolean isPublic) {
+		Collection<RepositoryBean> items = new ArrayList<RepositoryBean>();
+		for (RepositoryBean repository : repositories) {
+			if (repository.getIsPublic().equals(isPublic)) {
+				items.add(repository);
 			}
 		}
 		return items;

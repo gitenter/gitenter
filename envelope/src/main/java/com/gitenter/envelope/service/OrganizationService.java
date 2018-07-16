@@ -13,7 +13,10 @@ public interface OrganizationService {
 	public OrganizationBean getOrganization(Integer organizationId);
 
 	public Collection<MemberBean> getManagers(Integer organizationId);
-	public boolean isManagedBy(Integer organizationId, Authentication authentication);
+	public boolean isManager(Integer organizationId, Authentication authentication);
+	
+	public Collection<MemberBean> getAllMembers(Integer organizationId);
+	public boolean isMember(Integer organizationId, Authentication authentication);
 	
 	public Collection<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication);
 }

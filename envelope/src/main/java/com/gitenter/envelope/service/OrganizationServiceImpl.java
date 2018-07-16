@@ -30,10 +30,28 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	@Override
-	public boolean isManagedBy(Integer organizationId, Authentication authentication) {
+	public boolean isManager(Integer organizationId, Authentication authentication) {
 		
 		for (MemberBean manager : getManagers(organizationId)) {
 			if (manager.getUsername().equals(authentication.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Collection<MemberBean> getAllMembers(Integer organizationId) {
+		
+		OrganizationBean organization = getOrganization(organizationId);
+		return organization.getMembers();
+	}
+
+	@Override
+	public boolean isMember(Integer organizationId, Authentication authentication) {
+		
+		for (MemberBean member : getAllMembers(organizationId)) {
+			if (member.getUsername().equals(authentication.getName())) {
 				return true;
 			}
 		}
@@ -43,15 +61,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
 	public Collection<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) {
 		
-		/*
-		 * TODO:
-		 * 
-		 * Show all repositories if the user belongs to that organization.
-		 * 
-		 * Show only public repositories if the user doesn't belong to 
-		 * the organization.
-		 */
 		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getRepositories();
+		if (isMember(organizationId, authentication)) {
+			return organization.getRepositories();
+		}
+		else {
+			return organization.getRepositories(true);
+		}
 	}
 }

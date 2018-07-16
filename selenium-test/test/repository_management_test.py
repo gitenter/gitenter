@@ -25,7 +25,7 @@ class TestOrganizationManagement(GitEnterTest):
         email = "username@email.com"
 
         another_username = "another_username"
-        another_password = "password"
+        another_password = "another_password"
         another_display_name = "Another User Name"
         another_email = "another_username@email.com"
 
@@ -108,4 +108,4 @@ class TestOrganizationManagement(GitEnterTest):
         fill_login_form(self.driver, self.another_username, self.another_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
-        #assert repo_display_name not in self.driver.page_source
+        assert repo_display_name not in self.driver.page_source

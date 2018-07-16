@@ -21,14 +21,26 @@ class TestOrganizationManagement(GitEnterTest):
         display_name = "User Name"
         email = "username@email.com"
 
+        another_username = "another_username"
+        another_password = "another_password"
+        another_display_name = "Another User Name"
+        another_email = "another_username@email.com"
+
         self.driver.get(urljoin(self.root_url, "register"))
         fill_signup_form(self.driver, username, password, display_name, email)
+
+        self.driver.get(urljoin(self.root_url, "register"))
+        fill_signup_form(self.driver, another_username, another_password, another_display_name, another_email)
 
         self.driver.get(urljoin(self.root_url, "login"))
         fill_login_form(self.driver, username, password)
 
         self.username = username
         self.display_name = display_name
+
+        self.another_username = another_username
+        self.another_password = another_password
+        self.another_display_name = another_display_name
 
     def tearDown(self):
         super(TestOrganizationManagement, self).tearDown()
@@ -66,6 +78,20 @@ class TestOrganizationManagement(GitEnterTest):
 
     def test_create_organization_name_already_exists(self):
         pass
+
+    def test_organization_not_listed_for_non_member(self):
+        org_name = "another_org"
+        org_display_name = "Another Organization"
+
+        self.driver.get(urljoin(self.root_url, "/organizations/create"))
+        fill_create_organization_form(self.driver, org_name, org_display_name)
+
+        self.driver.get(urljoin(self.root_url, "logout"))
+
+        self.driver.get(urljoin(self.root_url, "login"))
+        fill_login_form(self.driver, self.another_username, self.another_password)
+        self.driver.get(urljoin(self.root_url, "/"))
+        assert org_display_name not in self.driver.page_source
 
 
 if __name__ == '__main__':

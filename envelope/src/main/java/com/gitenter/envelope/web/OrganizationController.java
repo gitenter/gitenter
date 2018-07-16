@@ -37,7 +37,7 @@ public class OrganizationController {
 		model.addAttribute("repositories", organizationService.getVisibleRepositories(organizationId, authentication));
 		model.addAttribute("managers", organizationService.getManagers(organizationId));
 		
-		model.addAttribute("is_manager", organizationService.isManagedBy(organizationId, authentication));
+		model.addAttribute("is_manager", organizationService.isManager(organizationId, authentication));
 		
 		return "index/organization";
 	}
