@@ -30,6 +30,20 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	@Override
+	public Collection<MemberBean> getOrdinaryMembers(Integer organizationId) {
+		
+		OrganizationBean organization = getOrganization(organizationId);
+		return organization.getMembers(OrganizationMemberRole.MEMBER);
+	}
+	
+	@Override
+	public Collection<MemberBean> getAllMembers(Integer organizationId) {
+		
+		OrganizationBean organization = getOrganization(organizationId);
+		return organization.getMembers();
+	}
+	
+	@Override
 	public boolean isManager(Integer organizationId, Authentication authentication) {
 		
 		for (MemberBean manager : getManagers(organizationId)) {
@@ -38,13 +52,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 			}
 		}
 		return false;
-	}
-	
-	@Override
-	public Collection<MemberBean> getAllMembers(Integer organizationId) {
-		
-		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getMembers();
 	}
 
 	@Override

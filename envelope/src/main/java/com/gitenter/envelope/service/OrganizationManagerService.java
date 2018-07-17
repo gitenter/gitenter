@@ -11,5 +11,8 @@ public interface OrganizationManagerService {
 
 	public void addOrganizationMember(Integer organizationId, String username);
 	
+	public void addOrganizationManager(Integer organizationId, String username);
+	public void removeOrganizationManager(Integer organizationId, String username);
+	
 	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException;
 }

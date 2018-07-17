@@ -21,7 +21,7 @@
               <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
                 <input type="hidden" name="member_id" value="${manager.id}" /> 
-                <input class="delete" type="submit" value="x" />
+                <input class="delete" type="submit" value="&darr;" />
               </sf:form>
             </c:if>
             <c:if test="${manager.username == myUsername}">
@@ -30,27 +30,21 @@
           </li>
         </c:forEach>
         </ul>
+        <h5>Ordinary Members</h5>
+        <ul class="user-list">
+        <c:forEach var="member" items="${ordinaryMembers}">
+          <li>
+            <span class="user-deletable"><c:out value="${member.displayName}" /></span>
+            <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/add" />
+            <sf:form method="POST" action="${remove_manager_url}">
+              <input type="hidden" name="member_id" value="${member.id}" /> 
+              <input class="delete" type="submit" value="&uarr;" />
+            </sf:form>
+          </li>
+        </c:forEach>
+        </ul>
       </div>
       <div class="right-wide">
-        <s:url var="add_manager_url" value="/organizations/${organization.id}/setting/managers/add" />
-        <sf:form method="POST" action="${add_manager_url}">
-          <table class="fill-in">
-            <c:if test="${errorMessage != null}">
-            <tr>
-              <td></td>
-              <td class="error">${errorMessage}</td>
-            </tr>
-            </c:if>
-            <tr>
-              <td>Username</td>
-              <td><input type="text" name="username" /></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td class="button"><input type="submit" value="Add a new manager" /></td>
-            </tr>
-          </table>
-        </sf:form>
       </div>
       <div style="clear:both"></div>
     </article>

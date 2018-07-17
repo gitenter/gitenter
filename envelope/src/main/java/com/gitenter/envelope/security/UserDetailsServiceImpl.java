@@ -1,4 +1,4 @@
-package com.gitenter.envelope.service;
+package com.gitenter.envelope.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +23,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		try {
-			MemberBean member = memberRepository.findByUsername(username).get(0);
-			
-			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-			
-			return new User(
-					member.getUsername(),
-					member.getPassword(),
-					authorities);
+		List<MemberBean> members = memberRepository.findByUsername(username);
+		if (members.size() == 0) {
+			throw new UsernameNotFoundException(username);
 		}
-		catch (Exception e) {
-			throw new UsernameNotFoundException(e.getMessage());
-		}
+		MemberBean member = members.get(0);
+			
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+			
+		return new User(member.getUsername(), member.getPassword(), authorities);
 	}
 }

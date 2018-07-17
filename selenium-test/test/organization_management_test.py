@@ -32,6 +32,9 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/settings/members".format(self.org_id))
         assert self.another_display_name in self.driver.page_source
 
+    def test_non_manager_cannot_add_members(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

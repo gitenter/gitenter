@@ -109,6 +109,7 @@ public class OrganizationController {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
 		model.addAttribute("managers", organizationService.getManagers(organizationId));
+		model.addAttribute("ordinaryMembers", organizationService.getOrdinaryMembers(organizationId));
 		model.addAttribute("myUsername", authentication.getName());
 		
 		return "organization-management/managers";

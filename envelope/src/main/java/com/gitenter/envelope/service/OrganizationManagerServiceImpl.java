@@ -40,8 +40,18 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		
 		OrganizationBean organization = organizationRepository.findById(organizationId).get();
 		MemberBean member = memberRepository.findByUsername(username).get(0);
-		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MANAGER);
+		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MEMBER);
 		organizationMemberMapRepository.saveAndFlush(map);
+	}
+	
+	@Override
+	public void addOrganizationManager(Integer organizationId, String username) {
+		
+	}
+	
+	@Override
+	public void removeOrganizationManager(Integer organizationId, String username) {
+		
 	}
 
 	@Override
