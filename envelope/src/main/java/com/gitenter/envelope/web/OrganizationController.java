@@ -64,7 +64,6 @@ public class OrganizationController {
 		return "redirect:/";
 	}
 
-	@PreAuthorize("hasPermission(#organizationId, 'MANAGER')")
 	@RequestMapping(value="/organizations/{organizationId}/settings", method=RequestMethod.GET)
 	public String manageOrganizationManagers (
 			@PathVariable Integer organizationId,

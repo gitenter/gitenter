@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Autowired GitSource gitSource;
 	
+	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
 	public void addOrganizationMember(Integer organizationId, String username) {
 		
@@ -44,16 +46,20 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
 	
+	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
 	public void addOrganizationManager(Integer organizationId, String username) {
 		
 	}
 	
+	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
 	public void removeOrganizationManager(Integer organizationId, String username) {
 		
 	}
 
+	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)"
+			+ " or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
 	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
 		
