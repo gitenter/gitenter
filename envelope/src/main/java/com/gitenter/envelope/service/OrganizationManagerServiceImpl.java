@@ -50,16 +50,46 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@Override
 	public void addOrganizationManager(Integer organizationId, String username) {
 		
+		OrganizationBean organization = organizationRepository.findById(organizationId).get();
+		for (OrganizationMemberMapBean map : organization.getOrganizationMemberMaps()) {
+			if (map.getMember().getUsername().equals(username)) {
+				/*
+				 * So it will only add if the user is already a MEMBER of that organization.
+				 */
+				if (map.getRole().equals(OrganizationMemberRole.MEMBER)) {
+					map.setRole(OrganizationMemberRole.MANAGER);
+					organizationMemberMapRepository.saveAndFlush(map);
+				}
+				
+				break;
+			}
+		}
 	}
 	
 	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
 	public void removeOrganizationManager(Integer organizationId, String username) {
-		
+	
+		OrganizationBean organization = organizationRepository.findById(organizationId).get();
+		for (OrganizationMemberMapBean map : organization.getOrganizationMemberMaps()) {
+			if (map.getMember().getUsername().equals(username)) {
+				/*
+				 * The code in here doesn't check that the user cannot remove himself/herself
+				 * as a manager (although the UI doesn't provide the link). This is the case
+				 * because this is a general method. That constrain will be implemented in the
+				 * controller level.
+				 */
+				if (map.getRole().equals(OrganizationMemberRole.MANAGER)) {
+					map.setRole(OrganizationMemberRole.MEMBER);
+					organizationMemberMapRepository.saveAndFlush(map);
+				}
+				
+				break;
+			}
+		}
 	}
 
-	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)"
-			+ " or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
+	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
 	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
 		

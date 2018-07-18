@@ -116,6 +116,37 @@ public class OrganizationController {
 		return "organization-management/managers";
 	}
 	
+	@RequestMapping(value="/organizations/{organizationId}/settings/managers/add", method=RequestMethod.POST)
+	public String addAMamangerToOrganization (
+			@PathVariable Integer organizationId,
+			@RequestParam(value="username") String username) throws Exception {
+		
+		organizationManagerService.addOrganizationManager(organizationId, username);		
+		
+		return "redirect:/organizations/"+organizationId+"/settings/managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/managers/remove", method=RequestMethod.POST)
+	public String removeAMamangerToOrganization (
+			@PathVariable Integer organizationId,
+			@RequestParam(value="username") String username,
+			Authentication authentication) throws Exception {
+		
+		/*
+		 * The reason to use "username" rather than member ID as the input to
+		 * add/remove managers:
+		 * 
+		 * (1) Same interface as add member to organization.
+		 * (2) Makes compare to authentication (manager cannot remove himself/herself)
+		 * easier.
+		 */
+		if (!username.equals(authentication.getName())) {
+			organizationManagerService.removeOrganizationManager(organizationId, username);	
+		}
+		
+		return "redirect:/organizations/"+organizationId+"/settings/managers";
+	}
+	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
 	public String showCreateRepositoryForm (
 			@PathVariable Integer organizationId,

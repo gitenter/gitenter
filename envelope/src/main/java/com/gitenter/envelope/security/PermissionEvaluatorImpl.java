@@ -20,6 +20,17 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 		
+		/*
+		 * Since "targetDomainObject" is mostly just an integer (ID), here is secretly using
+		 * "permission" type to distinguish whether it is a per-organization or per-repository
+		 * authorization.
+		 * 
+		 * A better way is probably to have "targetDomainObject" to be either "OrganizationBean"
+		 * or "RepositoryBean", and don't need this method to involve @Autowired repositories.
+		 * However, since by-method "@PreAuthorize" always has input of plain ID (we may have 
+		 * private helper method to input beans, but it seems not working with this annotation)
+		 * that doesn't work.
+		 */
 		if (permission instanceof OrganizationMemberRole) {
 			
 			Integer organizationId = (Integer)targetDomainObject;

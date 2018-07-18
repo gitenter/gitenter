@@ -12,31 +12,29 @@ class RegisteredTestSuite(BaseTestSuite):
     def setUp(self):
         super(RegisteredTestSuite, self).setUp()
 
-        username = "username"
-        password = "password"
-        display_name = "User Name"
-        email = "username@email.com"
-
-        another_username = "another_username"
-        another_password = "another_password"
-        another_display_name = "Another User Name"
-        another_email = "another_username@email.com"
+        self.username = "username"
+        self.password = "password"
+        self.display_name = "User Name"
+        self.email = "username@email.com"
 
         self.driver.get(urljoin(self.root_url, "register"))
-        fill_signup_form(self.driver, username, password, display_name, email)
+        fill_signup_form(self.driver, self.username, self.password, self.display_name, self.email)
+
+        self.org_manager_username = "manager"
+        self.org_manager_password = "password"
+        self.org_manager_display_name = "Organization Manager"
+        self.org_manager_email = "manager@organization.com"
 
         self.driver.get(urljoin(self.root_url, "register"))
-        fill_signup_form(self.driver, another_username, another_password, another_display_name, another_email)
+        fill_signup_form(self.driver, self.org_manager_username, self.org_manager_password, self.org_manager_display_name, self.org_manager_email)
 
-        self.driver.get(urljoin(self.root_url, "login"))
-        fill_login_form(self.driver, username, password)
+        self.org_member_username = "member"
+        self.org_member_password = "password"
+        self.org_member_display_name = "Organization Member"
+        self.org_member_email = "member@organization.com"
 
-        self.username = username
-        self.display_name = display_name
-
-        self.another_username = another_username
-        self.another_password = another_password
-        self.another_display_name = another_display_name
+        self.driver.get(urljoin(self.root_url, "register"))
+        fill_signup_form(self.driver, self.org_member_username, self.org_member_password, self.org_member_display_name, self.org_member_email)
 
     def tearDown(self):
         super(RegisteredTestSuite, self).tearDown()

@@ -12,11 +12,11 @@
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
-<%--          <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)">--%>
+          <security:authorize access="hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)">
             <sf:form method="GET" action="${create_repo_url}">
               <input type="submit" value="+" />
             </sf:form>
-<%--          </security:authorize>--%>
+          </security:authorize>
         </h3>
         <c:forEach var="repository" items="${repositories}">
           <h5>
@@ -42,12 +42,12 @@
       <div class="right-narrow">
         <h3>
           Members
-<%--          <security:authorize access="@organizationService.isManager(#organization.id, authentication)"> --%>
+          <security:authorize access="hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)">
             <s:url var="manager_url" value="/organizations/${organization.id}/settings" />
             <sf:form method="GET" action="${manager_url}">
               <input type="submit" value="Settings" />
             </sf:form>
-<%--          </security:authorize> --%>
+          </security:authorize>
         </h3>
         <ul class="user-list">
           <c:forEach var="member" items="${members}">

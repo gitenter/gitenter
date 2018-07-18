@@ -20,7 +20,7 @@
               <span class="user-deletable"><c:out value="${manager.displayName}" /></span>
               <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
-                <input type="hidden" name="member_id" value="${manager.id}" /> 
+                <input type="hidden" name="username" value="${manager.username}" /> 
                 <input class="delete" type="submit" value="&darr;" />
               </sf:form>
             </c:if>
@@ -37,7 +37,7 @@
             <span class="user-deletable"><c:out value="${member.displayName}" /></span>
             <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/add" />
             <sf:form method="POST" action="${remove_manager_url}">
-              <input type="hidden" name="member_id" value="${member.id}" /> 
+              <input type="hidden" name="username" value="${member.username}" /> 
               <input class="delete" type="submit" value="&uarr;" />
             </sf:form>
           </li>
