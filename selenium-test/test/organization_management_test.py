@@ -33,7 +33,21 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         assert self.another_display_name in self.driver.page_source
 
     def test_non_manager_cannot_add_members(self):
-        pass
+        self.driver.get(urljoin(self.root_url, "logout"))
+
+        self.driver.get(urljoin(self.root_url, "login"))
+        fill_login_form(self.driver, self.another_username, self.another_password)
+
+        # TODO:
+        # Should we forbidden it from the page level (do not let the user to access this
+        # page), or from the method level (do not allow user to call the real "add user
+        # to database" method)?
+        self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
+        form_start = self.driver.find_element_by_id("username")
+        form_start.send_keys(self.another_username)
+        form_start.submit()
+
+        assert "status=403" in self.driver.page_source
 
 
 if __name__ == '__main__':
