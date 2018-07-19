@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.gitenter.dao.auth.OrganizationRepository;
-import com.gitenter.domain.auth.OrganizationBean;
+import com.gitenter.protease.dao.auth.OrganizationRepository;
+import com.gitenter.protease.domain.auth.OrganizationBean;
 
 /*
  * This main class has nothing to do with unit tests.

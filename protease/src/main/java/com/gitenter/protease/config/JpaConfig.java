@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * "DatabaseConfig" and "GitConfig" is needed), I don't under why.
  */
 @Configuration
-@EnableJpaRepositories(basePackages="com.gitenter.dao")
+@EnableJpaRepositories(basePackages="com.gitenter.protease.dao")
 @EnableTransactionManagement
 public class JpaConfig {
 
@@ -38,7 +38,7 @@ public class JpaConfig {
 		
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setDatabase(Database.POSTGRESQL);
-		adapter.setShowSql(false);
+		adapter.setShowSql(true);
 		adapter.setGenerateDdl(true);
 		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL94Dialect");
 		
@@ -50,7 +50,7 @@ public class JpaConfig {
 		
 		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactory.setDataSource(dataSource);
-		entityManagerFactory.setPackagesToScan(new String[]{"com.gitenter.database", "com.gitenter.domain"});
+		entityManagerFactory.setPackagesToScan(new String[]{"com.gitenter.protease.dao", "com.gitenter.protease.domain"});
 		entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
 		
 		/*

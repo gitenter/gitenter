@@ -1,1 +1,1 @@
-CREATE DATABASE enterovirus OWNER enterovirus;
+CREATE DATABASE :dbname OWNER enterovirus;

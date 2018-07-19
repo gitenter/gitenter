@@ -19,11 +19,19 @@ CREATE TABLE auth.organization_member_map (
 	id serial PRIMARY KEY,
 
 	/*
-	 * With this constrain, a member can at most have one role
-	 * in a particular organization.
+	 * "ON DELETE RESTRICT" for member because otherwise when a member
+	 * is removed, some organization will become orphan ones with no
+	 * manager (and nobody can further add manager/member). This force
+	 * delete organization duties before a member can be removed from
+	 * the system.
 	 */
 	organization_id serial REFERENCES auth.organization (id) ON DELETE CASCADE,
 	member_id serial REFERENCES auth.member (id) ON DELETE RESTRICT,
+
+	/*
+	 * With this constrain, a member can at most have one role
+	 * in a particular organization.
+	 */
 	UNIQUE (organization_id, member_id),
 
 	/*
@@ -70,10 +78,18 @@ CREATE TABLE auth.repository_member_map (
 	 * Currently we have "role_shortname" to have values:
 	 * O: project organizer
 	 * E: document editor
-	 * R: document reviewer
 	 * B: blacklist
+	 *
+	 * "Reviewer" is a property per-review, rather than per-repository,
+	 * and it is not a persistent property (a user who used to review a
+ 	 * repository may later on loose read-access of the same repository).
+	 * Therefore, there's no role of "reviewer" in here.
+	 *
+	 * "Editor" is a property right now, which has nothing to do with
+	 * the "author" of a review. Anybody made change for the a particular
+	 * review will be an "author".
 	 */
-	role_shortname char(1) NOT NULL CHECK (role_shortname='O' OR role_shortname='E' OR role_shortname='R' OR role_shortname='B')
+	role_shortname char(1) NOT NULL CHECK (role_shortname='O' OR role_shortname='E' OR role_shortname='B')
 );
 
 CREATE TABLE auth.ssh_key (
