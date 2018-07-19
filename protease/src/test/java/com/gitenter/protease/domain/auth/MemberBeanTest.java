@@ -24,6 +24,7 @@ import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -76,6 +77,7 @@ public class MemberBeanTest {
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
+	@DatabaseTearDown
 	public void testAddNewOrganization() {
 		
 		MemberBean member = memberRepository.findById(1).get();
@@ -104,7 +106,31 @@ public class MemberBeanTest {
 		 */
 		organizationMemberMapRepository.saveAndFlush(map);
 		
-		MemberBean updatedMember = memberRepository.findById(1).get();
-		assertEquals(updatedMember.getOrganizations(OrganizationMemberRole.MANAGER).size(), 2);
+		member = memberRepository.findById(1).get();
+		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 2);
+	}
+	
+	@Test
+	@Transactional
+	@DbUnitMinimalDataSetup
+	@DatabaseTearDown
+	public void testRemoveOrganization() {
+		
+		MemberBean member = memberRepository.findById(1).get();
+		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
+		
+		Integer mapId = member.getOrganizationMemberMaps().get(0).getId();
+		organizationMemberMapRepository.throughSqldeleteById(mapId);
+		
+		/*
+		 * Can't do it. Because Hibernate will be too smart to not generate the query
+		 * to touch the database again (identity mapping pattern), so the assert will
+		 * be wrong.
+		 */
+//		member = memberRepository.findById(1).get();
+//		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 0);
+		
+		OrganizationBean organization = organizationRepository.findById(1).get();
+		assertEquals(organization.getMembers(OrganizationMemberRole.MANAGER).size(), 0);
 	}
 }

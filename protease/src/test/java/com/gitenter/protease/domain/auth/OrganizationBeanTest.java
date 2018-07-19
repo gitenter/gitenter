@@ -23,6 +23,7 @@ import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,6 +65,7 @@ public class OrganizationBeanTest {
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
+	@DatabaseTearDown
 	public void testAddNewRepository() {
 		
 		RepositoryBean repository = new RepositoryBean();

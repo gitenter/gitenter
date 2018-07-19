@@ -2,12 +2,14 @@ package com.gitenter.envelope.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ListIterator;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
 import com.gitenter.gitar.GitBareRepository;
@@ -44,6 +46,27 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		MemberBean member = memberRepository.findByUsername(username).get(0);
 		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MEMBER);
 		organizationMemberMapRepository.saveAndFlush(map);
+	}
+	
+	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@Transactional
+	@Override
+	public void removeOrganizationMember(Integer organizationId, String username) {
+		
+		OrganizationBean organization = organizationRepository.findById(organizationId).get();
+		System.out.println(organization.getOrganizationMemberMaps().size());
+		
+		ListIterator<OrganizationMemberMapBean> iter = organization.getOrganizationMemberMaps().listIterator();
+		while(iter.hasNext()){
+			OrganizationMemberMapBean map = iter.next();
+			MemberBean member = map.getMember();
+			if(member.getUsername().equals(username)){
+				Integer mapId = map.getId();
+				System.out.println("MapId: "+mapId);
+				organizationMemberMapRepository.throughSqldeleteById(mapId);
+				break;
+			}
+		}
 	}
 	
 	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")

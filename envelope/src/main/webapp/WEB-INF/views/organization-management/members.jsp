@@ -20,7 +20,7 @@
               <span class="user-deletable"><c:out value="${member.displayName}" /></span>
               <s:url var="remove_member_url" value="/organizations/${organization.id}/settings/members/remove" />
               <sf:form method="POST" action="${remove_member_url}">
-                <input type="hidden" name="member_id" value="${member.id}" /> 
+                <input type="hidden" name="username" value="${member.username}" /> 
                 <input class="delete" type="submit" value="x" />
               </sf:form>
             </c:if>

@@ -102,6 +102,16 @@ public class OrganizationController {
 		return "redirect:/organizations/"+organizationId+"/settings/members";
 	}
 	
+	@RequestMapping(value="/organizations/{organizationId}/settings/members/remove", method=RequestMethod.POST)
+	public String removeAMemberToOrganization (
+			@PathVariable Integer organizationId,
+			@RequestParam(value="username") String username) throws Exception {
+		
+		organizationManagerService.removeOrganizationMember(organizationId, username);		
+		
+		return "redirect:/organizations/"+organizationId+"/settings/members";
+	}
+	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers", method=RequestMethod.GET)
 	public String showManagerManagementForm (
 			@PathVariable Integer organizationId,

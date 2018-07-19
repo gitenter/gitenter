@@ -19,11 +19,19 @@ CREATE TABLE auth.organization_member_map (
 	id serial PRIMARY KEY,
 
 	/*
-	 * With this constrain, a member can at most have one role
-	 * in a particular organization.
+	 * "ON DELETE RESTRICT" for member because otherwise when a member
+	 * is removed, some organization will become orphan ones with no
+	 * manager (and nobody can further add manager/member). This force
+	 * delete organization duties before a member can be removed from
+	 * the system.
 	 */
 	organization_id serial REFERENCES auth.organization (id) ON DELETE CASCADE,
 	member_id serial REFERENCES auth.member (id) ON DELETE RESTRICT,
+
+	/*
+	 * With this constrain, a member can at most have one role
+	 * in a particular organization.
+	 */
 	UNIQUE (organization_id, member_id),
 
 	/*
