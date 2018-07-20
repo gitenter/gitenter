@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SignUpDTO extends MemberProfileDTO {
+public class MemberRegisterDTO extends MemberProfileDTO {
 	
 	/*
 	 * TODO:

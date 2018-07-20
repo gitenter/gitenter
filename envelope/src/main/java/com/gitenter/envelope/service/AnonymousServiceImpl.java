@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  */
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.envelope.dto.SignUpDTO;
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 
@@ -26,7 +26,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public void signUp(SignUpDTO signUpDTO) {
+	public void signUp(MemberRegisterDTO signUpDTO) {
 		
 		/*
 		 * TODO:

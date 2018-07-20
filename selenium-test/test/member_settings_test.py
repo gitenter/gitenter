@@ -17,6 +17,12 @@ class TestMemberSetting(RegisteredTestSuite):
         self.driver.get(urljoin(self.root_url, "/settings"))
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
+        self.driver.get(urljoin(self.root_url, "/settings/profile"))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
+        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
     def test_change_user_profile(self):
         display_name_append = "Jr."
         email_append = ".com"
@@ -75,6 +81,49 @@ class TestMemberSetting(RegisteredTestSuite):
         self.assertEqual(self.driver.find_element_by_id("email").get_attribute("value"), new_email)
         assert "size" in self.driver.find_element_by_id("displayName.errors").text
         assert "not a well-formed email addres" in self.driver.find_element_by_id("email.errors").text
+
+    def test_change_password(self):
+        new_password = "new_password"
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
+        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        form_start = self.driver.find_element_by_id("old_password")
+        form_start.send_keys(self.password)
+        self.driver.find_element_by_id("password").send_keys(new_password)
+        form_start.submit()
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        assert "Changes has been saved successfully!" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/logout"))
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+        assert "Invalid username and password!" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, new_password)
+        assert "Logged in as {}".format(self.username) in self.driver.page_source
+
+    def test_wrong_old_password_deny_change_password(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
+        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        form_start = self.driver.find_element_by_id("old_password")
+        form_start.send_keys("wrong_password")
+        self.driver.find_element_by_id("password").send_keys("whatever")
+        form_start.submit()
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        assert "Old password doesn't match!" in self.driver.page_source
+
+    def test_invalid_new_password(self):
+        # TODO:
+        # Not working yet. See comments in code.
+        pass
 
 
 if __name__ == '__main__':

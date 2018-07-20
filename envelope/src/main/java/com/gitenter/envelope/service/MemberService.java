@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.dto.MemberProfileDTO;
 import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.domain.auth.MemberBean;
@@ -35,7 +36,9 @@ public interface MemberService {
 	 * effect as @PreAuthorize("isAuthenticated()").
 	 */
 	public MemberProfileDTO getMemberProfileDTO(Authentication authentication);
-	public void updateMember(Authentication authentication, MemberProfileDTO profile);
+	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication);
+	public void updateMember(MemberProfileDTO profile);
+	public boolean updatePassword(MemberRegisterDTO register, String oldPassword);
 	
 	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO);
 }

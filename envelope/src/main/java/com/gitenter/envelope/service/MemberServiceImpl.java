@@ -5,8 +5,10 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.dto.MemberProfileDTO;
 import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.dao.auth.MemberRepository;
@@ -35,6 +37,8 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
+	
+	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public MemberBean getMemberByUsername(String username) {
@@ -91,9 +95,24 @@ public class MemberServiceImpl implements MemberService {
 		return profile;
 	}
 	
-	public void updateMember(Authentication authentication, MemberProfileDTO profile) {
+	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) {
 		
-		MemberBean memberBean = getMemberByUsername(authentication.getName());
+		MemberBean member = getMemberByUsername(authentication.getName());
+		
+		/*
+		 * Can just use superclass method, as fulfill "password"
+		 * attribute is not necessary.
+		 */
+		MemberRegisterDTO profileAndPassword = new MemberRegisterDTO();
+		profileAndPassword.fillFromMemberBean(member);
+		
+		return profileAndPassword;
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	public void updateMember(MemberProfileDTO profile) {
+		
+		MemberBean memberBean = getMemberByUsername(profile.getUsername());
 		profile.updateMemberBean(memberBean);
 		
 		/* Since "saveAndFlush()" will decide by itself whether the operation is
@@ -102,6 +121,22 @@ public class MemberServiceImpl implements MemberService {
 		 * produced. 
 		 */
 		memberRepository.saveAndFlush(memberBean);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) {
+		
+		MemberBean memberBean = getMemberByUsername(register.getUsername());
+		
+		if (!passwordEncoder.matches(oldPassword, memberBean.getPassword())) {
+			return false;
+		}
+		else {
+			memberBean.setPassword(passwordEncoder.encode(register.getPassword()));
+			memberRepository.saveAndFlush(memberBean);
+			
+			return true;
+		}
 	}
 	
 	@Override

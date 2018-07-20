@@ -29,9 +29,9 @@ class TestAuthorization(BaseTestSuite):
         display_name = "User Name "
         email = "username@email.com"
 
-        self.driver.get(urljoin(self.root_url, "register"))
+        self.driver.get(urljoin(self.root_url, "/register"))
         assert "GitEnter" in self.driver.title
-        assert "Register" in self.driver.page_source
+        assert "/register" in self.driver.page_source
 
         fill_signup_form(self.driver, username, password, display_name, email)
 
@@ -85,7 +85,7 @@ class TestAuthorization(BaseTestSuite):
 
         incorrect_password = "incorrect_password"
 
-        self.driver.get(urljoin(self.root_url, "register"))
+        self.driver.get(urljoin(self.root_url, "/register"))
         fill_signup_form(self.driver, username, password, display_name, email)
 
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -98,7 +98,7 @@ class TestAuthorization(BaseTestSuite):
         display_name = "D"
         email = "not_a_email_address"
 
-        self.driver.get(urljoin(self.root_url, "register"))
+        self.driver.get(urljoin(self.root_url, "/register"))
         fill_signup_form(self.driver, username, password, display_name, email)
 
         self.assertEqual(urlparse(self.driver.current_url).path, "/register")
