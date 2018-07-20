@@ -39,16 +39,16 @@ class TestAuthorization(BaseTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
         # Login with just registered username and password
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, username, password)
         self.assertEqual(urlparse(self.driver.current_url).path, "/") # if from "/login" page will be redirect to "/"
         assert "Logged in as {}".format(username) in self.driver.page_source
         self.assertEqual(len(self.driver.get_cookies()), 1)
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
         # Logout and login again with remember_me checked
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
 
         fill_login_form(self.driver, username, password, remember_me=True)
 
@@ -63,7 +63,7 @@ class TestAuthorization(BaseTestSuite):
                 find_cookie = True
         self.assertTrue(find_cookie)
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
     def test_redirect_after_login(self):
         pass
@@ -72,7 +72,7 @@ class TestAuthorization(BaseTestSuite):
         username = "nonexistent_username"
         password = "password"
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
 
         fill_login_form(self.driver, username, password)
         assert "Invalid username and password!" in self.driver.page_source
@@ -88,20 +88,25 @@ class TestAuthorization(BaseTestSuite):
         self.driver.get(urljoin(self.root_url, "register"))
         fill_signup_form(self.driver, username, password, display_name, email)
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, username, incorrect_password)
         assert "Invalid username and password!" in self.driver.page_source
 
     def test_register_with_invalid_input(self):
         username = "u"
         password = "p"
-        display_name = "U"
+        display_name = "D"
         email = "not_a_email_address"
 
         self.driver.get(urljoin(self.root_url, "register"))
         fill_signup_form(self.driver, username, password, display_name, email)
 
         self.assertEqual(urlparse(self.driver.current_url).path, "/register")
+        self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), username)
+        # Password will not be prefilled.
+        self.assertEqual(self.driver.find_element_by_id("password").get_attribute("value"), "")
+        self.assertEqual(self.driver.find_element_by_id("displayName").get_attribute("value"), display_name)
+        self.assertEqual(self.driver.find_element_by_id("email").get_attribute("value"), email)
         assert "size" in self.driver.find_element_by_id("username.errors").text
         assert "size" in self.driver.find_element_by_id("password.errors").text
         assert "size" in self.driver.find_element_by_id("displayName.errors").text

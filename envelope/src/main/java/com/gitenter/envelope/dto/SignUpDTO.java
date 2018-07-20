@@ -1,29 +1,20 @@
 package com.gitenter.envelope.dto;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Email;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.gitenter.protease.domain.auth.MemberBean;
 
 import lombok.Getter;
 import lombok.Setter;
 
-/*
- * In general, the bean validation are in domain classes
- * (enterovirus.protease.domain package) rather than separated
- * DTO classes.
- * 
- * However, as we need to handle password encoding of the member
- * bean (in MemberService), we split the validation and the 
- * persistent parts of this bean.
- */
 @Getter
 @Setter
-public class SignUpDTO {
-
-	@NotNull
-	@Size(min=2, max=16)
-	private String username;
+public class SignUpDTO extends MemberProfileDTO {
 	
 	/*
 	 * TODO:
@@ -36,14 +27,19 @@ public class SignUpDTO {
 	@NotNull
 	@Size(min=2, max=16)
 	private String password;
-
-	@NotNull
-	@Size(min=2, max=64)
-	private String displayName;
 	
-	@NotNull
-	@Email
-	private String email;
+	public MemberBean toMemberBean(PasswordEncoder passwordEncoder) {
+		
+		MemberBean memberBean = new MemberBean();
+		
+		memberBean.setUsername(getUsername());
+		memberBean.setPassword(passwordEncoder.encode(getPassword()));
+		memberBean.setDisplayName(getDisplayName());
+		memberBean.setEmail(getEmail());
+		memberBean.setRegisterAt(new Date());
+		
+		return memberBean;
+	}
 
 //	public MemberDTO () {
 //		

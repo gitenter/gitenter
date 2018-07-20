@@ -3,7 +3,6 @@ package com.gitenter.envelope.web;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,7 +59,7 @@ public class OrganizationController {
 			return "admin/create-organization";
 		}
 		
-		memberService.createOrganization(authentication.getName(), organizationDTO);
+		memberService.createOrganization(authentication, organizationDTO);
 		return "redirect:/";
 	}
 

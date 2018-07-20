@@ -14,28 +14,28 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         super(TestOrganizationManagement, self).tearDown()
 
     def test_organization_not_listed_for_non_member(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/"))
         assert self.org_display_name not in self.driver.page_source
 
     def test_organization_member_cannot_access_setting(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings']".format(self.org_id)))
 
     def test_non_member_cannot_access_setting(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings']".format(self.org_id)))
 
     def test_organization_manager_add_member(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
@@ -52,7 +52,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         assert self.display_name in self.driver.page_source
 
     def test_organization_normal_member_cannot_add_member(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         # TODO:
@@ -67,7 +67,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         assert "status=403" in self.driver.page_source
 
     def test_non_member_cannot_add_members(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
@@ -78,7 +78,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         assert "status=403" in self.driver.page_source
 
     def test_organization_manager_remove_member(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
@@ -90,7 +90,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings/members/remove']/input".format(self.org_id)))
 
     def test_organization_manager_add_manager(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "organizations/{}/settings/managers".format(self.org_id)))

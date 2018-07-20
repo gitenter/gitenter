@@ -1,7 +1,5 @@
 package com.gitenter.envelope.service;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,14 +34,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 		 * the system.
 		 */
 		
-		MemberBean memberBean = new MemberBean();
-		
-		memberBean.setUsername(signUpDTO.getUsername());
-		memberBean.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
-		memberBean.setDisplayName(signUpDTO.getDisplayName());
-		memberBean.setEmail(signUpDTO.getEmail());
-		memberBean.setRegisterAt(new Date());
-		
+		MemberBean memberBean = signUpDTO.toMemberBean(passwordEncoder);
 		memberRepository.saveAndFlush(memberBean);
 		
 		/*

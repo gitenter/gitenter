@@ -20,7 +20,7 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         super(TestRepositoryManagement, self).tearDown()
 
     def test_organization_manager_create_public_repository_and_view_by_organization_member_and_non_member(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
@@ -42,18 +42,18 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         # TODO:
         # check the current user is a project organizer.
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source
         assert "Public" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
@@ -61,7 +61,7 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         assert "Public" in self.driver.page_source
 
     def test_organization_manager_create_private_repository_and_view_by_organization_member_and_non_member(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
@@ -70,25 +70,25 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert "Private" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source
         assert "Private" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name not in self.driver.page_source
 
     def test_organization_member_create_repository(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
@@ -101,7 +101,7 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         assert self.repo_display_name in self.driver.page_source
 
     def test_non_member_cannot_create_repository(self):
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
@@ -117,7 +117,7 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         repo_display_name = "A"
         repo_description = "A"
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))

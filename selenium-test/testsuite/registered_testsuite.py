@@ -14,7 +14,7 @@ class RegisteredTestSuite(BaseTestSuite):
 
         self.username = "username"
         self.password = "password"
-        self.display_name = "User Name"
+        self.display_name = "Display Name"
         self.email = "username@email.com"
 
         self.driver.get(urljoin(self.root_url, "register"))
