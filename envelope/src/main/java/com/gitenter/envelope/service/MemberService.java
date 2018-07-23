@@ -2,11 +2,10 @@ package com.gitenter.envelope.service;
 
 import java.util.Collection;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 
-import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.dto.MemberProfileDTO;
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
