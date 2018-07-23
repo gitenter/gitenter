@@ -1,7 +1,5 @@
 package com.gitenter.envelope.service;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Service;
  */
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.envelope.dto.SignUpDTO;
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 
@@ -28,7 +26,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public void signUp(SignUpDTO signUpDTO) {
+	public void signUp(MemberRegisterDTO signUpDTO) {
 		
 		/*
 		 * TODO:
@@ -36,14 +34,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 		 * the system.
 		 */
 		
-		MemberBean memberBean = new MemberBean();
-		
-		memberBean.setUsername(signUpDTO.getUsername());
-		memberBean.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
-		memberBean.setDisplayName(signUpDTO.getDisplayName());
-		memberBean.setEmail(signUpDTO.getEmail());
-		memberBean.setRegisterAt(new Date());
-		
+		MemberBean memberBean = signUpDTO.toMemberBean(passwordEncoder);
 		memberRepository.saveAndFlush(memberBean);
 		
 		/*

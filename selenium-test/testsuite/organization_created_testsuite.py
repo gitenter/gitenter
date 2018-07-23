@@ -15,7 +15,7 @@ class OrganizationCreatedTestSuite(RegisteredTestSuite):
         self.org_name = "org"
         self.org_display_name = "A Organization"
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/create"))
@@ -29,7 +29,7 @@ class OrganizationCreatedTestSuite(RegisteredTestSuite):
         form_start.send_keys(self.org_member_username)
         form_start.submit()
 
-        self.driver.get(urljoin(self.root_url, "logout"))
+        self.driver.get(urljoin(self.root_url, "/logout"))
 
     def tearDown(self):
         super(OrganizationCreatedTestSuite, self).tearDown()

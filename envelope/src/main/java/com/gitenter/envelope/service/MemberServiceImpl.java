@@ -3,8 +3,13 @@ package com.gitenter.envelope.service;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gitenter.envelope.dto.MemberRegisterDTO;
+import com.gitenter.envelope.dto.MemberProfileDTO;
 import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
@@ -33,8 +38,10 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
+	@Autowired private PasswordEncoder passwordEncoder;
+	
 	@Override
-	public MemberBean getMember(String username) {
+	public MemberBean getMemberByUsername(String username) {
 		return memberRepository.findByUsername(username).get(0);
 	}
 	
@@ -53,35 +60,89 @@ public class MemberServiceImpl implements MemberService {
 		 * when display), for example a dirty fix of implement a proxy pattern
 		 * inside of the "getMember()" method
 		 */
-		MemberBean member = getMember(username);
+		MemberBean member = getMemberByUsername(username);
 		return member.getOrganizations(OrganizationMemberRole.MANAGER);
 	}
 
 	@Override
 	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
 		
-		MemberBean member = getMember(username);
+		MemberBean member = getMemberByUsername(username);
 		return member.getOrganizations(OrganizationMemberRole.MEMBER);
 	}
 
 	@Override
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) {
 		
-		MemberBean member = getMember(username);
+		MemberBean member = getMemberByUsername(username);
 		return member.getRepositories(RepositoryMemberRole.ORGANIZER);
 	}
 
 	@Override
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) {
 		
-		MemberBean member = getMember(username);
+		MemberBean member = getMemberByUsername(username);
 		return member.getRepositories(RepositoryMemberRole.EDITOR);
 	}
 	
-	@Override
-	public void createOrganization(String username, OrganizationDTO organizationDTO) {
+	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) {
 		
-		MemberBean member = getMember(username);
+		MemberBean member = getMemberByUsername(authentication.getName());
+		
+		MemberProfileDTO profile = new MemberProfileDTO();
+		profile.fillFromMemberBean(member);
+		
+		return profile;
+	}
+	
+	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) {
+		
+		MemberBean member = getMemberByUsername(authentication.getName());
+		
+		/*
+		 * Can just use superclass method, as fulfill "password"
+		 * attribute is not necessary.
+		 */
+		MemberRegisterDTO profileAndPassword = new MemberRegisterDTO();
+		profileAndPassword.fillFromMemberBean(member);
+		
+		return profileAndPassword;
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	public void updateMember(MemberProfileDTO profile) {
+		
+		MemberBean memberBean = getMemberByUsername(profile.getUsername());
+		profile.updateMemberBean(memberBean);
+		
+		/* Since "saveAndFlush()" will decide by itself whether the operation is
+		 * INSERT or UPDATE, the bean being actually modified and refreshed should 
+		 * be the bean queried from the database, rather than the bean user just
+		 * produced. 
+		 */
+		memberRepository.saveAndFlush(memberBean);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) {
+		
+		MemberBean memberBean = getMemberByUsername(register.getUsername());
+		
+		if (!passwordEncoder.matches(oldPassword, memberBean.getPassword())) {
+			return false;
+		}
+		else {
+			memberBean.setPassword(passwordEncoder.encode(register.getPassword()));
+			memberRepository.saveAndFlush(memberBean);
+			
+			return true;
+		}
+	}
+	
+	@Override
+	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) {
+		
+		MemberBean member = getMemberByUsername(authentication.getName());
 		
 		OrganizationBean organization = new OrganizationBean();
 		organization.setName(organizationDTO.getName());

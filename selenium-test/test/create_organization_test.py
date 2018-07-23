@@ -20,7 +20,7 @@ class TestCreateOrganization(RegisteredTestSuite):
         org_name = "org"
         org_display_name = "A Organization"
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/"))
@@ -56,7 +56,7 @@ class TestCreateOrganization(RegisteredTestSuite):
         org_name = "o"
         org_display_name = "O"
 
-        self.driver.get(urljoin(self.root_url, "login"))
+        self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/create"))

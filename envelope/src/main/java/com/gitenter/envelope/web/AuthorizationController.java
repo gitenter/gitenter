@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gitenter.envelope.dto.LoginDTO;
-import com.gitenter.envelope.dto.SignUpDTO;
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.service.AnonymousService;
 
 @Controller
@@ -26,13 +26,13 @@ public class AuthorizationController {
 		 * The modelAttribute NEED to be the same as the class name,
 		 * otherwise the <sf:errors> will not render. 
 		 */
-		model.addAttribute("signUpDTO", new SignUpDTO());
+		model.addAttribute("signUpDTO", new MemberRegisterDTO());
 		return "authorization/register";
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
 	public String processRegistration (
-			@Valid SignUpDTO signUpDTO, 
+			@Valid MemberRegisterDTO signUpDTO, 
 			Errors errors, 
 			Model model) {
 		

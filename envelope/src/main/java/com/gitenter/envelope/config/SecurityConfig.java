@@ -41,13 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			 */
 			.authorizeRequests()
 				.antMatchers("/").authenticated()
-//				/*
-//				 * URL patterns in "SettingsController".
-//				 */
-//				.antMatchers("/settings/**").authenticated()
-//				/*
-//				 * URL patterns in "ManagerAdminController".
-//				 */
+				.antMatchers("/settings/**").authenticated()
 				.antMatchers("/organizations/create").authenticated()
 //				.antMatchers("/organizations/{organizationId}/settings/**").access("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 //				.antMatchers("/organizations/{organizationId}/repositories/create").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
