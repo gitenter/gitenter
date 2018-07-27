@@ -9,8 +9,9 @@
 
 
 ## Ignore Chef related files and secrets
-.chef
+#.chef
 .chef/*.pem
+.chef/*.pem.pub
 .chef/encrypted_data_bag_secret
 
 ## Ignore Chef-Zero files

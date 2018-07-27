@@ -9,6 +9,7 @@ apt_update 'all platforms' do
   action :periodic
 end
 
+# Then http://192.168.33.7:8080/ works.
 apt_package 'tomcat8' do
   action :install
 end
