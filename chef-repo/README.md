@@ -48,3 +48,8 @@ Under this folder, may run
 `chef-zero --port 9501`
 
 Then various `knife` commands are available under this folder.
+
+```
+knife upload nodes
+knife node list
+```

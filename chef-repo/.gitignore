@@ -16,7 +16,7 @@
 
 ## Ignore Chef-Zero files
 clients
-nodes
+#nodes
 
 # ## OS junk files
 # [Tt]humbs.db

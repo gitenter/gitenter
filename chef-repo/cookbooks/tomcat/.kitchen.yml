@@ -8,6 +8,9 @@ provisioner:
   # For example:
   #   always_update_cookbooks: <%= !ENV['CI'] %>
   always_update_cookbooks: true
+  data_bags_path: ../../data_bags
+  environments_path: ../../environments
+  roles_path: ../../roles
 
 verifier:
   name: inspec
