@@ -76,6 +76,8 @@ Document visualization:
 - [SRS-WS-0013]{SRS-WS-0012} The software shall be able to display local images referred in markdown pages.
 - [SRS-WS-0014]{SRS-WS-0013} The software shall have a opinion to show files (images, ...) under particular commit version in their raw format.
 - [SRS-WS-0016]{SRS-WS-0012,SyAD-0007} The software shall visualize (1) normal markdown items and (2) modified markdown syntax defined by this software in a compatible way.
+- [SRS-WS-0105]{} The software shall be able to show line numbers.
+- [SRS-WS-0104]{} The software shall be able to highlight words in a document persistently by a hyperlink.
 - [SRS-WS-0017]{SRS-WS-0016} The software shall visualize traceable item tag in a styled way.
 - [SRS-WS-0021]{SRS-WS-0016} The software shall visualize traceable item comments in a styled way.
 - [SRS-WS-0018]{SRS-WS-0017,SyRS-0010} The software shall provide hyperlink for both upstream and downstream items, with the destination of the link point to the corresponding line of the targeting item.
@@ -172,11 +174,12 @@ Reviewing:
         - Denial.
     - "Draft" cannot be switched to.
 - [SRS-WS-0037]{SyRS-0052,SyRS-0026} The software shall be able to generate a paper-based snapshot of the to-be-reviewed documents in `pdf` format, (1) to be used for a traditional review meeting, and/or (2) to fit into a company's the existing work flow in case exists.
-- [SRS-WS-0038]{SRS-WS-0037,SyRS-0064,SyRS-0065} In the `pdf` version of review draft, the following items shall be explicitly marked:
+- [SRS-WS-0038]{SRS-WS-0037,SyRS-0064,SyRS-0065,SRS-WS-0105} In the `pdf` version of review draft, the following items shall be explicitly marked:
     - Author(s).
     - (1) Snapshot date and (2) review deadline.
     - (1) Review version and (2) subsection commit ID.
     - Line numbers.
+        - Line numbers shall be consistent with what is shown from the web UI.
 - [SRS-WS-0039]{SRS-WS-003} The `pdf` to-be-reviewed document may have customized header/footer, to fit into the official document format of some particular company.
 - [SRS-WS-0040]{SyRS-0052} The software shall provide a recorder of the traditional review meetings through the web interface.
     - *(Can comments have more complicated syntax? Markdown should be trivial to support so we have items, and in principle tables, but what about graphs?)*
