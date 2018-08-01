@@ -119,6 +119,8 @@ Traceability:
 - [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
 - [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
 - [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
+    - *(For TDD unit tests, a simple link should be enough. However, it is unlikely that a requirement/design document will be linking to a unit test.)*
+    - *(For BDD testing frameworks such as [cucumber](https://github.com/cucumber/cucumber), should the software provide some kind of pattern generator, or directly print out the test case in document?)*
 - [SyRS-0091]{SyRS-0045} The (unit)test status from a continuous integration platform, shall be integrated into this system.
 - [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to trace the completeness of traceable items through manual ways.
 - [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems (which provide a TODO/in progress/done.
