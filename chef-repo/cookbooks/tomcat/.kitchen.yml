@@ -24,6 +24,7 @@ platforms:
 suites:
   - name: default
     run_list:
+      - recipe[iptables::default]
       - recipe[tomcat::default]
     verifier:
       inspec_tests:
