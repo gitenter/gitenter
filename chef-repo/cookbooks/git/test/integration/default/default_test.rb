@@ -17,6 +17,20 @@ describe port(80), :skip do
   it { should_not be_listening }
 end
 
+describe package('openssh-server') do
+  it { should be_installed }
+end
+
 describe package('git') do
   it { should be_installed }
+end
+
+describe user('git') do
+  it { should exist }
+  its('home') { should eq '/home/git' }
+  its('shell') { should eq '/bin/bash' }
+end
+
+describe sshd_config do
+  its('PasswordAuthentication') { should cmp 'no' }
 end
