@@ -1,6 +1,2 @@
-DROP USER IF EXISTS enterovirus;
-
-DROP ROLE IF EXISTS enterovirus_apps;
-
-DROP USER IF EXISTS enterovirus_gitar;
-DROP USER IF EXISTS enterovirus_capsid;
+DROP USER IF EXISTS gitenter;
+DROP USER IF EXISTS gitenter_app;
