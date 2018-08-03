@@ -9,20 +9,6 @@ apt_update 'all platforms' do
   action :periodic
 end
 
-# Consider using "postgresql" cookbook from Chef Supermarket.
-# However, that one only includes resources so not sure exactly
-# how to use.
-
-# apt_package 'postgresql' do
-#   action :install
-# end
-#
-# apt_package 'postgresql-contrib' do
-#   action :install
-# end
-
-# include_recipe 'postgresql::default'
-
 postgresql_server_install 'postgresql server install' do
   password 'postgres'
   port 5432
@@ -35,10 +21,11 @@ postgresql_user 'gitenter' do
   action :create
 end
 
+# "user" cannot be "gitenter" because there should be a corresponding system user.
+# "owner" as "gitenter" can pass "kitchen converge" but with deprecated warnings,
+# also if log into the machine and check, it's owner is still "postgres"
 postgresql_database 'gitenter' do
-  # user 'gitenter'
-  # owner 'gitenter'
   user 'postgres'
-  owner 'postgres'
+  owner 'gitenter'
   action :create
 end
