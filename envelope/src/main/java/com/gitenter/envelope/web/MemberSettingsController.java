@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gitenter.envelope.dto.MemberProfileDTO;
 import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.service.MemberService;
-import com.gitenter.protease.domain.auth.MemberBean;
 
 @Controller
 @RequestMapping("/settings")

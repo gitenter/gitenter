@@ -26,25 +26,28 @@ public class AuthorizationController {
 		 * The modelAttribute NEED to be the same as the class name,
 		 * otherwise the <sf:errors> will not render. 
 		 */
-		model.addAttribute("signUpDTO", new MemberRegisterDTO());
+		model.addAttribute("registerDTO", new MemberRegisterDTO());
 		return "authorization/register";
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
 	public String processRegistration (
-			@Valid MemberRegisterDTO signUpDTO, 
+			@Valid MemberRegisterDTO memberRegisterDTO, 
 			Errors errors, 
 			Model model) {
 		
 		if (errors.hasErrors()) {
 			/* 
 			 * So <sf:> will render the values in object "member" to the form.
+			 * 
+			 * TODO:
+			 * When it has a super-class, error cannot be shown properly.
 			 */
-			model.addAttribute("memberDTO", signUpDTO); 
+			model.addAttribute("registerDTO", memberRegisterDTO); 
 			return "authorization/register";
 		}
 		
-		anonymousService.signUp(signUpDTO);
+		anonymousService.signUp(memberRegisterDTO);
 		return "redirect:/login";
 	}
 	
