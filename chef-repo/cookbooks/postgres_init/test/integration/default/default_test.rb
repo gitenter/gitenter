@@ -8,3 +8,7 @@
 describe package('postgresql') do
   it { should be_installed }
 end
+
+describe command("psql --version") do
+  its('stdout') { should match /10.4/ }
+end
