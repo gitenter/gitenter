@@ -17,7 +17,7 @@ class BaseTestSuite(unittest.TestCase):
         self.config = STSConfig()
 
         self.root_url = self.config.web_root_url
-        self._reset_database("enterovirus", "enterovirus_empty")
+        self._reset_database("gitenter", "gitenter_empty")
 
     def tearDown(self):
         self.driver.close()
@@ -26,6 +26,12 @@ class BaseTestSuite(unittest.TestCase):
 
         # TODO:
         # Makes database connection a singleton.
+        #
+        # TODO:
+        # Use anybody other than "postgres" to do it. Currently everybody except
+        # "postgres" will have error:
+        # > psycopg2.OperationalError: terminating connection due to administrator command
+        # > server closed the connection unexpectedly...
         conn_string = "host='{}' port='{}' user='postgres' password='postgres'".format(
             urlparse(self.config.postgres_root_url).hostname,
             urlparse(self.config.postgres_root_url).port

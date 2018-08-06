@@ -89,6 +89,8 @@ class TestMemberSetting(RegisteredTestSuite):
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/settings/account"))
+        self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
+
         form_start = self.driver.find_element_by_id("old_password")
         form_start.send_keys(self.password)
         self.driver.find_element_by_id("password").send_keys(new_password)
@@ -118,12 +120,24 @@ class TestMemberSetting(RegisteredTestSuite):
         form_start.submit()
 
         self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
         assert "Old password doesn't match!" in self.driver.page_source
 
     def test_invalid_new_password(self):
-        # TODO:
-        # Not working yet. See comments in code.
-        pass
+        new_password = "p"
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
+        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        form_start = self.driver.find_element_by_id("old_password")
+        form_start.send_keys(self.password)
+        self.driver.find_element_by_id("password").send_keys(new_password)
+        form_start.submit()
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
+        assert "size" in self.driver.find_element_by_id("password.errors").text
 
 
 if __name__ == '__main__':

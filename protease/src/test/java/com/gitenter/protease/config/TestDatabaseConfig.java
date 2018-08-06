@@ -17,8 +17,8 @@ public class TestDatabaseConfig {
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/enterovirus");
-		dataSource.setUsername("enterovirus");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/gitenter");
+		dataSource.setUsername("gitenter_app");
 		dataSource.setPassword("zooo");
 		return dataSource;
 	}

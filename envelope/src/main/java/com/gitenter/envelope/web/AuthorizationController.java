@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,25 +27,24 @@ public class AuthorizationController {
 		 * The modelAttribute NEED to be the same as the class name,
 		 * otherwise the <sf:errors> will not render. 
 		 */
-		model.addAttribute("signUpDTO", new MemberRegisterDTO());
+		model.addAttribute("memberRegisterDTO", new MemberRegisterDTO());
 		return "authorization/register";
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
 	public String processRegistration (
-			@Valid MemberRegisterDTO signUpDTO, 
-			Errors errors, 
-			Model model) {
+			/* 
+			 * Use "ModelAttribute" rather than directly put the value into model,
+			 * otherwise the <sf:errors> will not render. 
+			 */
+			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO memberRegisterDTO, 
+			Errors errors) {
 		
 		if (errors.hasErrors()) {
-			/* 
-			 * So <sf:> will render the values in object "member" to the form.
-			 */
-			model.addAttribute("memberDTO", signUpDTO); 
 			return "authorization/register";
 		}
 		
-		anonymousService.signUp(signUpDTO);
+		anonymousService.signUp(memberRegisterDTO);
 		return "redirect:/login";
 	}
 	
