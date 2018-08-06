@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,7 +54,7 @@ public class MemberSettingsController {
 	
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
 	public String processUpdateProfile (
-			@Valid MemberProfileDTO profileAfterChange, 
+			@ModelAttribute("memberProfileDTO") @Valid MemberProfileDTO profileAfterChange, 
 			Errors errors, 
 			RedirectAttributes model, 
 			Authentication authentication) throws Exception {
@@ -62,21 +63,7 @@ public class MemberSettingsController {
 		 * skip these associated errors. */
 		int expectErrorCount = 0;
 		expectErrorCount += errors.getFieldErrorCount("password");
-		
 		if (errors.getErrorCount() > expectErrorCount) {
-			/*
-			 * TODO:
-			 * Currently cannot map the old values in the redirect page.
-			 * With error message (validation in registration works):
-			 * > Failed to convert value of type 'com.gitenter.envelope.dto.MemberProfileDTO' to required type 'java.lang.String'; nested exception is java.lang.IllegalStateException: Cannot convert value of type 'com.gitenter.envelope.dto.MemberProfileDTO' to required type 'java.lang.String': no matching editors or conversion strategy found
-			 * 
-			 * I don't understand why.
-			 * 
-			 * However, Even if you don't add the attribute, it still displayed
-			 * in the redirect page with the correct error messages. Need to figure 
-			 * out whether that addAttribute() is actually needed or not in Spring.
-			 */
-//			model.addAttribute("memberProfileDTO", profileAfterChange); 
 			return "settings/profile";
 		}
 
@@ -99,8 +86,8 @@ public class MemberSettingsController {
 		 * as well as its share the password encoder with sign up. That's
 		 * the reason we want to load this DTO.
 		 */
-		MemberRegisterDTO registerDTO = memberService.getMemberRegisterDTO(authentication);
-		model.addAttribute("registerDTO", registerDTO);
+		MemberRegisterDTO memberRegisterDTO = memberService.getMemberRegisterDTO(authentication);
+		model.addAttribute("memberRegisterDTO", memberRegisterDTO);
 		
 		return "settings/account";
 	}
@@ -114,7 +101,7 @@ public class MemberSettingsController {
 			 * > Validation failed for object='XXX'. Error count: XXX
 			 * rather than write that information into the "Error" class.
 			 */
-			@Valid MemberRegisterDTO registerAfterChange, 
+			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO registerAfterChange, 
 			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
 			RedirectAttributes model, 
@@ -129,26 +116,7 @@ public class MemberSettingsController {
 		int expectErrorCount = 0;
 		expectErrorCount += errors.getFieldErrorCount("displayName");
 		expectErrorCount += errors.getFieldErrorCount("email");
-		
 		if (errors.getErrorCount() > expectErrorCount) {
-			/*
-			 * TODO:
-			 * 
-			 * Currently cannot map the old values in the redirect page.
-			 * With error message (validation in registration works):
-			 * > Failed to convert value of type 'enterovirus.capsid.dto.MemberDTO' 
-			 * > to required type 'java.lang.String'; nested exception is 
-			 * > java.lang.IllegalStateException: Cannot convert value of 
-			 * > type 'enterovirus.capsid.dto.MemberDTO' to required type 
-			 * > 'java.lang.String': no matching editors or conversion strategy found
-			 * 
-			 * However, if not including this line, then will get error
-			 * > Neither BindingResult nor plain target object for bean name 'registerDTO' available as request attribute
-			 * 
-			 * So right now this validation will always fail. Need to find a way to
-			 * either resolve this problem, or find a workaround.
-			 */
-//			model.addAttribute("registerDTO", registerAfterChange);
 			return "settings/account";
 		}
 		
@@ -159,7 +127,6 @@ public class MemberSettingsController {
 			return "redirect:/settings/account";
 		}
 		else {
-//			model.addAttribute("registerDTO", registerAfterChange);
 			model.addFlashAttribute("errorMessage", "Old password doesn't match!");
 			return "redirect:/settings/account";
 		}
