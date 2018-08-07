@@ -24,7 +24,8 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[git::default]
+      - recipe[openssh::default]
+      - recipe[git_server::default]
     verifier:
       inspec_tests:
         - test/integration/default

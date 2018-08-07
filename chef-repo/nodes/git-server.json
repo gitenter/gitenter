@@ -3,7 +3,9 @@
   "chef_type": "node",
   "json_class": "Chef::Node",
   "chef_environment": "_default",
-  "run_list": ["recipe[git]"],
+  "run_list": [
+    "recipe[git_server]"
+  ],
   "automatic": {
     "ipaddress": "192.168.33.31",
     "hostname": "git",

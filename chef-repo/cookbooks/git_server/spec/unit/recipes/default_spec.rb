@@ -1,12 +1,12 @@
 #
-# Cookbook:: git
+# Cookbook:: git_server
 # Spec:: default
 #
 # Copyright:: 2018, The Authors, All Rights Reserved.
 
 require 'spec_helper'
 
-describe 'git::default' do
+describe 'git_server::default' do
   context 'When all attributes are default, on Ubuntu 16.04' do
     let(:chef_run) do
       # for a complete list of available platforms and versions see:
