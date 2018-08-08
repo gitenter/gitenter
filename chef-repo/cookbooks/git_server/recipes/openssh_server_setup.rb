@@ -17,3 +17,7 @@ end
 #
 # node.force_default['openssh']['server']['password_authentication'] = 'no'
 # include_recipe 'openssh::default'
+#
+# However, there's a reason NOT to use openssh cookbook, as we may
+# Need to later on fork/customize our openssh to make it get authorization
+# from a database rather than the authorized_keys file. 

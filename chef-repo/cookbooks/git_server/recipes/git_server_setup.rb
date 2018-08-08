@@ -1,8 +1,8 @@
-node.default['git']['username'] = 'git'
-node.default['git']['home_dir'] = "/home/#{node.default['git']['username']}"
+node.default['git_server']['username'] = 'git'
+node.default['git_server']['home_dir'] = "/home/#{node.default['git_server']['username']}"
 
-git_username = node.default['git']['username']
-git_home_dir = node.default['git']['home_dir']
+git_username = node.default['git_server']['username']
+git_home_dir = node.default['git_server']['home_dir']
 
 apt_package 'git' do
   action :install
