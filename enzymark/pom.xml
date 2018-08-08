@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>enterovirus</groupId>
+	<groupId>com.gitenter</groupId>
 	<artifactId>enzymark</artifactId>
 	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
@@ -30,7 +30,7 @@
 	<dependencies>
 		<!-- local packages -->
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.2-prototype</version>
 			<exclusions>
@@ -41,7 +41,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
 			<version>0.0.2-prototype</version>
 			<exclusions>
