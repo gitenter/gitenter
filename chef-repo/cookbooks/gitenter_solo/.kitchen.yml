@@ -21,8 +21,9 @@ platforms:
 suites:
   - name: default
     run_list:
+      - recipe[iptables::default]
       - recipe[git_server::default]
-      - recipe[postgresql_init::default]
+      - recipe[postgres_init::default]
       - recipe[tomcat_init::default]
       - recipe[gitenter_solo::default]
     verifier:

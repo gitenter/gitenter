@@ -5,7 +5,7 @@
 # Copyright:: 2018, The Authors, All Rights Reserved.
 
 include_recipe 'git_server::default'
-include_recipe 'postgresql_init::default'
+include_recipe 'postgres_init::default'
 include_recipe 'tomcat_init::default'
 
 # TODO:
@@ -26,6 +26,7 @@ template '/etc/default/tomcat8' do
   })
 end
 
+=begin
 directory '/var/log/tomcat8' do
   owner git_username
   group 'adm'
@@ -74,6 +75,7 @@ Dir.foreach('/var/lib/tomcat8/conf') do |item|
       group 'adm'
       action :nothing
     end
+  end
   # do work on real items
 end
 
@@ -88,3 +90,4 @@ cookbook_file '/var/lib/tomcat8/webapps/ROOT.war' do
   manage_symlink_source false
   action :create
 end
+=end
