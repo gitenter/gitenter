@@ -26,57 +26,69 @@ template '/etc/default/tomcat8' do
   })
 end
 
-=begin
 directory '/var/log/tomcat8' do
   owner git_username
   group 'adm'
-  recursive True
-  action :nothing
+end
+
+# Recursive doesn't work. It is for create PARENTS rather
+# than recursive children, and it only works with :create.
+# And chef doesn't support "chown -R" because it is not
+# idempotent.
+# Ref:
+# https://tickets.opscode.com/browse/CHEF-690
+# https://tickets.opscode.com/browse/CHEF-1621
+Dir.glob('/var/log/tomcat8/**/*') do |path|
+  next if path == '.' or path == '..'
+  file path do
+    owner git_username
+    group "adm"
+  end if File.file?(path)
 end
 
 directory '/var/lib/tomcat8/webapps' do
   owner git_username
   group git_username
-  recursive True
-  action :nothing
+end
+
+Dir.glob('/var/lib/tomcat8/webapps/**/*') do |path|
+  next if path == '.' or path == '..'
+  file path do
+    owner git_username
+    group git_username
+  end if File.file?(path)
+  directory path do
+    owner git_username
+    group git_username
+  end if File.directory?(path)
 end
 
 directory '/var/lib/tomcat8/lib' do
   owner git_username
   group git_username
-  recursive True
-  action :nothing
 end
 
-directory '/var/cache/tomcat8' do
-  owner git_username
-  group 'adm'
-  recursive True
-  action :nothing
+# glob will recursively do all nested subfolders.
+Dir.glob('/var/cache/tomcat8/**/*') do |path|
+  next if path == '..'
+  file path do
+    owner git_username
+    group 'adm'
+  end if File.file?(path)
+  directory path do
+    owner git_username
+    group 'adm'
+  end if File.directory?(path)
 end
 
-directory '/var/cache/tomcat8/Catalina' do
-  owner git_username
-  group 'adm'
-  recursive True
-  action :nothing
-end
-
-Dir.foreach('/var/lib/tomcat8/conf') do |item|
-  next if item == '.' or item == '..'
-  if File.directory?(item)
-    directory item do
-      group 'adm'
-      recursive True
-      action :nothing
-    end
-  elsif File.file?("name")
-    file item do
-      group 'adm'
-      action :nothing
-    end
-  end
-  # do work on real items
+Dir.glob('/var/lib/tomcat8/conf/**/*') do |path|
+  next if path == '.' or path == '..'
+  file path do
+    group git_username
+  end if File.file?(path)
+  directory path do
+    group git_username
+  end if File.directory?(path)
 end
 
 service "tomcat8" do
@@ -90,4 +102,3 @@ cookbook_file '/var/lib/tomcat8/webapps/ROOT.war' do
   manage_symlink_source false
   action :create
 end
-=end
