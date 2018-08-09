@@ -9,7 +9,7 @@ import com.gitenter.enzymark.TraceableItemParser;
 public class TraceableItemParserTest {
 
 	@Test
-	public void test1() {
+	public void testTraceableItemWithoutDownstream() {
 		TraceableItemParser parsingResult = new TraceableItemParser("- [tagWith-_123] Content with !@#$%^&*()[], space and \t in it.");
 		assertEquals(parsingResult.isTraceableItem(), true);
 		assertEquals(parsingResult.getTag(), "tagWith-_123");
@@ -18,7 +18,7 @@ public class TraceableItemParserTest {
 	}
 	
 	@Test
-	public void test2() {
+	public void testTraceableItemWithDownstream() {
 		TraceableItemParser parsingResult = new TraceableItemParser("[tagWith-_123]{referWith-_123,referWith-_456} Content with !@#$%^&*()[], space and \t in it.");
 		assertEquals(parsingResult.isTraceableItem(), true);
 		assertEquals(parsingResult.getTag(), "tagWith-_123");
@@ -27,7 +27,7 @@ public class TraceableItemParserTest {
 	}
 	
 	@Test
-	public void test3() {
+	public void testTraceableItemWithEmptyDownstream() {
 		TraceableItemParser parsingResult = new TraceableItemParser("[tagWith-_123]{} Content with !@#$%^&*()[], space and \t in it.");
 		assertEquals(parsingResult.isTraceableItem(), true);
 		assertEquals(parsingResult.getTag(), "tagWith-_123");
@@ -36,7 +36,7 @@ public class TraceableItemParserTest {
 	}
 	
 	@Test
-	public void test4() {
+	public void testNotTraceableItem() {
 		TraceableItemParser parsingResult = new TraceableItemParser("~~~garbage~~~");
 		assertEquals(parsingResult.isTraceableItem(), false);
 	}

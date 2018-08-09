@@ -15,11 +15,9 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import com.gitenter.domain.git.DocumentBean;
-import com.gitenter.domain.git.TraceableItemBean;
 import com.gitenter.enzymark.TraceableItemParser;
-
-import enterovirus.protease.domain.*;
+import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.TraceableItemBean;
 
 class TraceableItemNodeRenderer implements NodeRenderer {
 	
@@ -161,16 +159,16 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 		 * path is a file rather than a directory. If not, then there will
 		 * be one more "../". 
 		 */
-		Path original = Paths.get(document.getRelativeFilepath()).getParent();
+		Path original = Paths.get(document.getRelativePath()).getParent();
 		
 		if (original == null) {
 			/*
 			 * This is for the special case that document is at the root.
 			 */
-			return referredItem.getDocument().getRelativeFilepath();
+			return referredItem.getDocument().getRelativePath();
 		}
 		else {
-			Path referred = Paths.get(referredItem.getDocument().getRelativeFilepath());
+			Path referred = Paths.get(referredItem.getDocument().getRelativePath());
 			String relativeFilepath = original.relativize(referred).toString();
 			
 			return relativeFilepath;

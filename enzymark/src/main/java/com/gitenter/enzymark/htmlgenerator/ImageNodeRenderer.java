@@ -12,7 +12,7 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import com.gitenter.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.DocumentBean;
 
 class ImageNodeRenderer implements NodeRenderer {
 	
@@ -36,8 +36,8 @@ class ImageNodeRenderer implements NodeRenderer {
 		Image image = (Image) node;
 		
 		String destination = image.getDestination();
-		Path referredPath = Paths.get("documents", "directories", document.getRelativeFilepath()).getParent();
-		Path imagePath = Paths.get("blobs", "directories", document.getRelativeFilepath()).getParent().resolve(destination);
+		Path referredPath = Paths.get("documents", "directories", document.getRelativePath()).getParent();
+		Path imagePath = Paths.get("blobs", "directories", document.getRelativePath()).getParent().resolve(destination);
 		String url = referredPath.relativize(imagePath).toString();
 		
 		String title = image.getTitle();

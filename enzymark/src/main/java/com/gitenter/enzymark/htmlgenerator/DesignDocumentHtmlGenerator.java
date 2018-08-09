@@ -1,5 +1,6 @@
 package com.gitenter.enzymark.htmlgenerator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,17 +13,16 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlNodeRendererFactory;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
-import com.gitenter.domain.git.DocumentBean;
-
-import enterovirus.protease.domain.*;
+import com.gitenter.protease.domain.git.DocumentBean;
 
 public class DesignDocumentHtmlGenerator implements HtmlGenerator {
 
 	private DocumentBean document;
 	private String markdownContent;
 	
-	public DesignDocumentHtmlGenerator(DocumentBean document) {
+	public DesignDocumentHtmlGenerator(DocumentBean document) throws IOException, GitAPIException {
 		this.document = document;
 		this.markdownContent = document.getContent();
 	}
