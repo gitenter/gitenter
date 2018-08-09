@@ -1,0 +1,11 @@
+# tomcat_init CHANGELOG
+
+This file is used to list changes made in each version of the tomcat_init cookbook.
+
+# 0.1.0
+
+Initial release.
+
+- change 0
+- change 1
+

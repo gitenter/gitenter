@@ -3,5 +3,4 @@ source 'https://supermarket.chef.io'
 
 metadata
 
-# Newest version (7.1.0) no longer have recipe included.
-cookbook "postgresql"#, '= 6.1.0'
+cookbook "postgresql"
