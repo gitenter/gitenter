@@ -11,7 +11,7 @@ import org.commonmark.node.Paragraph;
 import org.commonmark.node.Text;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import com.gitenter.enzymark.TraceableItemParser;
+import com.gitenter.enzymark.traceparser.TraceableItemParser;
 
 class TraceableItemVisitor extends AbstractVisitor {
 

@@ -15,7 +15,7 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import com.gitenter.enzymark.TraceableItemParser;
+import com.gitenter.enzymark.traceparser.TraceableItemParser;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.TraceableItemBean;
 

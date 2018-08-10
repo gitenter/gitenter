@@ -1,4 +1,4 @@
-package com.gitenter.enzymark;
+package com.gitenter.enzymark.traceparser;
 
 import java.util.Scanner;
 import java.util.regex.MatchResult;

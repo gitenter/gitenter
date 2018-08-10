@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.gitenter.enzymark.traceanalyzer.ItemTagNotUniqueException;
 import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
