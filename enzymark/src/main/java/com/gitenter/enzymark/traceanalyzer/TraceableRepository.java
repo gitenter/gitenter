@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * TODO:
+ * As most (right now all) usage cases right now need to start from a git
+ * historical state, this package should starts with git GitRepository and GitFile.
+ */
 public class TraceableRepository {
 	
 	File repositoryDirectory;
