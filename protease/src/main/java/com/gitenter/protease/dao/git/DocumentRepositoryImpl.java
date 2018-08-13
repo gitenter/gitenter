@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
-import com.gitenter.gitar.GitFile;
+import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.source.GitSource;
@@ -75,7 +75,7 @@ class DocumentRepositoryImpl implements DocumentRepository {
 		
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
-		GitFile gitFile = gitCommit.getFile(document.getRelativePath());
+		GitHistoricalFile gitFile = gitCommit.getFile(document.getRelativePath());
 		
 		assert document.getRelativePath().equals(gitFile.getRelativePath());
 		document.setFromGit(gitFile);

@@ -1,6 +1,6 @@
 package com.gitenter.protease.domain.git;
 
-import com.gitenter.gitar.GitPath;
+import com.gitenter.gitar.GitHistoricalPath;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +15,7 @@ public abstract class PathBean {
 	
 	protected ValidCommitBean commit;
 	
-	public void setFromGit(GitPath gitPath) {
+	public void setFromGit(GitHistoricalPath gitPath) {
 		relativePath = gitPath.getRelativePath();
 		name = gitPath.getName();
 	}

@@ -13,9 +13,9 @@ import org.springframework.stereotype.Repository;
 
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
-import com.gitenter.gitar.GitFile;
-import com.gitenter.gitar.GitFolder;
-import com.gitenter.gitar.GitPath;
+import com.gitenter.gitar.GitHistoricalFile;
+import com.gitenter.gitar.GitHistoricalFolder;
+import com.gitenter.gitar.GitHistoricalPath;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
 import com.gitenter.protease.domain.git.CommitBean;
@@ -104,7 +104,7 @@ public class CommitRepositoryImpl implements CommitRepository {
 
 		@Override
 		protected FolderBean getReal() throws IOException, GitAPIException {
-			GitFolder gitFolder = gitCommit.getRoot();
+			GitHistoricalFolder gitFolder = gitCommit.getRoot();
 			return getFolderBean(gitFolder, commit);
 		}
 	}
@@ -122,13 +122,13 @@ public class CommitRepositoryImpl implements CommitRepository {
 		@Override
 		public FileBean get(String relativePath) throws IOException, GitAPIException {
 			
-			GitFile gitFile = gitCommit.getFile(relativePath);
+			GitHistoricalFile gitFile = gitCommit.getFile(relativePath);
 			return getFileBean(gitFile, commit);
 		}
 		
 	}
 	
-	private static FileBean getFileBean(GitFile gitFile, ValidCommitBean commit) {
+	private static FileBean getFileBean(GitHistoricalFile gitFile, ValidCommitBean commit) {
 		
 		FileBean file = new FileBean();
 		file.setFromGit(gitFile);
@@ -137,20 +137,20 @@ public class CommitRepositoryImpl implements CommitRepository {
 		return file;
 	}
 	
-	private static FolderBean getFolderBean(GitFolder gitFolder, ValidCommitBean commit) {
+	private static FolderBean getFolderBean(GitHistoricalFolder gitFolder, ValidCommitBean commit) {
 		
 		FolderBean folder = new FolderBean();
 		folder.setFromGit(gitFolder);
 		folder.setCommit(commit);
 		
 		Collection<PathBean> subpath = new ArrayList<PathBean>();
-		for (GitPath path : gitFolder.list()) {
-			if (path instanceof GitFolder) {
-				subpath.add(getFolderBean((GitFolder)path, commit));
+		for (GitHistoricalPath path : gitFolder.ls()) {
+			if (path instanceof GitHistoricalFolder) {
+				subpath.add(getFolderBean((GitHistoricalFolder)path, commit));
 			}
 			else {
-				assert path instanceof GitFile;
-				subpath.add(getFileBean((GitFile)path, commit));
+				assert path instanceof GitHistoricalFile;
+				subpath.add(getFileBean((GitHistoricalFile)path, commit));
 			}
 			folder.setSubpath(subpath);
 		}

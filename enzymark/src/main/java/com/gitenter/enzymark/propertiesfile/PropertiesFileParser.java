@@ -12,7 +12,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
-import com.gitenter.gitar.GitFile;
+import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.GitRepository;
 
 /*
@@ -92,7 +92,7 @@ public class PropertiesFileParser {
 		try {
 			GitRepository repository = GitBareRepository.getInstance(repositoryDirectory);
 			GitCommit commit = repository.getCommit(sha);
-			GitFile file = commit.getFile(relativeFilepath);
+			GitHistoricalFile file = commit.getFile(relativeFilepath);
 			
 			/*
 			 * TODO:
