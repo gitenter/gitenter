@@ -29,3 +29,23 @@ postgresql_database 'gitenter' do
   owner 'gitenter'
   action :create
 end
+
+# TODO:
+# Should replace with remote_file in the future, or the future chef server need
+# to hold the entire project folder (rather than just chef-repo). Don't know which
+# is the more reasonable way?
+cookbook_file '/tmp/initiate_database.sql' do
+  source 'initiate_database.sql'
+  mode '0755'
+  force_unlink true
+  manage_symlink_source false
+  action :create
+end
+
+# Need to login and manually run the following command:
+# (It is NOT idempotent, and shouldN'T be run everytime when
+# there are changes on the chef recipe.)
+#
+# $ export PGPASSWORD=zooo
+# $ export PGHOST=localhost
+# $ psql -U gitenter -d gitenter -w -f /tmp/initiate_database.sql
