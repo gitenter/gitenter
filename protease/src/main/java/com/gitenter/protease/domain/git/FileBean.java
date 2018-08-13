@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import com.gitenter.gitar.GitFile;
+import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.util.GitPlaceholder;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
 
@@ -44,7 +44,7 @@ public class FileBean extends PathBean {
 	 * However, there's no other place to move unless we are okay with duplicated
 	 * code. Wonder whether there's a better solution.
 	 */
-	public void setFromGit(GitFile gitFile) {
+	public void setFromGit(GitHistoricalFile gitFile) {
 		
 		super.setFromGit(gitFile);
 		
@@ -59,9 +59,9 @@ public class FileBean extends PathBean {
 	
 	private static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
 
-		final private GitFile gitFile;
+		final private GitHistoricalFile gitFile;
 		
-		private ProxyBlobContentPlaceholder(GitFile gitFile) {
+		private ProxyBlobContentPlaceholder(GitHistoricalFile gitFile) {
 			this.gitFile = gitFile;
 		}
 
@@ -73,9 +73,9 @@ public class FileBean extends PathBean {
 	
 	private static class ProxyMimeTypePlaceholder extends GitProxyPlaceholder<String> implements FileBean.MimeTypePlaceholder {
 
-		final private GitFile gitFile;
+		final private GitHistoricalFile gitFile;
 		
-		private ProxyMimeTypePlaceholder(GitFile gitFile) {
+		private ProxyMimeTypePlaceholder(GitHistoricalFile gitFile) {
 			this.gitFile = gitFile;
 		}
 
