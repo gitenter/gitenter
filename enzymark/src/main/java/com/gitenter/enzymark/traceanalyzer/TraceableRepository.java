@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+
 /*
  * TODO:
  * As most (right now all) usage cases right now need to start from a git
@@ -13,34 +15,34 @@ import java.util.Map;
  */
 public class TraceableRepository {
 	
-	File repositoryDirectory;
+	@Getter
+	File directory;
 	
+	@Getter
 	private List<TraceableDocument> traceableDocuments = new ArrayList<TraceableDocument>();
+	
 	private Map<String,TraceableItem> traceableItemMap = new HashMap<String,TraceableItem>();
 
-	public TraceableRepository(File repositoryDirectory) {
-		this.repositoryDirectory = repositoryDirectory;
+	public TraceableRepository(File directory) {
+		this.directory = directory;
 	}
 
-	public boolean addTraceableDocument (TraceableDocument document) {
-		return traceableDocuments.add(document);
+	void addTraceableDocument (TraceableDocument document) throws ItemTagNotUniqueException {
+
+		traceableDocuments.add(document);
+		
+		for (TraceableItem traceableItem : document.getTraceableItems()) {
+			putIntoTraceableItem(traceableItem);
+		}
 	}
 	
-	TraceableItem putIntoTraceableItem (TraceableItem item) throws ItemTagNotUniqueException {
+	private void putIntoTraceableItem (TraceableItem item) throws ItemTagNotUniqueException {
 		
 		if (traceableItemMap.containsKey(item.getTag())) {
 			TraceableItem originalItem = traceableItemMap.get(item.getTag());
 			throw new ItemTagNotUniqueException(item.getTag(), originalItem.getDocument(), item.getDocument());
 		}
-		return traceableItemMap.put(item.getTag(), item);
-	}
-	
-	public File getRepositoryDirectory() {
-		return repositoryDirectory;
-	}
-	
-	public List<TraceableDocument> getTraceableDocuments() {
-		return traceableDocuments;
+		traceableItemMap.put(item.getTag(), item);
 	}
 	
 	public void refreshUpstreamAndDownstreamItems () throws UpstreamTagNotExistException {

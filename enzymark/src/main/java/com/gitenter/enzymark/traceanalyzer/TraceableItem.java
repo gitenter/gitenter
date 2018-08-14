@@ -4,16 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @EqualsAndHashCode(exclude={"upstreamItems", "downstreamItems"})
 public class TraceableItem {
 	
+	@Getter
 	private String tag;
+	
+	@Getter
 	private String content;
 	
+	@Getter
 	private TraceableDocument document;
 	
+	@Getter
 	private List<TraceableItem> upstreamItems = new ArrayList<TraceableItem>();
+	
+	@Getter
 	private List<TraceableItem> downstreamItems = new ArrayList<TraceableItem>();
 	
 	/*
@@ -43,25 +51,5 @@ public class TraceableItem {
 	 */
 	boolean addDownstreamItem (TraceableItem item) {
 		return downstreamItems.add(item);
-	}
-
-	public String getTag() {
-		return tag;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public TraceableDocument getDocument() {
-		return document;
-	}
-
-	public List<TraceableItem> getUpstreamItems() {
-		return upstreamItems;
-	}
-
-	public List<TraceableItem> getDownstreamItems() {
-		return downstreamItems;
 	}
 }

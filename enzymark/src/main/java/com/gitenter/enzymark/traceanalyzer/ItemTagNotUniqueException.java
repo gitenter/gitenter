@@ -6,7 +6,7 @@ public class ItemTagNotUniqueException extends TraceAnalyzerException {
 	
 	public ItemTagNotUniqueException(String tag, TraceableDocument document1, TraceableDocument document2) {
 		super("The traceable item tag \""+tag
-				+"\" is defined in both \""+document1.getRelativeFilepath()
-				+"\" and \""+document2.getRelativeFilepath()+"\".");
+				+"\" is defined in both \""+document1.getRelativePath()
+				+"\" and \""+document2.getRelativePath()+"\".");
 	}
 }

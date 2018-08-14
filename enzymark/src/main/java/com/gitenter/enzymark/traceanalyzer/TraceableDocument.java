@@ -1,59 +1,45 @@
 package com.gitenter.enzymark.traceanalyzer;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.Charsets;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 
-public class TraceableDocument {
+import lombok.Getter;
 
-	private TraceableRepository repository;
-	private String relativeFilepath;
+public class TraceableDocument {
+	
+	@Getter
+	private String relativePath;
+	
+	@Getter
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	
-	public TraceableDocument (TraceableRepository repository, String relativeFilepath, String textContent) throws ItemTagNotUniqueException {
-		
-		this.repository = repository;
-		this.relativeFilepath = relativeFilepath;
-		
-		parsing(repository, textContent);
+	public TraceableDocument (String relativePath) throws ItemTagNotUniqueException {
+		this.relativePath = relativePath;
 	}
 	
-	public TraceableDocument(TraceableRepository repository, File documentFile) throws IOException, ItemTagNotUniqueException {
-		
-		this.repository = repository;
-		this.relativeFilepath = repository.getRepositoryDirectory().toURI().relativize(documentFile.toURI()).getPath();
-		
-		List<String> lines = Files.readAllLines(documentFile.toPath(), Charsets.UTF_8);
-		String textContent = String.join("\n", lines);
-		
-		parsing(repository, textContent);
+//	public TraceableDocument(TraceableRepository repository, File documentFile) throws IOException, ItemTagNotUniqueException {
+//		
+//		this.repository = repository;
+//		this.relativePath = repository.getDirectory().toURI().relativize(documentFile.toURI()).getPath();
+//		
+//		List<String> lines = Files.readAllLines(documentFile.toPath(), Charsets.UTF_8);
+//		String textContent = String.join("\n", lines);
+//		
+////		parsing(repository, textContent);
+//	}
+	
+	void addTraceableItem(TraceableItem item) {
+		traceableItems.add(item);
 	}
 	
-	private void parsing(TraceableRepository repository, String textContent)  throws ItemTagNotUniqueException {
+	void parse(String textContent) {
 		
 		Parser parser = Parser.builder().build();
 		Node node = parser.parse(textContent);
 		TraceableItemVisitor visitor = new TraceableItemVisitor(this);
 		node.accept(visitor);
-		
-		traceableItems = visitor.getTraceableItems();
-		
-		for (TraceableItem traceableItem : visitor.getTraceableItems()) {
-			this.repository.putIntoTraceableItem(traceableItem);
-		}
-	}
-	
-	public String getRelativeFilepath() {
-		return relativeFilepath;
-	}
-
-	public List<TraceableItem> getTraceableItems() {
-		return traceableItems;
 	}
 }
