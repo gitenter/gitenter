@@ -10,16 +10,22 @@ import org.apache.commons.io.Charsets;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 
+import lombok.Getter;
+
 public class TraceableDocument {
 
 	private TraceableRepository repository;
-	private String relativeFilepath;
+	
+	@Getter
+	private String relativePath;
+	
+	@Getter
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	
-	public TraceableDocument (TraceableRepository repository, String relativeFilepath, String textContent) throws ItemTagNotUniqueException {
+	public TraceableDocument (TraceableRepository repository, String relativePath, String textContent) throws ItemTagNotUniqueException {
 		
 		this.repository = repository;
-		this.relativeFilepath = relativeFilepath;
+		this.relativePath = relativePath;
 		
 		parsing(repository, textContent);
 	}
@@ -27,7 +33,7 @@ public class TraceableDocument {
 	public TraceableDocument(TraceableRepository repository, File documentFile) throws IOException, ItemTagNotUniqueException {
 		
 		this.repository = repository;
-		this.relativeFilepath = repository.getRepositoryDirectory().toURI().relativize(documentFile.toURI()).getPath();
+		this.relativePath = repository.getDirectory().toURI().relativize(documentFile.toURI()).getPath();
 		
 		List<String> lines = Files.readAllLines(documentFile.toPath(), Charsets.UTF_8);
 		String textContent = String.join("\n", lines);
@@ -47,13 +53,5 @@ public class TraceableDocument {
 		for (TraceableItem traceableItem : visitor.getTraceableItems()) {
 			this.repository.putIntoTraceableItem(traceableItem);
 		}
-	}
-	
-	public String getRelativeFilepath() {
-		return relativeFilepath;
-	}
-
-	public List<TraceableItem> getTraceableItems() {
-		return traceableItems;
 	}
 }

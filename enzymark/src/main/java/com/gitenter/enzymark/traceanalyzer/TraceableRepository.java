@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+
 /*
  * TODO:
  * As most (right now all) usage cases right now need to start from a git
@@ -13,13 +15,16 @@ import java.util.Map;
  */
 public class TraceableRepository {
 	
-	File repositoryDirectory;
+	@Getter
+	File directory;
 	
+	@Getter
 	private List<TraceableDocument> traceableDocuments = new ArrayList<TraceableDocument>();
+	
 	private Map<String,TraceableItem> traceableItemMap = new HashMap<String,TraceableItem>();
 
-	public TraceableRepository(File repositoryDirectory) {
-		this.repositoryDirectory = repositoryDirectory;
+	public TraceableRepository(File directory) {
+		this.directory = directory;
 	}
 
 	public boolean addTraceableDocument (TraceableDocument document) {
@@ -33,14 +38,6 @@ public class TraceableRepository {
 			throw new ItemTagNotUniqueException(item.getTag(), originalItem.getDocument(), item.getDocument());
 		}
 		return traceableItemMap.put(item.getTag(), item);
-	}
-	
-	public File getRepositoryDirectory() {
-		return repositoryDirectory;
-	}
-	
-	public List<TraceableDocument> getTraceableDocuments() {
-		return traceableDocuments;
 	}
 	
 	public void refreshUpstreamAndDownstreamItems () throws UpstreamTagNotExistException {

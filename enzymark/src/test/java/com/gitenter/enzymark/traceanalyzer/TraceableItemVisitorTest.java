@@ -1,19 +1,13 @@
 package com.gitenter.enzymark.traceanalyzer;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.junit.Test;
-
-import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
-import com.gitenter.enzymark.traceanalyzer.TraceableItem;
-import com.gitenter.enzymark.traceanalyzer.TraceableItemVisitor;
-import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
 
 public class TraceableItemVisitorTest {
 	
@@ -42,7 +36,7 @@ public class TraceableItemVisitorTest {
 				+ "- [another-tag] another traceable item with **bold** and *italic*.\n"
 				+ "- [the-third-tag]{} no refer";
 		
-		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
+		TraceableRepository repository = mock(TraceableRepository.class);
 		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path", content);
 		
 		Parser parser = Parser.builder().build();

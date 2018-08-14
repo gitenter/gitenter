@@ -1,24 +1,13 @@
 package com.gitenter.enzymark.traceanalyzer;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
-
-import com.gitenter.enzymark.traceanalyzer.ItemTagNotUniqueException;
-import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
-import com.gitenter.enzymark.traceanalyzer.TraceableItem;
-import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
-import com.gitenter.enzymark.traceanalyzer.UpstreamTagNotExistException;
 
 public class TraceableRepositoryTest {
 	
@@ -81,7 +70,7 @@ public class TraceableRepositoryTest {
 	private void display (TraceableRepository repository) {
 
 		for (TraceableDocument document : repository.getTraceableDocuments()) {
-			System.out.println(document.getRelativeFilepath());
+			System.out.println(document.getRelativePath());
 			for (TraceableItem item : document.getTraceableItems()) {
 				System.out.println("\t"+item.getTag());
 				
