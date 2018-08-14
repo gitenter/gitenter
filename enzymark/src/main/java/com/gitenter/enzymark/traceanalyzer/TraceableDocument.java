@@ -17,10 +17,7 @@ public class TraceableDocument {
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	
 	public TraceableDocument (String relativePath) throws ItemTagNotUniqueException {
-		
 		this.relativePath = relativePath;
-		
-//		parsing(repository, textContent);
 	}
 	
 //	public TraceableDocument(TraceableRepository repository, File documentFile) throws IOException, ItemTagNotUniqueException {

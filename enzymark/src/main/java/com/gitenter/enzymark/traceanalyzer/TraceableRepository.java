@@ -27,9 +27,8 @@ public class TraceableRepository {
 		this.directory = directory;
 	}
 
-	public void addTraceableDocument (TraceableDocument document, String textContent) throws ItemTagNotUniqueException {
-		
-		document.parse(textContent);
+	void addTraceableDocument (TraceableDocument document) throws ItemTagNotUniqueException {
+
 		traceableDocuments.add(document);
 		
 		for (TraceableItem traceableItem : document.getTraceableItems()) {
