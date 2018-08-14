@@ -19,12 +19,12 @@ public class TraceableDocumentTest {
 		
 		TraceableRepository repository = new TraceableRepository(new File("/fake/path/to/repository/root/directory"));
 		
-		String content = "normal text\n"
+		String textContent = "normal text\n"
 				+ "\n"
 				+ "- [tag1] a traceable item.\n"
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
-		TraceableDocument document = new TraceableDocument(repository, "/fake/relative/file/path/for/document1", content);
-		repository.addTraceableDocument(document);
+		TraceableDocument document = new TraceableDocument("/fake/relative/file/path/for/document1");
+		repository.addTraceableDocument(document, textContent);
 		
 		repository.refreshUpstreamAndDownstreamItems();
 		

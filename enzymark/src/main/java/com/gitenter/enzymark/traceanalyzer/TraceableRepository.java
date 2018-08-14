@@ -27,17 +27,23 @@ public class TraceableRepository {
 		this.directory = directory;
 	}
 
-	public boolean addTraceableDocument (TraceableDocument document) {
-		return traceableDocuments.add(document);
+	public void addTraceableDocument (TraceableDocument document, String textContent) throws ItemTagNotUniqueException {
+		
+		document.parse(textContent);
+		traceableDocuments.add(document);
+		
+		for (TraceableItem traceableItem : document.getTraceableItems()) {
+			putIntoTraceableItem(traceableItem);
+		}
 	}
 	
-	TraceableItem putIntoTraceableItem (TraceableItem item) throws ItemTagNotUniqueException {
+	private void putIntoTraceableItem (TraceableItem item) throws ItemTagNotUniqueException {
 		
 		if (traceableItemMap.containsKey(item.getTag())) {
 			TraceableItem originalItem = traceableItemMap.get(item.getTag());
 			throw new ItemTagNotUniqueException(item.getTag(), originalItem.getDocument(), item.getDocument());
 		}
-		return traceableItemMap.put(item.getTag(), item);
+		traceableItemMap.put(item.getTag(), item);
 	}
 	
 	public void refreshUpstreamAndDownstreamItems () throws UpstreamTagNotExistException {
