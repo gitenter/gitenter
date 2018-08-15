@@ -60,11 +60,8 @@
     <put-attribute name="body" value="/WEB-INF/views/git-navigation/document.jsp" />
   </definition>
 
-  <definition name="admin/create-organization" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/create-organization.jsp" />
-  </definition>
-  <definition name="admin/create-repository" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/create-repository.jsp" />
+  <definition name="organization-management/create" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/organization-management/create.jsp" />
   </definition>
   <definition name="organization-management/settings" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/settings.jsp" />
@@ -74,6 +71,10 @@
   </definition>
   <definition name="organization-management/members" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/members.jsp" />
+  </definition>
+  
+  <definition name="repository-management/create" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/create.jsp" />
   </definition>
   <definition name="admin/repository-settings" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/admin/repository-settings.jsp" />
