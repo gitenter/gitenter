@@ -9,11 +9,11 @@
       <div class="left-wide">
         <h3>Organized Repositories</h3>
         <c:forEach var="repository" items="${organizedRepositories}">
-          <h5><a href="<s:url value="/organizations/${repository.id}" />">${repository.displayName}</a></h5>
+          <h5><a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />">${repository.displayName}</a></h5>
         </c:forEach>
         <h3>Authored Repositories</h3>
         <c:forEach var="repository" items="${organizedRepositories}">
-          <h5><a href="<s:url value="/organizations/${repository.id}" />">${repository.displayName}</a></h5>
+          <h5><a href="<s:url value="/organizations/${repository.organization.id}/repositories/${repository.id}" />">${repository.displayName}</a></h5>
         </c:forEach>
         <h3>Currently reviewed repository</h3>
       </div>

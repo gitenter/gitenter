@@ -2,6 +2,7 @@ import unittest
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from selenium import webdriver
+import shutil
 from urllib.parse import urlparse
 
 from setup.config import (
@@ -18,6 +19,7 @@ class BaseTestSuite(unittest.TestCase):
 
         self.root_url = self.config.web_root_url
         self._reset_database("gitenter", "gitenter_empty")
+        self._cleanup_local_git_server()
 
     def tearDown(self):
         self.driver.close()
@@ -48,3 +50,7 @@ class BaseTestSuite(unittest.TestCase):
         cursor.execute("CREATE DATABASE {} TEMPLATE {};".format(dbname, template_dbname))
 
         conn.close()
+
+    def _cleanup_local_git_server(self):
+        shutil.rmtree(str(self.config.git_server_root_path))
+        self.config.git_server_root_path.mkdir(mode=0o777, parents=False, exist_ok=False)

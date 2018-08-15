@@ -16,7 +16,7 @@ public class GitConfig {
 	public GitSource stsGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/fake_server"));
+		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
 		return gitSource;
 	}
 	
