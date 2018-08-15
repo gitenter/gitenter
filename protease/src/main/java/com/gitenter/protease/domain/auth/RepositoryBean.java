@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -65,6 +67,7 @@ public class RepositoryBean {
 	@Column(name="is_public")
 	private Boolean isPublic;
 	
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	/*
 	 * Since to access through here, the commits are not persistent
@@ -72,6 +75,10 @@ public class RepositoryBean {
 	 */
 	@Getter(AccessLevel.NONE)
 	private List<CommitBean> commits;
+	
+	public int getCommitCount() {
+		return commits.size();
+	}
 
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();

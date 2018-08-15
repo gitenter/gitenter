@@ -6,12 +6,12 @@
       <div>
         <h3>
           Collaboration
-          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)">
+<%--          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)"> --%>
             <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
             <sf:form method="GET" action="${collaborators_url}">
               <input type="submit" value="Settings" />
             </sf:form>
-          </security:authorize>
+<%--          </security:authorize> --%>
         </h3>
         <table class="hidden">
           <tr>
@@ -39,8 +39,8 @@
         what a review system want to do, people contribute by being a
         good reviewer. 
       --%>
-      <security:authorize access="@securityService.checkRepositoryEditability(authentication,#repository.id)">
+<%--      <security:authorize access="@securityService.checkRepositoryEditability(authentication,#repository.id)"> --%>
       <div>
         <p><span class="intro">Clone with SSH</span> <code>git clone git@<c:out value="${rootUrl}"/>:<c:out value="${organization.name}" />/<c:out value="${repository.name}" /></code></p>
       </div>
-      </security:authorize>
+<%--      </security:authorize> --%>

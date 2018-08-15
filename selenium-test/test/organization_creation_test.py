@@ -8,13 +8,13 @@ from forms.organization_management_form import (
 )
 
 
-class TestCreateOrganization(RegisteredTestSuite):
+class TestOrganizationCreation(RegisteredTestSuite):
 
     def setUp(self):
-        super(TestCreateOrganization, self).setUp()
+        super(TestOrganizationCreation, self).setUp()
 
     def tearDown(self):
-        super(TestCreateOrganization, self).tearDown()
+        super(TestOrganizationCreation, self).tearDown()
 
     def test_create_organization_and_display_managed_organizations(self):
         org_name = "org"

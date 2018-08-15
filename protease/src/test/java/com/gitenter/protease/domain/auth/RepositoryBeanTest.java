@@ -68,6 +68,22 @@ public class RepositoryBeanTest {
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	public void testMinimalRepositoryGetCommitCount() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
+		
+		/*
+		 * This is actually to test that Hibernate will indeed fire 
+		 * > select count(id) from git.git_commit where repository_id =?
+		 * However we can only print out the SQL and check it using our eye bowl.
+		 */
+		assertEquals(item.getCommitCount(), 1);
+	}
+	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
 	public void testMinimalRepositoryGetBranches() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();

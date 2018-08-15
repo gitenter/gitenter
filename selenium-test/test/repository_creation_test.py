@@ -7,17 +7,17 @@ from forms.repository_management_form import (
 )
 
 
-class TestRepositoryManagement(OrganizationCreatedTestSuite):
+class TestRepositoryCreation(OrganizationCreatedTestSuite):
 
     def setUp(self):
-        super(TestRepositoryManagement, self).setUp()
+        super(TestRepositoryCreation, self).setUp()
 
         self.repo_name = "repo"
         self.repo_display_name = "A Repository"
         self.repo_description = "A Repository Description"
 
     def tearDown(self):
-        super(TestRepositoryManagement, self).tearDown()
+        super(TestRepositoryCreation, self).tearDown()
 
     def test_organization_manager_create_public_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -36,8 +36,12 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         assert self.repo_display_name in self.driver.page_source
         assert "Public" in self.driver.page_source
 
-        # TODO:
-        # Check the repository page infomation.
+        repo_link = self.driver.find_element_by_link_text(self.repo_display_name).get_attribute("href")
+        repo_id = urlparse(repo_link).path.split("/")[-1]
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+        assert "Setup a new repository" in self.driver.page_source
 
         # TODO:
         # check the current user is a project organizer.
@@ -51,6 +55,14 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         assert self.repo_display_name in self.driver.page_source
         assert "Public" in self.driver.page_source
 
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+
+        # TODO:
+        # Should see an customized page saying that you can read, but this is a empty repository.
+        # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
+        # to be added as an editor.
+
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -59,6 +71,14 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source
         assert "Public" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+
+        # TODO:
+        # Should see an customized page saying that you can read, but this is a empty repository.
+        # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
+        # to be added as an editor.
 
     def test_organization_manager_create_private_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -70,6 +90,13 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert "Private" in self.driver.page_source
 
+        repo_link = self.driver.find_element_by_link_text(self.repo_display_name).get_attribute("href")
+        repo_id = urlparse(repo_link).path.split("/")[-1]
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+        assert "Setup a new repository" in self.driver.page_source
+
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -79,6 +106,14 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
         assert self.repo_display_name in self.driver.page_source
         assert "Private" in self.driver.page_source
 
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+
+        # TODO:
+        # Should see an customized page saying that you can read, but this is a empty repository.
+        # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
+        # to be added as an editor.
+
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -86,6 +121,10 @@ class TestRepositoryManagement(OrganizationCreatedTestSuite):
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name not in self.driver.page_source
+
+        # TODO:
+        # To query "/organizations/{}/repositories/{}".format(self.org_id, repo_id)
+        # should returns this is a private repository.
 
     def test_organization_member_create_repository(self):
         self.driver.get(urljoin(self.root_url, "/login"))

@@ -158,6 +158,8 @@ CREATE TABLE git.git_commit (
 	UNIQUE(repository_id, sha)
 );
 
+CREATE UNIQUE INDEX repository_id_in_git_commit ON git.git_commit (repository_id);
+
 CREATE FUNCTION git.repository_id_from_commit (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;

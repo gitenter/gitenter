@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Profile;
 
 import com.gitenter.protease.source.WebSource;
 
-
 @Configuration
 public class WebConfig {
 

@@ -45,46 +45,6 @@ public class MemberServiceImpl implements MemberService {
 		return memberRepository.findByUsername(username).get(0);
 	}
 	
-	@Override
-	public Collection<OrganizationBean> getManagedOrganizations(String username) {
-		
-		/* 
-		 * I believe that Hibernate should be smart enough that when
-		 * "memberRepository.findById()" is called the second time in an execution,
-		 * it will not reach the database again but use the same return value.
-		 * (As it march with what Martin Flower said of "Identity Map" of an ORM
-		 * design). Need to double check. 
-		 * 
-		 * If not, we need to find out a smarter way to handle the case of listing 
-		 * all organizations (we can have it iterated/filtered multiple times 
-		 * when display), for example a dirty fix of implement a proxy pattern
-		 * inside of the "getMember()" method
-		 */
-		MemberBean member = getMemberByUsername(username);
-		return member.getOrganizations(OrganizationMemberRole.MANAGER);
-	}
-
-	@Override
-	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
-		
-		MemberBean member = getMemberByUsername(username);
-		return member.getOrganizations(OrganizationMemberRole.MEMBER);
-	}
-
-	@Override
-	public Collection<RepositoryBean> getOrganizedRepositories(String username) {
-		
-		MemberBean member = getMemberByUsername(username);
-		return member.getRepositories(RepositoryMemberRole.ORGANIZER);
-	}
-
-	@Override
-	public Collection<RepositoryBean> getAuthoredRepositories(String username) {
-		
-		MemberBean member = getMemberByUsername(username);
-		return member.getRepositories(RepositoryMemberRole.EDITOR);
-	}
-	
 	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
@@ -163,5 +123,45 @@ public class MemberServiceImpl implements MemberService {
 		 * key error.
 		 */
 		organizationMemberMapRepository.saveAndFlush(map);
+	}
+	
+	@Override
+	public Collection<OrganizationBean> getManagedOrganizations(String username) {
+		
+		/* 
+		 * I believe that Hibernate should be smart enough that when
+		 * "memberRepository.findById()" is called the second time in an execution,
+		 * it will not reach the database again but use the same return value.
+		 * (As it march with what Martin Flower said of "Identity Map" of an ORM
+		 * design). Need to double check. 
+		 * 
+		 * If not, we need to find out a smarter way to handle the case of listing 
+		 * all organizations (we can have it iterated/filtered multiple times 
+		 * when display), for example a dirty fix of implement a proxy pattern
+		 * inside of the "getMember()" method
+		 */
+		MemberBean member = getMemberByUsername(username);
+		return member.getOrganizations(OrganizationMemberRole.MANAGER);
+	}
+
+	@Override
+	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
+		
+		MemberBean member = getMemberByUsername(username);
+		return member.getOrganizations(OrganizationMemberRole.MEMBER);
+	}
+
+	@Override
+	public Collection<RepositoryBean> getOrganizedRepositories(String username) {
+		
+		MemberBean member = getMemberByUsername(username);
+		return member.getRepositories(RepositoryMemberRole.ORGANIZER);
+	}
+
+	@Override
+	public Collection<RepositoryBean> getAuthoredRepositories(String username) {
+		
+		MemberBean member = getMemberByUsername(username);
+		return member.getRepositories(RepositoryMemberRole.EDITOR);
 	}
 }
