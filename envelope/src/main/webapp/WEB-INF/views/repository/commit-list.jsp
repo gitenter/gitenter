@@ -8,7 +8,7 @@
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a> &rarr; 
-      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}" />">Branch: <c:out value="${branch}" /></a> &rarr; 
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branchName}" />">Branch: <c:out value="${branchName}" /></a> &rarr; 
       <span class="nav-current">Commits</span>
     </nav>
     <article>
@@ -31,8 +31,8 @@
                   <c:if test="${b.name.equals(branch)}">selected="selected"</c:if>
                 --%>
                 <select name="branch">
-                  <c:forEach items="${repository.branchNames}" var="b" >
-                    <option value="${b.name}"><c:out value="Branch: ${b.name}" /></option>
+                  <c:forEach items="${branches}" var="branch" >
+                    <option value="${branch.name}"><c:out value="Branch: ${branch.name}" /></option>
                   </c:forEach>
                 </select>
                 <input type="submit" value="Switch" /> 
@@ -48,18 +48,18 @@
             <th class="left">Log</th>
             <th>Status</th>
           </tr>
-          <c:forEach var="commitLog" items="${repository.commitLogMap}">
+          <c:forEach var="commit" items="${commits}">
           <tr>
             <td>
-              <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commitLog.key.commitSha.shaChecksumHash}" />" >
-                <input type="submit" value="${fn:substring(commitLog.key.commitSha.shaChecksumHash, 0, 6)}">
+              <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commit.sha}" />" >
+                <input type="submit" value="${fn:substring(commit.sha, 0, 6)}">
               </form>
             </td>
             <td class="left">
-              <p><c:out value="${commitLog.key.fullMessage}" /></p>
-              <p class="minor">By <c:out value="${commitLog.key.gitUserInfo.name}" />, at <fmt:formatDate type="both" dateStyle="medium" timeStyle="short" value="${commitLog.key.getCommitDate()}" /></p>
+              <p><c:out value="${commit.message}" /></p>
+              <p class="minor">By <c:out value="${commit.author.name}" />, at <fmt:formatDate type="both" dateStyle="medium" timeStyle="short" value="${commit.timestamp}" /></p>
             </td>
-            <td><img src="<s:url value="/resources/image/status_icons/${commitLog.value.getClass().simpleName}.png" />" alt="${commitLog.value.getClass().simpleName}"></td>
+<%--            <td><img src="<s:url value="/resources/image/status_icons/${commitLog.value.getClass().simpleName}.png" />" alt="${commitLog.value.getClass().simpleName}"></td> --%>
           </tr>
           </c:forEach>
         </table>

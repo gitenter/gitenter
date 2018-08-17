@@ -1,3 +1,4 @@
+import os
 import unittest
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -51,6 +52,18 @@ class BaseTestSuite(unittest.TestCase):
 
         conn.close()
 
+    def _remove_folder_content(self, folderpath):
+        for the_file in os.listdir(str(folderpath)):
+            subpathstring = str(folderpath / the_file)
+            if os.path.isfile(subpathstring):
+                os.remove(subpathstring)
+            else:
+                shutil.rmtree(subpathstring)
+
+        # if os.path.exists(str(folderpath)) and os.path.isdir(str(folderpath)):
+        #     shutil.rmtree(str(folderpath))
+        # folderpath.mkdir(mode=0o777, parents=False, exist_ok=False)
+
     def _cleanup_local_git_server(self):
-        shutil.rmtree(str(self.config.git_server_root_path))
-        self.config.git_server_root_path.mkdir(mode=0o777, parents=False, exist_ok=False)
+        self._remove_folder_content(self.config.git_server_root_path)
+        self._remove_folder_content(self.config.sandbox_path)

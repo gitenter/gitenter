@@ -201,7 +201,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			/*
 			 * Keep insert order.
 			 */
-			LinkedHashMap <String,GitCommit> logMap = new LinkedHashMap <String,GitCommit>();
+			LinkedHashMap<String,GitCommit> logMap = new LinkedHashMap<String,GitCommit>();
 			for (GitCommit gitCommit : gitLog) {
 				logMap.put(gitCommit.getSha(), gitCommit);
 			}

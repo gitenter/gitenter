@@ -2,9 +2,7 @@ from urllib.parse import urlparse, urljoin
 
 from testsuite.organization_created_testsuite import OrganizationCreatedTestSuite
 from forms.authorization_form import fill_login_form
-from forms.repository_management_form import (
-    fill_create_repository_form
-)
+from forms.repository_management_form import fill_create_repository_form
 
 
 class TestRepositoryCreation(OrganizationCreatedTestSuite):
@@ -21,7 +19,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
 
     def test_organization_manager_create_public_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name not in self.driver.page_source
@@ -49,7 +47,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source
@@ -82,7 +80,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
 
     def test_organization_manager_create_private_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, self.repo_name, self.repo_display_name, self.repo_description, is_public=False)
@@ -100,7 +98,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source

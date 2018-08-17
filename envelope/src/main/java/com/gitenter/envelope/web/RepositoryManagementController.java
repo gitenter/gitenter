@@ -60,6 +60,17 @@ public class RepositoryManagementController {
 			return "repository-management/create";
 		}
 		
+		/*
+		 * TODO:
+		 * "createRepository()" includes setup a folder structure under the local git folder.
+		 * However, Spring(?) turns to be too smart that it caches the OS folder operation so
+		 * the second time it will not trigger the real OS mkdir.
+		 * 
+		 * In my selenium tests, I empty the local git folder structure and run another test.
+		 * However, the above optimization makes me to need to restart my server to make the
+		 * mkdir actual happen in the second run. Wonder whether there's a better way to solve
+		 * this problem. 
+		 */
 		organizationManagerService.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
 
 		return "redirect:/organizations/"+organizationId;

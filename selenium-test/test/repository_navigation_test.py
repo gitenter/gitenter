@@ -1,0 +1,42 @@
+from urllib.parse import urlparse, urljoin
+import os
+import subprocess
+import pygit2
+
+from testsuite.repository_created_testsuite import RepositoryCreatedTestSuite
+from forms.authorization_form import fill_login_form
+
+
+# !! Attention !!
+# Need to restart the system every time to run RepositoryCreatedTestSuite.
+# Otherwise Spring(?) try to be too smart to cache the file system, so it
+# will not know that the folder has been reset.
+class TestRepositoryNavigation(RepositoryCreatedTestSuite):
+
+    def setUp(self):
+        super(TestRepositoryNavigation, self).setUp()
+
+    def tearDown(self):
+        super(TestRepositoryNavigation, self).tearDown()
+
+    def test_commit(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+        assert "Setup a new repository" in self.driver.page_source
+
+        # TODO:
+        # Check commit list will display correctly when there's an empty git
+        # repo with no commit at all.
+
+        remote_git_url = self.config.git_server_remote_path / self.org_name / self.repo_name
+        # local_path = self.config.sandbox_path / self.repo_name
+        # local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
+
+        # If "remote_git_url" is a local path, pygit2 will raise "pygit2.GitError"
+        # pygit2.clone_repository(str(remote_git_url), str(local_path))
+        os.chdir(str(self.config.sandbox_path))
+        subprocess.call("git", "clone:", str(remote_git_url))
+
+        self.driver.get(urljoin(self.root_url, "/logout"))
