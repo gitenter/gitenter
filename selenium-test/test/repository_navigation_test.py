@@ -30,13 +30,34 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         # Check commit list will display correctly when there's an empty git
         # repo with no commit at all.
 
-        remote_git_url = self.config.git_server_remote_path / self.org_name / self.repo_name
-        # local_path = self.config.sandbox_path / self.repo_name
-        # local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
+        remote_git_url = self.config.git_server_remote_path / self.org_name / "{}.git".format(self.repo_name)
+        local_path = self.config.sandbox_path / self.repo_name
+        local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
 
-        # If "remote_git_url" is a local path, pygit2 will raise "pygit2.GitError"
-        # pygit2.clone_repository(str(remote_git_url), str(local_path))
-        os.chdir(str(self.config.sandbox_path))
-        subprocess.call("git", "clone:", str(remote_git_url))
+        pygit2.clone_repository("file://{}".format(str(remote_git_url)), str(local_path))
+
+        with open(str(local_path / "README.md"), 'w') as f:
+            f.write("readme")
+
+        repo = pygit2.Repository(str(local_path))
+        # reference = "refs/heads/master"
+        index = repo.index
+        index.add("README.md")
+        index.write()
+        author = pygit2.Signature(self.org_member_username, self.org_member_email)
+        commiter = pygit2.Signature(self.org_member_username, self.org_member_email)
+        message = "add README"
+        tree = repo.TreeBuilder().write()
+        if repo.head_is_unborn:
+            parent = []
+        else:
+            parent = [repo.head.get_object().hex]
+        repo.create_commit("HEAD", author, commiter, message, tree, parent)
+        print(repo.remotes["origin"])
+        repo.remotes["origin"].push(["refs/heads/master"])
+
+        # TODO:
+        # Currently the repo folder structure/commit list are not working yet.
+        # because the server side post-receive hook is not included.
 
         self.driver.get(urljoin(self.root_url, "/logout"))
