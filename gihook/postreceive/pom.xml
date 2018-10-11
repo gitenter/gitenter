@@ -40,17 +40,17 @@
 	<dependencies>
 		<!-- local packages -->
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>enzymark</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
@@ -80,9 +80,21 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.junit.contrib</groupId>
+		    <artifactId>junit-theories</artifactId>
+		    <version>4.12</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.18.3</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

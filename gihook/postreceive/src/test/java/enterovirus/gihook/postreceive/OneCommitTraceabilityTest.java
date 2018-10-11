@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
-import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.ProteaseConfig;
@@ -42,7 +41,7 @@ public class OneCommitTraceabilityTest extends AbstractTestExecutionListener {
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/org/repo.git");
 		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/one_commit_traceability/commit-sha-list.txt");
 		
-		CommitStatus status = new CommitStatus(
+		HookInputSet status = new HookInputSet(
 				repositoryDirectory,
 				new BranchName("master"),
 				new CommitSha("0000000000000000000000000000000000000000"),

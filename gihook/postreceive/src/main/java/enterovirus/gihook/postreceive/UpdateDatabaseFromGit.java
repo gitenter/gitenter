@@ -1,5 +1,6 @@
 package enterovirus.gihook.postreceive;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.protease.dao.auth.RepositoryRepository;
+import com.gitenter.protease.dao.git.CommitRepository;
+import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.git.BranchBean;
+import com.gitenter.protease.domain.git.CommitBean;
+
 import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
 import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
 import enterovirus.enzymark.traceanalyzer.*;
-import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.GitBlob;
 import enterovirus.gitar.GitFolderStructure;
 import enterovirus.gitar.GitLog;
@@ -37,12 +43,13 @@ public class UpdateDatabaseFromGit {
 	 * Move the relevant functions to some other classes, such as some controllers. 
 	 */
 	@Transactional
-	public void update (CommitStatus status) throws IOException, GitAPIException {
+	public void update (HookInputSet input) throws IOException, GitAPIException {
 		
-		GitLog gitLog = new GitLog(status.getRepositoryDirectory(), status.getBranchName(), status.getOldCommitSha(), status.getNewCommitSha());
+		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(
+				input.getOrganizationName(), input.getRepositoryName()).get(0);
+		BranchBean branch = repository.getBranch(input.getBranchName());
+		List<CommitBean> commits = branch.getLog(input.getOldSha(), input.getNewSha());
 	
-		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(status.getOrganizationName(), status.getRepositoryName());
-
 		/*
 		 * Since all commits need to write to the database are new (no update),
 		 * there is no need to load the privous commits.
@@ -60,7 +67,11 @@ public class UpdateDatabaseFromGit {
 		 * The other method is to change the implementation in "GitLog", but it is also
 		 * now easy so we don't go to that direction.
 		 */
-		List<CommitBean> alreadyInDbCommit = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), gitLog.getCommitShas());
+		List<String> commitShas = new ArrayList<String>();
+		for (CommitBean commit : commits) {
+			commitShas.add(commit.getSha());
+		}
+		List<CommitBean> alreadyInDbCommit = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), commitShas);
 		
 		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
 			
@@ -86,7 +97,7 @@ public class UpdateDatabaseFromGit {
 			 * Update every single git commit which is under the
 			 * new "git push". 
 			 */
-			updateGitCommit(status, repository, commitInfo);
+			updateGitCommit(input, repository, commitInfo);
 		}
 	}
 	
@@ -97,7 +108,7 @@ public class UpdateDatabaseFromGit {
 	 * (e.g. https://stackoverflow.com/questions/22682870/git-undo-pushed-commits),
 	 * then the database should be cleaned up.
 	 */
-	private void updateGitCommit (CommitStatus status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
+	private void updateGitCommit (HookInputSet status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
 		
 		PropertiesFileParser propertiesFileParser;
 		try {
@@ -185,7 +196,7 @@ public class UpdateDatabaseFromGit {
 		buildTraceabilityMaps(commit, helper);
 	}
 	
-	private TraceableRepository getTraceableRepository (CommitStatus status, CommitInfo commitInfo, String[] includePaths) throws IOException, TraceAnalyzerException {
+	private TraceableRepository getTraceableRepository (HookInputSet status, CommitInfo commitInfo, String[] includePaths) throws IOException, TraceAnalyzerException {
 
 		List<GitBlob> blobs = new GitFolderStructure(status.getRepositoryDirectory(), commitInfo.getCommitSha(), includePaths).getGitBlobs();
 		

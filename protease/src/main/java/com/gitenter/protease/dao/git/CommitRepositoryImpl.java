@@ -79,13 +79,17 @@ public class CommitRepositoryImpl implements CommitRepository {
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(commit.getSha());
 		
-		commit.setFromGit(gitCommit);
+		commit.setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
 		
 		if (commit instanceof ValidCommitBean) {
 			ValidCommitBean validCommit = (ValidCommitBean)commit;
 			validCommit.setRootPlaceholder(new ProxyRootPlaceholder(validCommit, gitCommit));
 			validCommit.setFilePlaceholder(new FilePlaceholderImpl(validCommit, gitCommit));
 		}
+	}
+	
+	public void deleteById(Integer id) {
+		databaseRepository.deleteById(id);
 	}
 	
 	public CommitBean saveAndFlush(CommitBean commit) {

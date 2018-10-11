@@ -169,7 +169,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.setFromGit(gitCommit);
+			commit.setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
 			
 			return commit;
 		}
@@ -194,10 +194,63 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public List<CommitBean> get(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		public List<CommitBean> getInDatabase(Integer maxCount, Integer skip) throws IOException, GitAPIException {
 			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog();
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
+			return gitLog2FillValuedInDbCommit(gitLog);	
+		}
+		
+		@Override
+		public List<CommitBean> getInDatabase(String oldSha, String newSha) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
+			return gitLog2FillValuedInDbCommit(gitLog);	
+		}
+		
+		private List<CommitBean> gitLog2FillValuedInDbCommit(List<GitCommit> gitLog) {
+			LinkedHashMap<String,GitCommit> logMap = getLogMap(gitLog);
+			List<CommitBean> inDbCommits = checkInDbCommits(logMap);
+			for (CommitBean commit : inDbCommits) {
+				commit.setFromDatapack(new CommitBean.GitCommitDatapack(logMap.get(commit.getSha())));
+			}
 			
+			return inDbCommits;
+		}
+		
+		@Override
+		public List<CommitBean.GitCommitDatapack> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
+			return gitLog2CommitDatapack(gitLog);
+		}
+
+		@Override
+		public List<CommitBean.GitCommitDatapack> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
+			return gitLog2CommitDatapack(gitLog);
+		}
+		
+		private List<CommitBean.GitCommitDatapack> gitLog2CommitDatapack(List<GitCommit> gitLog) {
+			LinkedHashMap<String,GitCommit> logMap = getLogMap(gitLog);
+			List<CommitBean> inDbCommits = checkInDbCommits(logMap);
+			for (CommitBean commit : inDbCommits) {
+				logMap.remove(commit.getSha());
+			}
+			
+			List<CommitBean.GitCommitDatapack> datapacks = new ArrayList<CommitBean.GitCommitDatapack>();
+			/*
+			 * TODO:
+			 * Need to double check whether it indeed keep orders.
+			 */
+			for (GitCommit gitCommit : logMap.values()) {
+				datapacks.add(new CommitBean.GitCommitDatapack(gitCommit));
+			}
+			
+			return datapacks;
+		}
+		
+		private LinkedHashMap<String,GitCommit> getLogMap(List<GitCommit> gitLog) {
 			/*
 			 * Keep insert order.
 			 */
@@ -205,6 +258,12 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			for (GitCommit gitCommit : gitLog) {
 				logMap.put(gitCommit.getSha(), gitCommit);
 			}
+			
+			return logMap;
+		}
+			
+		private List<CommitBean> checkInDbCommits(LinkedHashMap<String,GitCommit> logMap) { 
+			
 			/*
 			 * TODO:
 			 * Need to double check whether it indeed keep orders.
@@ -215,14 +274,12 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			 * Do it in one single SQL query by performance concerns.
 			 * Also, use directory database query so git information is not
 			 * automatically included.
+			 * 
+			 * TODO:
+			 * But this only include the in database ones. 
 			 */
-			List<CommitBean> log = commitDatabaseRepository.findByRepositoryIdAndShaIn(branch.getRepository().getId(), shas);
-			
-			for (CommitBean commit : log) {
-				commit.setFromGit(logMap.get(commit.getSha()));
-			}
-			
-			return log;
+			List<CommitBean> inDbCommits = commitDatabaseRepository.findByRepositoryIdAndShaIn(branch.getRepository().getId(), shas);
+			return inDbCommits;
 		}
 	}
 	
@@ -278,7 +335,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.setFromGit(gitCommit);
+			commit.setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
 			
 			return commit;
 		}

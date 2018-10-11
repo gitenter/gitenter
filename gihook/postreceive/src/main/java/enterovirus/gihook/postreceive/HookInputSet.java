@@ -1,24 +1,25 @@
-package enterovirus.gihook.postreceive.status;
+package enterovirus.gihook.postreceive;
 
 import java.io.File;
+import java.io.IOException;
 
-import enterovirus.gitar.wrap.BranchName;
-import enterovirus.gitar.wrap.CommitSha;
-import enterovirus.protease.source.GitSource;
+import com.gitenter.protease.source.GitSource;
 
-public class CommitStatus {
+public class HookInputSet {
 
 	private File repositoryDirectory;
-	private BranchName branchName;
-	private CommitSha oldCommitSha;
-	private CommitSha newCommitSha;
 	
-	public CommitStatus(File repositoryDirectory, BranchName branchName, CommitSha oldCommitSha, CommitSha newCommitSha) {
+	private String branchName;
+	private String oldSha;
+	private String newSha;
+	
+	public HookInputSet(String userDir, String[] args) {
 		
-		this.repositoryDirectory = repositoryDirectory;
-		this.branchName = branchName;
-		this.oldCommitSha = oldCommitSha;
-		this.newCommitSha = newCommitSha;
+		this.repositoryDirectory = new File(userDir);
+		
+		this.branchName = args[2];
+		this.oldSha = args[0];
+		this.newSha = args[1];
 		
 		/* 
 		 * Change Java working directory to the hook folder of
@@ -37,23 +38,23 @@ public class CommitStatus {
 		return repositoryDirectory;
 	}
 
-	public BranchName getBranchName() {
+	public String getBranchName() {
 		return branchName;
 	}
 
-	public CommitSha getOldCommitSha() {
-		return oldCommitSha;
+	public String getOldSha() {
+		return oldSha;
 	}
 
-	public CommitSha getNewCommitSha() {
-		return newCommitSha;
+	public String getNewSha() {
+		return newSha;
 	}
 	
 	public String getOrganizationName() {
 		return GitSource.getBareRepositoryOrganizationName(repositoryDirectory);
 	}
 	
-	public String getRepositoryName () {
+	public String getRepositoryName() throws IOException {
 		return GitSource.getBareRepositoryName(repositoryDirectory);
 	}
 }

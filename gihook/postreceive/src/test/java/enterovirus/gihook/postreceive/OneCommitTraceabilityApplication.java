@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
@@ -34,7 +33,7 @@ public class OneCommitTraceabilityApplication {
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/org/repo.git");
 		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/one-commit-traceability/commit-sha-list.txt");
 		
-		CommitStatus status = new CommitStatus(
+		HookInputSet status = new HookInputSet(
 				repositoryDirectory,
 				new BranchName("master"),
 				new CommitSha("0000000000000000000000000000000000000000"),
@@ -43,7 +42,7 @@ public class OneCommitTraceabilityApplication {
 		p.run(status);
 	}
 	
-	private void run (CommitStatus status) throws IOException, GitAPIException {
+	private void run (HookInputSet status) throws IOException, GitAPIException {
 		updateDatabase.update(status);
 	}
 }

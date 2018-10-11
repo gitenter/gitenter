@@ -63,10 +63,10 @@ abstract public class CommitBean {
 	@Transient
 	private AuthorBean author;
 	
-	public void setFromGit(GitCommit gitCommit) {
-		timestamp = gitCommit.getTimestamp();
-		message = gitCommit.getMessage();
-		author = AuthorBean.getInstance(gitCommit.getAuthor());
+	public void setFromDatapack(GitCommitDatapack datapack) {
+		timestamp = datapack.getTimestamp();
+		message = datapack.getMessage();
+		author = datapack.getAuthor();
 	}
 	
 	public static boolean inCommitList (String sha, List<CommitBean> commits) {
@@ -77,5 +77,23 @@ abstract public class CommitBean {
 			}
 		}
 		return false;
+	}
+	
+	public static class GitCommitDatapack {
+	
+		@Getter
+		private Date timestamp;
+		
+		@Getter
+		private String message;
+		
+		@Getter
+		private AuthorBean author;
+		
+		public GitCommitDatapack(GitCommit gitCommit) {
+			timestamp = gitCommit.getTimestamp();
+			message = gitCommit.getMessage();
+			author = AuthorBean.getInstance(gitCommit.getAuthor());
+		}
 	}
 }

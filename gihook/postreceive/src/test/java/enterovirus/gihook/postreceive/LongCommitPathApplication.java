@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import enterovirus.gihook.postreceive.status.CommitStatus;
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
@@ -29,7 +28,7 @@ public class LongCommitPathApplication {
 		File repositoryDirectory = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/org/repo.git");
 		File commitRecordFileMaster = new File("/home/beta/Workspace/enterovirus-test/long-commit-path/commit-sha-list-master.txt");
 		
-		CommitStatus status = new CommitStatus(
+		HookInputSet status = new HookInputSet(
 				repositoryDirectory,
 				new BranchName("master"),
 				new CommitSha(commitRecordFileMaster, 1),
@@ -38,7 +37,7 @@ public class LongCommitPathApplication {
 		p.run(status);
 	}
 	
-	private void run (CommitStatus status) throws IOException, GitAPIException {
+	private void run (HookInputSet status) throws IOException, GitAPIException {
 		updateDatabase.update(status);
 	}
 }

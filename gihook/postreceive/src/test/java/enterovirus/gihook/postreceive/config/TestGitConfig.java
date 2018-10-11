@@ -1,29 +1,29 @@
 package enterovirus.gihook.postreceive.config;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.FileNotFoundException;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.util.ResourceUtils;
 
-import enterovirus.protease.source.GitSource;
+import com.gitenter.protease.source.GitSource;
 
 @Configuration
 public class TestGitConfig {
 	
-	@Profile("long_commit_path")
+	@Profile("minimal")
 	@Bean
-	public GitSource longCommitPathgitSource() {
+	public GitSource minimalGitSource() throws FileNotFoundException {
 		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/long_commit_path/");
-		return gitSource;
-	}
-	
-	@Profile("one_commit_traceability")
-	@Bean
-	public GitSource oneCommitTraceabilityGitSource() {
+		GitSource gitSource = mock(GitSource.class);
+		when(gitSource.getBareRepositoryDirectory(any(String.class), any(String.class)))
+			.thenReturn(ResourceUtils.getFile("classpath:repo/minimal.git"));
 		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/beta/Workspace/enterovirus-test/one_commit_traceability/");
 		return gitSource;
 	}
 }

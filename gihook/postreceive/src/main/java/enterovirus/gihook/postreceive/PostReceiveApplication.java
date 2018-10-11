@@ -1,6 +1,5 @@
 package enterovirus.gihook.postreceive;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -8,24 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import enterovirus.gihook.postreceive.status.CommitStatus;
-import enterovirus.gitar.wrap.BranchName;
-import enterovirus.gitar.wrap.CommitSha;
-
 /*
  * This main class has nothing to do with unit tests.
  * If this package is used as a library rather than a
  * stand-alone executive jar, then this class is not
  * needed. 
  */
-@ComponentScan(basePackages = {"enterovirus.protease","enterovirus.gihook.postreceive"})
+@ComponentScan(basePackages = {"com.gitenter.protease","com.gitenter.gihook.postreceive"})
 public class PostReceiveApplication {
 	
 	@Autowired private UpdateDatabaseFromGit updateDatabaseFromGit;
 	
 	public static void main (String[] args) throws Exception {
-
-		File repositoryDirectory = new File(System.getProperty("user.dir"));
 		
 		/*
 		 * Quote:
@@ -38,19 +31,11 @@ public class PostReceiveApplication {
 		 * 
 		 * https://git-scm.com/docs/githooks
 		 */
-		CommitSha oldCommitSha = new CommitSha(args[0]);
-		CommitSha newCommitSha = new CommitSha(args[1]);
-		BranchName branchName = new BranchName(args[2]);
+		HookInputSet input = new HookInputSet(System.getProperty("user.dir"), args);
 		
-		CommitStatus status = new CommitStatus(
-				repositoryDirectory,
-				branchName,
-				oldCommitSha,
-				newCommitSha);
-		
-		System.out.println("branchName: "+branchName.getName());
-		System.out.println("oldCommitSha: "+oldCommitSha.getShaChecksumHash());
-		System.out.println("newCommitSha: "+newCommitSha.getShaChecksumHash());
+		System.out.println("branchName: "+input.getBranchName());
+		System.out.println("oldCommitSha: "+input.getOldCommitSha());
+		System.out.println("newCommitSha: "+input.getNewCommitSha());
 		
 		/*
 		 * We need to active the Spring profile definition for 
@@ -90,10 +75,10 @@ public class PostReceiveApplication {
 //		context.refresh();
 		
 		PostReceiveApplication p = context.getBean(PostReceiveApplication.class);
-		p.run(status);
+		p.run(input);
 	}
 	
-	private void run (CommitStatus status) throws IOException, GitAPIException {
-		updateDatabaseFromGit.update(status);
+	private void run (HookInputSet input) throws IOException, GitAPIException {
+		updateDatabaseFromGit.update(input);
 	}
 }
