@@ -79,7 +79,7 @@ public class CommitRepositoryImpl implements CommitRepository {
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(commit.getSha());
 		
-		commit.setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
+		commit.setFromGitCommit(gitCommit);
 		
 		if (commit instanceof ValidCommitBean) {
 			ValidCommitBean validCommit = (ValidCommitBean)commit;

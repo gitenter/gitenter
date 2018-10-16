@@ -169,7 +169,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
+			commit.setFromGitCommit(gitCommit);
 			
 			return commit;
 		}
@@ -211,48 +211,54 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			LinkedHashMap<String,GitCommit> logMap = getLogMap(gitLog);
 			List<CommitBean> inDbCommits = checkInDbCommits(logMap);
 			for (CommitBean commit : inDbCommits) {
-				commit.setFromDatapack(new CommitBean.GitCommitDatapack(logMap.get(commit.getSha())));
+				commit.setFromGitCommit(logMap.get(commit.getSha()));
 			}
 			
 			return inDbCommits;
 		}
 		
 		@Override
-		public List<CommitBean.GitCommitDatapack> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		public List<GitCommit> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException {
 			GitRepository gitRepository = getGitRepository(branch.getRepository());
 			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
-			return gitLog2CommitDatapack(gitLog);
+			return updateByRemoveSaved(gitLog);
 		}
 
 		@Override
-		public List<CommitBean.GitCommitDatapack> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException {
+		public List<GitCommit> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException {
 			GitRepository gitRepository = getGitRepository(branch.getRepository());
 			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
-			return gitLog2CommitDatapack(gitLog);
+			return updateByRemoveSaved(gitLog);
 		}
 		
-		private List<CommitBean.GitCommitDatapack> gitLog2CommitDatapack(List<GitCommit> gitLog) {
+		private List<GitCommit> updateByRemoveSaved(List<GitCommit> gitLog) {
 			LinkedHashMap<String,GitCommit> logMap = getLogMap(gitLog);
 			List<CommitBean> inDbCommits = checkInDbCommits(logMap);
+			
+			/*
+			 * Actually when the log comes (as the reverse time order), the
+			 * in database ones are always the last several of them. That may
+			 * help to improve the performance, as we don't need to iterate the
+			 * entire set and move out commits individually. However, since the
+			 * most time consuming part is the database query parts (to see what
+			 * commits already exists), it probably doesn't make a big difference
+			 * to make optimization in here.
+			 */
 			for (CommitBean commit : inDbCommits) {
 				logMap.remove(commit.getSha());
 			}
 			
-			List<CommitBean.GitCommitDatapack> datapacks = new ArrayList<CommitBean.GitCommitDatapack>();
 			/*
 			 * TODO:
 			 * Need to double check whether it indeed keep orders.
 			 */
-			for (GitCommit gitCommit : logMap.values()) {
-				datapacks.add(new CommitBean.GitCommitDatapack(gitCommit));
-			}
-			
-			return datapacks;
+			return new ArrayList<>(logMap.values());
 		}
 		
 		private LinkedHashMap<String,GitCommit> getLogMap(List<GitCommit> gitLog) {
 			/*
-			 * Keep insert order.
+			 * Keep insert order. So it should maintain the revert time order which
+			 * `git log` command provides.
 			 */
 			LinkedHashMap<String,GitCommit> logMap = new LinkedHashMap<String,GitCommit>();
 			for (GitCommit gitCommit : gitLog) {
@@ -335,7 +341,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
+			commit.setFromGitCommit(gitCommit);
 			
 			return commit;
 		}

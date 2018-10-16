@@ -17,6 +17,24 @@ public class HookInputSet {
 		
 		this.repositoryDirectory = new File(userDir);
 		
+		/*
+		 * Quote:
+		 * 
+		 * > This hook executes once for the receive operation. It 
+		 * > takes no arguments, but for each ref to be updated it 
+		 * > receives on standard input a line of the format:
+		 * > 
+		 * > `<old-value> SP <new-value> SP <ref-name> LF`
+		 * 
+		 * https://git-scm.com/docs/githooks
+		 * 
+		 * TODO:
+		 * 
+		 * Notice that post-receive may have more then one line of stdin 
+		 * (I don't know any condition for our particular usage until
+		 * now) and check whether the above condition is possible. If 
+		 * yes, need to write an exceptional condition somewhere in here.
+		 */
 		this.branchName = args[2];
 		this.oldSha = args[0];
 		this.newSha = args[1];

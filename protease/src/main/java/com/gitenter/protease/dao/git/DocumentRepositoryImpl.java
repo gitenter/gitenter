@@ -86,7 +86,7 @@ class DocumentRepositoryImpl implements DocumentRepository {
 		 * But validCommit placeholders is not setup yet.
 		 */
 		assert document.getCommit().getSha().equals(gitCommit.getSha());
-		document.getCommit().setFromDatapack(new CommitBean.GitCommitDatapack(gitCommit));
+		document.getCommit().setFromGitCommit(gitCommit);
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {

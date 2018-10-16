@@ -20,22 +20,11 @@ public class PostReceiveApplication {
 	
 	public static void main (String[] args) throws Exception {
 		
-		/*
-		 * Quote:
-		 * 
-		 * This hook executes once for the receive operation. It 
-		 * takes no arguments, but for each ref to be updated it 
-		 * receives on standard input a line of the format:
-		 * 
-		 * <old-value> SP <new-value> SP <ref-name> LF
-		 * 
-		 * https://git-scm.com/docs/githooks
-		 */
 		HookInputSet input = new HookInputSet(System.getProperty("user.dir"), args);
 		
 		System.out.println("branchName: "+input.getBranchName());
-		System.out.println("oldCommitSha: "+input.getOldCommitSha());
-		System.out.println("newCommitSha: "+input.getNewCommitSha());
+		System.out.println("oldCommitSha: "+input.getOldSha());
+		System.out.println("newCommitSha: "+input.getNewSha());
 		
 		/*
 		 * We need to active the Spring profile definition for 

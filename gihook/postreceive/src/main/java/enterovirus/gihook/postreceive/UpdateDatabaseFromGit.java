@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -17,16 +18,13 @@ import com.gitenter.protease.dao.git.CommitRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
-
-import enterovirus.enzymark.propertiesfile.PropertiesFileFormatException;
-import enterovirus.enzymark.propertiesfile.PropertiesFileParser;
-import enterovirus.enzymark.traceanalyzer.*;
-import enterovirus.gitar.GitBlob;
-import enterovirus.gitar.GitFolderStructure;
-import enterovirus.gitar.GitLog;
-import enterovirus.gitar.wrap.CommitInfo;
-import enterovirus.protease.database.*;
-import enterovirus.protease.domain.*;
+import com.gitenter.protease.domain.git.IgnoredCommitBean;
+import com.gitenter.protease.domain.git.InvalidCommitBean;
+import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.enzymark.propertiesfile.PropertiesFileFormatException;
+import com.gitenter.enzymark.propertiesfile.PropertiesFileParser;
+import com.gitenter.enzymark.traceanalyzer.*;
+import com.gitenter.gitar.GitCommit;
 
 @Service
 public class UpdateDatabaseFromGit {
@@ -48,56 +46,28 @@ public class UpdateDatabaseFromGit {
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(
 				input.getOrganizationName(), input.getRepositoryName()).get(0);
 		BranchBean branch = repository.getBranch(input.getBranchName());
-		List<CommitBean> commits = branch.getLog(input.getOldSha(), input.getNewSha());
-	
-		/*
-		 * Since all commits need to write to the database are new (no update),
-		 * there is no need to load the privous commits.
-		 */
-//		Hibernate.initialize(repository.getCommits());
 		
 		/*
-		 * This happens because for a new branch, although it starts from an existing
-		 * commit, the "oldCommitSha" "update"/"post-receive" hooks provided
+		 * Ideally for commits in between the two provided SHAs, they should all
+		 * be unsaved. However, `branch.getUnsavedLog()` actually queries the database
+		 * and remove all the existing ones.
+		 * 
+		 * We need to do it, because for a new branch, although it actually starts from 
+		 * an existing commit, the `oldSha` "update"/"post-receive" hooks provided
 		 * is still a null value. So if we don't manually find these commit out,
 		 * they'll be try to rewrite to the database again, and that raises SQL
 		 * error 
 		 * > ERROR: duplicate key value violates unique constraint
 		 * 
-		 * The other method is to change the implementation in "GitLog", but it is also
-		 * now easy so we don't go to that direction.
+		 * This also makes the hook idempotent, which is more robust for further maintenance.
 		 */
-		List<String> commitShas = new ArrayList<String>();
-		for (CommitBean commit : commits) {
-			commitShas.add(commit.getSha());
-		}
-		List<CommitBean> alreadyInDbCommit = commitRepository.findByRepositoryIdAndCommitShaIn(repository.getId(), commitShas);
-		
-		for (CommitInfo commitInfo : gitLog.getCommitInfos()) {
-			
-			/*
-			 * Since "gitLog" commits are in reverse time order, when we met
-			 * the first one which is in "alreadyInDbCommit", all the follow up
-			 * ones are in it. So the loop can be terminated immediately.
-			 * 
-			 * TODO:
-			 * 
-			 * We still need to run the loop every single time the commit has
-			 * not exist yet. The performance of the current method is not good.
-			 * 
-			 * Improve the code by finding out the commits in "gitLog" but
-			 * not in "alreadyInDbCommit" (set absolute complement), and only 
-			 * iterate for those elements.
-			 */
-			if (CommitBean.inCommitList(commitInfo.getCommitSha().getShaChecksumHash(), alreadyInDbCommit)) {
-				break;
-			}
+		for (GitCommit gitCommit : branch.getUnsavedLog(input.getOldSha(), input.getNewSha())) {
 			
 			/*
 			 * Update every single git commit which is under the
 			 * new "git push". 
 			 */
-			updateGitCommit(input, repository, commitInfo);
+			updateGitCommit(input.getRepositoryDirectory(), repository, gitCommit);
 		}
 	}
 	
@@ -108,15 +78,23 @@ public class UpdateDatabaseFromGit {
 	 * (e.g. https://stackoverflow.com/questions/22682870/git-undo-pushed-commits),
 	 * then the database should be cleaned up.
 	 */
-	private void updateGitCommit (HookInputSet status, RepositoryBean repository, CommitInfo commitInfo) throws IOException {
-		
+	private void updateGitCommit(File repositoryDirectory, RepositoryBean repository, GitCommit gitCommit) throws IOException {
+
 		PropertiesFileParser propertiesFileParser;
 		try {
-			propertiesFileParser = new PropertiesFileParser(status.getRepositoryDirectory(), commitInfo.getCommitSha(), "gitenter.properties"); 
+			propertiesFileParser = new PropertiesFileParser(repositoryDirectory, gitCommit.getSha(), "gitenter.properties"); 
 		}
 		catch (PropertiesFileFormatException e) {
 
-			CommitBean commit = new CommitInvalidBean(repository, commitInfo.getCommitSha(), e.getMessage());
+			InvalidCommitBean commit = new InvalidCommitBean();
+			commit.setErrorMessage(e.getMessage());
+			
+			/*
+			 * TODO:
+			 * This piece of code (until return) is duplicated.
+			 */
+			commit.setRepository(repository);
+			commit.setFromGitCommit(gitCommit);
 			repository.addCommit(commit);
 			
 			commitRepository.saveAndFlush(commit);
@@ -125,7 +103,10 @@ public class UpdateDatabaseFromGit {
 		
 		if (propertiesFileParser.isEnabledSystemwide() == false) {
 			
-			CommitBean commit = new CommitIgnoredBean(repository, commitInfo.getCommitSha());
+			IgnoredCommitBean commit = new IgnoredCommitBean();
+			
+			commit.setRepository(repository);
+			commit.setFromGitCommit(gitCommit);
 			repository.addCommit(commit);
 			
 			commitRepository.saveAndFlush(commit);
@@ -144,41 +125,41 @@ public class UpdateDatabaseFromGit {
 		
 		try {
 			String[] includePaths = propertiesFileParser.getIncludePaths();
-			traceableRepository = getTraceableRepository(status, commitInfo, includePaths);
+			traceableRepository = getTraceableRepository(status, gitCommit, includePaths);
 		}
 		catch (TraceAnalyzerException e) {
 			
+			InvalidCommitBean commit = new InvalidCommitBean();
+			
 			/*
 			 * TODO:
-			 * Can it show all the parsing exceptions at the same time?
+			 * Can it show all the parsing exceptions at the same time (the current
+			 * approach can only show the first exception which errors out)?
 			 * Or a better way is to have a client-side hook to handle that?
 			 * 
 			 * Probably need to recover from the "TraceAnalyzerException"
 			 * and continue append the error messages. 
 			 */
-			CommitBean commit = new CommitInvalidBean(repository, commitInfo.getCommitSha(), e.getMessage());
+			commit.setErrorMessage(e.getMessage());
+			
+			/*
+			 * TODO:
+			 * This piece of code (until return) is duplicated.
+			 */
+			commit.setRepository(repository);
+			commit.setFromGitCommit(gitCommit);
 			repository.addCommit(commit);
 			
 			commitRepository.saveAndFlush(commit);
 			return;
 		}
 			
-		CommitValidBean commit = new CommitValidBean(repository, commitInfo.getCommitSha());
+		ValidCommitBean commit = new ValidCommitBean();
+		
+		commit.setRepository(repository);
+		commit.setFromGitCommit(gitCommit);
 		repository.addCommit(commit);
-			
-		/*
-		 * TODO:
-		 * GitLog gives all the previous commits related to the current 
-		 * branch (so include the one previous share with other branch).
-		 * Therefore, it is possible that one commit already exists in
-		 * the SQL database system (notice that SQL doesn't in charge of
-		 * the part of the topology/relationship of the commits).
-		 * 
-		 * Need to think carefully the condition that post-receive have 
-		 * more then one line of stdin (I don't know any condition until
-		 * now) and check whether the above condition is possible. If 
-		 * yes, need to write an exceptional condition somewhere in here.
-		 */
+		
 //		commitRepository.saveAndFlush(commit);
 		
 		/*

@@ -48,18 +48,18 @@ public class BranchBean {
 	 * Cannot return "CommitBean" because it is unknown yet which kind of
 	 * subclass it should be.
 	 */
-	public List<CommitBean.GitCommitDatapack> getUnsavedLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+	public List<GitCommit> getUnsavedLog(Integer maxCount, Integer skip) throws IOException, GitAPIException {
 		return logPlaceholder.getUnsaved(maxCount, skip);
 	}
 	
-	public List<CommitBean.GitCommitDatapack> getUnsavedLog(String oldSha, String newSha) throws IOException, GitAPIException {
+	public List<GitCommit> getUnsavedLog(String oldSha, String newSha) throws IOException, GitAPIException {
 		return logPlaceholder.getUnsaved(oldSha, newSha);
 	}
 	
 	public interface LogPlaceholder {
 		List<CommitBean> getInDatabase(Integer maxCount, Integer skip) throws IOException, GitAPIException;
 		List<CommitBean> getInDatabase(String oldSha, String newSha) throws IOException, GitAPIException;
-		List<CommitBean.GitCommitDatapack> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException;
-		List<CommitBean.GitCommitDatapack> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException;
+		List<GitCommit> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException;
+		List<GitCommit> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException;
 	}
 }

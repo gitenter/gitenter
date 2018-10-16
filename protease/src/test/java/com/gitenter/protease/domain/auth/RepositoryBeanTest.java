@@ -22,6 +22,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.gitar.GitCommit;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
@@ -152,7 +153,7 @@ public class RepositoryBeanTest {
 		List<CommitBean> log = branch.getInDatabaseLog(5, 0);
 		assertEquals(log.size(), 0);
 		
-		List<CommitBean.GitCommitDatapack> unsavedLog = branch.getUnsavedLog(5, 0);
+		List<GitCommit> unsavedLog = branch.getUnsavedLog(5, 0);
 		assertEquals(unsavedLog.size(), 1);
 		assertEquals(unsavedLog.get(0).getMessage(), "commit\n");
 	}
@@ -174,7 +175,7 @@ public class RepositoryBeanTest {
 		List<CommitBean> log = branch.getInDatabaseLog(oldSha, newSha);
 		assertEquals(log.size(), 0);
 		
-		List<CommitBean.GitCommitDatapack> unsavedLog = branch.getUnsavedLog(oldSha, newSha);
+		List<GitCommit> unsavedLog = branch.getUnsavedLog(oldSha, newSha);
 		assertEquals(unsavedLog.size(), 1);
 		assertEquals(unsavedLog.get(0).getMessage(), "commit\n");
 	}
