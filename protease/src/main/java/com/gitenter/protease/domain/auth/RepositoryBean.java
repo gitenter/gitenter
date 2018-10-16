@@ -74,7 +74,7 @@ public class RepositoryBean {
 	 * to git materials.
 	 */
 	@Getter(AccessLevel.NONE)
-	private List<CommitBean> commits;
+	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
 	public int getCommitCount() {
 		return commits.size();

@@ -71,9 +71,16 @@ public class DocumentBeanTest {
 		
 		DocumentBean document = new DocumentBean();
 		
-		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
-		TraceableItemBean traceableItem2 = new TraceableItemBean(document, "tag-2", "content-2");
+		TraceableItemBean traceableItem1 = new TraceableItemBean();
+		traceableItem1.setDocument(document);
+		traceableItem1.setItemTag("tag-1");
+		traceableItem1.setContent("content-1");
 		document.addTraceableItem(traceableItem1);
+		
+		TraceableItemBean traceableItem2 = new TraceableItemBean();
+		traceableItem2.setDocument(document);
+		traceableItem2.setItemTag("tag-2");
+		traceableItem2.setContent("content-2");
 		document.addTraceableItem(traceableItem2);
 		
 		traceableItem1.addDownstreamItem(traceableItem2);
