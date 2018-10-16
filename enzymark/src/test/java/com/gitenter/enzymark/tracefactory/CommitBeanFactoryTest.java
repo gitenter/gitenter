@@ -14,7 +14,6 @@ import org.junit.rules.TemporaryFolder;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitNormalRepository;
 import com.gitenter.gitar.GitWorkspace;
-import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
@@ -47,7 +46,7 @@ public class CommitBeanFactoryTest {
 		GitCommit gitCommit = repository.getCurrentBranch().getHead();
 		
 		CommitBeanFactory factory = new CommitBeanFactory();
-		CommitBean commit = factory.getCommit(new RepositoryBean(), gitCommit);
+		CommitBean commit = factory.getCommit(gitCommit);
 		
 		assert commit instanceof ValidCommitBean;
 //		ValidCommitBean validCommit = (ValidCommitBean)commit;
@@ -83,7 +82,7 @@ public class CommitBeanFactoryTest {
 		GitCommit gitCommit = repository.getCurrentBranch().getHead();
 		
 		CommitBeanFactory factory = new CommitBeanFactory();
-		CommitBean commit = factory.getCommit(new RepositoryBean(), gitCommit);
+		CommitBean commit = factory.getCommit(gitCommit);
 		
 		assert commit instanceof InvalidCommitBean;
 		InvalidCommitBean invalidCommit = (InvalidCommitBean)commit;

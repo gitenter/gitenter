@@ -33,8 +33,11 @@ public class TraceableRepositoryFactory {
 			
 			/*
 			 * TODO:
+			 * 
 			 * Should implement the filtering conditions that which file we would like
-			 * to analysis the traceable items.
+			 * to analysis the traceable items, such as only parse markdown files.
+			 * 
+			 * > blob.getMimeType().equals("text/markdown")
 			 */
 			if (gitPath instanceof GitFile) {
 				GitFile gitFile = (GitFile)gitPath;

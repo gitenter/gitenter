@@ -13,7 +13,6 @@ import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
 import com.gitenter.enzymark.traceanalyzer.TraceableItem;
 import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
 import com.gitenter.gitar.GitCommit;
-import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
@@ -22,7 +21,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 
 public class CommitBeanFactory {
 
-	public CommitBean getCommit(RepositoryBean repository, GitCommit gitCommit) 
+	public CommitBean getCommit(GitCommit gitCommit) 
 			throws FileNotFoundException, CheckoutConflictException, GitAPIException, IOException {
 		
 		CommitBean commit;
@@ -62,6 +61,13 @@ public class CommitBeanFactory {
 				 */
 				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 					
+					/*
+					 * TODO:
+					 * May try to build some "backed by" collection (through 
+					 * "Collection.retainAll()") so the collections of 
+					 * "TraceableItem" and "TraceableItemBean" can be handled
+					 * together.
+					 */
 					for (TraceableItem downstreamItem : traceableItem.getDownstreamItems()) {
 						traceabilityIterateMap.get(traceableItem).addDownstreamItem(traceabilityIterateMap.get(downstreamItem));
 					}
@@ -78,16 +84,22 @@ public class CommitBeanFactory {
 		}
 		catch (TraceAnalyzerException e) {
 			
+			/*
+			 * TODO:
+			 * Can it show all the parsing exceptions at the same time (the current
+			 * approach can only show the first exception which errors out)?
+			 * Or a better way is to have a client-side hook to handle that?
+			 * 
+			 * Probably need to recover from the "TraceAnalyzerException"
+			 * and continue append the error messages. 
+			 */
 			InvalidCommitBean invalidCommit = new InvalidCommitBean();
 			invalidCommit.setErrorMessage(e.getMessage());
-			
-			invalidCommit.setRepository(repository);
 			invalidCommit.setFromGitCommit(gitCommit);
 			
 			commit = invalidCommit;
 		}
 
-		repository.addCommit(commit);
 		return commit;
 	}
 }
