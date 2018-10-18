@@ -62,7 +62,10 @@ public class CommitBeanFactoryTest {
 		 * 
 		 * (2) The other possibility is to save to the database and query back, then all the
 		 * database/git part of the domain class will be setup properly. However, by doing so 
-		 * we need to turn on dbunit in this package, which is kind of too much.
+		 * we need to 
+		 * - Turn on dbunit in this package
+		 * - Involve repository so this also becomes a spring project rather than a pure Java project
+		 * which is kind of too much.
 		 */
 	}
 	

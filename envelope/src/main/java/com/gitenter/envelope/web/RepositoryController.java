@@ -84,7 +84,7 @@ public class RepositoryController {
 		model.addAttribute("branches", branches);
 		
 		BranchBean branch = repository.getBranch(branchName);
-		List<CommitBean> commits = branch.getLog(itemPerPage, itemPerPage*page);
+		List<CommitBean> commits = branch.getInDatabaseLog(itemPerPage, itemPerPage*page);
 		model.addAttribute("commits", commits);
 		
 		

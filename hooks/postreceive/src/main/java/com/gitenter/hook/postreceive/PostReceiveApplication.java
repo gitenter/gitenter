@@ -29,14 +29,14 @@ public class PostReceiveApplication {
 		System.out.println("oldCommitSha: "+input.getOldSha());
 		System.out.println("newCommitSha: "+input.getNewSha());
 		
-		/*
-		 * We need to active the Spring profile definition for 
-		 * "dataSource" and "gitSource".
-		 * 
-		 * "spring.profiles.active" system property is the only
-		 * working way I know until now.
-		 */
-		System.setProperty("spring.profiles.active", "production");
+//		/*
+//		 * We need to active the Spring profile definition for 
+//		 * "dataSource" and "gitSource".
+//		 * 
+//		 * "spring.profiles.active" system property is the only
+//		 * working way I know until now.
+//		 */
+//		System.setProperty("spring.profiles.active", "production");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.
