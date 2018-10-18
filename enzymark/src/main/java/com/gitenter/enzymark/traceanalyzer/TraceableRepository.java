@@ -1,6 +1,5 @@
 package com.gitenter.enzymark.traceanalyzer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,18 +15,15 @@ import lombok.Getter;
 public class TraceableRepository {
 	
 	@Getter
-	File directory;
-	
-	@Getter
 	private List<TraceableDocument> traceableDocuments = new ArrayList<TraceableDocument>();
 	
 	private Map<String,TraceableItem> traceableItemMap = new HashMap<String,TraceableItem>();
 
-	public TraceableRepository(File directory) {
-		this.directory = directory;
+	public TraceableRepository() {
+
 	}
 
-	void addTraceableDocument (TraceableDocument document) throws ItemTagNotUniqueException {
+	public void addTraceableDocument (TraceableDocument document) throws ItemTagNotUniqueException {
 
 		traceableDocuments.add(document);
 		

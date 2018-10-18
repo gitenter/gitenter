@@ -13,6 +13,7 @@ import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.GitRepository;
+import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.source.GitSource;
 
@@ -85,7 +86,7 @@ class DocumentRepositoryImpl implements DocumentRepository {
 		 * But validCommit placeholders is not setup yet.
 		 */
 		assert document.getCommit().getSha().equals(gitCommit.getSha());
-		document.getCommit().setFromGit(gitCommit);
+		document.getCommit().setFromGitCommit(gitCommit);
 	}
 	
 	public DocumentBean saveAndFlush(DocumentBean document) {
