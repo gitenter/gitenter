@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive.config;
+package com.gitenter.hook.postreceive.config;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;

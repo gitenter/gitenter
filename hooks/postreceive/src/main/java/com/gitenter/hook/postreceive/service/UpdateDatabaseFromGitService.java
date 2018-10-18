@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 
 @Service
-public class UpdateDatabaseFromGit {
+public class UpdateDatabaseFromGitService {
 
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private CommitRepository commitRepository;

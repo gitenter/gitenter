@@ -1,10 +1,12 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive.service;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
 import org.junit.Test;
+
+import com.gitenter.hook.postreceive.service.HookInputSet;
 
 public class HookInputSetTest {
 

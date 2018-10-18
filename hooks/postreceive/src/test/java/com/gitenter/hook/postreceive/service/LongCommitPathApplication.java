@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.gitenter.hook.postreceive.service.HookInputSet;
+import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
+
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 
@@ -16,7 +19,7 @@ import enterovirus.gitar.wrap.CommitSha;
 		"enterovirus.gihook.postreceive"})
 public class LongCommitPathApplication {
 	
-	@Autowired private UpdateDatabaseFromGit updateDatabase;
+	@Autowired private UpdateDatabaseFromGitService updateDatabase;
 	
 	public static void main (String[] args) throws Exception {
 		

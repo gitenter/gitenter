@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive.config;
+package com.gitenter.hook.postreceive.config;
 
 import javax.sql.DataSource;
 

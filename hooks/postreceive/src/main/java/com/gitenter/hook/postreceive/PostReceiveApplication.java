@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive;
 
 import java.io.IOException;
 
@@ -6,6 +6,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+
+import com.gitenter.hook.postreceive.service.HookInputSet;
+import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
 
 /*
  * This main class has nothing to do with unit tests.
@@ -16,7 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"com.gitenter.protease","com.gitenter.gihook.postreceive"})
 public class PostReceiveApplication {
 	
-	@Autowired private UpdateDatabaseFromGit updateDatabaseFromGit;
+	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGit;
 	
 	public static void main (String[] args) throws Exception {
 		

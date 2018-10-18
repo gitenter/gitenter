@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive.service;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,6 +13,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
+import com.gitenter.hook.postreceive.PostReceiveConfig;
+import com.gitenter.hook.postreceive.service.HookInputSet;
+import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
+
 import enterovirus.gitar.wrap.BranchName;
 import enterovirus.gitar.wrap.CommitSha;
 import enterovirus.protease.ProteaseConfig;
@@ -24,7 +28,7 @@ import enterovirus.protease.domain.*;
 @ContextConfiguration(classes={ProteaseConfig.class,PostReceiveConfig.class})
 public class OneCommitTraceabilityTest extends AbstractTestExecutionListener {
 	
-	@Autowired private UpdateDatabaseFromGit updateDatabase;
+	@Autowired private UpdateDatabaseFromGitService updateDatabase;
 	
 	@Autowired private RepositoryRepository repositoryRepository;
 	@Autowired private CommitRepository commitRepository;

@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package enterovirus.gihook.postreceive;
+package com.gitenter.hook.postreceive.service;
 
 import java.io.File;
 import java.io.IOException;
