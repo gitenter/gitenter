@@ -62,10 +62,18 @@ public class DesignDocumentHtmlGeneratorTest {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("fake-path-for-a-document.md");
-		TraceableItemBean traceableItem1 = new TraceableItemBean(document, "tag-1", "content-1");
-		TraceableItemBean traceableItem2 = new TraceableItemBean(document, "tag-2", "content-2");
+		
+		TraceableItemBean traceableItem1 = new TraceableItemBean();
 		document.addTraceableItem(traceableItem1);
+		traceableItem1.setDocument(document);
+		traceableItem1.setItemTag("tag-1");
+		traceableItem1.setContent("content-1");
+		
+		TraceableItemBean traceableItem2 = new TraceableItemBean();
 		document.addTraceableItem(traceableItem2);
+		traceableItem2.setDocument(document);
+		traceableItem2.setItemTag("tag-2");
+		traceableItem2.setContent("content-2");
 		
 		String content = 
 				  "- [tag-1] content-1.\n"

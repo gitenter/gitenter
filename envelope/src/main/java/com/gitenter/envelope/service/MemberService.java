@@ -24,12 +24,6 @@ public interface MemberService {
 	 */
 	public MemberBean getMemberByUsername(String username);
 	
-	public Collection<OrganizationBean> getManagedOrganizations(String username);
-	public Collection<OrganizationBean> getBelongedOrganizations(String username);
-	
-	public Collection<RepositoryBean> getOrganizedRepositories(String username);
-	public Collection<RepositoryBean> getAuthoredRepositories(String username);
-	
 	/*
 	 * Basically to have the input of "Authentication", it has similar the same
 	 * effect as @PreAuthorize("isAuthenticated()").
@@ -40,4 +34,10 @@ public interface MemberService {
 	public boolean updatePassword(MemberRegisterDTO register, String oldPassword);
 	
 	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO);
+	
+	public Collection<OrganizationBean> getManagedOrganizations(String username);
+	public Collection<OrganizationBean> getBelongedOrganizations(String username);
+	
+	public Collection<RepositoryBean> getOrganizedRepositories(String username);
+	public Collection<RepositoryBean> getAuthoredRepositories(String username);
 }

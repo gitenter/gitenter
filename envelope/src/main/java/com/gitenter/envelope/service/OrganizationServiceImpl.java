@@ -19,6 +19,11 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Override
 	public OrganizationBean getOrganization(Integer organizationId) {
+		/*
+		 * TODO:
+		 * 
+		 * Raise correct exception if the provided organizationId doesn't exist.
+		 */
 		return organizationRepository.findById(organizationId).get();
 	}
 	

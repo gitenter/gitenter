@@ -61,19 +61,6 @@ public class TraceableItemBean {
 
 	@ManyToMany(mappedBy="downstreamItems")
 	private List<TraceableItemBean> upstreamItems = new ArrayList<TraceableItemBean>();
-	
-	/*
-	 * Hibernate constructor
-	 */
-	public TraceableItemBean () {
-		
-	}
-
-	public TraceableItemBean(DocumentBean document, String itemTag, String content) {
-		this.document = document;
-		this.itemTag = itemTag;
-		this.content = content;
-	}
 
 	public boolean addDownstreamItem (TraceableItemBean item) {
 		return downstreamItems.add(item);

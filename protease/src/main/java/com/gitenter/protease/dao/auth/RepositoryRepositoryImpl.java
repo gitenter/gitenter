@@ -169,7 +169,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.setFromGit(gitCommit);
+			commit.setFromGitCommit(gitCommit);
 			
 			return commit;
 		}
@@ -194,17 +194,82 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		}
 		
 		@Override
-		public List<CommitBean> get(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+		public List<CommitBean> getInDatabase(Integer maxCount, Integer skip) throws IOException, GitAPIException {
 			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog();
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
+			return gitLog2FillValuedInDbCommit(gitLog);	
+		}
+		
+		@Override
+		public List<CommitBean> getInDatabase(String oldSha, String newSha) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
+			return gitLog2FillValuedInDbCommit(gitLog);	
+		}
+		
+		private List<CommitBean> gitLog2FillValuedInDbCommit(List<GitCommit> gitLog) {
+			LinkedHashMap<String,GitCommit> logMap = getLogMap(gitLog);
+			List<CommitBean> inDbCommits = checkInDbCommits(logMap);
+			for (CommitBean commit : inDbCommits) {
+				commit.setFromGitCommit(logMap.get(commit.getSha()));
+			}
+			
+			return inDbCommits;
+		}
+		
+		@Override
+		public List<GitCommit> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
+			return updateByRemoveSaved(gitLog);
+		}
+
+		@Override
+		public List<GitCommit> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException {
+			GitRepository gitRepository = getGitRepository(branch.getRepository());
+			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
+			return updateByRemoveSaved(gitLog);
+		}
+		
+		private List<GitCommit> updateByRemoveSaved(List<GitCommit> gitLog) {
+			LinkedHashMap<String,GitCommit> logMap = getLogMap(gitLog);
+			List<CommitBean> inDbCommits = checkInDbCommits(logMap);
 			
 			/*
-			 * Keep insert order.
+			 * Actually when the log comes (as the reverse time order), the
+			 * in database ones are always the last several of them. That may
+			 * help to improve the performance, as we don't need to iterate the
+			 * entire set and move out commits individually. However, since the
+			 * most time consuming part is the database query parts (to see what
+			 * commits already exists), it probably doesn't make a big difference
+			 * to make optimization in here.
 			 */
-			LinkedHashMap <String,GitCommit> logMap = new LinkedHashMap <String,GitCommit>();
+			for (CommitBean commit : inDbCommits) {
+				logMap.remove(commit.getSha());
+			}
+			
+			/*
+			 * TODO:
+			 * Need to double check whether it indeed keep orders.
+			 */
+			return new ArrayList<>(logMap.values());
+		}
+		
+		private LinkedHashMap<String,GitCommit> getLogMap(List<GitCommit> gitLog) {
+			/*
+			 * Keep insert order. So it should maintain the revert time order which
+			 * `git log` command provides.
+			 */
+			LinkedHashMap<String,GitCommit> logMap = new LinkedHashMap<String,GitCommit>();
 			for (GitCommit gitCommit : gitLog) {
 				logMap.put(gitCommit.getSha(), gitCommit);
 			}
+			
+			return logMap;
+		}
+			
+		private List<CommitBean> checkInDbCommits(LinkedHashMap<String,GitCommit> logMap) { 
+			
 			/*
 			 * TODO:
 			 * Need to double check whether it indeed keep orders.
@@ -215,14 +280,12 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			 * Do it in one single SQL query by performance concerns.
 			 * Also, use directory database query so git information is not
 			 * automatically included.
+			 * 
+			 * TODO:
+			 * But this only include the in database ones. 
 			 */
-			List<CommitBean> log = commitDatabaseRepository.findByRepositoryIdAndShaIn(branch.getRepository().getId(), shas);
-			
-			for (CommitBean commit : log) {
-				commit.setFromGit(logMap.get(commit.getSha()));
-			}
-			
-			return log;
+			List<CommitBean> inDbCommits = commitDatabaseRepository.findByRepositoryIdAndShaIn(branch.getRepository().getId(), shas);
+			return inDbCommits;
 		}
 	}
 	
@@ -278,7 +341,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			GitCommit gitCommit = gitRepository.getTag(tag.getName()).getCommit();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(tag.getRepository().getId(), gitCommit.getSha()).get(0);
-			commit.setFromGit(gitCommit);
+			commit.setFromGitCommit(gitCommit);
 			
 			return commit;
 		}

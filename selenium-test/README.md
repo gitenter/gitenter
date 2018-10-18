@@ -28,6 +28,25 @@ $ mv chromedriver /usr/local/bin
 
 Add add-ons (a.k.a Selenium IDEs) to the existing browsers ([Chrome](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd?hl=en), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/selenium-ide/), ...) has nothing to do with the corresponding drivers (`ChromeDriver`, `GeckoDriver`, ...). That's for create simple scripts/assist in exploratory testing. Also, notice that add add-ons is a user-level action (no password needed).
 
+### `libgit2`
+
+```
+brew install libssh2
+```
+
+```
+wget https://github.com/libgit2/libgit2/archive/v0.27.4.tar.gz
+tar xzf v0.27.4.tar.gz
+cd libgit2-0.27.4/
+cmake .
+make
+sudo make install
+```
+
+```
+pip3 install pygit2
+```
+
 ## Run Tests
 
 ```

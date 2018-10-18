@@ -12,5 +12,6 @@ public interface CommitDatabaseRepository extends PagingAndSortingRepository<Com
 	List<CommitBean> findByRepositoryIdAndSha(Integer repositoryId, String sha);
 	List<CommitBean> findByRepositoryIdAndShaIn(Integer repositoryId, List<String> sha);
 	
+	public void deleteById(Integer id);
 	public CommitBean saveAndFlush(CommitBean commit);
 }

@@ -63,7 +63,10 @@ abstract public class CommitBean {
 	@Transient
 	private AuthorBean author;
 	
-	public void setFromGit(GitCommit gitCommit) {
+	public void setFromGitCommit(GitCommit gitCommit) {
+		
+		sha = gitCommit.getSha();
+		
 		timestamp = gitCommit.getTimestamp();
 		message = gitCommit.getMessage();
 		author = AuthorBean.getInstance(gitCommit.getAuthor());

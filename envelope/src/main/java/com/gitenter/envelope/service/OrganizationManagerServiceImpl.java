@@ -137,15 +137,18 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		
-//		ClassLoader classLoader = getClass().getClassLoader();
-//		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
-//		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
-		
 		/*
 		 * TODO:
 		 * Consider move the git related part to a DAO method.
+		 * 
+		 * TODO:
+		 * Consider using task queue to implement git related operations.
 		 */
 		GitBareRepository.getInstance(repositoryDirectory);
+		
+//		ClassLoader classLoader = getClass().getClassLoader();
+//		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+//		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
 		
 		if (includeSetupFiles.equals(Boolean.FALSE)) {
 //			GitRepository.initBare(repositoryDirectory, sampleHooksDirectory);

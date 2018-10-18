@@ -41,30 +41,8 @@
     <put-attribute name="body" value="/WEB-INF/views/index/organization.jsp" />
   </definition>
 
-  <definition name="git-navigation/setup-a-new-repository" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/setup-a-new-repository.jsp" />
-  </definition>
-  <definition name="git-navigation/commit" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/commit.jsp" />
-  </definition>
-  <definition name="git-navigation/invalid-commit" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/invalid-commit.jsp" />
-  </definition>
-  <definition name="git-navigation/ignored-commit" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/ignored-commit.jsp" />
-  </definition>
-  <definition name="git-navigation/commit-list" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/commit-list.jsp" />
-  </definition>
-  <definition name="git-navigation/document" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/git-navigation/document.jsp" />
-  </definition>
-
-  <definition name="admin/create-organization" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/create-organization.jsp" />
-  </definition>
-  <definition name="admin/create-repository" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/create-repository.jsp" />
+  <definition name="organization-management/create" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/organization-management/create.jsp" />
   </definition>
   <definition name="organization-management/settings" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/settings.jsp" />
@@ -74,6 +52,29 @@
   </definition>
   <definition name="organization-management/members" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/members.jsp" />
+  </definition>
+  
+  <definition name="repository/setup-a-new-repository" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/setup-a-new-repository.jsp" />
+  </definition>
+  <definition name="repository/commit" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/commit.jsp" />
+  </definition>
+  <definition name="repository/invalid-commit" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/invalid-commit.jsp" />
+  </definition>
+  <definition name="repository/ignored-commit" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/ignored-commit.jsp" />
+  </definition>
+  <definition name="repository/commit-list" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/commit-list.jsp" />
+  </definition>
+  <definition name="repository/document" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/document.jsp" />
+  </definition>
+  
+  <definition name="repository-management/create" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/create.jsp" />
   </definition>
   <definition name="admin/repository-settings" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/admin/repository-settings.jsp" />

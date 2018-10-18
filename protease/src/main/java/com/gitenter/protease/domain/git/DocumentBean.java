@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -68,6 +69,8 @@ public class DocumentBean extends FileBean {
 	 * Use together with buildTraceableItemIndex()
 	 */
 	@Transient
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private Map<String,TraceableItemBean> traceableItemMap;
 	
 	public void buildTraceableItemIndex() {

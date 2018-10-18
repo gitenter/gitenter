@@ -35,7 +35,7 @@ public class TraceableDocument {
 		traceableItems.add(item);
 	}
 	
-	void parse(String textContent) {
+	public void parse(String textContent) {
 		
 		Parser parser = Parser.builder().build();
 		Node node = parser.parse(textContent);

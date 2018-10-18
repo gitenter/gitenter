@@ -48,9 +48,13 @@ public class GitSource {
 		return parts[parts.length-2];
 	}
 	
-	public static String getBareRepositoryName (File bareRepositoryDirectory) {
+	public static String getBareRepositoryName (File bareRepositoryDirectory) throws IOException {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");
 		String gitFolder = parts[parts.length-1];
+		
+		if (!gitFolder.substring(gitFolder.length()-4, gitFolder.length()).equals(".git")) {
+			throw new IOException(bareRepositoryDirectory+" is not a bare repository directory");
+		}
 		return gitFolder.substring(0, gitFolder.length()-4);
 	}
 
