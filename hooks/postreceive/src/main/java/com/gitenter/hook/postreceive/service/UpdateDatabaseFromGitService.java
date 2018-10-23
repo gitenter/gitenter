@@ -20,6 +20,7 @@ import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
+import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @Service
 public class UpdateDatabaseFromGitService {
@@ -118,7 +119,7 @@ public class UpdateDatabaseFromGitService {
 		 */
 		commit.setRepository(repository);
 		repository.addCommit(commit);
-		
+
 		commitRepository.saveAndFlush(commit);
 		return;
 	}

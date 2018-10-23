@@ -16,7 +16,6 @@ import com.gitenter.protease.source.GitSource;
 @Configuration
 public class TestGitConfig {
 	
-	@Profile("minimal")
 	@Bean
 	public GitSource minimalGitSource() throws FileNotFoundException {
 		
