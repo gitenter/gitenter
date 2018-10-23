@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
@@ -41,6 +42,8 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
+import com.gitenter.protease.domain.git.InvalidCommitBean;
+import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=PostReceiveConfig.class)
@@ -53,13 +56,54 @@ public class UpdateDatabaseFromGitServiceTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
 
+	private GitNormalRepository gitNormalRepository;
+	private GitBareRepository gitBareRepository;
+	
+	private GitWorkspace workspace;
+	private GitRemote origin;
+	
 	@Before
-    public void initMocks(){
+    public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
 	
-	@Test
-	public void testNotSaveIfNoUnsavedBranch() throws IOException, GitAPIException {
+	private void setupGit() throws IOException, GitAPIException {
+		
+		Random rand = new Random();
+		String name = "repo-"+rand.nextInt(Integer.MAX_VALUE);
+		File normalDirectory = folder.newFolder(name);
+		gitNormalRepository = GitNormalRepository.getInstance(normalDirectory);
+		workspace = gitNormalRepository.getCurrentBranch().checkoutTo();
+		
+		File bareDirectory = folder.newFolder(name+".git");
+		gitBareRepository = GitBareRepository.getInstance(bareDirectory);
+		gitNormalRepository.createOrUpdateRemote("origin", gitBareRepository.getDirectory().toString());
+		origin = gitNormalRepository.getRemote("origin");
+	}
+	
+	private HookInputSet getHookInputSet() throws IOException, GitAPIException {
+		
+		GitCommit headGitCommit = gitBareRepository.getBranch("master").getHead();
+		String oldSha = GitCommit.EMPTY_SHA;
+		String newSha = headGitCommit.getSha();
+		String branchName = "master";
+		
+		String userDir = gitBareRepository.getDirectory().getAbsolutePath();
+		String args[] = {oldSha, newSha, branchName};
+		
+		HookInputSet input = new HookInputSet(userDir, args);
+		
+		return input;
+	}
+	
+	/*
+	 * Probably can merge this method to the previous one, with the input as `List<GitCommit>`
+	 * and for this case give empty string. But it is troublesome because in this case we can completely
+	 * forget git temporary file setup (probably we shouldn't, as that hacks the system).
+	 * 
+	 * Will re-think about it later.
+	 */
+	private HookInputSet getDummyHookInputSet() {
 		
 		String oldSha = GitCommit.EMPTY_SHA;
 		String newSha = GitCommit.EMPTY_SHA;
@@ -70,81 +114,32 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		HookInputSet input = new HookInputSet(userDir, args);
 		
-		BranchBean mockBranch = mock(BranchBean.class);
-		Mockito.when(mockBranch.getUnsavedLog(any(String.class), any(String.class)))
-			.thenReturn(new ArrayList<GitCommit>());
-		
-		RepositoryBean mockRepository = mock(RepositoryBean.class);
-		Mockito.when(mockRepository.getBranch(any(String.class))).thenReturn(mockBranch);
-		
-		Mockito.when(repositoryRepository.findByOrganizationNameAndRepositoryName(any(String.class), any(String.class)))
-			.thenReturn(Arrays.asList(mockRepository));
-		
-		updateDatabaseFromGit.update(input);
-		verify(commitRepository, times(0)).saveAndFlush(any(CommitBean.class));
+		return input;
 	}
 	
-	@Test
-	public void testValidCommit() throws IOException, GitAPIException {
+	private List<RepositoryBean> spyRepositoryRepositoryAndGetMockRepositories(HookInputSet input) throws IOException, GitAPIException {
 		
-		File normalDirectory = folder.newFolder("valid-repo");
-		GitNormalRepository gitNormalRepository = GitNormalRepository.getInstance(normalDirectory);
-		GitWorkspace workspace = gitNormalRepository.getCurrentBranch().checkoutTo();
-		
-		File bareDirectory = folder.newFolder("valid-repo.git");
-		GitBareRepository gitBareRepository = GitBareRepository.getInstance(bareDirectory);
-		gitNormalRepository.createOrUpdateRemote("origin", gitBareRepository.getDirectory().toString());
-		GitRemote origin = gitNormalRepository.getRemote("origin");
-		
-		String textContent =
-				  "- [tag1] a traceable item.\n"
-				+ "- [tag2]{tag1} a traceable item with in-document reference.";
-		
-		addAFile(normalDirectory, "file.md", textContent);
-		
-		workspace.add();
-		workspace.commit("dummy commit message");
-		workspace.push(origin);
-		
-		GitCommit gitCommit = gitBareRepository.getBranch("master").getHead();
-		String oldSha = GitCommit.EMPTY_SHA;
-		String newSha = gitCommit.getSha();
-		String branchName = "master";
-		
-		String userDir = bareDirectory.getAbsolutePath();
-		String args[] = {oldSha, newSha, branchName};
-		
-		HookInputSet input = new HookInputSet(userDir, args);
-		
+		List<GitCommit> gitCommits;
+		if (input.getNewSha().equals(GitCommit.EMPTY_SHA)) {
+			gitCommits = new ArrayList<GitCommit>();
+		}
+		else {
+			gitCommits = gitBareRepository.getBranch("master").getLog(input.getOldSha(), input.getNewSha());
+		}
 		BranchBean mockBranch = mock(BranchBean.class);
 		Mockito.when(mockBranch.getUnsavedLog(any(String.class), any(String.class)))
-			.thenReturn(Arrays.asList(gitCommit));
+			.thenReturn(gitCommits);
 		
 		RepositoryBean mockRepository = mock(RepositoryBean.class);
 		Mockito.when(mockRepository.getBranch(any(String.class))).thenReturn(mockBranch);
 		
+		List<RepositoryBean> mockRepositories = Arrays.asList(mockRepository);
 		Mockito.when(repositoryRepository.findByOrganizationNameAndRepositoryName(any(String.class), any(String.class)))
-			.thenReturn(Arrays.asList(mockRepository));
+			.thenReturn(mockRepositories);
 		
-		updateDatabaseFromGit.update(input);
-		
-		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
-		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
-		CommitBean savedCommit = argument.getValue();
-		
-		assertEquals(savedCommit.getRepository(), mockRepository);
-		
-		/*
-		 * TODO:
-		 * 
-		 * Modify the test so the "ValidCommitBean" case will be tested.
-		 * 
-		 * And/or we may have multiple commits in `getUnsavedLog()` then
-		 * we can test it is saved multiple times.
-		 */
-		assertTrue(savedCommit instanceof IgnoredCommitBean);
+		return mockRepositories;
 	}
-
+	
 	private void addAFile(File directory, String filename, String textContent) throws IOException {
 		
 		File file = new File(directory, filename);
@@ -152,5 +147,134 @@ public class UpdateDatabaseFromGitServiceTest {
 		FileWriter writer = new FileWriter(file);
 		writer.write(textContent);
 		writer.close();
+	}
+	
+	@Test
+	public void testValidCommit() throws IOException, GitAPIException {
+		
+		setupGit();
+		
+		String fileTextContent =
+				  "- [tag1] a traceable item.\n"
+				+ "- [tag2]{tag1} a traceable item with in-document reference.";
+		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
+		
+		String configTextContent = "enable_systemwide = on";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", configTextContent);
+		
+		workspace.add();
+		workspace.commit("valid commit");
+		workspace.push(origin);
+		
+		HookInputSet input = getHookInputSet();		
+		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
+		updateDatabaseFromGit.update(input);
+		
+		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
+		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
+		CommitBean savedCommit = argument.getValue();
+		
+		assertEquals(savedCommit.getRepository(), mockRepositories.get(0));
+		assertTrue(savedCommit instanceof ValidCommitBean);
+	}
+	
+	@Test
+	public void testInvalidCommit() throws IOException, GitAPIException {
+		
+		setupGit();
+		
+		String fileTextContent = "- [tag]{refer-not-exist} a traceable item.";
+		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
+		
+		String configTextContent = "enable_systemwide = on";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", configTextContent);
+		
+		workspace.add();
+		workspace.commit("invalid commit");
+		workspace.push(origin);
+		
+		HookInputSet input = getHookInputSet();		
+		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
+		updateDatabaseFromGit.update(input);
+		
+		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
+		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
+		CommitBean savedCommit = argument.getValue();
+		
+		assertEquals(savedCommit.getRepository(), mockRepositories.get(0));
+		assertTrue(savedCommit instanceof InvalidCommitBean);
+	}
+	
+	@Test
+	public void testIgnoredCommit() throws IOException, GitAPIException {
+		
+		setupGit();
+		
+		String textContent = "enable_systemwide = off";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", textContent);
+		
+		workspace.add();
+		workspace.commit("setup as disabled");
+		workspace.push(origin);
+		
+		HookInputSet input = getHookInputSet();		
+		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
+		updateDatabaseFromGit.update(input);
+		
+		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
+		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
+		CommitBean savedCommit = argument.getValue();
+		
+		assertEquals(savedCommit.getRepository(), mockRepositories.get(0));
+		assertTrue(savedCommit instanceof IgnoredCommitBean);
+	}
+	
+	@Test
+	public void testNotSaveIfNoUnsavedBranch() throws IOException, GitAPIException {
+		
+		HookInputSet input = getDummyHookInputSet();		
+		spyRepositoryRepositoryAndGetMockRepositories(input);
+		updateDatabaseFromGit.update(input);
+		
+		updateDatabaseFromGit.update(getDummyHookInputSet());
+		verify(commitRepository, times(0)).saveAndFlush(any(CommitBean.class));
+	}
+	
+	@Test
+	public void testMultipleCommitsWillBeSavedMultipleTinmes() throws IOException, GitAPIException {
+		
+		setupGit();
+		
+		String configTextContent = "enable_systemwide = on";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", configTextContent);
+		
+		workspace.add();
+		workspace.commit("first (valid) commit");
+		workspace.push(origin);
+		
+		String fileTextContent = "- [tag]{refer-not-exist} a traceable item.";
+		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
+		
+		workspace.add();
+		workspace.commit("second (invalid) commit");
+		workspace.push(origin);
+		
+		HookInputSet input = getHookInputSet();		
+		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
+		updateDatabaseFromGit.update(input);
+		
+		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
+		verify(commitRepository, times(2)).saveAndFlush(argument.capture());
+		List<CommitBean> savedCommits = argument.getAllValues();
+		
+		/*
+		 * Second commit will be saved first, while the first commit will be saved later.
+		 * That is reverse time order.
+		 */
+		assertEquals(savedCommits.get(1).getRepository(), mockRepositories.get(0));
+		assertTrue(savedCommits.get(1) instanceof ValidCommitBean);
+		
+		assertEquals(savedCommits.get(0).getRepository(), mockRepositories.get(0));
+		assertTrue(savedCommits.get(0) instanceof InvalidCommitBean);
 	}
 }
