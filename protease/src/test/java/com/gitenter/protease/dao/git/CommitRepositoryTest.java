@@ -65,10 +65,17 @@ public class CommitRepositoryTest {
 		assertFalse(documentRepository.findById(1).isPresent());
 	}
 	
+	/*
+	 * This tests, as basically for testing Hibernate/Spring data `save()` method,
+	 * is because we used to see weird behavior while saving complicated models.
+	 * 
+	 * That may be just a fakr alarm but we'll just keep those tests in here in
+	 * case we need further investigations.
+	 */
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	public void testSaveAndFlushMatchMinimalDbUnitGitSetup() throws IOException, GitAPIException {
+	public void testSaveAndFlushWorksInMinimalDbUnitSetup() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
 		
@@ -97,8 +104,8 @@ public class CommitRepositoryTest {
 		/*
 		 * Both works. Can go with each way.
 		 */
-		repositoryRepository.saveAndFlush(repository);
-//		commitRepository.saveAndFlush(commit);
+//		repositoryRepository.saveAndFlush(repository);
+		commitRepository.saveAndFlush(commit);
 		
 		/*
 		 * Confirmed by printed out SQL that database query is re-triggered (rather
@@ -123,6 +130,7 @@ public class CommitRepositoryTest {
 		TraceableItemBean reloadTraceableItem = reloadDocument.getTraceableItems().get(0);
 		assertEquals(reloadTraceableItem.getItemTag(), "tag");
 		assertEquals(reloadTraceableItem.getContent(), "content");
+		
 		assertEquals(reloadTraceableItem.getDownstreamItems().size(), 1);
 		assertEquals(reloadTraceableItem.getUpstreamItems().size(), 1);
 		assertEquals(reloadTraceableItem.getDownstreamItems().get(0), reloadTraceableItem);
@@ -132,7 +140,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	public void testSaveAndFlushMoreComplicatedTraceabilityMap() throws IOException, GitAPIException {
+	public void testSaveAndFlushWorksMoreComplicatedTraceabilityMap() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
 		
@@ -163,55 +171,39 @@ public class CommitRepositoryTest {
 		TraceableItemBean traceableItem2 = new TraceableItemBean();
 		traceableItem2.setItemTag("tag-2");
 		traceableItem2.setContent("content-2");
-		traceableItem1.setDocument(document);
+		traceableItem2.setDocument(document);
 		document.addTraceableItem(traceableItem2);
 		
 		traceableItem1.setDownstreamItems(Arrays.asList(traceableItem2));
 		traceableItem2.setUpstreamItems(Arrays.asList(traceableItem1));
 		
-		/*
-		 * TODO:
-		 * 
-		 * Can't save this way for more complicated case. Hibernate is not smart enough
-		 * to realize the complicated mapping relationship, and it will cause the
-		 * following error.
-		 * 
-		 * > WARN [main] (SqlExceptionHelper.java:129) - SQL Error: 0, SQLState: 23502
-		 * > ERROR [main] (SqlExceptionHelper.java:131) - ERROR: null value in column "document_id" violates not-null constraint
-		 * > Detail: Failing row contains (14, null, tag-2, content-2).
-		 */
-		repositoryRepository.saveAndFlush(repository);
-//		commitRepository.saveAndFlush(commit);
+//		repositoryRepository.saveAndFlush(repository);
+		commitRepository.saveAndFlush(commit);
 		
-//		/*
-//		 * Confirmed by printed out SQL that database query is re-triggered (rather
-//		 * than just load the value from ORM caching).
-//		 */
-//		RepositoryBean reloadRepository = repositoryRepository.findById(1).get();
-//		assertEquals(reloadRepository.getCommitCount(), 1);
-//		
-//		/*
-//		 * Can't use `findById`, because the ID is changing for multiple run of
-//		 * this test.
-//		 */
-//		CommitBean reloadCommit = commitRepository.findByRepositoryIdAndCommitSha(1, "c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73").get(0);
-//		assertTrue(reloadCommit instanceof ValidCommitBean);
-//		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
-//		
-//		DocumentBean reloadDocument = reloadValidCommit.getDocument("file");
-//		assertEquals(reloadDocument.getName(), "file");
-//		assertNull(reloadValidCommit.getDocument("file-does-not-exist"));
-//		
-//		assertEquals(reloadDocument.getTraceableItems().size(), 2);
-//		TraceableItemBean reloadTraceableItem1 = reloadDocument.getTraceableItems().get(0);
-//		assertEquals(reloadTraceableItem1.getItemTag(), "tag-1");
-//		assertEquals(reloadTraceableItem1.getContent(), "content-1");
-//		TraceableItemBean reloadTraceableItem2 = reloadDocument.getTraceableItems().get(1);
-//		assertEquals(reloadTraceableItem2.getItemTag(), "tag-2");
-//		assertEquals(reloadTraceableItem2.getContent(), "content-2");
-////		assertEquals(reloadTraceableItem1.getDownstreamItems().size(), 1);
-////		assertEquals(reloadTraceableItem1.getUpstreamItems().size(), 1);
-////		assertEquals(reloadTraceableItem1.getDownstreamItems().get(0), reloadTraceableItem1);
-////		assertEquals(reloadTraceableItem1.getUpstreamItems().get(0), reloadTraceableItem1);
+		RepositoryBean reloadRepository = repositoryRepository.findById(1).get();
+		assertEquals(reloadRepository.getCommitCount(), 1);
+		
+		CommitBean reloadCommit = commitRepository.findByRepositoryIdAndCommitSha(1, "c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73").get(0);
+		assertTrue(reloadCommit instanceof ValidCommitBean);
+		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
+		
+		DocumentBean reloadDocument = reloadValidCommit.getDocument("file");
+		assertEquals(reloadDocument.getName(), "file");
+		assertNull(reloadValidCommit.getDocument("file-does-not-exist"));
+		
+		assertEquals(reloadDocument.getTraceableItems().size(), 2);
+		TraceableItemBean reloadTraceableItem1 = reloadDocument.getTraceableItems().get(0);
+		assertEquals(reloadTraceableItem1.getItemTag(), "tag-1");
+		assertEquals(reloadTraceableItem1.getContent(), "content-1");
+		TraceableItemBean reloadTraceableItem2 = reloadDocument.getTraceableItems().get(1);
+		assertEquals(reloadTraceableItem2.getItemTag(), "tag-2");
+		assertEquals(reloadTraceableItem2.getContent(), "content-2");
+		
+		assertEquals(reloadTraceableItem1.getDownstreamItems().size(), 1);
+		assertEquals(reloadTraceableItem1.getUpstreamItems().size(), 0);
+		assertEquals(reloadTraceableItem1.getDownstreamItems().get(0), reloadTraceableItem2);
+		assertEquals(reloadTraceableItem2.getDownstreamItems().size(), 0);
+		assertEquals(reloadTraceableItem2.getUpstreamItems().size(), 1);
+		assertEquals(reloadTraceableItem2.getUpstreamItems().get(0), reloadTraceableItem1);
 	}
 }

@@ -39,9 +39,15 @@ public class ValidCommitBean extends CommitBean {
 	 * To have a GitDAO which only @autowired gitSource, and define 
 	 * placeholders in there (maybe in version 2 make them as annotations
 	 * just like the JPA ones). Import those placeholders in beans.
+	 * 
+	 * TODO:
+	 * 
+	 * This is the un-(git-)bootstrapped one. Previously setup as 
+	 * `@Getter(AccessLevel.NONE)` and it is removed by testing reasons.
+	 * Probably still want to set it up, but use the explicit name
+	 * such as `getDocumentsGitUnbootstrapped()`.
 	 */
 	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
-	@Getter(AccessLevel.NONE)
 	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
 	
 	@Transient
