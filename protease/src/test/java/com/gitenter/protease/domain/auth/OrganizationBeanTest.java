@@ -22,6 +22,7 @@ import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
+import com.gitenter.protease.exception.RepositoryNameNotUniqueException;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -66,7 +67,7 @@ public class OrganizationBeanTest {
 	@Transactional
 	@DbUnitMinimalDataSetup
 	@DatabaseTearDown
-	public void testAddNewRepository() {
+	public void testAddNewRepository() throws RepositoryNameNotUniqueException {
 		
 		RepositoryBean repository = new RepositoryBean();
 		repository.setName("new_repository");

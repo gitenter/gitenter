@@ -25,7 +25,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.gitenter.hooks.postreceive.PostReceiveApplication</mainClass>
+							<mainClass>com.gitenter.hook.postreceive.PostReceiveApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

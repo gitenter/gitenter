@@ -31,6 +31,7 @@ import com.gitenter.protease.domain.git.TraceableItemBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,6 +52,7 @@ public class CommitRepositoryTest {
 
 	@Test
 	@DbUnitMinimalDataSetup
+	@DatabaseTearDown
 	public void testDeleteById() throws IOException, GitAPIException {
 		
 		assertTrue(commitRepository.findById(1).isPresent());

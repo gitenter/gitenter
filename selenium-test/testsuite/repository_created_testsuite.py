@@ -1,3 +1,4 @@
+from random import randint
 from urllib.parse import urljoin, urlparse
 
 from testsuite.organization_created_testsuite import OrganizationCreatedTestSuite
@@ -10,7 +11,7 @@ class RepositoryCreatedTestSuite(OrganizationCreatedTestSuite):
     def setUp(self):
         super(RepositoryCreatedTestSuite, self).setUp()
 
-        self.repo_name = "repo"
+        self.repo_name = "repo-{}".format(randint(1, 10**10))
         self.repo_display_name = "A Repository"
         self.repo_description = "A Repository Description"
 

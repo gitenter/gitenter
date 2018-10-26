@@ -25,6 +25,7 @@ import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.source.GitSource;
 
 @Service
@@ -114,7 +115,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 
 	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
-	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
+	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException, RepositoryNameNotUniqueException {
 		
 		RepositoryBean repository = new RepositoryBean();
 		repository.setName(repositoryDTO.getName());
