@@ -34,6 +34,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         local_path = self.config.sandbox_path / self.repo_name
         local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
 
+        print("file://{}".format(str(remote_git_url)), str(local_path))
         pygit2.clone_repository("file://{}".format(str(remote_git_url)), str(local_path))
 
         with open(str(local_path / "README.md"), 'w') as f:

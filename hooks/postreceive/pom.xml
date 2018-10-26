@@ -25,13 +25,13 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>enterovirus.gihook.postreceive.PostReceiveApplication</mainClass>
+							<mainClass>com.gitenter.hooks.postreceive.PostReceiveApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
+					<outputDirectory>../../envelope/src/main/resources/git-server-side-hooks</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
