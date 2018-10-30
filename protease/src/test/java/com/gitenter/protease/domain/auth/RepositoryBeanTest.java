@@ -101,11 +101,23 @@ public class RepositoryBeanTest {
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	public void testMinimalRepositoryGetBranch() throws IOException, GitAPIException {
+	public void testMinimalRepositoryGetShortNameBranch() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
 		
 		BranchBean branch = item.getBranch("master");
+		CommitBean head = branch.getHead();
+		assertEquals(head.getMessage(), "commit\n");
+	}
+	
+	@Test
+	@Transactional
+	@DbUnitMinimalDataSetup
+	public void testMinimalRepositoryGetFullNameBranch() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
+		
+		BranchBean branch = item.getBranch("refs/heads/master");
 		CommitBean head = branch.getHead();
 		assertEquals(head.getMessage(), "commit\n");
 	}

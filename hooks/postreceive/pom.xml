@@ -71,6 +71,42 @@
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+		<!--
+			TODO:
+			The following javax and sun packages are for solving the
+			"java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException"
+			error, raised by the `entityManagerFactory` inside of
+			`com/gitenter/protease/config/JpaConfig.class`.
+
+			Without the import it works with Java 8, and with
+			`==add-modules java.xml.bind` it works with Java 9/10.
+
+			The dependencies are added in here so it can work in all cases,
+			but in the long term we should consider refactoring `JpaConfig`
+			to remove this dependency.
+
+			Refer to: https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j
+		-->
+		<dependency>
+		    <groupId>javax.xml.bind</groupId>
+		    <artifactId>jaxb-api</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-core</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-impl</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.activation</groupId>
+		    <artifactId>activation</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
 
 		<!-- Test -->
 		<dependency>

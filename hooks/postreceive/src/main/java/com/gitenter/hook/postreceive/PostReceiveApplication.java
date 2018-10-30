@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 import com.gitenter.hook.postreceive.service.HookInputSet;
 import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
-import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitServiceImpl;
 
 /*
  * This main class has nothing to do with unit tests.
@@ -30,14 +29,20 @@ public class PostReceiveApplication {
 		System.out.println("oldCommitSha: "+input.getOldSha());
 		System.out.println("newCommitSha: "+input.getNewSha());
 		
-//		/*
-//		 * We need to active the Spring profile definition for 
-//		 * "dataSource" and "gitSource".
-//		 * 
-//		 * "spring.profiles.active" system property is the only
-//		 * working way I know until now.
-//		 */
-		System.setProperty("spring.profiles.active", "production");
+		/*
+		 * We need to active the Spring profile definition for 
+		 * "dataSource" and "gitSource".
+		 * 
+		 * "spring.profiles.active" system property is the only
+		 * working way I know until now.
+		 * 
+		 * TODO:
+		 * This need to be changed based on what profile of the
+		 * web application (envelope) is using. It is quite troublesome. 
+		 * Should be optimized so at least no need to change in multiple 
+		 * times.
+		 */
+		System.setProperty("spring.profiles.active", "sts");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.

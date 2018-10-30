@@ -43,7 +43,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         repo = pygit2.Repository(str(local_path))
         # reference = "refs/heads/master"
         index = repo.index
-        index.add("README.md")
+        index.add_all()
         index.write()
         author = pygit2.Signature(self.org_member_username, self.org_member_email)
         commiter = pygit2.Signature(self.org_member_username, self.org_member_email)
