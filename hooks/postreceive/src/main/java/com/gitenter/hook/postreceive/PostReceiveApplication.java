@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 import com.gitenter.hook.postreceive.service.HookInputSet;
 import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
+import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitServiceImpl;
 
 /*
  * This main class has nothing to do with unit tests.
@@ -16,10 +17,10 @@ import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
  * stand-alone executive jar, then this class is not
  * needed. 
  */
-@ComponentScan(basePackages = {"com.gitenter.protease","com.gitenter.gihook.postreceive"})
+@ComponentScan(basePackages = {"com.gitenter.hook.postreceive", "com.gitenter.protease"})
 public class PostReceiveApplication {
 	
-	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGit;
+	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGitService;
 	
 	public static void main (String[] args) throws Exception {
 		
@@ -36,7 +37,7 @@ public class PostReceiveApplication {
 //		 * "spring.profiles.active" system property is the only
 //		 * working way I know until now.
 //		 */
-//		System.setProperty("spring.profiles.active", "production");
+		System.setProperty("spring.profiles.active", "production");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.
@@ -71,6 +72,6 @@ public class PostReceiveApplication {
 	}
 	
 	private void run (HookInputSet input) throws IOException, GitAPIException {
-		updateDatabaseFromGit.update(input);
+		updateDatabaseFromGitService.update(input);
 	}
 }

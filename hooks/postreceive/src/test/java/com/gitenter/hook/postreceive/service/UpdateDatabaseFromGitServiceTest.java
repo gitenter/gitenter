@@ -49,7 +49,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 @ContextConfiguration(classes=PostReceiveConfig.class)
 public class UpdateDatabaseFromGitServiceTest {
 	
-	@InjectMocks private UpdateDatabaseFromGitService updateDatabaseFromGit;
+	@InjectMocks private UpdateDatabaseFromGitServiceImpl service;
 	
 	@Spy private RepositoryRepository repositoryRepository;
 	@Mock private CommitRepository commitRepository;
@@ -168,7 +168,7 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		HookInputSet input = getHookInputSet();		
 		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
-		updateDatabaseFromGit.update(input);
+		service.update(input);
 		
 		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
 		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
@@ -195,7 +195,7 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		HookInputSet input = getHookInputSet();		
 		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
-		updateDatabaseFromGit.update(input);
+		service.update(input);
 		
 		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
 		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
@@ -219,7 +219,7 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		HookInputSet input = getHookInputSet();		
 		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
-		updateDatabaseFromGit.update(input);
+		service.update(input);
 		
 		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
 		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
@@ -234,9 +234,9 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		HookInputSet input = getDummyHookInputSet();		
 		spyRepositoryRepositoryAndGetMockRepositories(input);
-		updateDatabaseFromGit.update(input);
+		service.update(input);
 		
-		updateDatabaseFromGit.update(getDummyHookInputSet());
+		service.update(getDummyHookInputSet());
 		verify(commitRepository, times(0)).saveAndFlush(any(CommitBean.class));
 	}
 	
@@ -261,7 +261,7 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		HookInputSet input = getHookInputSet();		
 		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
-		updateDatabaseFromGit.update(input);
+		service.update(input);
 		
 		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
 		verify(commitRepository, times(2)).saveAndFlush(argument.capture());
