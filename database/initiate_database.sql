@@ -143,10 +143,10 @@ CREATE TABLE git.git_commit (
 	sha text NOT NULL,
 
 	/*
-	 * It is not save to make "sha_checksum_hash" itself unique,
-	 * since empty repositories make at the same time (should be up
-	 * to second?) will have exactly the same "sha_checksum_hash".
-	 * It happens in my automatic UI test case, and causes SQL errors.
+	 * It is not save to make `sha` itself unique, since empty repositories
+	 * make at the same time (should be up to second?) will have exactly
+	 * the same "sha_checksum_hash". It happens in my automatic UI test case,
+	 * and causes SQL errors.
 	 *
 	 * On the other hand, although not exactly true, it is quite safe
 	 * to make (repository_id, sha_checksum_hash) pair unique. Since
@@ -158,7 +158,7 @@ CREATE TABLE git.git_commit (
 	UNIQUE(repository_id, sha)
 );
 
-CREATE UNIQUE INDEX repository_id_in_git_commit ON git.git_commit (repository_id);
+CREATE INDEX repository_id_in_git_commit ON git.git_commit (repository_id);
 
 CREATE FUNCTION git.repository_id_from_commit (integer)
 RETURNS integer AS $return_id$

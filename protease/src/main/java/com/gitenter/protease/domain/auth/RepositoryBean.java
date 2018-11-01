@@ -76,6 +76,9 @@ public class RepositoryBean {
 	@Getter(AccessLevel.NONE)
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
+	/*
+	 * Hibernate will smartly `select count(id) from git.git_commit`
+	 */
 	public int getCommitCount() {
 		return commits.size();
 	}

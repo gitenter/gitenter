@@ -1,5 +1,6 @@
 package com.gitenter.enzymark.tracefactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitNormalRepository;
 import com.gitenter.gitar.GitWorkspace;
 import com.gitenter.protease.domain.git.CommitBean;
+import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
@@ -49,21 +51,24 @@ public class CommitBeanFactoryTest {
 		CommitBean commit = factory.getCommit(gitCommit);
 		
 		assert commit instanceof ValidCommitBean;
-//		ValidCommitBean validCommit = (ValidCommitBean)commit;
+		ValidCommitBean validCommit = (ValidCommitBean)commit;
 		
-		/*
-		 * TODO:
-		 * 
-		 * It is really hard to assert anything in here, because:
-		 * 
-		 * (1) `getDocuments()` is private for `validCommit`, while although there are public
-		 * `getRoot()` and `getFile()`, they need to be initialized throught `CommitRepositoryImpl`
-		 * which has private classes involved.
-		 * 
-		 * (2) The other possibility is to save to the database and query back, then all the
-		 * database/git part of the domain class will be setup properly. However, by doing so 
-		 * we need to turn on dbunit in this package, which is kind of too much.
-		 */
+		assertEquals(validCommit.getDocuments().size(), 2);
+		for (DocumentBean document : validCommit.getDocuments()) {
+			
+			/*
+			 * Can't use `validCommit.getDocument("file1.md")` because that will trigger
+			 * `getFile` which needs the placeholders which are not properly setup
+			 * unless we get it through the database.
+			 */
+			if (document.getRelativePath().equals("file1.md")) {
+				assertEquals(document.getTraceableItems().size(), 2);
+			}
+			
+			if (document.getRelativePath().equals("file2.md")) {
+				assertEquals(document.getTraceableItems().size(), 1);
+			}
+		}
 	}
 	
 	@Test

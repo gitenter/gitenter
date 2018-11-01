@@ -64,8 +64,7 @@ public class CommitBeanTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testMinimalFolderStructure() throws IOException, GitAPIException {
 		
 		CommitBean item = repository.findById(1).get();
@@ -86,8 +85,7 @@ public class CommitBeanTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testMinimalFile() throws IOException, GitAPIException {
 	
 		CommitBean item = repository.findById(1).get();
@@ -102,8 +100,7 @@ public class CommitBeanTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testMinimalDocument() throws IOException, GitAPIException {
 	
 		CommitBean item = repository.findById(1).get();

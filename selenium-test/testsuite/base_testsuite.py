@@ -52,6 +52,23 @@ class BaseTestSuite(unittest.TestCase):
 
         conn.close()
 
+    # TODO:
+    # There's currently a bug in here. Our gitar class `GitRepository`
+    # build a list of existing repository and lazily reload. However, all
+    # our tests are executed without the server being restarted, so
+    # `GitRepository` will not know that in there the directories got delete,
+    # but still believe the repo is in there. Therefore, it will NOT re-build
+    # the repo, and if you go inside you will see an empty repo (with possibly
+    # hooks).
+    #
+    # Possible ways:
+    # (1) In test create repos with different names each time to avoid name crashing.
+    # (2) Actually in `OrbanizationManagerServiceImpl.createRepository()` there's
+    # always the case we want to re-create the repo (actually we should raise an
+    # error if the repo is already in there). Make the application correct in that
+    # sense.
+    #
+    # Should prefer to do (2).
     def _remove_folder_content(self, folderpath):
         for the_file in os.listdir(str(folderpath)):
             subpathstring = str(folderpath / the_file)

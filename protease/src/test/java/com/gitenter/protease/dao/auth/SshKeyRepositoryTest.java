@@ -24,8 +24,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.dao.auth.SshKeyRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 import com.gitenter.protease.source.SshSource;
@@ -65,6 +63,7 @@ public class SshKeyRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseTearDown
 	public void test() throws Exception {
 		
 		File file = folder.newFile("authorized_keys");

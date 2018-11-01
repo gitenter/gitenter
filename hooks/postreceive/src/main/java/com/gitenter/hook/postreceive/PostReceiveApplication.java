@@ -16,10 +16,10 @@ import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
  * stand-alone executive jar, then this class is not
  * needed. 
  */
-@ComponentScan(basePackages = {"com.gitenter.protease","com.gitenter.gihook.postreceive"})
+@ComponentScan(basePackages = {"com.gitenter.hook.postreceive", "com.gitenter.protease"})
 public class PostReceiveApplication {
 	
-	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGit;
+	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGitService;
 	
 	public static void main (String[] args) throws Exception {
 		
@@ -35,8 +35,14 @@ public class PostReceiveApplication {
 		 * 
 		 * "spring.profiles.active" system property is the only
 		 * working way I know until now.
+		 * 
+		 * TODO:
+		 * This need to be changed based on what profile of the
+		 * web application (envelope) is using. It is quite troublesome. 
+		 * Should be optimized so at least no need to change in multiple 
+		 * times.
 		 */
-		System.setProperty("spring.profiles.active", "production");
+		System.setProperty("spring.profiles.active", "sts");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.
@@ -71,6 +77,6 @@ public class PostReceiveApplication {
 	}
 	
 	private void run (HookInputSet input) throws IOException, GitAPIException {
-		updateDatabaseFromGit.update(input);
+		updateDatabaseFromGitService.update(input);
 	}
 }

@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>enterovirus.gihook</groupId>
+	<groupId>com.gitenter.hook</groupId>
 	<artifactId>postreceive</artifactId>
 	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
@@ -25,13 +25,13 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>enterovirus.gihook.postreceive.PostReceiveApplication</mainClass>
+							<mainClass>com.gitenter.hook.postreceive.PostReceiveApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
+					<outputDirectory>../../envelope/src/main/resources/git-server-side-hooks</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -71,6 +71,42 @@
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+		<!--
+			TODO:
+			The following javax and sun packages are for solving the
+			"java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException"
+			error, raised by the `entityManagerFactory` inside of
+			`com/gitenter/protease/config/JpaConfig.class`.
+
+			Without the import it works with Java 8, and with
+			`==add-modules java.xml.bind` it works with Java 9/10.
+
+			The dependencies are added in here so it can work in all cases,
+			but in the long term we should consider refactoring `JpaConfig`
+			to remove this dependency.
+
+			Refer to: https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j
+		-->
+		<dependency>
+		    <groupId>javax.xml.bind</groupId>
+		    <artifactId>jaxb-api</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-core</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-impl</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.activation</groupId>
+		    <artifactId>activation</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
 
 		<!-- Test -->
 		<dependency>
@@ -78,12 +114,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.contrib</groupId>
-		    <artifactId>junit-theories</artifactId>
-		    <version>4.12</version>
-		    <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

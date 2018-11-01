@@ -86,6 +86,9 @@ public class RepositoryBeanTest {
 		
 		RepositoryBean item = repository.findById(1).get();
 		
+		BranchBean masterBranch = item.getBranch("master");
+		assertEquals(masterBranch.getName(), "master");
+		
 		Collection<BranchBean> branches = item.getBranches();
 		assertEquals(branches.size(), 1);
 		BranchBean branch = branches.iterator().next();
@@ -98,11 +101,23 @@ public class RepositoryBeanTest {
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	public void testMinimalRepositoryGetBranch() throws IOException, GitAPIException {
+	public void testMinimalRepositoryGetShortNameBranch() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
 		
 		BranchBean branch = item.getBranch("master");
+		CommitBean head = branch.getHead();
+		assertEquals(head.getMessage(), "commit\n");
+	}
+	
+	@Test
+	@Transactional
+	@DbUnitMinimalDataSetup
+	public void testMinimalRepositoryGetFullNameBranch() throws IOException, GitAPIException {
+		
+		RepositoryBean item = repository.findById(1).get();
+		
+		BranchBean branch = item.getBranch("refs/heads/master");
 		CommitBean head = branch.getHead();
 		assertEquals(head.getMessage(), "commit\n");
 	}
@@ -130,7 +145,7 @@ public class RepositoryBeanTest {
 		
 		CommitBean commit = commitRepository.findById(1).get();
 		String newSha = commit.getSha();
-		String oldSha = "0000000000000000000000000000000000000000";
+		String oldSha = GitCommit.EMPTY_SHA;
 		
 		RepositoryBean item = repository.findById(1).get();
 		BranchBean branch = item.getBranch("master");
@@ -165,7 +180,7 @@ public class RepositoryBeanTest {
 		
 		CommitBean commit = commitRepository.findById(1).get();
 		String newSha = commit.getSha();
-		String oldSha = "0000000000000000000000000000000000000000";
+		String oldSha = GitCommit.EMPTY_SHA;
 		
 		commitRepository.deleteById(1);
 		
