@@ -59,7 +59,7 @@
               <p><c:out value="${commit.message}" /></p>
               <p class="minor">By <c:out value="${commit.author.name}" />, at <fmt:formatDate type="both" dateStyle="medium" timeStyle="short" value="${commit.timestamp}" /></p>
             </td>
-<%--            <td><img src="<s:url value="/resources/image/status_icons/${commitLog.value.getClass().simpleName}.png" />" alt="${commitLog.value.getClass().simpleName}"></td> --%>
+            <td><img src="<s:url value="/resources/image/status_icons/${commit.getClass().simpleName}.png" />" alt="${commit.getClass().simpleName}"></td>
           </tr>
           </c:forEach>
         </table>

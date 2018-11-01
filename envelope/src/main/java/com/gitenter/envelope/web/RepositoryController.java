@@ -86,15 +86,12 @@ public class RepositoryController {
 		BranchBean branch = repository.getBranch(branchName);
 		List<CommitBean> commits = branch.getInDatabaseLog(itemPerPage, itemPerPage*page);
 		model.addAttribute("commits", commits);
-		
-		
-		
-		
+
 		/* 
 		 * TODO:
 		 * Connect the git user (name and email) to the user of
 		 * this website.
 		 */
-		return "git-repository/commit-list";
+		return "repository/commit-list";
 	}
 }

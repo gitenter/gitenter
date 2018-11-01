@@ -7,10 +7,6 @@ from testsuite.repository_created_testsuite import RepositoryCreatedTestSuite
 from forms.authorization_form import fill_login_form
 
 
-# !! Attention !!
-# Need to restart the system every time to run RepositoryCreatedTestSuite.
-# Otherwise Spring(?) try to be too smart to cache the file system, so it
-# will not know that the folder has been reset.
 class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def setUp(self):
@@ -53,10 +49,25 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         else:
             parent = [repo.head.get_object().hex]
         repo.create_commit("refs/heads/master", author, commiter, message, tree, parent)
-        repo.remotes["origin"].push(["refs/heads/master"])
 
+        # pygit2/libgit2 doesn't support hooks (which get bypassed silently).
+        # https://github.com/libgit2/libgit2/issues/964
+        # https://github.com/libgit2/libgit2/pull/3824
+        # repo.remotes["origin"].push(["refs/heads/master"])
+        #
         # TODO:
-        # post-receive hook is working to write to database. Need to setup the UI
-        # to display the change, and then test if passing documents works properly.
+        # Consider to replace pygit2 with the following libs, to see if they have
+        # better support.
+        # https://github.com/gitpython-developers/GitPython
+        # https://github.com/dulwich/dulwich
+        push_process = subprocess.Popen(["git", "push", "origin", "master"], cwd=str(local_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = push_process.communicate()
+        print("git push output:\n{}".format(output.decode('UTF-8')))
+        print("git push errors:\n{}".format(errors.decode('UTF-8')))
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+        assert message in self.driver.page_source
+        assert author.name in self.driver.page_source
 
         self.driver.get(urljoin(self.root_url, "/logout"))
