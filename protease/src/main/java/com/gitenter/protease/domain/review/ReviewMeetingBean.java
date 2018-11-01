@@ -40,8 +40,8 @@ public class ReviewMeetingBean {
 	
 	@ManyToMany(targetEntity=AttendeeBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(schema="review", name="review_meeting_attendee_map", 
-			joinColumns=@JoinColumn(name="attendee_id"), 
-			inverseJoinColumns=@JoinColumn(name="review_meeting_id"))
+			joinColumns=@JoinColumn(name="review_meeting_id"), 
+			inverseJoinColumns=@JoinColumn(name="attendee_id"))
 	private List<AttendeeBean> attendees;
 	
 	@NotNull

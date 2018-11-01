@@ -34,7 +34,6 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         local_path = self.config.sandbox_path / self.repo_name
         local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
 
-        print("file://{}".format(str(remote_git_url)), str(local_path))
         pygit2.clone_repository("file://{}".format(str(remote_git_url)), str(local_path))
 
         with open(str(local_path / "README.md"), 'w') as f:
@@ -48,17 +47,16 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         author = pygit2.Signature(self.org_member_username, self.org_member_email)
         commiter = pygit2.Signature(self.org_member_username, self.org_member_email)
         message = "add README"
-        tree = repo.TreeBuilder().write()
+        tree = repo.index.write_tree()
         if repo.head_is_unborn:
             parent = []
         else:
             parent = [repo.head.get_object().hex]
-        repo.create_commit("HEAD", author, commiter, message, tree, parent)
-        print(repo.remotes["origin"])
+        repo.create_commit("refs/heads/master", author, commiter, message, tree, parent)
         repo.remotes["origin"].push(["refs/heads/master"])
 
         # TODO:
-        # Currently the repo folder structure/commit list are not working yet.
-        # because the server side post-receive hook is not included.
+        # post-receive hook is working to write to database. Need to setup the UI
+        # to display the change, and then test if passing documents works properly.
 
         self.driver.get(urljoin(self.root_url, "/logout"))

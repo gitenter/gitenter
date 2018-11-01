@@ -67,6 +67,38 @@ public class CommitRepositoryTest {
 		assertFalse(documentRepository.findById(1).isPresent());
 	}
 	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseTearDown
+	public void testSave() throws IOException, GitAPIException {
+		
+		assertFalse(commitRepository.findById(1).isPresent());
+		
+		RepositoryBean repository = repositoryRepository.findById(1).get();
+		assertEquals(repository.getCommitCount(), 0);
+		
+		ValidCommitBean commit1 = new ValidCommitBean();
+		commit1.setSha("fake-sha-1");
+		commit1.setRepository(repository);
+		repository.addCommit(commit1);
+		
+		commitRepository.saveAndFlush(commit1);
+		
+		repositoryRepository.findById(1).get();
+		assertEquals(repository.getCommitCount(), 1);
+		
+		ValidCommitBean commit2 = new ValidCommitBean();
+		commit2.setSha("fake-sha-2");
+		commit2.setRepository(repository);
+		repository.addCommit(commit2);
+		
+		commitRepository.saveAndFlush(commit2);
+		
+		repositoryRepository.findById(1).get();
+		assertEquals(repository.getCommitCount(), 2);
+	}
+	
 	/*
 	 * This tests, as basically for testing Hibernate/Spring data `save()` method,
 	 * is because we used to see weird behavior while saving complicated models.
@@ -77,6 +109,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseTearDown
 	public void testSaveAndFlushWorksInMinimalDbUnitSetup() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
@@ -142,6 +175,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseTearDown
 	public void testSaveAndFlushWorksMoreComplicatedTraceabilityMap() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
