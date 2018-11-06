@@ -18,6 +18,7 @@ import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
+import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
@@ -25,7 +26,6 @@ import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
-import com.gitenter.protease.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.source.GitSource;
 
 @Service

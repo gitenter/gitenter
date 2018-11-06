@@ -3,8 +3,8 @@ package com.gitenter.protease.dao.auth;
 import java.util.List;
 import java.util.Optional;
 
+import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.exception.RepositoryNameNotUniqueException;
 
 public interface RepositoryRepository {
 

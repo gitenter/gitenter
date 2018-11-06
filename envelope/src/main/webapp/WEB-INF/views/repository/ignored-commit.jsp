@@ -10,8 +10,8 @@
       <c:if test="${branch != null}">
         <span class="nav-current">Branch: <c:out value="${branch}" /></span>
       </c:if>
-      <c:if test="${shaChecksumHash != null}">
-        <span class="nav-current">Commit: ${fn:substring(shaChecksumHash, 0, 6)}</span>
+      <c:if test="${commitSha != null}">
+        <span class="nav-current">Commit: ${fn:substring(commitSha, 0, 6)}</span>
       </c:if>
     </nav>
     <article>

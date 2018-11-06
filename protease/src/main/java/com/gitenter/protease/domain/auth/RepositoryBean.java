@@ -110,6 +110,14 @@ public class RepositoryBean {
 		return branchesPlaceholder.get();
 	}
 	
+	public List<String> getBranchNames() throws IOException, GitAPIException {
+		List<String> branchNames = new ArrayList<String>();
+		for (BranchBean branch : getBranches()) {
+			branchNames.add(branch.getName());
+		}
+		return branchNames;
+	}
+	
 	public interface BranchesPlaceholder extends GitPlaceholder<Collection<BranchBean>> {
 		Collection<BranchBean> get() throws IOException, GitAPIException;
 	}

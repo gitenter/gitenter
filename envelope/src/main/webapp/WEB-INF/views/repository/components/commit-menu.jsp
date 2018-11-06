@@ -16,8 +16,8 @@
               <s:url var="repo_url" value="/organizations/${organization.id}/repositories/${repository.id}" />
               <sf:form method="GET" action="${repo_url}">
                 <select name="branch">
-                  <c:forEach items="${repository.branchNames}" var="b">
-                    <option value="${b.name}"><c:out value="Branch: ${b.name}" /></option>
+                  <c:forEach items="${branchNames}" var="branchName">
+                    <option value="${branchName}"><c:out value="Branch: ${branchName}" /></option>
                   </c:forEach>
                 </select>
                 <input type="submit" value="Switch" />

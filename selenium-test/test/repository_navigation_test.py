@@ -85,22 +85,38 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         print("git push output:\n{}".format(output.decode('UTF-8')))
         print("git push errors:\n{}".format(errors.decode('UTF-8')))
 
-    def test_commit(self):
+    def test_repo_with_no_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         assert "Setup a new repository" in self.driver.page_source
 
+        # In this case, there is no commit yet. So there is no branch available
+        # (branch "master" is not available yet.)
+        #
         # TODO:
-        # Check commit list will display correctly when there's an empty git
-        # repo with no commit at all.
+        # Should later on aviod return code 500, but to catch the error and redirect
+        # to 404 error properly.
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id)))
+        assert "status=404" in self.driver.page_source
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+        assert "status=500" in self.driver.page_source
+        assert "Branch master is not existing yet!" in self.driver.page_source
 
-        git_commit_datapack = GitCommitDatapack("add README", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("README.md", "readme"))
+    def test_ignored_commit(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        git_commit_datapack = GitCommitDatapack("add commit without setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitFile("a_irrelevant_file.txt", "A irrelevant file"))
 
         local_path = self._clone_repo_and_return_local_path()
         self._commit_to_repo(git_commit_datapack, local_path)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
+        assert "This system is turned off for this commit." in self.driver.page_source
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
         assert self.repo_display_name in self.driver.page_source

@@ -20,12 +20,13 @@ import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.GitTag;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
+import com.gitenter.protease.dao.exception.BranchNotExistException;
+import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.dao.git.CommitDatabaseRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.TagBean;
-import com.gitenter.protease.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.source.GitSource;
 
 @Repository
@@ -94,6 +95,16 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 				repository.getName());
 		
 		return GitBareRepository.getInstance(repositoryDirectory);
+	}
+	
+	private GitBranch getGitBranchFromBranch(BranchBean branch) throws IOException, GitAPIException {
+		GitRepository gitRepository = getGitRepository(branch.getRepository());
+		GitBranch gitBranch = gitRepository.getBranch(branch.getName());
+		if (gitBranch == null) {
+			throw new BranchNotExistException(branch.getName());
+		}
+		
+		return gitBranch;
 	}
 	
 	/*
@@ -183,8 +194,8 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		@Override
 		protected CommitBean getReal() throws IOException, GitAPIException {
 			
-			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			GitCommit gitCommit = gitRepository.getBranch(branch.getName()).getHead();
+			GitBranch gitBranch = getGitBranchFromBranch(branch);
+			GitCommit gitCommit = gitBranch.getHead();
 			
 			CommitBean commit = commitDatabaseRepository.findByRepositoryIdAndSha(branch.getRepository().getId(), gitCommit.getSha()).get(0);
 			commit.setFromGitCommit(gitCommit);
@@ -213,15 +224,15 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		
 		@Override
 		public List<CommitBean> getInDatabase(Integer maxCount, Integer skip) throws IOException, GitAPIException {
-			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
+			GitBranch gitBranch = getGitBranchFromBranch(branch);
+			List<GitCommit> gitLog = gitBranch.getLog(maxCount, skip);
 			return gitLog2FillValuedInDbCommit(gitLog);	
 		}
 		
 		@Override
 		public List<CommitBean> getInDatabase(String oldSha, String newSha) throws IOException, GitAPIException {
-			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
+			GitBranch gitBranch = getGitBranchFromBranch(branch);
+			List<GitCommit> gitLog = gitBranch.getLog(oldSha, newSha);
 			return gitLog2FillValuedInDbCommit(gitLog);	
 		}
 		
@@ -237,15 +248,15 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		
 		@Override
 		public List<GitCommit> getUnsaved(Integer maxCount, Integer skip) throws IOException, GitAPIException {
-			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(maxCount, skip);
+			GitBranch gitBranch = getGitBranchFromBranch(branch);
+			List<GitCommit> gitLog = gitBranch.getLog(maxCount, skip);
 			return updateByRemoveSaved(gitLog);
 		}
 
 		@Override
 		public List<GitCommit> getUnsaved(String oldSha, String newSha) throws IOException, GitAPIException {
-			GitRepository gitRepository = getGitRepository(branch.getRepository());
-			List<GitCommit> gitLog = gitRepository.getBranch(branch.getName()).getLog(oldSha, newSha);
+			GitBranch gitBranch = getGitBranchFromBranch(branch);
+			List<GitCommit> gitLog = gitBranch.getLog(oldSha, newSha);
 			return updateByRemoveSaved(gitLog);
 		}
 		
