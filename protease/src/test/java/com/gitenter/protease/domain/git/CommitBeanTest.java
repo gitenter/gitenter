@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,6 +39,8 @@ public class CommitBeanTest {
 
 	@Autowired CommitRepository repository;
 	
+	@Rule public final ExpectedException exception = ExpectedException.none();
+	
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
@@ -53,6 +57,13 @@ public class CommitBeanTest {
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 		
 		assertEquals(item.getRepository().getId(), new Integer(1));
+		
+		/*
+		 * Currently if we `getRepository` from a commit object,
+		 * the git related placeholders are not bootstrapped yet.
+		 */
+		exception.expect(NullPointerException.class);
+		item.getRepository().getBranches();
 	}
 	
 	@Test

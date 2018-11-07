@@ -59,7 +59,21 @@ public class RepositoryServiceImpl implements RepositoryService {
 			 * No possibility to have multiple returns based on
 			 * SQL unique constrain.
 			 */
-			return commits.get(0);
+			CommitBean commit = commits.get(0);
+			
+			/*
+			 * Currently if we `getRepository` from a commit object,
+			 * the git related placeholders are not bootstrapped yet.
+			 * 
+			 * It is technically really hard to do it in the DAO layer
+			 * (as you don't want `CommitRepositoryImpl` to rely on 
+			 * `RepositoryRepositoryImpl` (not `RepositoryDatabaseRepository`),
+			 * so we make up the fact in here.
+			 */
+			RepositoryBean repository = getRepository(commit.getRepository().getId());
+			commit.setRepository(repository);
+			
+			return commit;
 		}
 	}
 }

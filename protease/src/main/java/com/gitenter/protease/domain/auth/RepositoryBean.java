@@ -25,6 +25,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.util.GitPlaceholder;
+import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.TagBean;
@@ -38,7 +39,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "repository")
-public class RepositoryBean {
+public class RepositoryBean extends ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

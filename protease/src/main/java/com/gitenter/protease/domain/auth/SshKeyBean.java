@@ -17,6 +17,8 @@ import org.apache.sshd.common.config.keys.AuthorizedKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "ssh_key")
-public class SshKeyBean {
+public class SshKeyBean extends ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -51,7 +51,7 @@
           <c:forEach var="commit" items="${commits}">
           <tr>
             <td>
-              <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commit.sha}" />" >
+              <form class="commit-in-list" method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/commits/${commit.sha}" />" >
                 <input type="submit" value="${fn:substring(commit.sha, 0, 6)}">
               </form>
             </td>
