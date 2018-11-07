@@ -20,7 +20,7 @@ import lombok.*;
 @Setter
 @Entity
 @Table(schema = "auth", name = "organization_member_map")
-public class OrganizationMemberMapBean extends MapBean<OrganizationBean,MemberBean,OrganizationMemberRole> {
+public class OrganizationMemberMapBean implements MapBean<OrganizationBean,MemberBean,OrganizationMemberRole> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

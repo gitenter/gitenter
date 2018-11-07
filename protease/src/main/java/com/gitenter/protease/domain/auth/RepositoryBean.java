@@ -39,7 +39,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "repository")
-public class RepositoryBean extends ModelBean {
+public class RepositoryBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

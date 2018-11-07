@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.auth.MemberBean;
 
 import lombok.Getter;
@@ -26,7 +27,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "review", name = "attendee")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class AttendeeBean {
+public class AttendeeBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

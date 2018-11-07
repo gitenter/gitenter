@@ -30,7 +30,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "member")
-public class MemberBean extends ModelBean {
+public class MemberBean implements ModelBean {
 
 	/*
 	 * @GeneratedValue for automatically generate primary keys.

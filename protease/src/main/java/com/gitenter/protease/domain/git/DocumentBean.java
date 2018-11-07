@@ -24,6 +24,8 @@ import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +39,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "document")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class DocumentBean extends FileBean {
+public class DocumentBean extends FileBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

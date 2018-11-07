@@ -25,7 +25,7 @@ import lombok.*;
 @Setter
 @Entity
 @Table(schema = "git", name = "traceable_item")
-public class TraceableItemBean extends ModelBean {
+public class TraceableItemBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "git", name = "invalid_commit")
-public class InvalidCommitBean extends CommitBean {
+public class InvalidCommitBean extends CommitBean implements ModelBean {
 
 	/*
 	 * TODO:

@@ -1,5 +1,6 @@
 package com.gitenter.protease.domain;
 
-abstract public class ModelBean {
+public interface ModelBean {
 
+	public Integer getId();
 }

@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.util.GitPlaceholder;
+import com.gitenter.protease.domain.ModelBean;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,7 +27,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "valid_commit")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class ValidCommitBean extends CommitBean {
+public class ValidCommitBean extends CommitBean implements ModelBean {
 	
 	/*
 	 * TODO:

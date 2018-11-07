@@ -26,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "ssh_key")
-public class SshKeyBean extends ModelBean {
+public class SshKeyBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
