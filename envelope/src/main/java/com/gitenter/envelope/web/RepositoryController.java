@@ -122,9 +122,13 @@ public class RepositoryController {
 		
 		if (commit instanceof ValidCommitBean) {
 			
-			ValidCommitBean commitValid = (ValidCommitBean)commit;
+			ValidCommitBean validCommit = (ValidCommitBean)commit;
+			System.out.println(validCommit);
+			System.out.println(validCommit.getRoot());
 			
-			return "repository/commit";
+			model.addAttribute("root", validCommit.getRoot());
+			
+			return "repository/valid-commit";
 		}
 		else if (commit instanceof InvalidCommitBean) {
 			/*

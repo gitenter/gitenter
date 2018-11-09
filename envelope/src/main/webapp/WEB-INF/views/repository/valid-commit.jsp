@@ -15,7 +15,7 @@
           </span>
         </h3>
         <ul>
-          <c:forEach var="i" items="${folderStructure.childrenList()}">
+          <c:forEach var="i" items="${root.subpath}">
             <c:set var="folderOrFile" value="${i}" scope="request"/>
             <jsp:include page="components/commit-folder-structure.jsp"/>
           </c:forEach>

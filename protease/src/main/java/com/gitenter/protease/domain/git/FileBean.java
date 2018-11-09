@@ -84,4 +84,14 @@ public class FileBean extends PathBean {
 			return gitFile.getMimeType();
 		}
 	}
+
+	@Override
+	public boolean isFolder() {
+		return false;
+	}
+
+	@Override
+	public boolean isFile() {
+		return true;
+	}
 }

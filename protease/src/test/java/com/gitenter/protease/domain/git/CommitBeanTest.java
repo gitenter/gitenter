@@ -112,6 +112,8 @@ public class CommitBeanTest {
 		ValidCommitBean validItem = (ValidCommitBean)item;
 		
 		FileBean file = validItem.getFile("file");
+		assertEquals(file.isFile(), true);
+		assertEquals(file.isFolder(), false);
 		assertEquals(file.getName(), "file");
 		assertEquals(new String(file.getBlobContent()), "content");
 	}

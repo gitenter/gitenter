@@ -19,4 +19,7 @@ public abstract class PathBean {
 		relativePath = gitPath.getRelativePath();
 		name = gitPath.getName();
 	}
+	
+	public abstract boolean isFolder();
+	public abstract boolean isFile();
 }

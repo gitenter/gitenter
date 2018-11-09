@@ -104,6 +104,35 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         assert "status=500" in self.driver.page_source
         assert "Branch master is not existing yet!" in self.driver.page_source
 
+    def test_valid_commit(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
+
+        local_path = self._clone_repo_and_return_local_path()
+        self._commit_to_repo(git_commit_datapack, local_path)
+
+        # TODO: Not working yet.
+        # self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+        # self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
+        # assert "Trace Analyzer Error" in self.driver.page_source
+        # assert "Browse Historical Commits" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+        assert self.repo_display_name in self.driver.page_source
+        assert git_commit_datapack.commit_message in self.driver.page_source
+        assert git_commit_datapack.username in self.driver.page_source
+
+        commit_web_elements = self.driver.find_elements_by_class_name("commit-in-list")
+        self.assertEqual(len(commit_web_elements), 1)
+        commit_link = commit_web_elements[0].get_attribute("action")
+        self.driver.get(commit_link)
+        assert "Browse files and folders" in self.driver.page_source
+        assert "file.md" in self.driver.page_source
+
     def test_invalid_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)

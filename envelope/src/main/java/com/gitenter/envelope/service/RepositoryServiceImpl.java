@@ -43,6 +43,17 @@ public class RepositoryServiceImpl implements RepositoryService {
 	@Override
 	public CommitBean getCommitFromBranchName(Integer repositoryId, String branchName) throws IOException, GitAPIException {
 		
+		/*
+		 * TODO:
+		 * 
+		 * Here didn't load the folder structure of the commit. So if we
+		 * `commit.getRoot()`, it will return None and cause error.
+		 * Starting from `commitRepository` will setup document structure
+		 * placeholder through.
+		 * 
+		 * However, we don't need document structure every time. Try a hybrid
+		 * approach to load the document structure when needed.
+		 */
 		BranchBean branch = getRepository(repositoryId).getBranch(branchName);
 		return branch.getHead();
 	}
