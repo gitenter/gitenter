@@ -104,45 +104,31 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         assert "status=500" in self.driver.page_source
         assert "Branch master is not existing yet!" in self.driver.page_source
 
-    def test_valid_commit(self):
+    def test_ignored_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
-        git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
-        git_commit_datapack.add_file(AddToGitFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
+        git_commit_datapack = GitCommitDatapack("add commit without setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitFile("a_irrelevant_file.txt", "A irrelevant file"))
 
         local_path = self._clone_repo_and_return_local_path()
         self._commit_to_repo(git_commit_datapack, local_path)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
-        assert "Browse files and folders" in self.driver.page_source
-        elements = self.driver.find_elements_by_class_name("nav-current")
-        self.assertEqual(elements[0].text, "Branch: master")
-        elements = self.driver.find_elements_by_class_name("document-file")
-        self.assertEqual(elements[0].get_attribute("value"), "file.md")
-        elements = self.driver.find_elements_by_class_name("non-document-file")
-        self.assertEqual(elements[0].text, "gitenter.properties")
+        assert "Turn off for Traceability Analysis" in self.driver.page_source
 
-        # TODO:
-        # Navigate to there rather than hardcode the link.
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
         assert self.repo_display_name in self.driver.page_source
         assert git_commit_datapack.commit_message in self.driver.page_source
         assert git_commit_datapack.username in self.driver.page_source
 
-        elements = self.driver.find_elements_by_class_name("commit-in-list")
-        self.assertEqual(len(elements), 1)
-        commit_link = elements[0].get_attribute("action")
+        commit_web_elements = self.driver.find_elements_by_class_name("commit-in-list")
+        self.assertEqual(len(commit_web_elements), 1)
+        commit_link = commit_web_elements[0].get_attribute("action")
         self.driver.get(commit_link)
-        assert "Browse files and folders" in self.driver.page_source
-        elements = self.driver.find_elements_by_class_name("nav-current")
-        self.assertTrue("Commit:" in elements[0].text)
-        elements = self.driver.find_elements_by_class_name("document-file")
-        self.assertEqual(elements[0].get_attribute("value"), "file.md")
-        elements = self.driver.find_elements_by_class_name("non-document-file")
-        self.assertEqual(elements[0].text, "gitenter.properties")
+        assert "Turn off for Traceability Analysis" in self.driver.page_source
+        assert "Browse Historical Commits" not in self.driver.page_source
 
     def test_invalid_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -172,28 +158,64 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         assert "Trace Analyzer Error" in self.driver.page_source
         assert "Browse Historical Commits" not in self.driver.page_source
 
-    def test_ignored_commit(self):
+    def test_valid_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
-        git_commit_datapack = GitCommitDatapack("add commit without setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("a_irrelevant_file.txt", "A irrelevant file"))
+        git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
 
         local_path = self._clone_repo_and_return_local_path()
         self._commit_to_repo(git_commit_datapack, local_path)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
-        assert "Turn off for Traceability Analysis" in self.driver.page_source
+        assert "Browse files and folders" in self.driver.page_source
+        self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "Branch: master")
+        self.assertEqual(self.driver.find_element_by_class_name("document-file").get_attribute("value"), "file.md")
+        self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.properties")
 
+        document_link = self.driver.find_element_by_xpath("//input[@value='file.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file.md")
+        assert "a traceable item" in self.driver.page_source
+
+        # TODO:
+        # Navigate to there rather than hardcode the link.
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
         assert self.repo_display_name in self.driver.page_source
         assert git_commit_datapack.commit_message in self.driver.page_source
         assert git_commit_datapack.username in self.driver.page_source
 
-        commit_web_elements = self.driver.find_elements_by_class_name("commit-in-list")
-        self.assertEqual(len(commit_web_elements), 1)
-        commit_link = commit_web_elements[0].get_attribute("action")
+        commit_link = self.driver.find_element_by_class_name("commit-in-list").get_attribute("action")
         self.driver.get(commit_link)
-        assert "Turn off for Traceability Analysis" in self.driver.page_source
-        assert "Browse Historical Commits" not in self.driver.page_source
+        assert "Browse files and folders" in self.driver.page_source
+        self.assertTrue("Commit:" in self.driver.find_element_by_class_name("nav-current").text)
+        self.assertEqual(self.driver.find_element_by_class_name("document-file").get_attribute("value"), "file.md")
+        self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.properties")
+
+    def test_valid_commit_multiple_page_traceability(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitFile("file1.md", "- [tag1] a traceable item."))
+        git_commit_datapack.add_file(AddToGitFile("file2.md", "- [tag2]{tag1} another traceable item."))
+
+        local_path = self._clone_repo_and_return_local_path()
+        self._commit_to_repo(git_commit_datapack, local_path)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+
+        document_link = self.driver.find_element_by_xpath("//input[@value='file1.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file1.md")
+
+        # TODO:
+        # There's a bug that traceability links are not setting up correctly.
+
+        document_link = self.driver.find_element_by_xpath("//input[@value='file2.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file2.md")
