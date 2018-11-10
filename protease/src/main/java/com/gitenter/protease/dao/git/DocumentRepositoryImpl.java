@@ -1,6 +1,5 @@
 package com.gitenter.protease.dao.git;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -9,27 +8,21 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.gitar.GitBareRepository;
-import com.gitenter.gitar.GitCommit;
-import com.gitenter.gitar.GitHistoricalFile;
-import com.gitenter.gitar.GitRepository;
-import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.source.GitSource;
 
 @Repository
 class DocumentRepositoryImpl implements DocumentRepository {
 
-	@Autowired private DocumentDatabaseRepository databaseRepository;
-	@Autowired private GitSource gitSource;
+	@Autowired private DocumentDatabaseRepository documentDatabaseRepository;
+	@Autowired private DocumentGitUpdateFactory documentGitUpdateFactory;
 
 	public Optional<DocumentBean> findById(Integer id) throws IOException, GitAPIException {
 	
-	Optional<DocumentBean> items = databaseRepository.findById(id);
+	Optional<DocumentBean> items = documentDatabaseRepository.findById(id);
 	
 	if (items.isPresent()) {
 		DocumentBean item = items.get();
-		updateFromGit(item);
+		documentGitUpdateFactory.update(item);
 	}
 
 	return items;
@@ -37,10 +30,10 @@ class DocumentRepositoryImpl implements DocumentRepository {
 
 	public List<DocumentBean> findByCommitIdAndRelativePath(Integer commitId, String relativePath) throws IOException, GitAPIException {
 
-		List<DocumentBean> items = databaseRepository.findByCommitIdAndRelativePath(commitId, relativePath);	
+		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePath(commitId, relativePath);	
 		
 		for (DocumentBean item : items) {
-			updateFromGit(item);
+			documentGitUpdateFactory.update(item);
 		}
 		
 		return items;
@@ -48,10 +41,10 @@ class DocumentRepositoryImpl implements DocumentRepository {
 	
 	public List<DocumentBean> findByCommitIdAndRelativePathIn(Integer commitId, List<String> relativePaths) throws IOException, GitAPIException {
 	
-		List<DocumentBean> items = databaseRepository.findByCommitIdAndRelativePathIn(commitId, relativePaths);
+		List<DocumentBean> items = documentDatabaseRepository.findByCommitIdAndRelativePathIn(commitId, relativePaths);
 		
 		for (DocumentBean item : items) {
-			updateFromGit(item);
+			documentGitUpdateFactory.update(item);
 		}
 		
 		return items;
@@ -59,37 +52,16 @@ class DocumentRepositoryImpl implements DocumentRepository {
 	
 	public List<DocumentBean> findByCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException {
 
-		List<DocumentBean> items = databaseRepository.findByShaAndRelativePath(commitSha, relativePath);
+		List<DocumentBean> items = documentDatabaseRepository.findByShaAndRelativePath(commitSha, relativePath);
 		
 		for (DocumentBean item : items) {
-			updateFromGit(item);
+			documentGitUpdateFactory.update(item);
 		}
 		
 		return items; 
 	}
 	
-	private void updateFromGit(DocumentBean document) throws IOException, GitAPIException {
-
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				document.getCommit().getRepository().getOrganization().getName(), 
-				document.getCommit().getRepository().getName());
-		
-		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
-		GitHistoricalFile gitFile = gitCommit.getFile(document.getRelativePath());
-		
-		assert document.getRelativePath().equals(gitFile.getRelativePath());
-		document.setFromGit(gitFile);
-
-		/*
-		 * TODO:
-		 * But validCommit placeholders is not setup yet.
-		 */
-		assert document.getCommit().getSha().equals(gitCommit.getSha());
-		document.getCommit().setFromGitCommit(gitCommit);
-	}
-	
 	public DocumentBean saveAndFlush(DocumentBean document) {
-		return databaseRepository.saveAndFlush(document);
+		return documentDatabaseRepository.saveAndFlush(document);
 	}
 }
