@@ -9,20 +9,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.envelope.service.exception.CommitShaNotExistException;
+import com.gitenter.envelope.service.exception.DocumentNotExistException;
 import com.gitenter.envelope.service.exception.IdNotExistException;
 import com.gitenter.protease.dao.auth.RepositoryGitUpdateFactory;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitGitUpdateFactory;
 import com.gitenter.protease.dao.git.CommitRepository;
+import com.gitenter.protease.dao.git.DocumentRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
+import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @Service
 public class RepositoryServiceImpl implements RepositoryService {
 	
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired CommitRepository commitRepository;
+	@Autowired DocumentRepository documentRepository;
 	
 	@Autowired private RepositoryGitUpdateFactory repositoryGitUpdateFactory;
 	@Autowired private CommitGitUpdateFactory commitGitUpdateFactory;
@@ -62,21 +67,55 @@ public class RepositoryServiceImpl implements RepositoryService {
 		if (commits.size() == 0) {
 			throw new CommitShaNotExistException(repositoryId, commitSha);
 		}
-		else {
-			/*
-			 * No possibility to have multiple returns based on
-			 * SQL unique constrain.
-			 */
-			CommitBean commit = commits.get(0);
-			
-			/*
-			 * Currently if we `getRepository` from a commit object,
-			 * the git related placeholders in `RepositoryBean` are
-			 * not bootstrapped yet.
-			 */
-			repositoryGitUpdateFactory.update(commit.getRepository());
-			
-			return commit;
+
+		/*
+		 * No possibility to have multiple returns based on
+		 * SQL unique constrain.
+		 */
+		CommitBean commit = commits.get(0);
+		
+		/*
+		 * Currently if we `getRepository` from a commit object,
+		 * the git related placeholders in `RepositoryBean` are
+		 * not bootstrapped yet.
+		 */
+		repositoryGitUpdateFactory.update(commit.getRepository());
+		
+		return commit;
+	}
+
+	@Override
+	public DocumentBean getDocumentFromCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException {
+	
+		List<DocumentBean> documents = documentRepository.findByCommitShaAndRelativePath(commitSha, relativePath);
+		if (documents.size() == 0) {
+			throw new DocumentNotExistException(commitSha, relativePath);
 		}
+		
+		DocumentBean document = documents.get(0);
+		
+		commitGitUpdateFactory.update(document.getCommit());
+		repositoryGitUpdateFactory.update(document.getCommit().getRepository());
+		
+		return document;
+	}
+
+	@Override
+	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativeFilepath(
+			Integer repositoryId, String branchName, String relativePath) throws IOException, GitAPIException {
+		
+		CommitBean commit = getCommitFromBranchName(repositoryId, branchName);
+		assert commit instanceof ValidCommitBean;
+		ValidCommitBean validCommit = (ValidCommitBean)commit;
+		
+		List<DocumentBean> documents = documentRepository.findByCommitShaAndRelativePath(commit.getSha(), relativePath);
+		if (documents.size() == 0) {
+			throw new DocumentNotExistException(repositoryId, branchName, relativePath);
+		}
+		
+		DocumentBean document = documents.get(0);
+		document.setCommit(validCommit);
+		
+		return document;
 	}
 }

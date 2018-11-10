@@ -9,18 +9,23 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.gitenter.envelope.service.RepositoryService;
+import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
+import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
+import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
@@ -75,7 +80,7 @@ public class RepositoryController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
-		model.addAttribute("branch", branchName);
+		model.addAttribute("branchName", branchName);
 		
 		/*
 		 * TODO:
@@ -122,11 +127,7 @@ public class RepositoryController {
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 		
 		if (commit instanceof ValidCommitBean) {
-			
-			ValidCommitBean validCommit = (ValidCommitBean)commit;
-			
-			model.addAttribute("root", validCommit.getRoot());
-			
+			model.addAttribute("root", ((ValidCommitBean)commit).getRoot());			
 			return "repository/valid-commit";
 		}
 		else if (commit instanceof InvalidCommitBean) {
@@ -180,5 +181,99 @@ public class RepositoryController {
 		 * this website.
 		 */
 		return "repository/commit-list";
+	}
+	
+	/*
+	 * This functions go with URL "/directories/**".
+	 * 
+	 * They cannot go with "/documents/{documentId}", because link 
+	 * between traceable items (and the corresponding documents) 
+	 * need to set up in a relative way.
+	 * 
+	 * TODO:
+	 * Need to handle blobs (e.g. images) which are not documents.
+	 * (1) They are not written into document table.
+	 * (2) They need to be parsed and shown in a different way.
+	 */
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/documents/directories/**", method=RequestMethod.GET)
+	public String showDocumentContentByCommit (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable String commitSha,
+			HttpServletRequest request,
+			Model model) throws Exception {
+		
+		model.addAttribute("commitSha", commitSha);
+		
+		String relativePath = getWildcardValue(request);
+		model.addAttribute("relativePath", relativePath);
+		DocumentBean document = repositoryService.getDocumentFromCommitShaAndRelativePath(commitSha, relativePath);
+		
+		return showDocumentContent(document, request, model);
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/documents/directories/**", method=RequestMethod.GET)
+	public String showDocumentContentByBranch (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable String branchName,
+			HttpServletRequest request,
+			Model model) throws Exception {
+		
+		model.addAttribute("branch", branchName);
+		
+		String relativePath = getWildcardValue(request);
+		model.addAttribute("relativePath", relativePath);
+		DocumentBean document = repositoryService.getDocumentFromRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, relativePath);
+		
+		return showDocumentContent(document, request, model);
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/documents/directories/**", method=RequestMethod.GET)
+	public String showDocumentContentDefault (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@ModelAttribute("branch") String branch,
+			HttpServletRequest request) {
+		
+		/*
+		 * TODO:
+		 * 
+		 * Query database to get customized default branch name for each single repository.
+		 */
+		String branchName = "master";
+		String filepath = getWildcardValue(request);
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName+"/documents/directories/"+filepath;
+	}
+	
+	private String showDocumentContent (
+			DocumentBean document, 
+			HttpServletRequest request,
+			Model model) throws Exception {
+		
+		CommitBean commit = document.getCommit();
+		RepositoryBean repository = commit.getRepository();
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		model.addAttribute("commit", commit);
+		model.addAttribute("document", document);
+		
+		model.addAttribute("branchNames", repository.getBranchNames());
+		
+		HtmlGenerator htmlGenerator = new DesignDocumentHtmlGenerator(document);
+		model.addAttribute("content", htmlGenerator.getHtml());
+		
+		return "repository/document";
+	}
+	
+	private String getWildcardValue (HttpServletRequest request) {
+		
+		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		String wildcard = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, wholePath);
+		
+		return wildcard;
 	}
 }

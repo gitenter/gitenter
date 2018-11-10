@@ -118,25 +118,31 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
         assert "Browse files and folders" in self.driver.page_source
-        document_file_elements = self.driver.find_elements_by_class_name("document-file")
-        self.assertEqual(document_file_elements[0].get_attribute("value"), "file.md")
-        nondocument_file_elements = self.driver.find_elements_by_class_name("non-document-file")
-        self.assertEqual(nondocument_file_elements[0].text, "gitenter.properties")
+        elements = self.driver.find_elements_by_class_name("nav-current")
+        self.assertEqual(elements[0].text, "Branch: master")
+        elements = self.driver.find_elements_by_class_name("document-file")
+        self.assertEqual(elements[0].get_attribute("value"), "file.md")
+        elements = self.driver.find_elements_by_class_name("non-document-file")
+        self.assertEqual(elements[0].text, "gitenter.properties")
 
+        # TODO:
+        # Navigate to there rather than hardcode the link.
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
         assert self.repo_display_name in self.driver.page_source
         assert git_commit_datapack.commit_message in self.driver.page_source
         assert git_commit_datapack.username in self.driver.page_source
 
-        commit_web_elements = self.driver.find_elements_by_class_name("commit-in-list")
-        self.assertEqual(len(commit_web_elements), 1)
-        commit_link = commit_web_elements[0].get_attribute("action")
+        elements = self.driver.find_elements_by_class_name("commit-in-list")
+        self.assertEqual(len(elements), 1)
+        commit_link = elements[0].get_attribute("action")
         self.driver.get(commit_link)
         assert "Browse files and folders" in self.driver.page_source
-        document_file_elements = self.driver.find_elements_by_class_name("document-file")
-        self.assertEqual(document_file_elements[0].get_attribute("value"), "file.md")
-        nondocument_file_elements = self.driver.find_elements_by_class_name("non-document-file")
-        self.assertEqual(nondocument_file_elements[0].text, "gitenter.properties")
+        elements = self.driver.find_elements_by_class_name("nav-current")
+        self.assertTrue("Commit:" in elements[0].text)
+        elements = self.driver.find_elements_by_class_name("document-file")
+        self.assertEqual(elements[0].get_attribute("value"), "file.md")
+        elements = self.driver.find_elements_by_class_name("non-document-file")
+        self.assertEqual(elements[0].text, "gitenter.properties")
 
     def test_invalid_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
