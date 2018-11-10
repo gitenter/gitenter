@@ -116,6 +116,7 @@ public class RepositoryController {
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
+		model.addAttribute("commit", commit);
 		
 		model.addAttribute("branchNames", repository.getBranchNames());
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
@@ -123,8 +124,6 @@ public class RepositoryController {
 		if (commit instanceof ValidCommitBean) {
 			
 			ValidCommitBean validCommit = (ValidCommitBean)commit;
-			System.out.println(validCommit);
-			System.out.println(validCommit.getRoot());
 			
 			model.addAttribute("root", validCommit.getRoot());
 			

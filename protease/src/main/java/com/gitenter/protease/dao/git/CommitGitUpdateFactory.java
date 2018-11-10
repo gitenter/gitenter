@@ -38,6 +38,13 @@ public class CommitGitUpdateFactory implements GitUpdateFactory<CommitBean> {
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		GitCommit gitCommit = gitRepository.getCommit(commit.getSha());
 		
+		/*
+		 * Was previously thinking about lazy doing this part (as in 
+		 * `repository.getBranch().getCommit()` we have similar logic.
+		 * 
+		 * However, it is useless, as we need `gitCommit` to be ready
+		 * for setup following placeholder anyway.
+		 */
 		commit.setFromGitCommit(gitCommit);
 		
 		if (commit instanceof ValidCommitBean) {

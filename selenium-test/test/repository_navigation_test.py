@@ -115,11 +115,13 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         local_path = self._clone_repo_and_return_local_path()
         self._commit_to_repo(git_commit_datapack, local_path)
 
-        # TODO: Not working yet.
-        # self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
-        # self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
-        # assert "Trace Analyzer Error" in self.driver.page_source
-        # assert "Browse Historical Commits" in self.driver.page_source
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
+        assert "Browse files and folders" in self.driver.page_source
+        document_file_elements = self.driver.find_elements_by_class_name("document-file")
+        self.assertEqual(document_file_elements[0].get_attribute("value"), "file.md")
+        nondocument_file_elements = self.driver.find_elements_by_class_name("non-document-file")
+        self.assertEqual(nondocument_file_elements[0].text, "gitenter.properties")
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
         assert self.repo_display_name in self.driver.page_source
@@ -131,7 +133,10 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         commit_link = commit_web_elements[0].get_attribute("action")
         self.driver.get(commit_link)
         assert "Browse files and folders" in self.driver.page_source
-        assert "file.md" in self.driver.page_source
+        document_file_elements = self.driver.find_elements_by_class_name("document-file")
+        self.assertEqual(document_file_elements[0].get_attribute("value"), "file.md")
+        nondocument_file_elements = self.driver.find_elements_by_class_name("non-document-file")
+        self.assertEqual(nondocument_file_elements[0].text, "gitenter.properties")
 
     def test_invalid_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))

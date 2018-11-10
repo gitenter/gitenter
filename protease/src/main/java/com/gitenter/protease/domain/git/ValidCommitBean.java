@@ -2,7 +2,9 @@ package com.gitenter.protease.domain.git;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -80,6 +82,26 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 		FileBean get(String relativePath) throws IOException, GitAPIException;
 	}
 	
+	@Transient
+	private Map<String,DocumentBean> documentMap;
+	
+	private void lazilyInitializeDocumentMap() {
+		if (documentMap != null) {
+			return;
+		}
+		
+		documentMap = new HashMap<String,DocumentBean>();
+		for (DocumentBean document : documents) {
+			documentMap.put(document.getRelativePath(), document);
+		}
+	}
+	
+	public boolean includeDocument(String relativePath) {
+		
+		lazilyInitializeDocumentMap();
+		return documentMap.containsKey(relativePath);
+	}
+	
 	/*
 	 * TODO:
 	 * Is it possible to setup "DocumentBean" (rather than "FileBean") when
@@ -91,37 +113,28 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 	 * or "DocumentRepository.findByCommitShaAndRelativePath()"?
 	 */
 	public DocumentBean getDocument(String relativePath) throws IOException, GitAPIException {
+
+		lazilyInitializeDocumentMap();
+		DocumentBean item = documentMap.get(relativePath);
+		
+		if (item == null) {
+			return null;
+		}
 		
 		/*
 		 * TODO:
-		 * Setup a lazy evaluated index "Map<String,DocumentBean>" to handle that,
-		 * rather than iterate the list every single time.
+		 * This is now working. At directly call "getDocments()" makes it not
+		 * persistent to the git material. However, there's duplicated logic
+		 * and code with other places.
 		 * 
-		 * Naive common-lang LazyInitializer doesn't work, because:
-		 * (1) It raises ConcurrentException, nor sure whether we need this complicity.
-		 * (2) Its initialized is protected, so cannot refresh after "addDocument()".
+		 * Don't know if there's a better solution...
 		 */
-		for (DocumentBean item : documents) {
-			if (item.getRelativePath().equals(relativePath)) {
-				
-				/*
-				 * TODO:
-				 * This is now working. At directly call "getDocments()" makes it not
-				 * persistent to the git material. However, there's duplicated logic
-				 * and code with other places.
-				 * 
-				 * Don't know if there's a better solution...
-				 */
-				FileBean file = this.getFile(relativePath);
-				item.setName(file.name);
-				item.setBlobContentPlaceholder(file.getBlobContentPlaceholder());
-				item.setMimeTypePlaceholder(file.getMimeTypePlaceholder());
-				
-				return item;
-			}
-		}
+		FileBean file = this.getFile(relativePath);
+		item.setName(file.name);
+		item.setBlobContentPlaceholder(file.getBlobContentPlaceholder());
+		item.setMimeTypePlaceholder(file.getMimeTypePlaceholder());
 		
-		return null;
+		return item;
 	}
 	
 	public boolean addDocument(DocumentBean document) {

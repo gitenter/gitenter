@@ -5,17 +5,17 @@
 
 <c:choose>
 <c:when test="${folderOrFile.isFile()}">
-<%--   <c:if test="${documentMap.containsKey(folderOrFile.toString())}"> --%>
+  <c:if test="${commit.includeDocument(folderOrFile.relativePath)}">
     <li>
       <s:url var="file_url" value="${currentUrl}/documents/directories/${folderOrFile.relativePath}" />
       <sf:form method="GET" action="${file_url}">
-        <input type="submit" value="${folderOrFile.name}" />
+        <input class="document-file" type="submit" value="${folderOrFile.name}" />
       </sf:form>
     </li>
-<%--   </c:if> --%>
-<%--   <c:if test="${!documentMap.containsKey(folderOrFile.toString())}"> --%>
+  </c:if>
+  <c:if test="${!commit.includeDocument(folderOrFile.relativePath)}">
     <li><span class="non-document-file"><c:out value="${folderOrFile.name}" /></span></li>
-<%--   </c:if> --%>
+  </c:if>
 </c:when>
 <c:otherwise>
   <li><span class="folder"><c:out value="${folderOrFile.name}" /></span></li>
