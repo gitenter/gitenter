@@ -67,15 +67,16 @@ public class DocumentBean extends FileBean implements ModelBean {
 		return new String(getBlobContent());
 	}
 	
-	/*
-	 * Use together with buildTraceableItemIndex()
-	 */
+	public boolean addTraceableItem(TraceableItemBean traceableItem) {
+		return traceableItems.add(traceableItem);
+	}
+
 	@Transient
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private Map<String,TraceableItemBean> traceableItemMap;
 	
-	public void buildTraceableItemIndex() {
+	private void buildTraceableItemMap() {
 		
 		traceableItemMap = new HashMap<String,TraceableItemBean>();
 		
@@ -84,16 +85,12 @@ public class DocumentBean extends FileBean implements ModelBean {
 		}
 	}
 	
-	public boolean addTraceableItem(TraceableItemBean traceableItem) {
-		return traceableItems.add(traceableItem);
-	}
-	
-	/*
-	 * TODO:
-	 * Build "traceableItemMap" by some proxy pattern triggered by this method.
-	 * Remove "buildTraceableItemIndex".
-	 */
 	public TraceableItemBean getTraceableItem(String itemTag) {
+		
+		if (traceableItemMap == null) {
+			buildTraceableItemMap();
+		}
+		
 		return traceableItemMap.get(itemTag);
 	}
 	

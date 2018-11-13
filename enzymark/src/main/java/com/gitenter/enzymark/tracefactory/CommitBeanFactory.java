@@ -33,6 +33,7 @@ public class CommitBeanFactory {
 			ValidCommitBean validCommit = new ValidCommitBean();
 			validCommit.setFromGitCommit(gitCommit);
 			
+			Map<TraceableItem,TraceableItemBean> traceabilityIterateMap = new HashMap<TraceableItem,TraceableItemBean>();
 			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
 				
 				DocumentBean document = new DocumentBean();
@@ -41,7 +42,6 @@ public class CommitBeanFactory {
 				
 				document.setRelativePath(traceableDocument.getRelativePath());
 				
-				Map<TraceableItem,TraceableItemBean> traceabilityIterateMap = new HashMap<TraceableItem,TraceableItemBean>();
 				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 					
 					TraceableItemBean itemBean = new TraceableItemBean();
@@ -53,12 +53,9 @@ public class CommitBeanFactory {
 					
 					traceabilityIterateMap.put(traceableItem, itemBean);
 				}
+			}
 				
-				/*
-				 * TODO:
-				 * May need to move this part to a different method, and save `CommitBean` twice,
-				 * as Hibernate seems have problem saving a complicated map of relationship.
-				 */
+			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
 				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 					
 					/*
@@ -76,8 +73,6 @@ public class CommitBeanFactory {
 						traceabilityIterateMap.get(traceableItem).addUpstreamItem(traceabilityIterateMap.get(upstreamItem));
 					}
 				}
-				
-				document.buildTraceableItemIndex();
 			}
 			
 			commit = validCommit;

@@ -176,7 +176,7 @@ public class CommitRepositoryTest {
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	@DatabaseTearDown
-	public void testSaveAndFlushWorksMoreComplicatedTraceabilityMap() throws IOException, GitAPIException {
+	public void testSaveAndFlushWorksMoreThanOneTraceableItems() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
 		
@@ -232,6 +232,84 @@ public class CommitRepositoryTest {
 		assertEquals(reloadTraceableItem1.getItemTag(), "tag-1");
 		assertEquals(reloadTraceableItem1.getContent(), "content-1");
 		TraceableItemBean reloadTraceableItem2 = reloadDocument.getTraceableItems().get(1);
+		assertEquals(reloadTraceableItem2.getItemTag(), "tag-2");
+		assertEquals(reloadTraceableItem2.getContent(), "content-2");
+		
+		assertEquals(reloadTraceableItem1.getDownstreamItems().size(), 1);
+		assertEquals(reloadTraceableItem1.getUpstreamItems().size(), 0);
+		assertEquals(reloadTraceableItem1.getDownstreamItems().get(0), reloadTraceableItem2);
+		assertEquals(reloadTraceableItem2.getDownstreamItems().size(), 0);
+		assertEquals(reloadTraceableItem2.getUpstreamItems().size(), 1);
+		assertEquals(reloadTraceableItem2.getUpstreamItems().get(0), reloadTraceableItem1);
+	}
+	
+	@Test
+	@Transactional
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseTearDown
+	public void testSaveAndFlushWorksMoreThanOneDocuments() throws IOException, GitAPIException {
+		
+		assertFalse(commitRepository.findById(1).isPresent());
+		
+		RepositoryBean repository = repositoryRepository.findById(1).get();
+		assertEquals(repository.getCommitCount(), 0);
+		
+		ValidCommitBean commit = new ValidCommitBean();
+		commit.setSha("c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73");
+		commit.setRepository(repository);
+		repository.addCommit(commit);
+		
+		DocumentBean document1 = new DocumentBean();
+		document1.setRelativePath("file1");
+		document1.setCommit(commit);
+		commit.addDocument(document1);
+		
+		DocumentBean document2 = new DocumentBean();
+		document2.setRelativePath("file2");
+		document2.setCommit(commit);
+		commit.addDocument(document2);
+		
+		/*
+		 * This part doesn't match with the static git repo, 
+		 * but that doesn't since the repository is not actively
+		 * load this part.
+		 */
+		TraceableItemBean traceableItem1 = new TraceableItemBean();
+		traceableItem1.setItemTag("tag-1");
+		traceableItem1.setContent("content-1");
+		traceableItem1.setDocument(document1);
+		document1.addTraceableItem(traceableItem1);
+		
+		TraceableItemBean traceableItem2 = new TraceableItemBean();
+		traceableItem2.setItemTag("tag-2");
+		traceableItem2.setContent("content-2");
+		traceableItem2.setDocument(document2);
+		document2.addTraceableItem(traceableItem2);
+		
+		traceableItem1.setDownstreamItems(Arrays.asList(traceableItem2));
+		traceableItem2.setUpstreamItems(Arrays.asList(traceableItem1));
+		
+//		repositoryRepository.saveAndFlush(repository);
+		commitRepository.saveAndFlush(commit);
+		
+		RepositoryBean reloadRepository = repositoryRepository.findById(1).get();
+		assertEquals(reloadRepository.getCommitCount(), 1);
+		
+		CommitBean reloadCommit = commitRepository.findByRepositoryIdAndCommitSha(1, "c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73").get(0);
+		assertTrue(reloadCommit instanceof ValidCommitBean);
+		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
+		
+		DocumentBean reloadDocument1 = reloadValidCommit.getDocument("file1");
+		assertEquals(reloadDocument1.getName(), "file1");
+		DocumentBean reloadDocument2 = reloadValidCommit.getDocument("file2");
+		assertEquals(reloadDocument2.getName(), "file2");
+		
+		assertEquals(reloadDocument1.getTraceableItems().size(), 1);
+		TraceableItemBean reloadTraceableItem1 = reloadDocument1.getTraceableItems().get(0);
+		assertEquals(reloadTraceableItem1.getItemTag(), "tag-1");
+		assertEquals(reloadTraceableItem1.getContent(), "content-1");
+		assertEquals(reloadDocument2.getTraceableItems().size(), 1);
+		TraceableItemBean reloadTraceableItem2 = reloadDocument2.getTraceableItems().get(0);
 		assertEquals(reloadTraceableItem2.getItemTag(), "tag-2");
 		assertEquals(reloadTraceableItem2.getContent(), "content-2");
 		

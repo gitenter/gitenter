@@ -86,8 +86,6 @@ public class DocumentBeanTest {
 		traceableItem1.addDownstreamItem(traceableItem2);
 		traceableItem2.addUpstreamItem(traceableItem1);
 		
-		document.buildTraceableItemIndex();
-		
 		assertEquals("content-1", document.getTraceableItem("tag-1").getContent());
 		assertEquals("content-2", document.getTraceableItem("tag-2").getContent());
 		assertEquals("tag-2", document.getTraceableItem("tag-1").getDownstreamItems().get(0).getItemTag());

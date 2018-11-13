@@ -158,7 +158,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         assert "Trace Analyzer Error" in self.driver.page_source
         assert "Browse Historical Commits" not in self.driver.page_source
 
-    def test_valid_commit(self):
+    def test_valid_commit_one_file(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
@@ -195,7 +195,22 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         self.assertEqual(self.driver.find_element_by_class_name("document-file").get_attribute("value"), "file.md")
         self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.properties")
 
-    def test_valid_commit_multiple_page_traceability(self):
+        document_link = self.driver.find_element_by_xpath("//input[@value='file.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
+            "{}#tag1".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
+            "{}#tag2".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
+            "{}#tag2".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
+            "{}#tag1".format(document_link))
+
+    def test_valid_commit_two_files_on_root(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
@@ -207,15 +222,26 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         local_path = self._clone_repo_and_return_local_path()
         self._commit_to_repo(git_commit_datapack, local_path)
 
-        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+        repo_link = urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id))
 
+        self.driver.get(repo_link)
         document_link = self.driver.find_element_by_xpath("//input[@value='file1.md']/parent::form").get_attribute("action")
         self.driver.get(document_link)
         self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file1.md")
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
+            "{}#tag1".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
+            "{}/branches/master/documents/directories/file2.md#tag2".format(repo_link))
 
-        # TODO:
-        # There's a bug that traceability links are not setting up correctly.
-
+        self.driver.get(repo_link)
         document_link = self.driver.find_element_by_xpath("//input[@value='file2.md']/parent::form").get_attribute("action")
         self.driver.get(document_link)
         self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file2.md")
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
+            "{}#tag2".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
+            "{}/branches/master/documents/directories/file1.md#tag1".format(repo_link))

@@ -98,7 +98,8 @@ public class TraceableRepositoryFactoryTest {
 				
 				if (currentItem.getTag().equals("tag2")) {
 					assertEquals(currentItem.getUpstreamItems().size(), 1);
-					assertEquals(currentItem.getDownstreamItems().size(), 1);
+					assertEquals(currentItem.getUpstreamItems().get(0).getTag(), "tag1");
+					assertEquals(currentItem.getDownstreamItems().get(0).getTag(), "tag3");
 				}
 				
 				if (currentItem.getTag().equals("tag3")) {
