@@ -20,6 +20,7 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.FileBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @Service
@@ -101,7 +102,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
-	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativeFilepath(
+	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativePath(
 			Integer repositoryId, String branchName, String relativePath) throws IOException, GitAPIException {
 		
 		CommitBean commit = getCommitFromBranchName(repositoryId, branchName);
@@ -117,5 +118,31 @@ public class RepositoryServiceImpl implements RepositoryService {
 		document.setCommit(validCommit);
 		
 		return document;
+	}
+
+	@Override
+	public FileBean getFileFromRepositoryIdAndCommitShaAndRelativePath(Integer repositoryId, String commitSha, String relativePath)
+			throws IOException, GitAPIException {
+		
+		CommitBean commit = getCommitFromSha(repositoryId, commitSha);
+		assert commit instanceof ValidCommitBean;
+		ValidCommitBean validCommit = (ValidCommitBean)commit;
+		
+		FileBean file = validCommit.getFile(relativePath);
+		
+		return file;
+	}
+
+	@Override
+	public FileBean getFileFromRepositoryIdAndBranchAndRelativePath(Integer repositoryId, String branchName, String relativePath) 
+			throws IOException, GitAPIException {
+		
+		CommitBean commit = getCommitFromBranchName(repositoryId, branchName);
+		assert commit instanceof ValidCommitBean;
+		ValidCommitBean validCommit = (ValidCommitBean)commit;
+		
+		FileBean file = validCommit.getFile(relativePath);
+		
+		return file;
 	}
 }

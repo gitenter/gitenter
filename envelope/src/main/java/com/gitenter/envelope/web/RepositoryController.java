@@ -1,9 +1,11 @@
 package com.gitenter.envelope.web;
 
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.FileBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
@@ -39,7 +42,7 @@ public class RepositoryController {
 	@Autowired RepositoryService repositoryService;
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
-	public String showCommitDefault (
+	public String showRepository (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
@@ -73,7 +76,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
-	public String showCommitByBranch (
+	public String showBranchHead (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -88,11 +91,11 @@ public class RepositoryController {
 		 * valid commit in this branch.
 		 */
 		CommitBean commit = repositoryService.getCommitFromBranchName(repositoryId, branchName);
-		return showCommit(commit, request, model);
+		return showCommitDetail(commit, request, model);
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}", method=RequestMethod.GET)
-	public String showCommitByCommit (
+	public String showCommit (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -102,10 +105,10 @@ public class RepositoryController {
 		model.addAttribute("commitSha", commitSha);
 		
 		CommitBean commit = repositoryService.getCommitFromSha(repositoryId, commitSha);
-		return showCommit(commit, request, model);
+		return showCommitDetail(commit, request, model);
 	}
 	
-	private String showCommit (
+	private String showCommitDetail (
 			CommitBean commit, 
 			HttpServletRequest request, 
 			Model model) throws Exception {
@@ -183,6 +186,23 @@ public class RepositoryController {
 		return "repository/commit-list";
 	}
 	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/documents/directories/**", method=RequestMethod.GET)
+	public String showDocumentContentDefault (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@ModelAttribute("branch") String branch,
+			HttpServletRequest request) {
+		
+		/*
+		 * TODO:
+		 * 
+		 * Query database to get customized default branch name for each single repository.
+		 */
+		String branchName = "master";
+		String filepath = getWildcardValue(request);
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName+"/documents/directories/"+filepath;
+	}
+	
 	/*
 	 * This functions go with URL "/directories/**".
 	 * 
@@ -224,26 +244,9 @@ public class RepositoryController {
 		
 		String relativePath = getWildcardValue(request);
 		model.addAttribute("relativePath", relativePath);
-		DocumentBean document = repositoryService.getDocumentFromRepositoryIdAndBranchAndRelativeFilepath(repositoryId, branchName, relativePath);
+		DocumentBean document = repositoryService.getDocumentFromRepositoryIdAndBranchAndRelativePath(repositoryId, branchName, relativePath);
 		
 		return showDocumentContent(document, request, model);
-	}
-	
-	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentDefault (
-			@PathVariable Integer organizationId,
-			@PathVariable Integer repositoryId,
-			@ModelAttribute("branch") String branch,
-			HttpServletRequest request) {
-		
-		/*
-		 * TODO:
-		 * 
-		 * Query database to get customized default branch name for each single repository.
-		 */
-		String branchName = "master";
-		String filepath = getWildcardValue(request);
-		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/branches/"+branchName+"/documents/directories/"+filepath;
 	}
 	
 	private String showDocumentContent (
@@ -266,6 +269,47 @@ public class RepositoryController {
 		model.addAttribute("content", htmlGenerator.getHtml());
 		
 		return "repository/document";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/blobs/directories/**", method=RequestMethod.GET)
+	public void showBlobContentByCommit (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable String commitSha,
+			HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		String relativePath = getWildcardValue(request);
+		FileBean file = repositoryService.getFileFromRepositoryIdAndCommitShaAndRelativePath(repositoryId, commitSha, relativePath);
+		writeToOutputStream(file, response);
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/blobs/directories/**", method=RequestMethod.GET)
+	public void showBlobContentByBranch (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@PathVariable String branchName,
+			HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		String relativePath = getWildcardValue(request);
+		FileBean file = repositoryService.getFileFromRepositoryIdAndBranchAndRelativePath(repositoryId, branchName, relativePath);
+		writeToOutputStream(file, response);
+	}
+	
+	private void writeToOutputStream (FileBean file, HttpServletResponse response) throws Exception {
+
+		/*
+		 * TODO:
+		 * Move this part to `file.isDocument()`;
+		 */
+		if (!file.getMimeType().equals("text/markdown")) {
+			
+			response.setContentType(file.getMimeType());
+			OutputStream outputStream = response.getOutputStream();
+			outputStream.write(file.getBlobContent());
+			outputStream.close();
+		}
 	}
 	
 	private String getWildcardValue (HttpServletRequest request) {
