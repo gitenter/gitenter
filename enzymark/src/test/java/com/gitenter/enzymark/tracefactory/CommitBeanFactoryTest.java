@@ -38,11 +38,11 @@ public class CommitBeanFactoryTest {
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
-		addAFile(directory, "file1.md", textContent1);
+		addAFile(directory, "root-file.md", textContent1);
 		
-		File subfolder = new File(directory, "folder");
+		File subfolder = new File(directory, "nested-folder");
 		subfolder.mkdir();
-		addAFile(subfolder, "file2.md", textContent2);
+		addAFile(subfolder, "nested-file.md", textContent2);
 		
 		workspace.add();
 		workspace.commit("dummy commit message");
@@ -63,7 +63,7 @@ public class CommitBeanFactoryTest {
 			 * unless we get it through the database.
 			 */
 			switch (document.getRelativePath()) {
-			case "file1.md":
+			case "root-file.md":
 				assertEquals(document.getTraceableItems().size(), 2);
 				
 				for (TraceableItemBean traceableItem : document.getTraceableItems()) {
@@ -86,7 +86,7 @@ public class CommitBeanFactoryTest {
 				}
 				break;
 			
-			case "folder/file2.md":
+			case "nested-folder/nested-file.md":
 				assertEquals(document.getTraceableItems().size(), 1);
 				TraceableItemBean traceableItem = document.getTraceableItems().get(0);
 				assertEquals(traceableItem.getDownstreamItems().size(), 0);

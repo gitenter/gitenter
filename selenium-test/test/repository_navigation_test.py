@@ -1,5 +1,6 @@
 from urllib.parse import urlparse, urljoin
 import subprocess
+import os
 import pygit2
 
 from testsuite.repository_created_testsuite import RepositoryCreatedTestSuite
@@ -48,7 +49,9 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
     def _commit_to_repo(self, git_commit_datapack, local_path):
 
         for add_to_git_file in git_commit_datapack.add_to_git_files:
-            with open(str(local_path / add_to_git_file.relative_filepath), 'w') as f:
+            file_path = str(local_path / add_to_git_file.relative_filepath)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
                 f.write(add_to_git_file.content)
 
         repo = pygit2.Repository(str(local_path))
@@ -92,14 +95,12 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         assert "Setup a new repository" in self.driver.page_source
 
-        # In this case, there is no commit yet. So there is no branch available
-        # (branch "master" is not available yet.)
-        #
         # TODO:
         # Should later on aviod return code 500, but to catch the error and redirect
         # to 404 error properly.
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id)))
-        assert "status=404" in self.driver.page_source
+        assert "status=500" in self.driver.page_source
+        assert "Branch master is not existing yet!" in self.driver.page_source
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
         assert "status=500" in self.driver.page_source
         assert "Branch master is not existing yet!" in self.driver.page_source
@@ -210,7 +211,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
             "{}#tag1".format(document_link))
 
-    def test_valid_commit_two_files_on_root(self):
+    def test_valid_commit_two_files_in_root(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
@@ -245,3 +246,39 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         self.assertEqual(
             self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
             "{}/branches/master/documents/directories/file1.md#tag1".format(repo_link))
+
+    def test_valid_commit_two_files_in_nested_folder(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitFile("root-file.md", "- [tag1] a traceable item."))
+        git_commit_datapack.add_file(AddToGitFile("nested-folder/nested-file.md", "- [tag2]{tag1} another traceable item."))
+
+        local_path = self._clone_repo_and_return_local_path()
+        self._commit_to_repo(git_commit_datapack, local_path)
+
+        repo_link = urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id))
+
+        self.driver.get(repo_link)
+        document_link = self.driver.find_element_by_xpath("//input[@value='root-file.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "root-file.md")
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
+            "{}#tag1".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
+            "{}/branches/master/documents/directories/nested-folder/nested-file.md#tag2".format(repo_link))
+
+        self.driver.get(repo_link)
+        document_link = self.driver.find_element_by_xpath("//input[@value='nested-file.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "nested-folder/nested-file.md")
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
+            "{}#tag2".format(document_link))
+        self.assertEqual(
+            self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
+            "{}/branches/master/documents/directories/root-file.md#tag1".format(repo_link))

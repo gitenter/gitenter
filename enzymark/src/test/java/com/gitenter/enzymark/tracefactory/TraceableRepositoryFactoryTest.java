@@ -73,11 +73,11 @@ public class TraceableRepositoryFactoryTest {
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
-		addAFile(directory, "file1.md", textContent1);
+		addAFile(directory, "root-file.md", textContent1);
 		
-		File subfolder = new File(directory, "folder");
+		File subfolder = new File(directory, "nested-folder");
 		subfolder.mkdir();
-		addAFile(subfolder, "file2.md", textContent2);
+		addAFile(subfolder, "nested-file.md", textContent2);
 		
 		workspace.add();
 		workspace.commit("dummy commit message");

@@ -20,7 +20,7 @@
 <c:otherwise>
   <li><span class="folder"><c:out value="${folderOrFile.name}" /></span></li>
   <ul>
-    <c:forEach var="i" items="${folderOrFile.subPath}">
+    <c:forEach var="i" items="${folderOrFile.subpath}">
       <c:set var="folderOrFile" value="${i}" scope="request"/>
       <jsp:include page="commit-folder-structure.jsp"/>
     </c:forEach>
