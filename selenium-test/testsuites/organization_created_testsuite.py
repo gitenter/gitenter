@@ -1,6 +1,6 @@
 from urllib.parse import urljoin, urlparse
 
-from testsuite.registered_testsuite import RegisteredTestSuite
+from testsuites.registered_testsuite import RegisteredTestSuite
 from forms.authorization_form import fill_login_form
 from forms.organization_management_form import fill_create_organization_form
 

@@ -1,7 +1,7 @@
 import unittest
 from urllib.parse import urlparse, urljoin
 
-from testsuite.organization_created_testsuite import OrganizationCreatedTestSuite
+from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
 from forms.authorization_form import fill_login_form
 
 

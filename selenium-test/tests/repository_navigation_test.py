@@ -1,7 +1,7 @@
 from urllib.parse import urlparse, urljoin
 import pygit2
 
-from testsuite.repository_created_testsuite import RepositoryCreatedTestSuite
+from testsuites.repository_created_testsuite import RepositoryCreatedTestSuite
 from forms.authorization_form import fill_login_form
 from datapacks.git_commit_datapack import (
     AddToGitConcreteFile,
