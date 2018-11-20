@@ -1,29 +1,13 @@
 from urllib.parse import urlparse, urljoin
-import subprocess
-import os
 import pygit2
 
 from testsuite.repository_created_testsuite import RepositoryCreatedTestSuite
 from forms.authorization_form import fill_login_form
-
-
-class AddToGitFile:
-
-    def __init__(self, relative_filepath, content):
-        self.relative_filepath = relative_filepath
-        self.content = content
-
-
-class GitCommitDatapack:
-
-    def __init__(self, commit_message, username, email):
-        self.add_to_git_files = []
-        self.commit_message = commit_message
-        self.username = username
-        self.email = email
-
-    def add_file(self, file):
-        self.add_to_git_files.append(file)
+from datapacks.git_commit_datapack import (
+    AddToGitConcreteFile,
+    AddToGitSymlinkFile,
+    GitCommitDatapack
+)
 
 
 class TestRepositoryNavigation(RepositoryCreatedTestSuite):
@@ -45,48 +29,6 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         pygit2.clone_repository("file://{}".format(str(remote_git_url)), str(local_path))
 
         return local_path
-
-    def _commit_to_repo(self, git_commit_datapack, local_path):
-
-        for add_to_git_file in git_commit_datapack.add_to_git_files:
-            file_path = str(local_path / add_to_git_file.relative_filepath)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, 'w') as f:
-                f.write(add_to_git_file.content)
-
-        repo = pygit2.Repository(str(local_path))
-        # reference = "refs/heads/master"
-        index = repo.index
-        index.add_all()
-        index.write()
-        author = pygit2.Signature(git_commit_datapack.username, git_commit_datapack.email)
-        commiter = pygit2.Signature(git_commit_datapack.username, git_commit_datapack.email)
-        message = git_commit_datapack.commit_message
-        tree = repo.index.write_tree()
-        if repo.head_is_unborn:
-            parent = []
-        else:
-            parent = [repo.head.get_object().hex]
-        repo.create_commit("refs/heads/master", author, commiter, message, tree, parent)
-
-        # pygit2/libgit2 doesn't support hooks (which get bypassed silently).
-        # https://github.com/libgit2/libgit2/issues/964
-        # https://github.com/libgit2/libgit2/pull/3824
-        # repo.remotes["origin"].push(["refs/heads/master"])
-        #
-        # TODO:
-        # Consider to replace pygit2 with the following libs, to see if they have
-        # better support.
-        # https://github.com/gitpython-developers/GitPython
-        # https://github.com/dulwich/dulwich
-        push_process = subprocess.Popen(
-            ["git", "push", "origin", "master"],
-            cwd=str(local_path),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
-        output, errors = push_process.communicate()
-        print("git push output:\n{}".format(output.decode('UTF-8')))
-        print("git push errors:\n{}".format(errors.decode('UTF-8')))
 
     def test_repo_with_no_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -110,10 +52,10 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         git_commit_datapack = GitCommitDatapack("add commit without setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("a_irrelevant_file.txt", "A irrelevant file"))
+        git_commit_datapack.add_file(AddToGitConcreteFile("a_irrelevant_file.txt", "A irrelevant file"))
 
         local_path = self._clone_repo_and_return_local_path()
-        self._commit_to_repo(git_commit_datapack, local_path)
+        git_commit_datapack.commit_to_repo(local_path)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
@@ -136,11 +78,11 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
-        git_commit_datapack.add_file(AddToGitFile("file.md", "- [tag]{refer-not-exist} a traceable item."))
+        git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "- [tag]{refer-not-exist} a traceable item."))
 
         local_path = self._clone_repo_and_return_local_path()
-        self._commit_to_repo(git_commit_datapack, local_path)
+        git_commit_datapack.commit_to_repo(local_path)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
@@ -164,11 +106,11 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
-        git_commit_datapack.add_file(AddToGitFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
+        git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
 
         local_path = self._clone_repo_and_return_local_path()
-        self._commit_to_repo(git_commit_datapack, local_path)
+        git_commit_datapack.commit_to_repo(local_path)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
@@ -216,12 +158,12 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
-        git_commit_datapack.add_file(AddToGitFile("file1.md", "- [tag1] a traceable item."))
-        git_commit_datapack.add_file(AddToGitFile("file2.md", "- [tag2]{tag1} another traceable item."))
+        git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitConcreteFile("file1.md", "- [tag1] a traceable item."))
+        git_commit_datapack.add_file(AddToGitConcreteFile("file2.md", "- [tag2]{tag1} another traceable item."))
 
         local_path = self._clone_repo_and_return_local_path()
-        self._commit_to_repo(git_commit_datapack, local_path)
+        git_commit_datapack.commit_to_repo(local_path)
 
         repo_link = urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id))
 
@@ -252,12 +194,12 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-        git_commit_datapack.add_file(AddToGitFile("gitenter.properties", "enable_systemwide = on"))
-        git_commit_datapack.add_file(AddToGitFile("root-file.md", "- [tag1] a traceable item."))
-        git_commit_datapack.add_file(AddToGitFile("nested-folder/nested-file.md", "- [tag2]{tag1} another traceable item."))
+        git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitConcreteFile("root-file.md", "- [tag1] a traceable item."))
+        git_commit_datapack.add_file(AddToGitConcreteFile("nested-folder/nested-file.md", "- [tag2]{tag1} another traceable item."))
 
         local_path = self._clone_repo_and_return_local_path()
-        self._commit_to_repo(git_commit_datapack, local_path)
+        git_commit_datapack.commit_to_repo(local_path)
 
         repo_link = urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id))
 
@@ -282,3 +224,27 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         self.assertEqual(
             self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
             "{}/branches/master/documents/directories/root-file.md#tag1".format(repo_link))
+
+    def test_valid_commit_display_image(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+        git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+        git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "![alt text](image.jpg \"image title\")"))
+        git_commit_datapack.add_file(AddToGitSymlinkFile("image.jpg", "resources/sample_files/sample.jpg"))
+
+        local_path = self._clone_repo_and_return_local_path()
+        git_commit_datapack.commit_to_repo(local_path)
+
+        repo_link = urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id))
+
+        self.driver.get(repo_link)
+        document_link = self.driver.find_element_by_xpath("//input[@value='file.md']/parent::form").get_attribute("action")
+        self.driver.get(document_link)
+        image_element = self.driver.find_element_by_xpath("//img[@src='../../blobs/directories/image.jpg']")
+        self.assertEqual(image_element.get_attribute("alt"), "alt text")
+        self.assertEqual(image_element.get_attribute("title"), "image title")
+
+        # TODO:
+        # Any way to assert that the image is displayed correctly?

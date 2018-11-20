@@ -20,7 +20,6 @@ import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
-import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @Service
 public class UpdateDatabaseFromGitServiceImpl implements UpdateDatabaseFromGitService {

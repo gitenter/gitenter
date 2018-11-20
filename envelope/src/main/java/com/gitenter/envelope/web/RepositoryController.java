@@ -298,18 +298,11 @@ public class RepositoryController {
 	}
 	
 	private void writeToOutputStream (FileBean file, HttpServletResponse response) throws Exception {
-
-		/*
-		 * TODO:
-		 * Move this part to `file.isDocument()`;
-		 */
-		if (!file.getMimeType().equals("text/markdown")) {
-			
-			response.setContentType(file.getMimeType());
-			OutputStream outputStream = response.getOutputStream();
-			outputStream.write(file.getBlobContent());
-			outputStream.close();
-		}
+		
+		response.setContentType(file.getMimeType());
+		OutputStream outputStream = response.getOutputStream();
+		outputStream.write(file.getBlobContent());
+		outputStream.close();
 	}
 	
 	private String getWildcardValue (HttpServletRequest request) {
