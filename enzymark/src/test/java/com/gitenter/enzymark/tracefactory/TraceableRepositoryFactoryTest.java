@@ -73,11 +73,11 @@ public class TraceableRepositoryFactoryTest {
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
-		addAFile(directory, "file1.md", textContent1);
+		addAFile(directory, "root-file.md", textContent1);
 		
-		File subfolder = new File(directory, "folder");
+		File subfolder = new File(directory, "nested-folder");
 		subfolder.mkdir();
-		addAFile(subfolder, "file2.md", textContent2);
+		addAFile(subfolder, "nested-file.md", textContent2);
 		
 		workspace.add();
 		workspace.commit("dummy commit message");
@@ -98,7 +98,8 @@ public class TraceableRepositoryFactoryTest {
 				
 				if (currentItem.getTag().equals("tag2")) {
 					assertEquals(currentItem.getUpstreamItems().size(), 1);
-					assertEquals(currentItem.getDownstreamItems().size(), 1);
+					assertEquals(currentItem.getUpstreamItems().get(0).getTag(), "tag1");
+					assertEquals(currentItem.getDownstreamItems().get(0).getTag(), "tag3");
 				}
 				
 				if (currentItem.getTag().equals("tag3")) {

@@ -1,7 +1,7 @@
 from random import randint
 from urllib.parse import urlparse, urljoin
 
-from testsuite.organization_created_testsuite import OrganizationCreatedTestSuite
+from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
 from forms.authorization_form import fill_login_form
 from forms.repository_management_form import fill_create_repository_form
 

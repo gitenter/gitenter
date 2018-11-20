@@ -17,13 +17,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @Table(schema = "git", name = "traceable_item")
-public class TraceableItemBean {
+public class TraceableItemBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

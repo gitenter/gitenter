@@ -12,6 +12,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +21,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "review", name = "review_meeting_record")
-public class ReviewMeetingRecordBean extends DiscussionTopicBean {
+public class ReviewMeetingRecordBean extends DiscussionTopicBean implements ModelBean {
 
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)

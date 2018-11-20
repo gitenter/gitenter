@@ -13,6 +13,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "review", name = "discussion_subsection")
-public class DiscussionSubsectionBean extends SubsectionBean {
+public class DiscussionSubsectionBean extends SubsectionBean implements ModelBean {
 
 	@NotNull
 	@Column(name="deadline", updatable=false)

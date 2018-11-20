@@ -1,4 +1,4 @@
-package com.gitenter.protease.exception;
+package com.gitenter.protease.dao.exception;
 
 import com.gitenter.protease.domain.auth.RepositoryBean;
 

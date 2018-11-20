@@ -84,4 +84,32 @@ public class FileBean extends PathBean {
 			return gitFile.getMimeType();
 		}
 	}
+
+	@Override
+	public boolean isFolder() {
+		return false;
+	}
+
+	@Override
+	public boolean isFile() {
+		return true;
+	}
+	
+	/*
+	 * It doesn't mean there's a corresponding `document` item in
+	 * the database.
+	 */
+	public boolean canBeDocument() throws IOException, GitAPIException {
+		
+		if (getMimeType().equals("text/markdown")) {
+			/*
+			 * TODO:
+			 * Add other requirements for a qualified document.
+			 */
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

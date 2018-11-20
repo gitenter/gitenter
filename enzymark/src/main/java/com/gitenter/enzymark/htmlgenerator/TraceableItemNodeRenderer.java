@@ -29,9 +29,7 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentBean document) {
 		
 		this.html = context.getWriter();
-		
 		this.document = document;
-		document.buildTraceableItemIndex();
 		
 		defaultRenderer = HtmlRenderer.builder().build();
 	}

@@ -10,4 +10,14 @@ import lombok.Setter;
 public class FolderBean extends PathBean {
 	
 	private Collection<PathBean> subpath;
+
+	@Override
+	public boolean isFolder() {
+		return true;
+	}
+
+	@Override
+	public boolean isFile() {
+		return false;
+	}
 }

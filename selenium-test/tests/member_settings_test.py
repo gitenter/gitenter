@@ -2,7 +2,7 @@ import unittest
 from urllib.parse import urlparse, urljoin
 from selenium.webdriver.common.keys import Keys
 
-from testsuite.registered_testsuite import RegisteredTestSuite
+from testsuites.registered_testsuite import RegisteredTestSuite
 from forms.authorization_form import fill_login_form
 
 class TestMemberSetting(RegisteredTestSuite):

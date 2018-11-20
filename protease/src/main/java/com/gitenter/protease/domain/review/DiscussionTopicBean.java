@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +23,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "review", name = "discussion_topic")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class DiscussionTopicBean {
+public class DiscussionTopicBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -57,8 +57,8 @@
   <definition name="repository/setup-a-new-repository" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/repository/setup-a-new-repository.jsp" />
   </definition>
-  <definition name="repository/commit" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/repository/commit.jsp" />
+  <definition name="repository/valid-commit" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository/valid-commit.jsp" />
   </definition>
   <definition name="repository/invalid-commit" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/repository/invalid-commit.jsp" />

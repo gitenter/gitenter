@@ -24,6 +24,8 @@ import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +39,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "document")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class DocumentBean extends FileBean {
+public class DocumentBean extends FileBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -65,15 +67,16 @@ public class DocumentBean extends FileBean {
 		return new String(getBlobContent());
 	}
 	
-	/*
-	 * Use together with buildTraceableItemIndex()
-	 */
+	public boolean addTraceableItem(TraceableItemBean traceableItem) {
+		return traceableItems.add(traceableItem);
+	}
+
 	@Transient
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private Map<String,TraceableItemBean> traceableItemMap;
 	
-	public void buildTraceableItemIndex() {
+	private void buildTraceableItemMap() {
 		
 		traceableItemMap = new HashMap<String,TraceableItemBean>();
 		
@@ -82,16 +85,12 @@ public class DocumentBean extends FileBean {
 		}
 	}
 	
-	public boolean addTraceableItem(TraceableItemBean traceableItem) {
-		return traceableItems.add(traceableItem);
-	}
-	
-	/*
-	 * TODO:
-	 * Build "traceableItemMap" by some proxy pattern triggered by this method.
-	 * Remove "buildTraceableItemIndex".
-	 */
 	public TraceableItemBean getTraceableItem(String itemTag) {
+		
+		if (traceableItemMap == null) {
+			buildTraceableItemMap();
+		}
+		
 		return traceableItemMap.get(itemTag);
 	}
 	

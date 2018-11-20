@@ -31,20 +31,36 @@ public class TraceableRepositoryFactory {
 		
 		for (GitPath gitPath : gitFolder.ls()) {
 			
-			/*
-			 * TODO:
-			 * 
-			 * Should implement the filtering conditions that which file we would like
-			 * to analysis the traceable items, such as only parse markdown files.
-			 * 
-			 * > blob.getMimeType().equals("text/markdown")
-			 */
 			if (gitPath instanceof GitFile) {
 				GitFile gitFile = (GitFile)gitPath;
 				
-				TraceableDocument document = new TraceableDocument(gitFile.getRelativePath());
-				document.parse(new String(gitFile.getBlobContent()));
-				repository.addTraceableDocument(document);
+				/*
+				 * TODO:
+				 * Should implement the better filtering conditions.
+				 * 
+				 * TODO:
+				 * Should input the filtering condition into this method. As this package
+				 * should know little about the application logic.
+				 * 
+				 * Probably one good way is to have an intermediate git layer
+				 * in between gitar and protease, and have this `canBeDocument()`
+				 * logic inside of this layer. Enzymark talk to this layer (so it
+				 * completely hide `gitar`. We can also move `FileBean`/... into 
+				 * this layer, so `FileBean.canBeDocument()` can automatically be
+				 * used.
+				 * 
+				 * If later on we replace the `gitar` library to a git microservice
+				 * (so the scaling part is completely hidden by the microservice,
+				 * and `gitar` becomes the testing mock of that microservice),
+				 * only that layer need to be changed.
+				 */
+				if (!gitFile.getRelativePath().equals("gitenter.properties")
+						&& gitFile.getMimeType().equals("text/markdown")) {
+					
+					TraceableDocument document = new TraceableDocument(gitFile.getRelativePath());
+					document.parse(new String(gitFile.getBlobContent()));
+					repository.addTraceableDocument(document);
+				}
 			}
 			else {
 				assert gitPath instanceof GitFolder;

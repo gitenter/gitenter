@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +18,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "review", name = "reviewer")
-public class ReviewerBean extends AttendeeBean {
+public class ReviewerBean extends AttendeeBean implements ModelBean {
 
 	@Column(name="liability_description")
 	private String liabilityDescription;

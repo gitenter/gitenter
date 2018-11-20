@@ -6,7 +6,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.security.core.Authentication;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
-import com.gitenter.protease.exception.RepositoryNameNotUniqueException;
+import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 
 public interface OrganizationManagerService {
 
