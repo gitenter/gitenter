@@ -76,8 +76,11 @@
   <definition name="repository-management/create" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/repository-management/create.jsp" />
   </definition>
-  <definition name="admin/repository-settings" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/repository-settings.jsp" />
+  <definition name="repository-management/settings" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/settings.jsp" />
+  </definition>
+  <definition name="repository-management/profile" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/profile.jsp" />
   </definition>
   <definition name="admin/repository-collaborators" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/admin/repository-collaborators.jsp" />

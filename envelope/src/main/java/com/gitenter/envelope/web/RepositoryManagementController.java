@@ -11,17 +11,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
 import com.gitenter.envelope.service.OrganizationManagerService;
 import com.gitenter.envelope.service.OrganizationService;
+import com.gitenter.envelope.service.RepositoryManagerService;
+import com.gitenter.envelope.service.RepositoryService;
 import com.gitenter.protease.domain.auth.OrganizationBean;
+import com.gitenter.protease.domain.auth.RepositoryBean;
 
 @Controller
 public class RepositoryManagementController {
 	
 	@Autowired OrganizationService organizationService;
 	@Autowired OrganizationManagerService organizationManagerService;
+	@Autowired RepositoryService repositoryService;
+	@Autowired RepositoryManagerService repositoryManagerService;
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
 	public String showCreateRepositoryForm (
@@ -71,8 +77,70 @@ public class RepositoryManagementController {
 		 * mkdir actual happen in the second run. Wonder whether there's a better way to solve
 		 * this problem. 
 		 */
-		organizationManagerService.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
+		repositoryManagerService.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
 
 		return "redirect:/organizations/"+organizationId;
+	}
+
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.GET)
+	public String showRepositorySettings (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		
+		return "repository-management/settings";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.GET)
+	public String showRepositoryProfileSettingsForm (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.fillFromRepositoryBean(repository);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		model.addAttribute("repositoryDTO", repositoryDTO);
+		
+		return "repository-management/profile";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.POST)
+	public String updateRepositoryProfile (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@Valid RepositoryDTO repositoryDTOAfterChange, 
+			Errors errors, 
+			RedirectAttributes model,
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		if (errors.hasErrors()) {
+			
+			model.addAttribute("organization", organization);
+			model.addAttribute("repository", repository);
+			model.addAttribute("repositoryDTO", repositoryDTOAfterChange);
+			
+			return "repository-management/profile";
+		}
+		
+		assert (repository.getName().equals(repositoryDTOAfterChange.getName()));
+		repositoryManagerService.updateRepository(authentication, repository, repositoryDTOAfterChange);
+		
+		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/profile";
 	}
 }

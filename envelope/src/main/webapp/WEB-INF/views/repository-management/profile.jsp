@@ -7,16 +7,17 @@
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a> &rarr; 
-      <span class="nav-current">Settings</span>
+      <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/settings" />">Settings</a> &rarr;
+      <span class="nav-current">Profile</span>
     </nav>
     <article>
       <div>
-      <sf:form method="POST" modelAttribute="repositoryBean" >
+      <sf:form method="POST" modelAttribute="repositoryDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>
             <td class="pre-fill">
-              <c:out value="${repositoryBean.name}" />
+              <c:out value="${repositoryDTO.name}" />
               <sf:hidden path="name" />
             </td>
           </tr>
