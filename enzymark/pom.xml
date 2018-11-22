@@ -13,16 +13,18 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>10</release>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -56,38 +58,39 @@
 		<dependency>
 			<groupId>com.atlassian.commonmark</groupId>
 			<artifactId>commonmark</artifactId>
-			<version>0.11.0</version>
+			<version>${commonmark-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atlassian.commonmark</groupId>
 			<artifactId>commonmark-ext-gfm-tables</artifactId>
-			<version>0.11.0</version>
+			<version>${commonmark-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atlassian.commonmark</groupId>
 			<artifactId>commonmark-ext-gfm-strikethrough</artifactId>
-			<version>0.11.0</version>
+			<version>${commonmark-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
+			<version>3.8.1</version>
 		</dependency>
 		<dependency>
+			<!--
+				TODO:
+				No longer actively maintained.
+				Should upgrade to `commons-configuration2`, but a quick
+				try seems don't work.
+				https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
+			-->
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
 			<version>1.10</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.18</version>
+			<version>1.18.4</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
