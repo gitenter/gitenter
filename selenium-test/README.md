@@ -50,5 +50,5 @@ pip3 install pygit2
 ## Run Tests
 
 ```
-python3 -m unittest test.authorization_test
+python3 -m unittest tests.authorization_test
 ```

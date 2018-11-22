@@ -2,7 +2,7 @@ import unittest
 import time
 from urllib.parse import urlparse, urljoin
 
-from testsuite.base_testsuite import BaseTestSuite
+from testsuites.base_testsuite import BaseTestSuite
 from forms.authorization_form import (
     fill_signup_form,
     fill_login_form

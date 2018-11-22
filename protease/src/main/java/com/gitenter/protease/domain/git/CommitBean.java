@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import com.gitenter.gitar.GitCommit;
+import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 import lombok.Getter;
@@ -35,7 +36,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "git_commit")
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract public class CommitBean {
+abstract public class CommitBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -18,6 +18,7 @@ import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
+import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
@@ -114,7 +115,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 
 	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
-	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
+	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException, RepositoryNameNotUniqueException {
 		
 		RepositoryBean repository = new RepositoryBean();
 		repository.setName(repositoryDTO.getName());
@@ -144,23 +145,26 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 * TODO:
 		 * Consider using task queue to implement git related operations.
 		 */
-		GitBareRepository.getInstance(repositoryDirectory);
+		GitBareRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		
-//		ClassLoader classLoader = getClass().getClassLoader();
-//		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+		/*
+		 * TODO:
+		 * Consider just setup a symlink in here. And the actual `.jar` file goes to a
+		 * different place (in the Chef setup).
+		 */
+		ClassLoader classLoader = getClass().getClassLoader();
+		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
+		gitRepository.addHooks(sampleHooksDirectory);
+		
 //		File configFilesDirectory = new File(classLoader.getResource("config-files").getFile());
 		
 		if (includeSetupFiles.equals(Boolean.FALSE)) {
-//			GitRepository.initBare(repositoryDirectory, sampleHooksDirectory);
 		}
 		else {
 //			/*
 //			 * Here makes a bare repository with one commit (include the
 //			 * configuration file) in it.
-//			 */
-//			GitRepository.initBareWithConfig(repositoryDirectory, sampleHooksDirectory, configFilesDirectory);
-//			
-//			/*
+//			 *
 //			 * Dirty but this part can only be done in here. See comments under GitRepository.
 //			 */
 //			GitLog gitLog = new GitLog(repositoryDirectory, new BranchName("master"), 1, 0);

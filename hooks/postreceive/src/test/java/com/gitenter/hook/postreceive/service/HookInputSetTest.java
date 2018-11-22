@@ -20,13 +20,13 @@ public class HookInputSetTest {
 		String userDir = "/home/git/org_name/repo_name.git";
 		String args[] = {"oldSha", "newSha", "branchName"};
 		
-		HookInputSet hookInputSet = new HookInputSet(userDir, args);
+		HookInputSet input = new HookInputSet(userDir, args);
 		
-		assertEquals(hookInputSet.getBranchName(), "branchName");
-		assertEquals(hookInputSet.getOldSha(), "oldSha");
-		assertEquals(hookInputSet.getNewSha(), "newSha");
+		assertEquals(input.getBranchName(), "branchName");
+		assertEquals(input.getOldSha(), "oldSha");
+		assertEquals(input.getNewSha(), "newSha");
 		
-		assertEquals(hookInputSet.getOrganizationName(), "org_name");
-		assertEquals(hookInputSet.getRepositoryName(), "repo_name");
+		assertEquals(input.getOrganizationName(), "org_name");
+		assertEquals(input.getRepositoryName(), "repo_name");
 	}
 }

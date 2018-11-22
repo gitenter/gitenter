@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
@@ -28,7 +29,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "review", name = "subsection")
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract public class SubsectionBean extends ValidCommitBean {
+abstract public class SubsectionBean extends ValidCommitBean implements ModelBean {
 
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)

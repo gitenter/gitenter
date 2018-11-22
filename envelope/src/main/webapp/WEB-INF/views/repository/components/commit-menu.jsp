@@ -6,8 +6,8 @@
         <table class="hidden">
           <tr>
             <td class="left">
-              <c:if test="${branch != null}">
-              <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branch}/commits/" />">
+              <c:if test="${branchName != null}">
+              <form method="GET" action="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/branches/${branchName}/commits/" />">
                 <input type="submit" value="Browse Historical Commits">
               </form>
               </c:if>
@@ -16,8 +16,8 @@
               <s:url var="repo_url" value="/organizations/${organization.id}/repositories/${repository.id}" />
               <sf:form method="GET" action="${repo_url}">
                 <select name="branch">
-                  <c:forEach items="${repository.branchNames}" var="b">
-                    <option value="${b.name}"><c:out value="Branch: ${b.name}" /></option>
+                  <c:forEach items="${branchNames}" var="bName">
+                    <option value="${bName}"><c:out value="Branch: ${bName}" /></option>
                   </c:forEach>
                 </select>
                 <input type="submit" value="Switch" />

@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,14 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.git.CommitRepository;
-import com.gitenter.protease.domain.git.CommitBean;
-import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.git.FileBean;
-import com.gitenter.protease.domain.git.FolderBean;
-import com.gitenter.protease.domain.git.PathBean;
-import com.gitenter.protease.domain.git.ValidCommitBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,10 +39,12 @@ public class CommitBeanTest {
 
 	@Autowired CommitRepository repository;
 	
+	@Rule public final ExpectedException exception = ExpectedException.none();
+	
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException, ParseException {
+	public void testDbUnitMinimalQueryWorksById() throws IOException, GitAPIException, ParseException {
 		
 		CommitBean item = repository.findById(1).get();
 		
@@ -60,12 +57,32 @@ public class CommitBeanTest {
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 		
 		assertEquals(item.getRepository().getId(), new Integer(1));
+		
+		/*
+		 * Currently if we `getRepository` from a commit object,
+		 * the git related placeholders are not bootstrapped yet.
+		 */
+		exception.expect(NullPointerException.class);
+		item.getRepository().getBranches();
 	}
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
+	public void testDbUnitMinimalQueryWorksByRepositoryIdAndSha() throws IOException, GitAPIException, ParseException {
+		
+		CommitBean item = repository.findByRepositoryIdAndCommitSha(1, "c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73").get(0);	
+		
+		assertEquals(item.getMessage(), "commit\n");
+		assertEquals(item.getAuthor().getName(), "Cong-Xin Qiu");
+		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
+		
+		assertEquals(item.getRepository().getId(), new Integer(1));
+	}
+	
+	@Test
+	@Transactional
+	@DbUnitMinimalDataSetup
 	public void testMinimalFolderStructure() throws IOException, GitAPIException {
 		
 		CommitBean item = repository.findById(1).get();
@@ -86,8 +103,7 @@ public class CommitBeanTest {
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testMinimalFile() throws IOException, GitAPIException {
 	
 		CommitBean item = repository.findById(1).get();
@@ -96,14 +112,15 @@ public class CommitBeanTest {
 		ValidCommitBean validItem = (ValidCommitBean)item;
 		
 		FileBean file = validItem.getFile("file");
+		assertEquals(file.isFile(), true);
+		assertEquals(file.isFolder(), false);
 		assertEquals(file.getName(), "file");
 		assertEquals(new String(file.getBlobContent()), "content");
 	}
 	
 	@Test
 	@Transactional
-	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DbUnitMinimalDataSetup
 	public void testMinimalDocument() throws IOException, GitAPIException {
 	
 		CommitBean item = repository.findById(1).get();

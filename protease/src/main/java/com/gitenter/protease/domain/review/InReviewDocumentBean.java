@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 
 import lombok.Getter;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "review", name = "in_review_document")
-public class InReviewDocumentBean extends DocumentBean {
+public class InReviewDocumentBean extends DocumentBean implements ModelBean {
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)

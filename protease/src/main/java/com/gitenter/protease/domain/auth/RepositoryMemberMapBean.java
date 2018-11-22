@@ -4,20 +4,24 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.*;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import com.gitenter.protease.domain.MapBean;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(schema = "auth", name = "repository_member_map")
-public class RepositoryMemberMapBean {
+public class RepositoryMemberMapBean implements MapBean<RepositoryBean,MemberBean,RepositoryMemberRole> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

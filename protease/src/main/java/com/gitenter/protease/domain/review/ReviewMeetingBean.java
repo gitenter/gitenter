@@ -19,6 +19,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.gitenter.protease.domain.ModelBean;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +28,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "review", name = "review_meeting")
-public class ReviewMeetingBean {
+public class ReviewMeetingBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -40,8 +42,8 @@ public class ReviewMeetingBean {
 	
 	@ManyToMany(targetEntity=AttendeeBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(schema="review", name="review_meeting_attendee_map", 
-			joinColumns=@JoinColumn(name="attendee_id"), 
-			inverseJoinColumns=@JoinColumn(name="review_meeting_id"))
+			joinColumns=@JoinColumn(name="review_meeting_id"), 
+			inverseJoinColumns=@JoinColumn(name="attendee_id"))
 	private List<AttendeeBean> attendees;
 	
 	@NotNull

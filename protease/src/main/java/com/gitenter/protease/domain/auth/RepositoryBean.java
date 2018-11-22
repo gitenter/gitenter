@@ -25,6 +25,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.util.GitPlaceholder;
+import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.TagBean;
@@ -38,7 +39,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "repository")
-public class RepositoryBean {
+public class RepositoryBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -76,6 +77,9 @@ public class RepositoryBean {
 	@Getter(AccessLevel.NONE)
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
+	/*
+	 * Hibernate will smartly `select count(id) from git.git_commit`
+	 */
 	public int getCommitCount() {
 		return commits.size();
 	}
@@ -105,6 +109,14 @@ public class RepositoryBean {
 	
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
 		return branchesPlaceholder.get();
+	}
+	
+	public List<String> getBranchNames() throws IOException, GitAPIException {
+		List<String> branchNames = new ArrayList<String>();
+		for (BranchBean branch : getBranches()) {
+			branchNames.add(branch.getName());
+		}
+		return branchNames;
 	}
 	
 	public interface BranchesPlaceholder extends GitPlaceholder<Collection<BranchBean>> {

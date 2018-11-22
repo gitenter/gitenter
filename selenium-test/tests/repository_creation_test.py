@@ -1,6 +1,7 @@
+from random import randint
 from urllib.parse import urlparse, urljoin
 
-from testsuite.organization_created_testsuite import OrganizationCreatedTestSuite
+from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
 from forms.authorization_form import fill_login_form
 from forms.repository_management_form import fill_create_repository_form
 
@@ -10,7 +11,12 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
     def setUp(self):
         super(TestRepositoryCreation, self).setUp()
 
-        self.repo_name = "repo"
+        # `repo_name` need to be different each time to avoid naming crashing.
+        # Notice that although the entire database/git folder get cleaned up
+        # after each test, the server is not restarted, so in-memory caching
+        # (`GitRepository` in gitar has a dict to keep only one instance for
+        # each distinguishable directory) will believe that repo still exists.
+        self.repo_name = "repo-{}".format(randint(1, 10**10))
         self.repo_display_name = "A Repository"
         self.repo_description = "A Repository Description"
 
@@ -163,3 +169,20 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/create".format(self.org_id))
         assert "size" in self.driver.find_element_by_id("name.errors").text
         assert "size" in self.driver.find_element_by_id("displayName.errors").text
+
+    def test_organization_cannot_create_two_repositories_with_the_same_name(self):
+        repo_name = "repo"
+        repo_display_name = "A Repository"
+        repo_description = "A Repository Description"
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
+        fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)
+        assert self.repo_display_name not in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
+        fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)
+        assert "status=500" in self.driver.page_source
+        assert "Organizations can only have distinguishable repository names." in self.driver.page_source

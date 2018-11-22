@@ -26,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "auth", name = "organization")
-public class OrganizationBean extends ModelBean {
+public class OrganizationBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
