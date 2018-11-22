@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 /* *************************************************************************
- * General replacement 
+ * General replacement
  * ************************************************************************* */
 
 body, img, form, table, tr, td, div, a {
@@ -12,7 +12,7 @@ body, img, form, table, tr, td, div, a {
 }
 
 form {
-	display: inline-block; 
+	display: inline-block;
 }
 
 table {
@@ -28,7 +28,7 @@ h1, h2, h3, h4, h5, h6 {
 p {
 	border: 0px;
 	margin: 0px 0px 5px 0px;
-	padding: 0px;	
+	padding: 0px;
 }
 
 h1 { font-size: 30px; }
@@ -40,7 +40,7 @@ h6 { font-size: 20px; }
 
 img.center {
 	display: block;
-	margin: 0 auto;	
+	margin: 0 auto;
 }
 
 p.center {
@@ -78,13 +78,13 @@ header img.logo {
 }
 
 header div.text, header form {
-	
+
 	float: right;
 	overflow: auto;
 }
 
 header div.text, header input[type=submit] {
-	
+
 	background-color: #bbbbbb;
 	color: #666666;
 }
@@ -93,7 +93,7 @@ header div.text {
 	border: 0px;
 	padding: 15px 18px 7px 18px;
 	margin: 0px;
-	
+
 	font-size: 17px;
 	font-weight: normal;
 	text-align: center;
@@ -101,11 +101,11 @@ header div.text {
 }
 
 header input[type=submit] {
-	
+
 	border: 0px;
 	padding: 16px 16px 8px 16px;
 	margin: 0px;
-	
+
    	font-size: 16px;
 	font-weight: bold;
 	text-align: center;
@@ -124,7 +124,7 @@ nav {
 
 	color: #888888;
 	background-color: #dddddd;
-	
+
 	font-size: 14px;
 	font-weight: bold;
 
@@ -141,6 +141,33 @@ nav a:link { color: #444444; text-decoration: none; }
 nav a:visited { color: #444444; text-decoration: none; }
 nav a:hover { color: #aaaaaa; text-decoration: none; }
 nav a:active { color: #aaaaaa; text-decoration: none;}
+
+nav input[type=submit] {
+
+	background-color: #dddddd;
+	color: #2fc8a8;
+	border-color: #2fc8a8;
+
+	border: 1px solid;
+	margin: 0px 5px 0px 5px;
+	padding: 3px 5px 3px 5px;
+	border-radius: 5px;
+
+	font-weight: normal;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+
+	transition-duration: 0.4s;
+}
+
+nav input[type=submit]:hover {
+
+	background-color: #2fc8a8;
+	color: #dddddd;
+	border-color: #2fc8a8;
+}
 
 /**************************** Article details ********************************/
 
@@ -162,7 +189,7 @@ article a:active { color: #444444; text-decoration: none; }
 
 article div {
 	/*
-	 * Margin at top and bottom. So things will not look like next to each 
+	 * Margin at top and bottom. So things will not look like next to each
 	 * other.
 	 */
 	margin-top: 5px;
@@ -193,11 +220,11 @@ div.error {
 	color: #ff0000;
 }
 
-article input[type=checkbox], 
-article input[type=text], 
-article input[type=password], 
-article input[type=email], 
-article textarea, 
+article input[type=checkbox],
+article input[type=text],
+article input[type=password],
+article input[type=email],
+article textarea,
 article select {
 
 	border: 1px solid #bbbbbb;
@@ -209,14 +236,14 @@ article select {
 	color: #444444;
 }
 
-article input[type=submit], 
+article input[type=submit],
 article input[type=button] {
 
-	border: 1px solid; 
+	border: 1px solid;
 	margin: 0px;
 	padding: 5px 10px 5px 10px;
 	border-radius: 10px;
-	
+
 	font-weight: normal;
 	text-align: center;
 	text-decoration: none;
@@ -237,7 +264,7 @@ article code {
 	border-radius: 5px;
 	margin: 0px;
  	padding: 0px 5px 0px 5px;
-	
+
 	font-size: 20px;
 	font-weight: normal;
 	text-align: left;
@@ -283,8 +310,8 @@ article table.hidden {
 	width: 100%;
 
 	/*
-	 * If a column has a width set, then no matter what the content is, 
-	 * it will be the specified width. Columns without a width set will 
+	 * If a column has a width set, then no matter what the content is,
+	 * it will be the specified width. Columns without a width set will
 	 * divide whatever room is left over among themselves.
 	 */
 	table-layout: fixed;
@@ -322,7 +349,7 @@ footer {
 
 	color: #bbbbbb;
 	background-color: #ffffff;
-	
+
 	font-size: 16px;
 	text-align: center;
 }
@@ -339,8 +366,8 @@ article table.fill-in {
 	margin: 10px 0px 5px 0px;
 
 	/*
-	 * I want to put this table to the center. But it seems 
-	 * doesn't work? 
+	 * I want to put this table to the center. But it seems
+	 * doesn't work?
 	 */
 	float: center;
 }
@@ -356,7 +383,7 @@ article table.fill-in td {
 }
 
 article table.fill-in td:nth-child(1) {
-	
+
 	width: 250px;
 
 	/*
@@ -365,25 +392,25 @@ article table.fill-in td:nth-child(1) {
 	 */
 	padding-top: 6px;
 	padding-bottom: 6px;
-	
+
 	text-align: right;
 }
 
 article table.fill-in td:nth-child(2) {
-	
+
 	width: 600px;
-	
+
 	padding-top: 1px;
 	padding-bottom: 1px;
-	
+
 	text-align: left;
 }
 
-article table.fill-in td:nth-child(2).pre-fill, 
-article table.fill-in td:nth-child(2).word, 
-article table.fill-in td:nth-child(2).error, 
+article table.fill-in td:nth-child(2).pre-fill,
+article table.fill-in td:nth-child(2).word,
+article table.fill-in td:nth-child(2).error,
 article table.fill-in td:nth-child(2).success {
-	
+
 	/*
 	 * Padding equals the second column (3px) plus the
 	 * form padding (5px).
@@ -416,9 +443,9 @@ article table.fill-in td.button {
 	padding-bottom: 5px;
 }
 
-article table.fill-in input[type=text], 
-article table.fill-in input[type=password], 
-article table.fill-in input[type=email] {	
+article table.fill-in input[type=text],
+article table.fill-in input[type=password],
+article table.fill-in input[type=email] {
 	width: 400px;
 }
 
@@ -432,17 +459,17 @@ article table.fill-in textarea.bigger {
 	height: 150px;
 }
 
-article table.fill-in input[type=submit], 
+article table.fill-in input[type=submit],
 article table.fill-in input[type=button] {
 
 	background-color: #e6e472;
 	color: #444444;
-	border-color: #e6e472; 
+	border-color: #e6e472;
 
 	font-size: 28px;
 }
 
-article table.fill-in input[type=submit]:hover, 
+article table.fill-in input[type=submit]:hover,
 article table.fill-in input[type=button]:hover {
 	background-color: #ffffff;
 	color: #e6e472;
@@ -461,7 +488,7 @@ article div.login table.fill-in td {
 	font-size: 32px;
 }
 
-article div.login table.fill-in td input[type=text], 
+article div.login table.fill-in td input[type=text],
 article div.login table.fill-in td input[type=password] {
 	font-size: 32px;
 	width: 400px;
@@ -496,8 +523,8 @@ article div.login table.fill-in td.button input[type=submit] {
 
 	background-color: #2fc8a8;
 	color: #444444;
-	border: 1px solid #2fc8a8; 
-	
+	border: 1px solid #2fc8a8;
+
 	font-size: 40px;
 }
 
@@ -510,7 +537,7 @@ article div.login table.fill-in td.button input[type=submit]:hover {
 
 /********************************* Menu ************************************/
 
-article div.menu input[type=text], 
+article div.menu input[type=text],
 article select {
 
 	/*
@@ -524,7 +551,7 @@ article div.menu input[type=submit] {
 
 	background-color: #ffffff;
 	color: #c53bce;
-	border-color: #c53bce; 
+	border-color: #c53bce;
 
 	font-size: 28px;
 }
@@ -552,7 +579,7 @@ article h6 input[type=submit] {
 
 	background-color: #ffffff;
 	color: #2fc8a8;
-	border-color: #2fc8a8; 
+	border-color: #2fc8a8;
 
 	vertical-align: middle;
 	font-size: 16px;
@@ -586,9 +613,9 @@ article h6 span.explanation {
  * ************************************************************************* */
 
 article table.info {
-	
+
 	margin: 10px 0px 10px 0px;
-	
+
 	width: 100%;
 	background-color: #ffffff;
 }
@@ -640,7 +667,7 @@ article a.paging {
 	font-size: 16px;
     text-decoration: none;
     display: inline-block;
-    
+
 	background-color: #dddddd;
 	color: 777777;
 
@@ -690,7 +717,7 @@ article div.folder-structure ul li input[type=submit] {
 	border-radius: 5px;
 	margin: 3px 5px 3px 5px;
  	padding: 0px 5px 0px 5px;
-	
+
 	font-size: 28px;
 	font-weight: normal;
 	display: inline-block;
@@ -744,7 +771,7 @@ article ul.user-list input[type=submit].delete {
 	color: #444444;
 
 	padding: 0px 5px 0px 5px;
-	
+
 	font-size: 20px;
 	font-weight: normal;
 	text-align: center;
@@ -793,7 +820,7 @@ article ul.user-list input[type=submit].delete:hover {
 
 article div.markdown table,
 article div.markdown table tr th,
-article div.markdown table tr td {	
+article div.markdown table tr td {
 	border: 1px solid #bbbbbb;
 }
 
@@ -835,7 +862,7 @@ article div.markdown p {
 }
 
 article div.markdown table {
-	margin: 10px 0px 15px 0px;	
+	margin: 10px 0px 15px 0px;
 }
 
 article div.markdown li {

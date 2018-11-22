@@ -32,14 +32,12 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	@Autowired GitSource gitSource;
 	
-	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
-	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
+	public void createRepository(Authentication authentication, OrganizationBean organization, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
+				
+		RepositoryBean repository = repositoryDTO.toBean();
 		
-		RepositoryBean repository = new RepositoryBean();
-		repositoryDTO.updateRepositoryBean(repository);
-		
-		OrganizationBean organization = organizationRepository.findById(organizationId).get();
 		organization.addRepository(repository);
 		
 		/*
@@ -90,10 +88,11 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		}
 	}
 
+	@PreAuthorize("hasPermission(#repositoryBean, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
 	public void updateRepository(Authentication authentication, RepositoryBean repositoryBean, RepositoryDTO repositoryDTO) throws IOException {
 		
-		repositoryDTO.updateRepositoryBean(repositoryBean);
+		repositoryDTO.updateBean(repositoryBean);
 		repositoryRepository.saveAndFlush(repositoryBean);
 	}
 }

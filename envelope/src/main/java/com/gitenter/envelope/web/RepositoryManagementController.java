@@ -77,7 +77,7 @@ public class RepositoryManagementController {
 		 * mkdir actual happen in the second run. Wonder whether there's a better way to solve
 		 * this problem. 
 		 */
-		repositoryManagerService.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
+		repositoryManagerService.createRepository(authentication, organization, repositoryDTO, includeSetupFiles);
 
 		return "redirect:/organizations/"+organizationId;
 	}
@@ -107,7 +107,7 @@ public class RepositoryManagementController {
 		OrganizationBean organization = repository.getOrganization();
 		
 		RepositoryDTO repositoryDTO = new RepositoryDTO();
-		repositoryDTO.fillFromRepositoryBean(repository);
+		repositoryDTO.fillFromBean(repository);
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);

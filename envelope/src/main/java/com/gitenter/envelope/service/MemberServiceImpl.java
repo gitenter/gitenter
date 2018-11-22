@@ -50,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
 		MemberBean member = getMemberByUsername(authentication.getName());
 		
 		MemberProfileDTO profile = new MemberProfileDTO();
-		profile.fillFromMemberBean(member);
+		profile.fillFromBean(member);
 		
 		return profile;
 	}
@@ -64,7 +64,7 @@ public class MemberServiceImpl implements MemberService {
 		 * attribute is not necessary.
 		 */
 		MemberRegisterDTO profileAndPassword = new MemberRegisterDTO();
-		profileAndPassword.fillFromMemberBean(member);
+		profileAndPassword.fillFromBean(member);
 		
 		return profileAndPassword;
 	}
@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
 	public void updateMember(MemberProfileDTO profile) {
 		
 		MemberBean memberBean = getMemberByUsername(profile.getUsername());
-		profile.updateMemberBean(memberBean);
+		profile.updateBean(memberBean);
 		
 		/* Since "saveAndFlush()" will decide by itself whether the operation is
 		 * INSERT or UPDATE, the bean being actually modified and refreshed should 
@@ -103,10 +103,7 @@ public class MemberServiceImpl implements MemberService {
 	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
-		
-		OrganizationBean organization = new OrganizationBean();
-		organization.setName(organizationDTO.getName());
-		organization.setDisplayName(organizationDTO.getDisplayName());
+		OrganizationBean organization = organizationDTO.toBean();
 		
 		/*
 		 * Need to save first. Otherwise when saving 

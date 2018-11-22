@@ -1,5 +1,6 @@
 import unittest
 from urllib.parse import urlparse, urljoin
+from selenium.webdriver.common.keys import Keys
 
 from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
 from forms.authorization_form import fill_login_form
@@ -33,6 +34,38 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings']".format(self.org_id)))
+
+    def test_organization_manager_modify_organization_profile(self):
+        display_name_append = " v2"
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/profile".format(self.org_id)))
+        display_name_form_fill = self.driver.find_element_by_id("displayName")
+
+        self.assertEqual(self.driver.find_element_by_id("name").get_attribute("value"), self.org_name)
+        self.assertEqual(display_name_form_fill.get_attribute("value"), self.org_display_name)
+
+        for i in range(50):
+            display_name_form_fill.send_keys(Keys.ARROW_RIGHT)
+        display_name_form_fill.send_keys(display_name_append)
+        display_name_form_fill.submit()
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/settings/profile".format(self.org_id))
+        assert "Changes has been saved successfully!" in self.driver.page_source
+        self.assertEqual(self.driver.find_element_by_id("displayName").get_attribute("value"), self.org_display_name+display_name_append)
+
+    def test_organization_member_cannot_modify_organization_profile(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/profile".format(self.org_id)))
+        display_name_form_fill = self.driver.find_element_by_id("displayName")
+
+        display_name_form_fill.send_keys(" v2")
+        display_name_form_fill.submit()
+        assert "status=403" in self.driver.page_source
 
     def test_organization_manager_add_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))

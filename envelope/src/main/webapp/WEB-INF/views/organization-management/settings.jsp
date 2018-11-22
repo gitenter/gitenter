@@ -10,6 +10,7 @@
       <span class="nav-current">Settings</span>
     </nav>
     <article>
+      <h3><a href="<s:url value="/organizations/${organization.id}/settings/profile" />">Profile</a></h3>
       <h3><a href="<s:url value="/organizations/${organization.id}/settings/members" />">Members</a></h3>
       <h3><a href="<s:url value="/organizations/${organization.id}/settings/managers" />">Managers</a></h3>
     </article>

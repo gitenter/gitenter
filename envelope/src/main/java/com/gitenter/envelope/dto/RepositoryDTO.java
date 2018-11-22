@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RepositoryDTO {
+public class RepositoryDTO implements CreateReadUpdateDTO<RepositoryBean> {
 
 	@NotNull
 	@Size(min=2, max=16)
@@ -27,7 +27,8 @@ public class RepositoryDTO {
 	
 	private Boolean isPublic;
 	
-	public void fillFromRepositoryBean(RepositoryBean repositoryBean) {
+	@Override
+	public void fillFromBean(RepositoryBean repositoryBean) {
 		
 		this.name = repositoryBean.getName();
 		this.displayName = repositoryBean.getDisplayName();
@@ -35,11 +36,26 @@ public class RepositoryDTO {
 		this.isPublic = repositoryBean.getIsPublic();
 	}
 	
-	public void updateRepositoryBean (RepositoryBean repositoryBean) {
+	@Override
+	public void updateBean (RepositoryBean repositoryBean) {
+		
+		assert repositoryBean.getName().equals(name);
+		
+		repositoryBean.setDisplayName(displayName);
+		repositoryBean.setDescription(description);
+		repositoryBean.setIsPublic(isPublic);
+	}
+
+	@Override
+	public RepositoryBean toBean() {
+		
+		RepositoryBean repositoryBean = new RepositoryBean();
 		
 		repositoryBean.setName(name);
 		repositoryBean.setDisplayName(displayName);
 		repositoryBean.setDescription(description);
 		repositoryBean.setIsPublic(isPublic);
+		
+		return repositoryBean;
 	}
 }

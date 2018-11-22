@@ -21,7 +21,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MemberProfileDTO {
+public class MemberProfileDTO implements ReadUpdateDTO<MemberBean> {
 	
 	@NotNull
 	@Size(min=2, max=16)
@@ -35,7 +35,8 @@ public class MemberProfileDTO {
 	@Email
 	private String email;
 	
-	public void fillFromMemberBean (MemberBean memberBean) {
+	@Override
+	public void fillFromBean(MemberBean memberBean) {
 		
 		/*
 		 * Since password cannot be reversely analyzed,
@@ -46,7 +47,8 @@ public class MemberProfileDTO {
 		this.email = memberBean.getEmail();
 	}
 	
-	public void updateMemberBean (MemberBean memberBean) {
+	@Override
+	public void updateBean(MemberBean memberBean) {
 		
 		/*
 		 * Since this class doesn't cover all attributes of "MemberBean"

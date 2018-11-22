@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.envelope.service.MemberService;
 import com.gitenter.envelope.service.OrganizationManagerService;
 import com.gitenter.envelope.service.OrganizationService;
+import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
 public class OrganizationManagementController {
@@ -49,13 +51,54 @@ public class OrganizationManagementController {
 	}
 
 	@RequestMapping(value="/organizations/{organizationId}/settings", method=RequestMethod.GET)
-	public String manageOrganizationManagers (
+	public String showOrganizationSettings (
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
 		
 		return "organization-management/settings";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/profile", method=RequestMethod.GET)
+	public String showOrganizationProfileSettingsForm (
+			@PathVariable Integer organizationId,
+			Model model) throws Exception {
+		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		OrganizationDTO organizationDTO = new OrganizationDTO();
+		organizationDTO.fillFromBean(organization);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("organizationDTO", organizationDTO);
+		
+		return "organization-management/profile";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/profile", method=RequestMethod.POST)
+	public String updateOrganizationProfile (
+			@PathVariable Integer organizationId,
+			@Valid OrganizationDTO organizationDTOAfterChange, 
+			Errors errors, 
+			RedirectAttributes model,
+			Authentication authentication) throws Exception {
+		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		if (errors.hasErrors()) {
+			
+			model.addAttribute("organization", organization);
+			model.addAttribute("organizationDTO", organizationDTOAfterChange);
+			
+			return "organization-management/profile";
+		}
+		
+		assert (organization.getName().equals(organizationDTOAfterChange.getName()));
+		organizationManagerService.updateOrganization(authentication, organization, organizationDTOAfterChange);
+		
+		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
+		return "redirect:/organizations/"+organizationId+"/settings/profile";
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
@@ -76,7 +119,8 @@ public class OrganizationManagementController {
 			@PathVariable Integer organizationId,
 			@RequestParam(value="username") String username) throws Exception {
 		
-		organizationManagerService.addOrganizationMember(organizationId, username);		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		organizationManagerService.addOrganizationMember(organization, username);		
 		/*
 		 * TODO:
 		 * Raise errors and redirect to the original page,
@@ -91,7 +135,8 @@ public class OrganizationManagementController {
 			@PathVariable Integer organizationId,
 			@RequestParam(value="username") String username) throws Exception {
 		
-		organizationManagerService.removeOrganizationMember(organizationId, username);		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		organizationManagerService.removeOrganizationMember(organization, username);		
 		
 		return "redirect:/organizations/"+organizationId+"/settings/members";
 	}
@@ -115,7 +160,8 @@ public class OrganizationManagementController {
 			@PathVariable Integer organizationId,
 			@RequestParam(value="username") String username) throws Exception {
 		
-		organizationManagerService.addOrganizationManager(organizationId, username);		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		organizationManagerService.addOrganizationManager(organization, username);		
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
 	}
@@ -135,7 +181,8 @@ public class OrganizationManagementController {
 		 * easier.
 		 */
 		if (!username.equals(authentication.getName())) {
-			organizationManagerService.removeOrganizationManager(organizationId, username);	
+			OrganizationBean organization = organizationService.getOrganization(organizationId);
+			organizationManagerService.removeOrganizationManager(organization, username);	
 		}
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";

@@ -6,13 +6,19 @@
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <span class="nav-current"><c:out value="${organization.displayName}" /></span>
+          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)">
+            <s:url var="manager_url" value="/organizations/${organization.id}/settings" />
+            <sf:form method="GET" action="${manager_url}">
+              <input type="submit" value="Settings" />
+            </sf:form>
+          </security:authorize>
     </nav>
     <article>
       <div class="left-wide">
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
-          <security:authorize access="hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)">
+          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)">
             <sf:form method="GET" action="${create_repo_url}">
               <input type="submit" value="+" />
             </sf:form>
@@ -25,16 +31,6 @@
               <c:if test="${repository.isPublic.equals(true)}">Public</c:if>
               <c:if test="${repository.isPublic.equals(false)}">Private</c:if>
             </span>
- <%--           <security:authorize access="@organizationService.isManagedBy(#organization.id, authentication)">--%>
-              <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
-              <sf:form method="GET" action="${repo_settings_url}">
-                <input type="submit" value="Settings" />
-              </sf:form>
-              <s:url var="repo_collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
-              <sf:form method="GET" action="${repo_collaborators_url}">
-                <input type="submit" value="Collaborators" />
-              </sf:form>
- <%--         	</security:authorize>--%>
           </h5>
           <p><c:out value="${repository.description}" /></p>
         </c:forEach>
@@ -42,12 +38,6 @@
       <div class="right-narrow">
         <h3>
           Members
-          <security:authorize access="hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)">
-            <s:url var="manager_url" value="/organizations/${organization.id}/settings" />
-            <sf:form method="GET" action="${manager_url}">
-              <input type="submit" value="Settings" />
-            </sf:form>
-          </security:authorize>
         </h3>
         <ul class="user-list">
           <c:forEach var="member" items="${members}">

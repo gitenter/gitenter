@@ -1,10 +1,17 @@
 package com.gitenter.envelope.service;
 
-public interface OrganizationManagerService {
+import org.springframework.security.core.Authentication;
 
-	public void addOrganizationMember(Integer organizationId, String username);
-	public void removeOrganizationMember(Integer organizationId, String username);
+import com.gitenter.envelope.dto.OrganizationDTO;
+import com.gitenter.protease.domain.auth.OrganizationBean;
+
+public interface OrganizationManagerService {
 	
-	public void addOrganizationManager(Integer organizationId, String username);
-	public void removeOrganizationManager(Integer organizationId, String username);
+	public void updateOrganization(Authentication authentication, OrganizationBean organizationBean, OrganizationDTO organizationDTO);
+	
+	public void addOrganizationMember(OrganizationBean organization, String username);
+	public void removeOrganizationMember(OrganizationBean organization, String username);
+	
+	public void addOrganizationManager(OrganizationBean organization, String username);
+	public void removeOrganizationManager(OrganizationBean organization, String username);
 }

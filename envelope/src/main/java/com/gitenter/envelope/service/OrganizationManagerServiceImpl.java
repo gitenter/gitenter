@@ -4,9 +4,11 @@ import java.util.ListIterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -22,23 +24,27 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
-	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
-	public void addOrganizationMember(Integer organizationId, String username) {
+	public void updateOrganization(Authentication authentication, OrganizationBean organizationBean, OrganizationDTO organizationDTO) {
 		
-		OrganizationBean organization = organizationRepository.findById(organizationId).get();
+		organizationDTO.updateBean(organizationBean);
+		organizationRepository.saveAndFlush(organizationBean);
+	}
+	
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@Override
+	public void addOrganizationMember(OrganizationBean organization, String username) {
+				
 		MemberBean member = memberRepository.findByUsername(username).get(0);
 		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MEMBER);
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
 	
-	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Transactional
 	@Override
-	public void removeOrganizationMember(Integer organizationId, String username) {
-		
-		OrganizationBean organization = organizationRepository.findById(organizationId).get();
-		System.out.println(organization.getOrganizationMemberMaps().size());
+	public void removeOrganizationMember(OrganizationBean organization, String username) {
 		
 		ListIterator<OrganizationMemberMapBean> iter = organization.getOrganizationMemberMaps().listIterator();
 		while(iter.hasNext()){
@@ -53,11 +59,10 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		}
 	}
 	
-	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
-	public void addOrganizationManager(Integer organizationId, String username) {
+	public void addOrganizationManager(OrganizationBean organization, String username) {
 		
-		OrganizationBean organization = organizationRepository.findById(organizationId).get();
 		for (OrganizationMemberMapBean map : organization.getOrganizationMemberMaps()) {
 			if (map.getMember().getUsername().equals(username)) {
 				/*
@@ -73,11 +78,10 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		}
 	}
 	
-	@PreAuthorize("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
-	public void removeOrganizationManager(Integer organizationId, String username) {
+	public void removeOrganizationManager(OrganizationBean organization, String username) {
 	
-		OrganizationBean organization = organizationRepository.findById(organizationId).get();
 		for (OrganizationMemberMapBean map : organization.getOrganizationMemberMaps()) {
 			if (map.getMember().getUsername().equals(username)) {
 				/*
