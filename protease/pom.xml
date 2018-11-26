@@ -24,7 +24,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
-					<release>10</release>
+					<release>8</release>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -178,39 +178,6 @@
 			<artifactId>mockito-core</artifactId>
 			<version>2.18.3</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!--
-			The following four packages are added because JAXB API
-			are deprecated for Java 9+. The solution is to add those
-			packages back manually, as suggested by
-			https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j
-
-			TODO:
-			Since the only place which uses these packages are
-			`com.gitenter.protease.config.JpaConfig` which uses Hibernate
-			entity manager, the alternative solution is to rewrite that
-			part so this dependency no longer exist.
-		-->
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>${jaxb-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>${jaxb-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>${jaxb-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 

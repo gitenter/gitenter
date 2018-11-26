@@ -12,9 +12,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>10</java.version>
-		<maven.compiler.source>10</maven.compiler.source>
-		<maven.compiler.target>10</maven.compiler.target>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring-version>5.1.2.RELEASE</spring-version>
 		<jaxb-version>2.3.0</jaxb-version>
 	</properties>
@@ -25,21 +25,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.1.0</version>
-				<dependencies>
-					<!--
-						TODO:
-						This dependency is for temperarily support of Java 10.
-						Remove it when not necessary.
-						https://stackoverflow.com/questions/49398894/unable-to-compile-simple-java-10-java-11-project-with-maven/51586202#51586202
-					-->
-					<dependency>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
-						<version>7.0</version> <!-- Use newer version of ASM -->
-					</dependency>
-				</dependencies>
 				<configuration>
-					<release>10</release>
+					<release>8</release>
 					<archive>
 						<manifest>
 							<mainClass>com.gitenter.hook.postreceive.PostReceiveApplication</mainClass>
