@@ -7,7 +7,7 @@
 	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
 
-	<name>gihook post-receive</name>
+	<name>post-receive hook</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,14 +15,18 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring-version>5.0.2.RELEASE</spring-version>
+		<spring-version>5.1.2.RELEASE</spring-version>
+		<jaxb-version>2.3.0</jaxb-version>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
 				<configuration>
+					<release>8</release>
 					<archive>
 						<manifest>
 							<mainClass>com.gitenter.hook.postreceive.PostReceiveApplication</mainClass>
@@ -70,42 +74,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
-		</dependency>
-		<!--
-			TODO:
-			The following javax and sun packages are for solving the
-			"java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException"
-			error, raised by the `entityManagerFactory` inside of
-			`com/gitenter/protease/config/JpaConfig.class`.
-
-			Without the import it works with Java 8, and with
-			`==add-modules java.xml.bind` it works with Java 9/10.
-
-			The dependencies are added in here so it can work in all cases,
-			but in the long term we should consider refactoring `JpaConfig`
-			to remove this dependency.
-
-			Refer to: https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j
-		-->
-		<dependency>
-		    <groupId>javax.xml.bind</groupId>
-		    <artifactId>jaxb-api</artifactId>
-		    <version>2.2.11</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.sun.xml.bind</groupId>
-		    <artifactId>jaxb-core</artifactId>
-		    <version>2.2.11</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.sun.xml.bind</groupId>
-		    <artifactId>jaxb-impl</artifactId>
-		    <version>2.2.11</version>
-		</dependency>
-		<dependency>
-		    <groupId>javax.activation</groupId>
-		    <artifactId>activation</artifactId>
-		    <version>1.1.1</version>
 		</dependency>
 
 		<!-- Test -->
