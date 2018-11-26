@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring-version>5.1.2.RELEASE</spring-version>
+		<spring-data-version>2.1.2.RELEASE</spring-data-version>
 		<jaxb-version>2.3.0</jaxb-version>
 	</properties>
 
@@ -68,12 +69,12 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
-			<version>2.0.2.RELEASE</version>
+			<version>${spring-data-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>2.0.2.RELEASE</version>
+			<version>${spring-data-version}</version>
 		</dependency>
 		<!--<dependency>
 			<groupId>javax.persistence</groupId>
@@ -178,6 +179,38 @@
 			<artifactId>mockito-core</artifactId>
 			<version>2.18.3</version>
 			<scope>test</scope>
+		</dependency>
+
+		<!--
+			The following four packages are added because JAXB API
+			are deprecated for Java 9+. The solution is to add those
+			packages back manually, as suggested by
+			https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j
+			TODO:
+			Since the only place which uses these packages are
+			`com.gitenter.protease.config.JpaConfig` which uses Hibernate
+			entity manager, the alternative solution is to rewrite that
+			part so this dependency no longer exist.
+		-->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${jaxb-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>${jaxb-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 
