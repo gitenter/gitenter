@@ -74,8 +74,8 @@ public class OrganizationBean implements ModelBean {
 		return items;
 	}
 	
-	public Collection<RepositoryBean> getRepositories(Boolean isPublic) {
-		Collection<RepositoryBean> items = new ArrayList<RepositoryBean>();
+	public List<RepositoryBean> getRepositories(Boolean isPublic) {
+		List<RepositoryBean> items = new ArrayList<RepositoryBean>();
 		for (RepositoryBean repository : repositories) {
 			if (repository.getIsPublic().equals(isPublic)) {
 				items.add(repository);

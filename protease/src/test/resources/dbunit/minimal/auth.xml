@@ -5,5 +5,5 @@
 	<organization id="1" name="organization" display_name="Organization" />
 	<organization_member_map id="1" member_id="1" organization_id="1" role_shortname="G"/>
 	<repository id="1" organization_id="1" name="repository" display_name="Repository" description="Repo description" is_public="true" />
-	<repository_member_map id="1" repository_id="1" member_id="1" role_shortname="E" />
+	<repository_member_map id="1" repository_id="1" member_id="1" role_shortname="O" />
 </dataset>

@@ -150,8 +150,8 @@ public class RepositoryBean implements ModelBean {
 	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<ReviewBean> reviews;
 	
-	public Collection<MemberBean> getMembers(RepositoryMemberRole role) {
-		Collection<MemberBean> items = new ArrayList<MemberBean>();
+	public List<MemberBean> getMembers(RepositoryMemberRole role) {
+		List<MemberBean> items = new ArrayList<MemberBean>();
 		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map.getMember());
@@ -167,14 +167,6 @@ public class RepositoryBean implements ModelBean {
 	void addMap(RepositoryMemberMapBean map) {
 		repositoryMemberMaps.add(map);
 	}
-	
-//	public void addMember (MemberBean member, RepositoryMemberRole role) {
-//		RepositoryMemberMapBean map = new RepositoryMemberMapBean();
-//		map.setRepository(this);
-//		map.setMember(member);
-//		map.setRole(role);
-//		repositoryMemberMaps.add(map);
-//	}
 	
 	/*
 	 * Not working, because repositoryRepository.saveAndFlush() cannot 

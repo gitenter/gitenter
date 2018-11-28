@@ -2,6 +2,8 @@ package com.gitenter.protease.domain.auth;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,6 @@ import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
-import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
-import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -67,7 +66,7 @@ public class OrganizationBeanTest {
 	@Transactional
 	@DbUnitMinimalDataSetup
 	@DatabaseTearDown
-	public void testAddNewRepository() throws RepositoryNameNotUniqueException {
+	public void testAddNewRepository() throws IOException {
 		
 		RepositoryBean repository = new RepositoryBean();
 		repository.setName("new_repository");
@@ -86,12 +85,27 @@ public class OrganizationBeanTest {
 		repositoryRepository.saveAndFlush(repository);
 		
 		MemberBean member = memberRepository.findById(1).get();
-		assertEquals(member.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 0);
+		assertEquals(member.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 1);
 		
 		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, member, RepositoryMemberRole.ORGANIZER);
 		repositoryMemberMapRepository.saveAndFlush(map);
 		
 		MemberBean updatedMember = memberRepository.findById(1).get();
-		assertEquals(updatedMember.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 1);
+		assertEquals(updatedMember.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 2);
+		for (RepositoryBean iterRepository : updatedMember.getRepositories(RepositoryMemberRole.ORGANIZER)) {
+			switch(iterRepository.getName()) {
+			case "repository":
+				break;
+			case "new_repository":
+				assertEquals(iterRepository.getDisplayName(), "New Repository");
+				break;
+			default:
+				throw new IOException();
+			}	
+		}
+		
+		RepositoryBean updatedNewRepository = repositoryRepository.findByOrganizationNameAndRepositoryName(organization.getName(), "new_repository").get(0);
+		assertEquals(updatedNewRepository.getMembers(RepositoryMemberRole.ORGANIZER).size(), 1);
+		assertEquals(updatedNewRepository.getMembers(RepositoryMemberRole.ORGANIZER).get(0).getUsername(), member.getUsername());
 	}
 }

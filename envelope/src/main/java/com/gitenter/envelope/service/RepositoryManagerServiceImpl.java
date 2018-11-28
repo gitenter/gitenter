@@ -95,4 +95,23 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		repositoryDTO.updateBean(repositoryBean);
 		repositoryRepository.saveAndFlush(repositoryBean);
 	}
+	
+	@PreAuthorize("hasPermission(#repositoryBean, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@Override
+	public void addCollaborator(
+			Authentication authentication, RepositoryBean repository, 
+			MemberBean collaborator, String roleName) throws IOException {
+		
+		RepositoryMemberRole role = RepositoryMemberRole.valueOf(roleName);
+		
+		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, collaborator, role);
+		repositoryMemberMapRepository.saveAndFlush(map);
+	}
+
+	@PreAuthorize("hasPermission(#repositoryBean, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@Override
+	public void removeCollaborator(Authentication authentication, RepositoryBean repositoryBean, MemberBean collaborator) throws IOException {
+		
+		// TODO Auto-generated method stub
+	}
 }
