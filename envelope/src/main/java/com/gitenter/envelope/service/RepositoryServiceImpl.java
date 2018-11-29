@@ -48,7 +48,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 			return repositoryRepository.findById(repositoryId).get();
 		}
 		else {
-			throw new IdNotExistException("repository", repositoryId);
+			throw new IdNotExistException(RepositoryBean.class, repositoryId);
 		}
 	}
 	
