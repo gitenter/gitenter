@@ -11,4 +11,5 @@
     </nav>
     <article>
       <h3><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/settings/profile" />">Profile</a></h3>
+      <h3><a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators" />">Collaborators</a></h3>
     </article>

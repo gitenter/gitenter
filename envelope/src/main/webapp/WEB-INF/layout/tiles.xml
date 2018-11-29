@@ -85,8 +85,8 @@
   <definition name="repository-management/profile" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/repository-management/profile.jsp" />
   </definition>
-  <definition name="admin/repository-collaborators" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/repository-collaborators.jsp" />
+  <definition name="repository-management/collaborators" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/collaborators.jsp" />
   </definition>
 
   <definition name="documentation/template" extends="unauth-base">

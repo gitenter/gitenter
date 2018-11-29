@@ -51,6 +51,11 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
 	public boolean isManager(Integer organizationId, Authentication authentication) {
 		
+		/*
+		 * TODO:
+		 * Shouldn't be necessary to go through the loop to get it.
+		 * Should be able to query it through a JOIN query with conditions.
+		 */
 		for (MemberBean manager : getManagers(organizationId)) {
 			if (manager.getUsername().equals(authentication.getName())) {
 				return true;
@@ -62,6 +67,11 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
 	public boolean isMember(Integer organizationId, Authentication authentication) {
 		
+		/*
+		 * TODO:
+		 * Shouldn't be necessary to go through the loop to get it.
+		 * Should be able to query it through a JOIN query with conditions.
+		 */
 		for (MemberBean member : getAllMembers(organizationId)) {
 			if (member.getUsername().equals(authentication.getName())) {
 				return true;

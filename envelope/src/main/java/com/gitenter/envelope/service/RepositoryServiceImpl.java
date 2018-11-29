@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,14 @@ public class RepositoryServiceImpl implements RepositoryService {
 			throw new IdNotExistException("repository", repositoryId);
 		}
 	}
+	
+	@Override
+	public RepositoryBean getRepositoryWithCollaborators(Integer repositoryId) throws IOException {
+		
+		RepositoryBean repository = getRepository(repositoryId);
+		Hibernate.initialize(repository.getRepositoryMemberMaps());
+		return repository;
+	}
 
 	@Override
 	public CommitBean getCommitFromBranchName(Integer repositoryId, String branchName) throws IOException, GitAPIException {
@@ -62,7 +71,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
-	public CommitBean getCommitFromSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException {
+	public CommitBean getCommitFromSha(
+			Integer repositoryId, 
+			String commitSha) throws IOException, GitAPIException {
 		
 		List<CommitBean> commits = commitRepository.findByRepositoryIdAndCommitSha(repositoryId, commitSha);
 		if (commits.size() == 0) {
@@ -86,7 +97,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
-	public DocumentBean getDocumentFromCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException {
+	public DocumentBean getDocumentFromCommitShaAndRelativePath(
+			String commitSha, 
+			String relativePath) throws IOException, GitAPIException {
 	
 		List<DocumentBean> documents = documentRepository.findByCommitShaAndRelativePath(commitSha, relativePath);
 		if (documents.size() == 0) {
@@ -103,7 +116,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 
 	@Override
 	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativePath(
-			Integer repositoryId, String branchName, String relativePath) throws IOException, GitAPIException {
+			Integer repositoryId, 
+			String branchName, 
+			String relativePath) throws IOException, GitAPIException {
 		
 		CommitBean commit = getCommitFromBranchName(repositoryId, branchName);
 		assert commit instanceof ValidCommitBean;
@@ -121,8 +136,10 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
-	public FileBean getFileFromRepositoryIdAndCommitShaAndRelativePath(Integer repositoryId, String commitSha, String relativePath)
-			throws IOException, GitAPIException {
+	public FileBean getFileFromRepositoryIdAndCommitShaAndRelativePath(
+			Integer repositoryId,
+			String commitSha, 
+			String relativePath) throws IOException, GitAPIException {
 		
 		CommitBean commit = getCommitFromSha(repositoryId, commitSha);
 		assert commit instanceof ValidCommitBean;
@@ -134,8 +151,10 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
-	public FileBean getFileFromRepositoryIdAndBranchAndRelativePath(Integer repositoryId, String branchName, String relativePath) 
-			throws IOException, GitAPIException {
+	public FileBean getFileFromRepositoryIdAndBranchAndRelativePath(
+			Integer repositoryId, 
+			String branchName, 
+			String relativePath) throws IOException, GitAPIException {
 		
 		CommitBean commit = getCommitFromBranchName(repositoryId, branchName);
 		assert commit instanceof ValidCommitBean;

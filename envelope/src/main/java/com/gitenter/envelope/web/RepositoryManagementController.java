@@ -14,16 +14,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
+import com.gitenter.envelope.service.MemberService;
 import com.gitenter.envelope.service.OrganizationManagerService;
 import com.gitenter.envelope.service.OrganizationService;
 import com.gitenter.envelope.service.RepositoryManagerService;
 import com.gitenter.envelope.service.RepositoryService;
+import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 
 @Controller
 public class RepositoryManagementController {
 	
+	@Autowired MemberService memberService;
 	@Autowired OrganizationService organizationService;
 	@Autowired OrganizationManagerService organizationManagerService;
 	@Autowired RepositoryService repositoryService;
@@ -142,5 +146,43 @@ public class RepositoryManagementController {
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/profile";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators", method=RequestMethod.GET)
+	public String showRepositoryCollaborators (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepositoryWithCollaborators(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		
+		model.addAttribute("collaboratorRoles", RepositoryMemberRole.collaboratorRoles());
+		
+		return "repository-management/collaborators";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/add", method=RequestMethod.POST)
+	public String addARepositoryCollaborator (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@RequestParam(value="username") String username,
+			String roleName,
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		MemberBean collaborator = memberService.getMemberByUsername(username);
+		/*
+		 * TODO:
+		 * Catch the errors and redirect to the original page,
+		 * if the collaborator manager username is invalid.
+		 */
+		
+		repositoryManagerService.addCollaborator(authentication, repository, collaborator, roleName);
+		
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}
 }

@@ -7,7 +7,10 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 
 public interface OrganizationManagerService {
 	
-	public void updateOrganization(Authentication authentication, OrganizationBean organizationBean, OrganizationDTO organizationDTO);
+	public void updateOrganization(
+			Authentication authentication, 
+			OrganizationBean organizationBean, 
+			OrganizationDTO organizationDTO);
 	
 	public void addOrganizationMember(OrganizationBean organization, String username);
 	public void removeOrganizationMember(OrganizationBean organization, String username);

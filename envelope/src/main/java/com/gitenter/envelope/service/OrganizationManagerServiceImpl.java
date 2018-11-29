@@ -26,7 +26,10 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
-	public void updateOrganization(Authentication authentication, OrganizationBean organizationBean, OrganizationDTO organizationDTO) {
+	public void updateOrganization(
+			Authentication authentication, 
+			OrganizationBean organizationBean, 
+			OrganizationDTO organizationDTO) {
 		
 		organizationDTO.updateBean(organizationBean);
 		organizationRepository.saveAndFlush(organizationBean);
@@ -52,7 +55,6 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 			MemberBean member = map.getMember();
 			if(member.getUsername().equals(username)){
 				Integer mapId = map.getId();
-				System.out.println("MapId: "+mapId);
 				organizationMemberMapRepository.throughSqldeleteById(mapId);
 				break;
 			}

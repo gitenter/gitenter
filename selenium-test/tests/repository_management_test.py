@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 
 from testsuites.repository_created_testsuite import RepositoryCreatedTestSuite
 from forms.authorization_form import fill_login_form
+from forms.repository_management_form import fill_add_collaborator_form
 
 
 class TestRepositoryManagement(RepositoryCreatedTestSuite):
@@ -76,6 +77,29 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         display_name_form_fill.send_keys(" v2")
         display_name_form_fill.submit()
         assert "status=403" in self.driver.page_source
+
+    def test_repo_organizer_add_and_remove_collaborator(self):
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+
+        self.driver.get(urljoin(
+            self.root_url,
+            "/organizations/{}/repositories/{}/settings/collaborators".format(self.org_id, self.repo_id)))
+
+        assert self.org_member_display_name in self.driver.page_source
+        assert self.org_manager_display_name not in self.driver.page_source
+
+        fill_add_collaborator_form(self.driver, self.org_manager_username, "Document editor")
+
+        assert self.org_member_display_name in self.driver.page_source
+        assert self.org_manager_display_name in self.driver.page_source
+
+        # `self.username` is not in that organization
+        #
+        # TODO:
+        # Shouldn't be able to add as collaborator.
+        fill_add_collaborator_form(self.driver, self.username, "Document editor")
 
 
 if __name__ == '__main__':

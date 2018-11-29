@@ -34,7 +34,11 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
-	public void createRepository(Authentication authentication, OrganizationBean organization, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException {
+	public void createRepository(
+			Authentication authentication, 
+			OrganizationBean organization, 
+			RepositoryDTO repositoryDTO, 
+			Boolean includeSetupFiles) throws IOException, GitAPIException {
 				
 		RepositoryBean repository = repositoryDTO.toBean();
 		
@@ -88,29 +92,43 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		}
 	}
 
-	@PreAuthorize("hasPermission(#repositoryBean, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
-	public void updateRepository(Authentication authentication, RepositoryBean repositoryBean, RepositoryDTO repositoryDTO) throws IOException {
+	public void updateRepository(
+			Authentication authentication, 
+			RepositoryBean repository, 
+			RepositoryDTO repositoryDTO) throws IOException {
 		
-		repositoryDTO.updateBean(repositoryBean);
-		repositoryRepository.saveAndFlush(repositoryBean);
+		repositoryDTO.updateBean(repository);
+		repositoryRepository.saveAndFlush(repository);
 	}
 	
-	@PreAuthorize("hasPermission(#repositoryBean, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
 	public void addCollaborator(
-			Authentication authentication, RepositoryBean repository, 
-			MemberBean collaborator, String roleName) throws IOException {
+			Authentication authentication, 
+			RepositoryBean repository, 
+			MemberBean collaborator, 
+			String roleName) throws IOException {
 		
-		RepositoryMemberRole role = RepositoryMemberRole.valueOf(roleName);
+		/*
+		 * TODO:
+		 * Validate that the potential `collaborator` is a member of the repository belonged
+		 * organization. Otherwise cannot add collaborator.
+		 */
+		
+		RepositoryMemberRole role = RepositoryMemberRole.collaboratorRoleOf(roleName);
 		
 		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, collaborator, role);
 		repositoryMemberMapRepository.saveAndFlush(map);
 	}
 
-	@PreAuthorize("hasPermission(#repositoryBean, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
-	public void removeCollaborator(Authentication authentication, RepositoryBean repositoryBean, MemberBean collaborator) throws IOException {
+	public void removeCollaborator(
+			Authentication authentication, 
+			RepositoryBean repository, 
+			MemberBean collaborator) throws IOException {
 		
 		// TODO Auto-generated method stub
 	}
