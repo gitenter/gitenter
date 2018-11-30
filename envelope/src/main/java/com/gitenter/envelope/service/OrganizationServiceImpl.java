@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.gitenter.envelope.service.exception.InvalidDataException;
 import com.gitenter.envelope.service.exception.IdNotExistException;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -72,7 +73,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			return false;
 		}
 		
-		throw new IOException();
+		throw new InvalidDataException("user should have a unique relationship to an organization.");
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			return false;
 		}
 		
-		throw new IOException();
+		throw new InvalidDataException("user should have a unique relationship to an organization.");
 	}
 
 	@Override

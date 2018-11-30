@@ -95,11 +95,13 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         assert self.org_member_display_name in self.driver.page_source
         assert self.org_manager_display_name in self.driver.page_source
 
-        # `self.username` is not in that organization
-        #
-        # TODO:
-        # Shouldn't be able to add as collaborator.
+        # `self.username` is not in that organization, therefore, shouldn't
+        # be able to add as collaborator.
         fill_add_collaborator_form(self.driver, self.username, "Document editor")
+        assert "status=500" in self.driver.page_source
+
+        fill_add_collaborator_form(self.driver, "non_existing_username", "Document editor")
+        assert "status=500" in self.driver.page_source
 
 
 if __name__ == '__main__':

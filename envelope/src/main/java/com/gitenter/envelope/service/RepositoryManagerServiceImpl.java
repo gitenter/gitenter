@@ -2,6 +2,7 @@ package com.gitenter.envelope.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
+import com.gitenter.envelope.service.exception.InputIsNotQualifiedException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.dao.auth.MemberRepository;
+import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
+import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
@@ -27,6 +31,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
+	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired RepositoryMemberMapRepository repositoryMemberMapRepository;
 	
@@ -111,11 +116,13 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			MemberBean collaborator, 
 			String roleName) throws IOException {
 		
-		/*
-		 * TODO:
-		 * Validate that the potential `collaborator` is a member of the repository belonged
-		 * organization. Otherwise cannot add collaborator.
-		 */
+		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.fineByMemberAndOrganization(
+				collaborator, repository.getOrganization());
+		if (maps.size() == 0) {
+			throw new InputIsNotQualifiedException("User "+collaborator.getUsername()+" cannot be added "
+					+ "as a collaborator for repository "+repository.getName()+", since s/he is "
+					+ "not a member of organization "+repository.getOrganization().getName()+".");
+		}
 		
 		RepositoryMemberRole role = RepositoryMemberRole.collaboratorRoleOf(roleName);
 		
@@ -128,8 +135,17 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	public void removeCollaborator(
 			Authentication authentication, 
 			RepositoryBean repository, 
-			MemberBean collaborator) throws IOException {
+			Integer repositoryMemberMapId) throws IOException {
 		
-		// TODO Auto-generated method stub
+		/*
+		 * Delete from "memberId" and find "mapId" from it
+		 * (1) need more SQL queries, 
+		 * (2) seems have consistency problem with Hibernate when first we 
+		 * "Hibernate.initialize(repository.getRepositoryMemberMaps());".
+		 * 
+		 * TODO:
+		 * This doesn't work. Should go with throughtSqlDeleteById
+		 */
+		repositoryMemberMapRepository.deleteById(repositoryMemberMapId);
 	}
 }

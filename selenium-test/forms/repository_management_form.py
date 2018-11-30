@@ -20,7 +20,6 @@ def fill_add_collaborator_form(driver, username, role):
     form_start.send_keys(username)
 
     for option in driver.find_element_by_name("roleName").find_elements_by_tag_name('option'):
-        print(option.text)
         if option.text == role:
             option.click()
             break

@@ -11,7 +11,7 @@ public class OrganizationMemberMapSqlImpl implements OrganizationMemberMapSql {
 	@PersistenceContext private EntityManager em;
 
 	@Override
-	public int throughSqldeleteById(Integer mapId) {
+	public int throughSqlDeleteById(Integer mapId) {
 	
 		final String sql = "DELETE FROM OrganizationMemberMapBean WHERE id = :mapId";
 		return em.createQuery(sql).setParameter("mapId", mapId).executeUpdate();

@@ -7,6 +7,6 @@ public class IdNotExistException extends InputNotExistException {
 	private static final long serialVersionUID = 1L;
 	
 	public IdNotExistException(Class<? extends Object> klass, Integer id) {
-		super("Id "+id+" for object "+klass+" is not existing yet");
+		super("Id "+id+" for domain object "+klass+" is not existing yet");
 	}
 }

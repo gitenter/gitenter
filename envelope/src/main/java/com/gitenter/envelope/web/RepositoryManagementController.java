@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -149,7 +150,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators", method=RequestMethod.GET)
-	public String showRepositoryCollaborators (
+	public String showRepositoryCollaboratorsManagementPage (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws Exception {
@@ -183,6 +184,20 @@ public class RepositoryManagementController {
 		
 		repositoryManagerService.addCollaborator(authentication, repository, collaborator, roleName);
 		
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/remove", method=RequestMethod.POST)
+	public String removeARepositoryCollaborator (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId,
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		
+		repositoryManagerService.removeCollaborator(authentication, repository, repositoryMemberMapId);
+
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}
 }

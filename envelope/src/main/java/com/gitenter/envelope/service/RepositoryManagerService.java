@@ -30,5 +30,5 @@ public interface RepositoryManagerService {
 	public void removeCollaborator(
 			Authentication authentication, 
 			RepositoryBean repository, 
-			MemberBean collaborator) throws IOException;
+			Integer repositoryMemberMapId) throws IOException;
 }
