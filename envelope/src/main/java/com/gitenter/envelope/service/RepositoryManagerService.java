@@ -18,17 +18,14 @@ public interface RepositoryManagerService {
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException;
 	public void updateRepository(
-			Authentication authentication, 
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException;
 	
 	public void addCollaborator(
-			Authentication authentication, 
 			RepositoryBean repository, 
 			MemberBean collaborator, 
 			String roleName) throws IOException;
-	public void removeCollaborator(
-			Authentication authentication, 
+	public void removeCollaborator( 
 			RepositoryBean repository, 
 			Integer repositoryMemberMapId) throws IOException;
 }

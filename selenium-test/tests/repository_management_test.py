@@ -83,25 +83,44 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
-        self.driver.get(urljoin(
+        collaborator_url = urljoin(
             self.root_url,
-            "/organizations/{}/repositories/{}/settings/collaborators".format(self.org_id, self.repo_id)))
+            "/organizations/{}/repositories/{}/settings/collaborators".format(self.org_id, self.repo_id))
+        self.driver.get(collaborator_url)
 
-        assert self.org_member_display_name in self.driver.page_source
-        assert self.org_manager_display_name not in self.driver.page_source
+        assert self.org_member_display_name in self.driver.find_element_by_class_name("user").text
+        self.assertEqual(len(self.driver.find_elements_by_class_name("user-deletable")), 0)
 
         fill_add_collaborator_form(self.driver, self.org_manager_username, "Document editor")
 
-        assert self.org_member_display_name in self.driver.page_source
-        assert self.org_manager_display_name in self.driver.page_source
+        self.assertEqual(self.driver.current_url, collaborator_url)
+        assert self.org_member_display_name in self.driver.find_element_by_class_name("user").text
+        assert self.org_manager_display_name in self.driver.find_element_by_class_name("user-deletable").text
 
         # `self.username` is not in that organization, therefore, shouldn't
         # be able to add as collaborator.
+        self.driver.get(collaborator_url)
         fill_add_collaborator_form(self.driver, self.username, "Document editor")
         assert "status=500" in self.driver.page_source
 
+        self.driver.get(collaborator_url)
         fill_add_collaborator_form(self.driver, "non_existing_username", "Document editor")
         assert "status=500" in self.driver.page_source
+
+        self.driver.get(collaborator_url)
+        form_start = self.driver.find_element_by_xpath(
+            "//form[@action='/organizations/{}/repositories/{}/settings/collaborators/remove']/input[@name='{}']".format(
+                self.org_id, self.repo_id, "to_be_remove_username"))
+        self.assertEqual(form_start.get_attribute("value"), self.org_manager_username)
+        form_start.submit()
+
+        self.assertEqual(self.driver.current_url, collaborator_url)
+
+        assert self.org_member_display_name in self.driver.find_element_by_class_name("user").text
+        self.assertEqual(len(self.driver.find_elements_by_class_name("user-deletable")), 0)
+        self.assertFalse(self.driver.find_elements_by_xpath(
+            "//form[@action='/organizations/{}/repositories/{}/settings/collaborators/remove']/input".format(
+                self.org_id, self.repo_id)))
 
 
 if __name__ == '__main__':

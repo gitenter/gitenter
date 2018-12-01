@@ -68,4 +68,11 @@ public class RepositoryMemberMapBean implements MapBean<RepositoryBean,MemberBea
 		
 		return map;
 	}
+	
+	@Override
+	public boolean isDeletable(String operatorUsername) {
+		
+		String toBeDeletedUsername = member.getUsername();
+		return !toBeDeletedUsername.equals(operatorUsername);
+	}
 }

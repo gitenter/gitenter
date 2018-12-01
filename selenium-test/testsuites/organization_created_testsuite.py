@@ -2,7 +2,10 @@ from urllib.parse import urljoin, urlparse
 
 from testsuites.registered_testsuite import RegisteredTestSuite
 from forms.authorization_form import fill_login_form
-from forms.organization_management_form import fill_create_organization_form
+from forms.organization_management_form import (
+    fill_create_organization_form,
+    fill_add_member_form
+)
 
 
 class OrganizationCreatedTestSuite(RegisteredTestSuite):
@@ -23,9 +26,7 @@ class OrganizationCreatedTestSuite(RegisteredTestSuite):
         self.org_id = urlparse(org_link).path.split("/")[-1]
 
         self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
-        form_start = self.driver.find_element_by_id("username")
-        form_start.send_keys(self.org_member_username)
-        form_start.submit()
+        fill_add_member_form(self.driver, self.org_member_username)
 
         self.driver.get(urljoin(self.root_url, "/logout"))
 

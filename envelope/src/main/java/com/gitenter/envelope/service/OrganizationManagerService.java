@@ -13,7 +13,7 @@ public interface OrganizationManagerService {
 			OrganizationDTO organizationDTO);
 	
 	public void addOrganizationMember(OrganizationBean organization, String username);
-	public void removeOrganizationMember(OrganizationBean organization, String username);
+	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId);
 	
 	public void addOrganizationManager(OrganizationBean organization, String username);
 	public void removeOrganizationManager(OrganizationBean organization, String username);

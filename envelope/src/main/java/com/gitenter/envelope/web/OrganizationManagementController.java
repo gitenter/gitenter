@@ -102,22 +102,34 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
-	public String showMemberManagementForm (
+	public String showMemberManagementPage (
 			@PathVariable Integer organizationId,
 			Model model,
 			Authentication authentication) throws Exception {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
-		model.addAttribute("members", organizationService.getAllMembers(organizationId));
-		model.addAttribute("myUsername", authentication.getName());
+		model.addAttribute("operatorUsername", authentication.getName());
 		
 		return "organization-management/members";
 	}
 	
+	/*
+	 * TODO:
+	 * 
+	 * There is a lot of duplicated code for 
+	 * (1) add/remove/switch role of members in here
+	 * (2) add/remove/switch role of collaborator in repository management
+	 * 
+	 * both in the controller and in the view layer (potentially also in
+	 * the service layer.
+	 * 
+	 * Wonder if there's a way to make a general framework which can handle
+	 * the two all together?
+	 */
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
 	public String addAMemberToOrganization (
 			@PathVariable Integer organizationId,
-			@RequestParam(value="username") String username) throws Exception {
+			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		organizationManagerService.addOrganizationMember(organization, username);		
@@ -133,10 +145,11 @@ public class OrganizationManagementController {
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/remove", method=RequestMethod.POST)
 	public String removeAMemberToOrganization (
 			@PathVariable Integer organizationId,
-			@RequestParam(value="username") String username) throws Exception {
+			@RequestParam(value="to_be_remove_username") String username,
+			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		organizationManagerService.removeOrganizationMember(organization, username);		
+		organizationManagerService.removeOrganizationMember(organization, organizationMemberMapId);		
 		
 		return "redirect:/organizations/"+organizationId+"/settings/members";
 	}
@@ -179,6 +192,14 @@ public class OrganizationManagementController {
 		 * (1) Same interface as add member to organization.
 		 * (2) Makes compare to authentication (manager cannot remove himself/herself)
 		 * easier.
+		 * 
+		 * TODO:
+		 * 
+		 * Get `organizationMemberMapId` in here, so then there's no need to
+		 * do iteration in `organizationManagerService.removeOrganizationManager()`.
+		 * 
+		 * Similar to organization removeMember and repository removeCollabrator, but 
+		 * need to think about what is the best way to achieve this.
 		 */
 		if (!username.equals(authentication.getName())) {
 			OrganizationBean organization = organizationService.getOrganization(organizationId);

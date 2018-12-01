@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,14 +49,6 @@ public class RepositoryServiceImpl implements RepositoryService {
 		else {
 			throw new IdNotExistException(RepositoryBean.class, repositoryId);
 		}
-	}
-	
-	@Override
-	public RepositoryBean getRepositoryWithCollaborators(Integer repositoryId) throws IOException {
-		
-		RepositoryBean repository = getRepository(repositoryId);
-		Hibernate.initialize(repository.getRepositoryMemberMaps());
-		return repository;
 	}
 
 	@Override

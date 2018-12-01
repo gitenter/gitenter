@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -127,8 +126,7 @@ public class RepositoryManagementController {
 			@PathVariable Integer repositoryId,
 			@Valid RepositoryDTO repositoryDTOAfterChange, 
 			Errors errors, 
-			RedirectAttributes model,
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
 		OrganizationBean organization = repository.getOrganization();
@@ -143,7 +141,7 @@ public class RepositoryManagementController {
 		}
 		
 		assert (repository.getName().equals(repositoryDTOAfterChange.getName()));
-		repositoryManagerService.updateRepository(authentication, repository, repositoryDTOAfterChange);
+		repositoryManagerService.updateRepository(repository, repositoryDTOAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/profile";
@@ -153,13 +151,15 @@ public class RepositoryManagementController {
 	public String showRepositoryCollaboratorsManagementPage (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			Model model) throws Exception {
+			Model model,
+			Authentication authentication) throws Exception {
 		
-		RepositoryBean repository = repositoryService.getRepositoryWithCollaborators(repositoryId);
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
 		OrganizationBean organization = repository.getOrganization();
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
+		model.addAttribute("operatorUsername", authentication.getName());
 		
 		model.addAttribute("collaboratorRoles", RepositoryMemberRole.collaboratorRoles());
 		
@@ -170,9 +170,8 @@ public class RepositoryManagementController {
 	public String addARepositoryCollaborator (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			@RequestParam(value="username") String username,
-			String roleName,
-			Authentication authentication) throws Exception {
+			@RequestParam(value="to_be_add_username") String username,
+			String roleName) throws Exception {
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
 		MemberBean collaborator = memberService.getMemberByUsername(username);
@@ -182,7 +181,7 @@ public class RepositoryManagementController {
 		 * if the collaborator manager username is invalid.
 		 */
 		
-		repositoryManagerService.addCollaborator(authentication, repository, collaborator, roleName);
+		repositoryManagerService.addCollaborator(repository, collaborator, roleName);
 		
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}
@@ -191,12 +190,20 @@ public class RepositoryManagementController {
 	public String removeARepositoryCollaborator (
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
-			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId,
-			Authentication authentication) throws Exception {
+			@RequestParam(value="to_be_remove_username") String toBeRemovedUsername,
+			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId) throws Exception {
+		
+		/*
+		 * `toBeRemovedUsername` is not currently in use for the actual logic.
+		 * 
+		 * It is for:
+		 * (1) Visibility while showing the form (since display name may collapse).
+		 * (2) For selenium tests.
+		 */
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
 		
-		repositoryManagerService.removeCollaborator(authentication, repository, repositoryMemberMapId);
+		repositoryManagerService.removeCollaborator(repository, repositoryMemberMapId);
 
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}

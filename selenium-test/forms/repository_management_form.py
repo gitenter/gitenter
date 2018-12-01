@@ -16,7 +16,7 @@ def fill_create_repository_form(driver, name, display_name, description, is_publ
 
 
 def fill_add_collaborator_form(driver, username, role):
-    form_start = driver.find_element_by_name("username")
+    form_start = driver.find_element_by_name("to_be_add_username")
     form_start.send_keys(username)
 
     for option in driver.find_element_by_name("roleName").find_elements_by_tag_name('option'):

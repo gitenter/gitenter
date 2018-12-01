@@ -47,18 +47,14 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Transactional
 	@Override
-	public void removeOrganizationMember(OrganizationBean organization, String username) {
+	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId) {
 		
-		ListIterator<OrganizationMemberMapBean> iter = organization.getOrganizationMemberMaps().listIterator();
-		while(iter.hasNext()){
-			OrganizationMemberMapBean map = iter.next();
-			MemberBean member = map.getMember();
-			if(member.getUsername().equals(username)){
-				Integer mapId = map.getId();
-				organizationMemberMapRepository.throughSqldeleteById(mapId);
-				break;
-			}
-		}
+		/*
+		 * TODO:
+		 * Should we validate the `organizationMemberMapId`?
+		 */
+		
+		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
 	}
 	
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")

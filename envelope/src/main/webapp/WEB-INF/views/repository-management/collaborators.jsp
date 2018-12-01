@@ -18,12 +18,18 @@
             <c:forEach var="map" items="${repository.repositoryMemberMaps}">
               <c:if test="${map.role == role}">
                 <li>
-                  <span class="user-deletable">${map.member.displayName}</span>
-                  <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators/remove" />
-                  <sf:form method="POST" action="${remove_member_url}">
-                    <input type="hidden" name="repository_member_map_id" value="${map.id}" />
-                    <input class="delete" type="submit" value="x" />
-                  </sf:form>
+                  <c:if test="${map.isDeletable(operatorUsername)}">
+                    <span class="user-deletable">${map.member.displayName}</span>
+                    <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators/remove" />
+                    <sf:form method="POST" action="${remove_member_url}">
+                      <input type="hidden" name="to_be_remove_username" value="${map.member.username}" />
+                      <input type="hidden" name="repository_member_map_id" value="${map.id}" />
+                      <input class="delete" type="submit" value="x" />
+                    </sf:form>
+                  </c:if>
+                  <c:if test="${!map.isDeletable(operatorUsername)}">
+                    <span class="user"><c:out value="${map.member.displayName}" /></span>
+                  </c:if>
                 </li>
               </c:if> 
             </c:forEach>
@@ -36,7 +42,7 @@
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td><input type="text" name="username" /></td>
+              <td><input type="text" name="to_be_add_username" /></td>
             </tr>
             <tr>
               <td>Role</td>

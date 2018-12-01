@@ -14,18 +14,19 @@
       <div class="left-narrow">
         <h5>Members</h5>
         <ul class="user-list">
-        <c:forEach var="member" items="${members}">
+        <c:forEach var="map" items="${organization.organizationMemberMaps}">
           <li>
-            <c:if test="${member.username != myUsername}">
-              <span class="user-deletable"><c:out value="${member.displayName}" /></span>
+            <c:if test="${map.isDeletable(operatorUsername)}">
+              <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
               <s:url var="remove_member_url" value="/organizations/${organization.id}/settings/members/remove" />
               <sf:form method="POST" action="${remove_member_url}">
-                <input type="hidden" name="username" value="${member.username}" /> 
+                <input type="hidden" name="to_be_remove_username" value="${map.member.username}" /> 
+                <input type="hidden" name="organization_member_map_id" value="${map.id}" />
                 <input class="delete" type="submit" value="x" />
               </sf:form>
             </c:if>
-            <c:if test="${member.username == myUsername}">
-              <span class="user"><c:out value="${member.displayName}" /></span>
+            <c:if test="${!map.isDeletable(operatorUsername)}">
+              <span class="user"><c:out value="${map.member.displayName}" /></span>
             </c:if>
           </li>
         </c:forEach>
@@ -43,7 +44,7 @@
             </c:if>
             <tr>
               <td>Username</td>
-              <td><input id="username" name="username" type="text" /></td>
+              <td><input name="to_be_add_username" type="text" /></td>
             </tr>
             <tr>
               <td></td>

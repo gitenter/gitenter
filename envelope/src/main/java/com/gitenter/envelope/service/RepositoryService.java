@@ -12,7 +12,6 @@ import com.gitenter.protease.domain.git.FileBean;
 public interface RepositoryService {
 
 	public RepositoryBean getRepository(Integer repositoryId) throws IOException;
-	public RepositoryBean getRepositoryWithCollaborators(Integer repositoryId) throws IOException;
 
 	public CommitBean getCommitFromBranchName(
 			Integer repositoryId, 

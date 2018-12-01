@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
 import com.gitenter.envelope.service.exception.InputIsNotQualifiedException;
@@ -100,7 +101,6 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
 	public void updateRepository(
-			Authentication authentication, 
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException {
 		
@@ -111,7 +111,6 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
 	public void addCollaborator(
-			Authentication authentication, 
 			RepositoryBean repository, 
 			MemberBean collaborator, 
 			String roleName) throws IOException {
@@ -131,21 +130,27 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@Transactional
 	@Override
 	public void removeCollaborator(
-			Authentication authentication, 
 			RepositoryBean repository, 
 			Integer repositoryMemberMapId) throws IOException {
 		
 		/*
-		 * Delete from "memberId" and find "mapId" from it
+		 * TODO:
+		 * Should we validate the `repositoryMemberMapId`?
+		 */
+		
+		/*
+		 * The alternative approach is to have input "memberId", then
+		 * find "mapId" and delete it. We don't do it because it:
 		 * (1) need more SQL queries, 
 		 * (2) seems have consistency problem with Hibernate when first we 
 		 * "Hibernate.initialize(repository.getRepositoryMemberMaps());".
 		 * 
-		 * TODO:
-		 * This doesn't work. Should go with throughtSqlDeleteById
+		 * We have knowledge of `repositoryMemberMapId` when we generate
+		 * the delete page with links.
 		 */
-		repositoryMemberMapRepository.deleteById(repositoryMemberMapId);
+		repositoryMemberMapRepository.throughSqlDeleteById(repositoryMemberMapId);
 	}
 }
