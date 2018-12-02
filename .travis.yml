@@ -1,0 +1,7 @@
+services:
+  - postgresql
+before_script:
+  - psql -U postgres -w -f database/create_users.sql
+  - psql -U postgres -w -f database/create_database.sql -v dbname=gitenter
+  - psql -U postgres -d gitenter -w -f database/initiate_database.sql
+  - psql -c 'ALTER DATABASE gitenter OWNER TO gitenter;' -U postgres
