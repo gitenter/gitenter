@@ -9,5 +9,5 @@ public interface MapBean<LeftBean extends ModelBean,RightBean extends ModelBean,
 	 * a static method.
 	 */
 	
-	public boolean isDeletable(String operatorUsername);
+	public boolean isAlterable(String operatorUsername);
 }

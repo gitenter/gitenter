@@ -16,7 +16,7 @@
         <ul class="user-list">
         <c:forEach var="map" items="${organization.organizationMemberMaps}">
           <li>
-            <c:if test="${map.isDeletable(operatorUsername)}">
+            <c:if test="${map.isAlterable(operatorUsername)}">
               <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
               <s:url var="remove_member_url" value="/organizations/${organization.id}/settings/members/remove" />
               <sf:form method="POST" action="${remove_member_url}">
@@ -25,7 +25,7 @@
                 <input class="delete" type="submit" value="x" />
               </sf:form>
             </c:if>
-            <c:if test="${!map.isDeletable(operatorUsername)}">
+            <c:if test="${!map.isAlterable(operatorUsername)}">
               <span class="user"><c:out value="${map.member.displayName}" /></span>
             </c:if>
           </li>

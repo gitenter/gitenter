@@ -18,7 +18,7 @@
             <c:forEach var="map" items="${repository.repositoryMemberMaps}">
               <c:if test="${map.role == role}">
                 <li>
-                  <c:if test="${map.isDeletable(operatorUsername)}">
+                  <c:if test="${map.isAlterable(operatorUsername)}">
                     <span class="user-deletable">${map.member.displayName}</span>
                     <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators/remove" />
                     <sf:form method="POST" action="${remove_member_url}">
@@ -27,7 +27,7 @@
                       <input class="delete" type="submit" value="x" />
                     </sf:form>
                   </c:if>
-                  <c:if test="${!map.isDeletable(operatorUsername)}">
+                  <c:if test="${!map.isAlterable(operatorUsername)}">
                     <span class="user"><c:out value="${map.member.displayName}" /></span>
                   </c:if>
                 </li>

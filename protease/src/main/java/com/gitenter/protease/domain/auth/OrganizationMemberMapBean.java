@@ -74,7 +74,7 @@ public class OrganizationMemberMapBean implements MapBean<OrganizationBean,Membe
 	}
 	
 	@Override
-	public boolean isDeletable(String operatorUsername) {
+	public boolean isAlterable(String operatorUsername) {
 		
 		String toBeDeletedUsername = member.getUsername();
 		return !toBeDeletedUsername.equals(operatorUsername);

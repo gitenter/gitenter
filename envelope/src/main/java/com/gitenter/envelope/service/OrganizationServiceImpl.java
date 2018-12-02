@@ -39,17 +39,17 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	@Override
-	public Collection<MemberBean> getManagers(Integer organizationId) throws IOException {
+	public Collection<OrganizationMemberMapBean> getManagerMaps(Integer organizationId) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getMembers(OrganizationMemberRole.MANAGER);
+		return organization.getMemberMaps(OrganizationMemberRole.MANAGER);
 	}
 	
 	@Override
-	public Collection<MemberBean> getOrdinaryMembers(Integer organizationId) throws IOException {
+	public Collection<OrganizationMemberMapBean> getOrdinaryMemberMaps(Integer organizationId) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getMembers(OrganizationMemberRole.MEMBER);
+		return organization.getMemberMaps(OrganizationMemberRole.MEMBER);
 	}
 	
 	@Override

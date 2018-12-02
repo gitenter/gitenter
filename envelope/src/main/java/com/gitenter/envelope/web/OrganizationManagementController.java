@@ -101,18 +101,6 @@ public class OrganizationManagementController {
 		return "redirect:/organizations/"+organizationId+"/settings/profile";
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
-	public String showMemberManagementPage (
-			@PathVariable Integer organizationId,
-			Model model,
-			Authentication authentication) throws Exception {
-		
-		model.addAttribute("organization", organizationService.getOrganization(organizationId));
-		model.addAttribute("operatorUsername", authentication.getName());
-		
-		return "organization-management/members";
-	}
-	
 	/*
 	 * TODO:
 	 * 
@@ -126,6 +114,18 @@ public class OrganizationManagementController {
 	 * Wonder if there's a way to make a general framework which can handle
 	 * the two all together?
 	 */
+	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
+	public String showMemberManagementPage (
+			@PathVariable Integer organizationId,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		model.addAttribute("organization", organizationService.getOrganization(organizationId));
+		model.addAttribute("operatorUsername", authentication.getName());
+		
+		return "organization-management/members";
+	}
+	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
 	public String addAMemberToOrganization (
 			@PathVariable Integer organizationId,
@@ -155,15 +155,15 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers", method=RequestMethod.GET)
-	public String showManagerManagementForm (
+	public String showManagerManagementPage (
 			@PathVariable Integer organizationId,
 			Model model,
 			Authentication authentication) throws Exception {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
-		model.addAttribute("managers", organizationService.getManagers(organizationId));
-		model.addAttribute("ordinaryMembers", organizationService.getOrdinaryMembers(organizationId));
-		model.addAttribute("myUsername", authentication.getName());
+		model.addAttribute("managerMaps", organizationService.getManagerMaps(organizationId));
+		model.addAttribute("ordinaryMemberMaps", organizationService.getOrdinaryMemberMaps(organizationId));
+		model.addAttribute("operatorUsername", authentication.getName());
 		
 		return "organization-management/managers";
 	}
@@ -171,10 +171,11 @@ public class OrganizationManagementController {
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers/add", method=RequestMethod.POST)
 	public String addAMamangerToOrganization (
 			@PathVariable Integer organizationId,
-			@RequestParam(value="username") String username) throws Exception {
+			@RequestParam(value="to_be_upgrade_username") String username,
+			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		organizationManagerService.addOrganizationManager(organization, username);		
+		organizationManagerService.addOrganizationManager(organization, organizationMemberMapId);		
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
 	}
@@ -182,29 +183,12 @@ public class OrganizationManagementController {
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers/remove", method=RequestMethod.POST)
 	public String removeAMamangerToOrganization (
 			@PathVariable Integer organizationId,
-			@RequestParam(value="username") String username,
+			@RequestParam(value="to_be_downgrade_username") String username,
+			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId,
 			Authentication authentication) throws Exception {
 		
-		/*
-		 * The reason to use "username" rather than member ID as the input to
-		 * add/remove managers:
-		 * 
-		 * (1) Same interface as add member to organization.
-		 * (2) Makes compare to authentication (manager cannot remove himself/herself)
-		 * easier.
-		 * 
-		 * TODO:
-		 * 
-		 * Get `organizationMemberMapId` in here, so then there's no need to
-		 * do iteration in `organizationManagerService.removeOrganizationManager()`.
-		 * 
-		 * Similar to organization removeMember and repository removeCollabrator, but 
-		 * need to think about what is the best way to achieve this.
-		 */
-		if (!username.equals(authentication.getName())) {
-			OrganizationBean organization = organizationService.getOrganization(organizationId);
-			organizationManagerService.removeOrganizationManager(organization, username);	
-		}
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		organizationManagerService.removeOrganizationManager(authentication, organization, organizationMemberMapId);	
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
 	}

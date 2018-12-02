@@ -14,30 +14,32 @@
       <div class="left-narrow">
         <h5>Managers</h5>
         <ul class="user-list">
-        <c:forEach var="manager" items="${managers}">
+        <c:forEach var="map" items="${managerMaps}">
           <li>
-            <c:if test="${manager.username != myUsername}">
-              <span class="user-deletable"><c:out value="${manager.displayName}" /></span>
+            <c:if test="${map.isAlterable(operatorUsername)}">
+              <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
               <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
-                <input type="hidden" name="username" value="${manager.username}" /> 
+                <input type="hidden" name="to_be_downgrade_username" value="${map.member.username}" />
+                <input type="hidden" name="organization_member_map_id" value="${map.id}" />
                 <input class="delete" type="submit" value="&darr;" />
               </sf:form>
             </c:if>
-            <c:if test="${manager.username == myUsername}">
-              <span class="user"><c:out value="${manager.displayName}" /></span>
+            <c:if test="${!map.isAlterable(operatorUsername)}">
+              <span class="user"><c:out value="${map.member.displayName}" /></span>
             </c:if>
           </li>
         </c:forEach>
         </ul>
         <h5>Ordinary Members</h5>
         <ul class="user-list">
-        <c:forEach var="member" items="${ordinaryMembers}">
+        <c:forEach var="map" items="${ordinaryMemberMaps}">
           <li>
-            <span class="user-deletable"><c:out value="${member.displayName}" /></span>
+            <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
             <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/add" />
             <sf:form method="POST" action="${remove_manager_url}">
-              <input type="hidden" name="username" value="${member.username}" /> 
+              <input type="hidden" name="to_be_upgrade_username" value="${map.member.username}" /> 
+              <input type="hidden" name="organization_member_map_id" value="${map.id}" />
               <input class="delete" type="submit" value="&uarr;" />
             </sf:form>
           </li>

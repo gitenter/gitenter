@@ -1,6 +1,9 @@
 package com.gitenter.envelope.service;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.envelope.dto.OrganizationDTO;
+import com.gitenter.envelope.service.exception.IdNotExistException;
+import com.gitenter.envelope.service.exception.InputIsNotQualifiedException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -57,44 +62,43 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
-	@Override
-	public void addOrganizationManager(OrganizationBean organization, String username) {
+	private OrganizationMemberMapBean getOrganizationMemberMapBean(Integer organizationMemberMapId) throws IOException {
 		
-		for (OrganizationMemberMapBean map : organization.getOrganizationMemberMaps()) {
-			if (map.getMember().getUsername().equals(username)) {
-				/*
-				 * So it will only add if the user is already a MEMBER of that organization.
-				 */
-				if (map.getRole().equals(OrganizationMemberRole.MEMBER)) {
-					map.setRole(OrganizationMemberRole.MANAGER);
-					organizationMemberMapRepository.saveAndFlush(map);
-				}
-				
-				break;
-			}
+		Optional<OrganizationMemberMapBean> maps = organizationMemberMapRepository.findById(organizationMemberMapId);
+		
+		if (maps.isPresent()) {
+			return maps.get();
+		}
+		else {
+			throw new IdNotExistException(OrganizationMemberMapBean.class, organizationMemberMapId);
 		}
 	}
 	
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
-	public void removeOrganizationManager(OrganizationBean organization, String username) {
+	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
+		
+		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
+		assert map.getRole().equals(OrganizationMemberRole.MEMBER);
+		map.setRole(OrganizationMemberRole.MANAGER);
+		organizationMemberMapRepository.saveAndFlush(map);
+	}
 	
-		for (OrganizationMemberMapBean map : organization.getOrganizationMemberMaps()) {
-			if (map.getMember().getUsername().equals(username)) {
-				/*
-				 * The code in here doesn't check that the user cannot remove himself/herself
-				 * as a manager (although the UI doesn't provide the link). This is the case
-				 * because this is a general method. That constrain will be implemented in the
-				 * controller level.
-				 */
-				if (map.getRole().equals(OrganizationMemberRole.MANAGER)) {
-					map.setRole(OrganizationMemberRole.MEMBER);
-					organizationMemberMapRepository.saveAndFlush(map);
-				}
-				
-				break;
-			}
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@Override
+	public void removeOrganizationManager(
+			Authentication authentication,
+			OrganizationBean organization, 
+			Integer organizationMemberMapId) throws IOException {
+		
+		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
+		assert map.getRole().equals(OrganizationMemberRole.MANAGER);
+		
+		if (authentication.getName().equals(map.getMember().getUsername())) {
+			throw new InputIsNotQualifiedException("Manager cannot remove him/herself as manager");
 		}
+		
+		map.setRole(OrganizationMemberRole.MEMBER);
+		organizationMemberMapRepository.saveAndFlush(map);
 	}
 }

@@ -1,5 +1,7 @@
 package com.gitenter.envelope.service;
 
+import java.io.IOException;
+
 import org.springframework.security.core.Authentication;
 
 import com.gitenter.envelope.dto.OrganizationDTO;
@@ -15,6 +17,11 @@ public interface OrganizationManagerService {
 	public void addOrganizationMember(OrganizationBean organization, String username);
 	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId);
 	
-	public void addOrganizationManager(OrganizationBean organization, String username);
-	public void removeOrganizationManager(OrganizationBean organization, String username);
+	public void addOrganizationManager(
+			OrganizationBean organization, 
+			Integer organizationMemberMapId) throws IOException;
+	public void removeOrganizationManager(
+			Authentication authentication, 
+			OrganizationBean organization, 
+			Integer organizationMemberMapId) throws IOException;
 }

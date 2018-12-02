@@ -50,18 +50,29 @@ public class OrganizationBean implements ModelBean {
 	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
 	
 	/*
-	 * Can be get by a customized JOINed SQL. Will not do it until some performance
+	 * The alternative approach is to get them by a customized JOINed SQL query
+	 * from `OrganizationMemberMapRepository`.
+	 * 
+	 * Will not do it until some performance
 	 * bottleneck is shown. Also, since Hibernate may optimize its query cache so
 	 * this mapped relationship will not be loaded multiple times in the same HTTP
 	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
 	 * actually have not-worse performance.
 	 */
-	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
-		Collection<MemberBean> items = new ArrayList<MemberBean>();
+	public Collection<OrganizationMemberMapBean> getMemberMaps(OrganizationMemberRole role) {
+		Collection<OrganizationMemberMapBean> items = new ArrayList<OrganizationMemberMapBean>();
 		for (OrganizationMemberMapBean map : organizationMemberMaps) {
 			if (map.getRole().equals(role)) {
-				items.add(map.getMember());
+				items.add(map);
 			}
+		}
+		return items;
+	}
+	
+	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
+		Collection<MemberBean> items = new ArrayList<MemberBean>();
+		for (OrganizationMemberMapBean map : getMemberMaps(role)) {
+			items.add(map.getMember());
 		}
 		return items;
 	}
