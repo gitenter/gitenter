@@ -72,4 +72,11 @@ public class OrganizationMemberMapBean implements MapBean<OrganizationBean,Membe
 		
 		return map;
 	}
+	
+	@Override
+	public boolean isAlterable(String operatorUsername) {
+		
+		String toBeDeletedUsername = member.getUsername();
+		return !toBeDeletedUsername.equals(operatorUsername);
+	}
 }

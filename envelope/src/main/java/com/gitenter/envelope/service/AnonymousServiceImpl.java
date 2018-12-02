@@ -26,7 +26,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public void signUp(MemberRegisterDTO signUpDTO) {
+	public void signUp(MemberRegisterDTO memberRegisterDTO) {
 		
 		/*
 		 * TODO:
@@ -34,7 +34,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 		 * the system.
 		 */
 		
-		MemberBean memberBean = signUpDTO.toMemberBean(passwordEncoder);
+		MemberBean memberBean = memberRegisterDTO.toBean(passwordEncoder);
 		memberRepository.saveAndFlush(memberBean);
 		
 		/*
@@ -42,35 +42,4 @@ public class AnonymousServiceImpl implements AnonymousService {
 		 * Send confirmation email, ...
 		 */
 	}
-	
-//	public SignUpDTO findDTOById (Integer id) throws IOException {
-//		/*
-//		 * Note:
-//		 * The MemberDTO constructor doesn't copy the password part.
-//		 */
-//		MemberBean memberBean = memberRepository.findById(id);
-//		return memberDTOFromMemberBean(memberBean);
-////		return new MemberDTO(memberBean);
-//	}
-//
-//	public SignUpDTO findDTOByUsername (String username) throws IOException {
-//		MemberBean memberBean = memberRepository.findByUsername(username);
-//		return memberDTOFromMemberBean(memberBean);
-////		return new MemberDTO(memberBean);
-//	}
-//	
-//	private SignUpDTO memberDTOFromMemberBean (MemberBean memberBean) {
-//		
-//		SignUpDTO memberDTO = new SignUpDTO();
-//		
-//		/*
-//		 * Since password cannot be reversely analyzed,
-//		 * the corresponding item is just list as blank.
-//		 */
-//		memberDTO.setUsername(memberBean.getUsername());
-//		memberDTO.setDisplayName(memberBean.getDisplayName());
-//		memberDTO.setEmail(memberBean.getEmail());
-//		
-//		return memberDTO;
-//	}
 }

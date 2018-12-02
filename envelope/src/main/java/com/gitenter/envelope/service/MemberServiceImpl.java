@@ -1,6 +1,8 @@
 package com.gitenter.envelope.service;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -8,9 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.dto.MemberProfileDTO;
+import com.gitenter.envelope.dto.MemberRegisterDTO;
 import com.gitenter.envelope.dto.OrganizationDTO;
+import com.gitenter.envelope.service.exception.UserNotExistException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -41,21 +44,27 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public MemberBean getMemberByUsername(String username) {
-		return memberRepository.findByUsername(username).get(0);
+	public MemberBean getMemberByUsername(String username) throws IOException {
+		List<MemberBean> members = memberRepository.findByUsername(username);
+		if (members.size() == 1) {
+			return members.get(0);
+		}
+		else {
+			throw new UserNotExistException(username);
+		}
 	}
 	
-	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) {
+	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) throws IOException {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
 		
 		MemberProfileDTO profile = new MemberProfileDTO();
-		profile.fillFromMemberBean(member);
+		profile.fillFromBean(member);
 		
 		return profile;
 	}
 	
-	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) {
+	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) throws IOException {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
 		
@@ -64,16 +73,16 @@ public class MemberServiceImpl implements MemberService {
 		 * attribute is not necessary.
 		 */
 		MemberRegisterDTO profileAndPassword = new MemberRegisterDTO();
-		profileAndPassword.fillFromMemberBean(member);
+		profileAndPassword.fillFromBean(member);
 		
 		return profileAndPassword;
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	public void updateMember(MemberProfileDTO profile) {
+	public void updateMember(MemberProfileDTO profile) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(profile.getUsername());
-		profile.updateMemberBean(memberBean);
+		profile.updateBean(memberBean);
 		
 		/* Since "saveAndFlush()" will decide by itself whether the operation is
 		 * INSERT or UPDATE, the bean being actually modified and refreshed should 
@@ -84,7 +93,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) {
+	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(register.getUsername());
 		
@@ -100,13 +109,10 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) {
+	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) throws IOException {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
-		
-		OrganizationBean organization = new OrganizationBean();
-		organization.setName(organizationDTO.getName());
-		organization.setDisplayName(organizationDTO.getDisplayName());
+		OrganizationBean organization = organizationDTO.toBean();
 		
 		/*
 		 * Need to save first. Otherwise when saving 
@@ -126,7 +132,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	public Collection<OrganizationBean> getManagedOrganizations(String username) {
+	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException {
 		
 		/* 
 		 * I believe that Hibernate should be smart enough that when
@@ -145,21 +151,21 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Collection<OrganizationBean> getBelongedOrganizations(String username) {
+	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException {
 		
 		MemberBean member = getMemberByUsername(username);
 		return member.getOrganizations(OrganizationMemberRole.MEMBER);
 	}
 
 	@Override
-	public Collection<RepositoryBean> getOrganizedRepositories(String username) {
+	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException {
 		
 		MemberBean member = getMemberByUsername(username);
 		return member.getRepositories(RepositoryMemberRole.ORGANIZER);
 	}
 
 	@Override
-	public Collection<RepositoryBean> getAuthoredRepositories(String username) {
+	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException {
 		
 		MemberBean member = getMemberByUsername(username);
 		return member.getRepositories(RepositoryMemberRole.EDITOR);

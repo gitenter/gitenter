@@ -1,5 +1,8 @@
 package com.gitenter.protease.domain.auth;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gitenter.protease.domain.Role;
 
 import lombok.Getter;
@@ -31,5 +34,26 @@ public enum RepositoryMemberRole implements Role {
 		default:
 			throw new IllegalArgumentException("Repository member role shortName: "+shortName+" is not supported.");
 		}
+	}
+	
+	public static RepositoryMemberRole collaboratorRoleOf(String name) {
+		RepositoryMemberRole role = valueOf(name);
+		if (!role.equals(BLACKLIST)) {
+			return role;
+		}
+		else {
+			throw new IllegalArgumentException("Role "+name+" is not a collaborator role");
+		}
+	}
+	
+	public static List<RepositoryMemberRole> collaboratorRoles() {
+		List<RepositoryMemberRole> roles = new ArrayList<RepositoryMemberRole>();
+		for (RepositoryMemberRole role : values()) {
+			if (!role.equals(BLACKLIST)) {
+				roles.add(role);
+			}
+		}
+		
+		return roles;
 	}
 }

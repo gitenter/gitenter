@@ -1,6 +1,6 @@
 package com.gitenter.protease.dao.auth;
 
-public interface OrganizationMemberMapSql {
+public interface RepositoryMemberMapSql {
 
 	public int throughSqlDeleteById(Integer mapId);
 }

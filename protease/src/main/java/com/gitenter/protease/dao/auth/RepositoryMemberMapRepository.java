@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
 
-public interface RepositoryMemberMapRepository extends CrudRepository<RepositoryMemberMapBean, Integer> {
+public interface RepositoryMemberMapRepository extends CrudRepository<RepositoryMemberMapBean, Integer>, RepositoryMemberMapSql {
 
 	public Optional<RepositoryMemberMapBean> findById(Integer mapId);
 	@Query("select rm "
@@ -31,8 +31,7 @@ public interface RepositoryMemberMapRepository extends CrudRepository<Repository
 			@Param("organizationName") String organizationName, 
 			@Param("repositoryName") String repositoryName);
 	
-	public void delete (RepositoryMemberMapBean map);
-	public void deleteById (Integer mapId);
+	public int throughSqlDeleteById(Integer mapId);
 	
 	public RepositoryMemberMapBean saveAndFlush(RepositoryMemberMapBean map);
 }

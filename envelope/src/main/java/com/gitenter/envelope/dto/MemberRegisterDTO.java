@@ -12,6 +12,11 @@ import com.gitenter.protease.domain.auth.MemberBean;
 import lombok.Getter;
 import lombok.Setter;
 
+/*
+ * TODO:
+ * Cannot implements CreateReadUpdateDTO because the extra
+ * argument `PasswordEncoder` for `toBean()`.
+ */
 @Getter
 @Setter
 public class MemberRegisterDTO extends MemberProfileDTO {
@@ -28,12 +33,12 @@ public class MemberRegisterDTO extends MemberProfileDTO {
 	@Size(min=2, max=16)
 	private String password;
 	
-	public MemberBean toMemberBean(PasswordEncoder passwordEncoder) {
+	public MemberBean toBean(PasswordEncoder passwordEncoder) {
 		
 		MemberBean memberBean = new MemberBean();
 		
 		memberBean.setUsername(getUsername());
-		memberBean.setPassword(passwordEncoder.encode(getPassword()));
+		memberBean.setPassword(passwordEncoder.encode(password));
 		memberBean.setDisplayName(getDisplayName());
 		memberBean.setEmail(getEmail());
 		memberBean.setRegisterAt(new Date());

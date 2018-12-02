@@ -11,17 +11,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.envelope.dto.RepositoryDTO;
+import com.gitenter.envelope.service.MemberService;
 import com.gitenter.envelope.service.OrganizationManagerService;
 import com.gitenter.envelope.service.OrganizationService;
+import com.gitenter.envelope.service.RepositoryManagerService;
+import com.gitenter.envelope.service.RepositoryService;
+import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
+import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 
 @Controller
 public class RepositoryManagementController {
 	
+	@Autowired MemberService memberService;
 	@Autowired OrganizationService organizationService;
 	@Autowired OrganizationManagerService organizationManagerService;
+	@Autowired RepositoryService repositoryService;
+	@Autowired RepositoryManagerService repositoryManagerService;
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
 	public String showCreateRepositoryForm (
@@ -71,8 +81,130 @@ public class RepositoryManagementController {
 		 * mkdir actual happen in the second run. Wonder whether there's a better way to solve
 		 * this problem. 
 		 */
-		organizationManagerService.createRepository(authentication, organizationId, repositoryDTO, includeSetupFiles);
+		repositoryManagerService.createRepository(authentication, organization, repositoryDTO, includeSetupFiles);
 
 		return "redirect:/organizations/"+organizationId;
+	}
+
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.GET)
+	public String showRepositorySettings (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		
+		return "repository-management/settings";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.GET)
+	public String showRepositoryProfileSettingsForm (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.fillFromBean(repository);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		model.addAttribute("repositoryDTO", repositoryDTO);
+		
+		return "repository-management/profile";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.POST)
+	public String updateRepositoryProfile (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@Valid RepositoryDTO repositoryDTOAfterChange, 
+			Errors errors, 
+			RedirectAttributes model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		if (errors.hasErrors()) {
+			
+			model.addAttribute("organization", organization);
+			model.addAttribute("repository", repository);
+			model.addAttribute("repositoryDTO", repositoryDTOAfterChange);
+			
+			return "repository-management/profile";
+		}
+		
+		assert (repository.getName().equals(repositoryDTOAfterChange.getName()));
+		repositoryManagerService.updateRepository(repository, repositoryDTOAfterChange);
+		
+		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/profile";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators", method=RequestMethod.GET)
+	public String showRepositoryCollaboratorsManagementPage (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model,
+			Authentication authentication) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		model.addAttribute("operatorUsername", authentication.getName());
+		
+		model.addAttribute("collaboratorRoles", RepositoryMemberRole.collaboratorRoles());
+		
+		return "repository-management/collaborators";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/add", method=RequestMethod.POST)
+	public String addARepositoryCollaborator (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@RequestParam(value="to_be_add_username") String username,
+			String roleName) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		MemberBean collaborator = memberService.getMemberByUsername(username);
+		/*
+		 * TODO:
+		 * Catch the errors and redirect to the original page,
+		 * if the collaborator manager username is invalid.
+		 */
+		
+		repositoryManagerService.addCollaborator(repository, collaborator, roleName);
+		
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/remove", method=RequestMethod.POST)
+	public String removeARepositoryCollaborator (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@RequestParam(value="to_be_remove_username") String toBeRemovedUsername,
+			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId) throws Exception {
+		
+		/*
+		 * `toBeRemovedUsername` is not currently in use for the actual logic.
+		 * 
+		 * It is for:
+		 * (1) Visibility while showing the form (since display name may collapse).
+		 * (2) For selenium tests.
+		 */
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		
+		repositoryManagerService.removeCollaborator(repository, repositoryMemberMapId);
+
+		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}
 }

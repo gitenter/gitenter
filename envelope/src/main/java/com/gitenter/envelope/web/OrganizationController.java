@@ -19,7 +19,7 @@ public class OrganizationController {
 	public String showOrganizationPage (
 			@PathVariable Integer organizationId,
 			Authentication authentication,
-			Model model) {
+			Model model) throws Exception {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
 		model.addAttribute("repositories", organizationService.getVisibleRepositories(organizationId, authentication));

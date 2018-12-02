@@ -13,13 +13,28 @@ public interface RepositoryService {
 
 	public RepositoryBean getRepository(Integer repositoryId) throws IOException;
 
-	public CommitBean getCommitFromBranchName(Integer repositoryId, String branchName) throws IOException, GitAPIException;
-	public CommitBean getCommitFromSha(Integer repositoryId, String commitSha) throws IOException, GitAPIException;
+	public CommitBean getCommitFromBranchName(
+			Integer repositoryId, 
+			String branchName) throws IOException, GitAPIException;
+	public CommitBean getCommitFromSha(
+			Integer repositoryId, 
+			String commitSha) throws IOException, GitAPIException;
 	
-	public DocumentBean getDocumentFromCommitShaAndRelativePath(String commitSha, String relativePath) throws IOException, GitAPIException;
-	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativePath(Integer repositoryId, String branchName, String relativePath) throws IOException, GitAPIException;
+	public DocumentBean getDocumentFromCommitShaAndRelativePath(
+			String commitSha, 
+			String relativePath) throws IOException, GitAPIException;
+	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativePath(
+			Integer repositoryId, 
+			String branchName, 
+			String relativePath) throws IOException, GitAPIException;
 	
-	public FileBean getFileFromRepositoryIdAndCommitShaAndRelativePath(Integer repositoryId, String commitSha, String relativePath) throws IOException, GitAPIException;
-	public FileBean getFileFromRepositoryIdAndBranchAndRelativePath(Integer repositoryId, String branchName, String relativePath) throws IOException, GitAPIException;
+	public FileBean getFileFromRepositoryIdAndCommitShaAndRelativePath(
+			Integer repositoryId, 
+			String commitSha, 
+			String relativePath) throws IOException, GitAPIException;
+	public FileBean getFileFromRepositoryIdAndBranchAndRelativePath(
+			Integer repositoryId, 
+			String branchName, 
+			String relativePath) throws IOException, GitAPIException;
 
 }

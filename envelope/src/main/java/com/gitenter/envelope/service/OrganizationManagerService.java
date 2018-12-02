@@ -2,19 +2,29 @@ package com.gitenter.envelope.service;
 
 import java.io.IOException;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.security.core.Authentication;
 
-import com.gitenter.envelope.dto.RepositoryDTO;
-import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
+import com.gitenter.envelope.dto.OrganizationDTO;
+import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.OrganizationBean;
 
 public interface OrganizationManagerService {
-
-	public void addOrganizationMember(Integer organizationId, String username);
-	public void removeOrganizationMember(Integer organizationId, String username);
 	
-	public void addOrganizationManager(Integer organizationId, String username);
-	public void removeOrganizationManager(Integer organizationId, String username);
+	public void updateOrganization(
+			Authentication authentication, 
+			OrganizationBean organizationBean, 
+			OrganizationDTO organizationDTO);
 	
-	public void createRepository(Authentication authentication, Integer organizationId, RepositoryDTO repositoryDTO, Boolean includeSetupFiles) throws IOException, GitAPIException, RepositoryNameNotUniqueException;
+	public void addOrganizationMember(OrganizationBean organization, MemberBean member);
+	public void removeOrganizationMember(
+			OrganizationBean organization, 
+			Integer organizationMemberMapId) throws IOException;
+	
+	public void addOrganizationManager(
+			OrganizationBean organization, 
+			Integer organizationMemberMapId) throws IOException;
+	public void removeOrganizationManager(
+			Authentication authentication, 
+			OrganizationBean organization, 
+			Integer organizationMemberMapId) throws IOException;
 }

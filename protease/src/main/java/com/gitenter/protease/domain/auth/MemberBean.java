@@ -1,7 +1,6 @@
 package com.gitenter.protease.domain.auth;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class MemberBean implements ModelBean {
 	private List<OrganizationMemberMapBean> organizationMemberMaps;
 	
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps;
+	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<SshKeyBean> sshKeys;
@@ -94,8 +93,8 @@ public class MemberBean implements ModelBean {
 	 * method can contain a switch which queries corresponding list. Will have no
 	 * affect to the outside part.
 	 */
-	public Collection<OrganizationBean> getOrganizations(OrganizationMemberRole role) {
-		Collection<OrganizationBean> items = new ArrayList<OrganizationBean>();
+	public List<OrganizationBean> getOrganizations(OrganizationMemberRole role) {
+		List<OrganizationBean> items = new ArrayList<OrganizationBean>();
 		for (OrganizationMemberMapBean map : organizationMemberMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map.getOrganization());
@@ -104,8 +103,8 @@ public class MemberBean implements ModelBean {
 		return items;
 	}
 	
-	public Collection<RepositoryBean> getRepositories(RepositoryMemberRole role) {
-		Collection<RepositoryBean> items = new ArrayList<RepositoryBean>();
+	public List<RepositoryBean> getRepositories(RepositoryMemberRole role) {
+		List<RepositoryBean> items = new ArrayList<RepositoryBean>();
 		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map.getRepository());

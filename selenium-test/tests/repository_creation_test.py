@@ -180,7 +180,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)
-        assert self.repo_display_name not in self.driver.page_source
+        assert self.repo_display_name in self.driver.page_source
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)

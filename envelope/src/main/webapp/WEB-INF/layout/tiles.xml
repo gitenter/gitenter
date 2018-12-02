@@ -47,6 +47,9 @@
   <definition name="organization-management/settings" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/settings.jsp" />
   </definition>
+  <definition name="organization-management/profile" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/organization-management/profile.jsp" />
+  </definition>
   <definition name="organization-management/managers" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/managers.jsp" />
   </definition>
@@ -76,11 +79,14 @@
   <definition name="repository-management/create" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/repository-management/create.jsp" />
   </definition>
-  <definition name="admin/repository-settings" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/repository-settings.jsp" />
+  <definition name="repository-management/settings" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/settings.jsp" />
   </definition>
-  <definition name="admin/repository-collaborators" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/admin/repository-collaborators.jsp" />
+  <definition name="repository-management/profile" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/profile.jsp" />
+  </definition>
+  <definition name="repository-management/collaborators" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/collaborators.jsp" />
   </definition>
 
   <definition name="documentation/template" extends="unauth-base">

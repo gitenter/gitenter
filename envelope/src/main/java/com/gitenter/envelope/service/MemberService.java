@@ -1,5 +1,6 @@
 package com.gitenter.envelope.service;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
@@ -22,22 +23,22 @@ public interface MemberService {
 	 * as we cannot annotate @PreAuthorize in the class scope (rather than
 	 * in the method scope), there's not a lot of benefits doing that.
 	 */
-	public MemberBean getMemberByUsername(String username);
+	public MemberBean getMemberByUsername(String username) throws IOException;
 	
 	/*
 	 * Basically to have the input of "Authentication", it has similar the same
 	 * effect as @PreAuthorize("isAuthenticated()").
 	 */
-	public MemberProfileDTO getMemberProfileDTO(Authentication authentication);
-	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication);
-	public void updateMember(MemberProfileDTO profile);
-	public boolean updatePassword(MemberRegisterDTO register, String oldPassword);
+	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) throws IOException;
+	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) throws IOException;
+	public void updateMember(MemberProfileDTO profile) throws IOException;
+	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException;
 	
-	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO);
+	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) throws IOException;
 	
-	public Collection<OrganizationBean> getManagedOrganizations(String username);
-	public Collection<OrganizationBean> getBelongedOrganizations(String username);
+	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException;
+	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException;
 	
-	public Collection<RepositoryBean> getOrganizedRepositories(String username);
-	public Collection<RepositoryBean> getAuthoredRepositories(String username);
+	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException;
+	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
 }
