@@ -17,6 +17,7 @@ import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.envelope.service.MemberService;
 import com.gitenter.envelope.service.OrganizationManagerService;
 import com.gitenter.envelope.service.OrganizationService;
+import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
@@ -132,7 +133,8 @@ public class OrganizationManagementController {
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		organizationManagerService.addOrganizationMember(organization, username);		
+		MemberBean toBeAddMember = memberService.getMemberByUsername(username);
+		organizationManagerService.addOrganizationMember(organization, toBeAddMember);		
 		/*
 		 * TODO:
 		 * Raise errors and redirect to the original page,

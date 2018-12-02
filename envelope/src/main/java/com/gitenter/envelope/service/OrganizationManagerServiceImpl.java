@@ -1,8 +1,6 @@
 package com.gitenter.envelope.service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.envelope.service.exception.IdNotExistException;
-import com.gitenter.envelope.service.exception.InputIsNotQualifiedException;
+import com.gitenter.envelope.service.exception.InvalidOperationException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -42,24 +40,10 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
-	public void addOrganizationMember(OrganizationBean organization, String username) {
-				
-		MemberBean member = memberRepository.findByUsername(username).get(0);
+	public void addOrganizationMember(OrganizationBean organization, MemberBean member) {
+
 		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MEMBER);
 		organizationMemberMapRepository.saveAndFlush(map);
-	}
-	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
-	@Transactional
-	@Override
-	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId) {
-		
-		/*
-		 * TODO:
-		 * Should we validate the `organizationMemberMapId`?
-		 */
-		
-		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
 	}
 	
 	private OrganizationMemberMapBean getOrganizationMemberMapBean(Integer organizationMemberMapId) throws IOException {
@@ -75,11 +59,30 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	}
 	
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	@Transactional
+	@Override
+	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
+		
+		/*
+		 * Doesn't for the SQL operation part, since if the `organizationMemberMapId` does not
+		 * exist then `DELECT` simply does nothing. The problem is the `@PreAuthorize` is only
+		 * for the operator has authorization for the current organization, but have no
+		 * requirement if the `mapId` belongs to a completely different organization. That's
+		 * the reason this checking is important.
+		 */
+		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
+		assert map.getOrganization().getId().equals(organization.getId());
+		
+		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
+	}
+	
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
 	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
 		assert map.getRole().equals(OrganizationMemberRole.MEMBER);
+		
 		map.setRole(OrganizationMemberRole.MANAGER);
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
@@ -95,7 +98,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		assert map.getRole().equals(OrganizationMemberRole.MANAGER);
 		
 		if (authentication.getName().equals(map.getMember().getUsername())) {
-			throw new InputIsNotQualifiedException("Manager cannot remove him/herself as manager");
+			throw new InvalidOperationException("Manager cannot remove him/herself as manager");
 		}
 		
 		map.setRole(OrganizationMemberRole.MEMBER);
