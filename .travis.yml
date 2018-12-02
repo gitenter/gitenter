@@ -1,3 +1,5 @@
+language: java
+jdk: openjdk10
 services:
   - postgresql
 before_script:
@@ -5,3 +7,5 @@ before_script:
   - psql -U postgres -w -f database/create_database.sql -v dbname=gitenter
   - psql -U postgres -d gitenter -w -f database/initiate_database.sql
   - psql -c 'ALTER DATABASE gitenter OWNER TO gitenter;' -U postgres
+script:
+  - cd protease && mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V && mvn test -B
