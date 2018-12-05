@@ -9,17 +9,20 @@
 
 	<name>post-receive hook</name>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.0.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring-version>5.1.2.RELEASE</spring-version>
-		<jaxb-version>2.3.0</jaxb-version>
+		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
 
-	<build>
+	<!-- <build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -39,7 +42,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 
 	<dependencies>
 		<!-- local packages -->
@@ -47,46 +50,107 @@
 			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.2-prototype</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
 			<version>0.0.2-prototype</version>
+			<!--
+				Exclude everything, because "protease" is a Spring application,
+				and "capsid" is a Spring Boot application. They only share the
+				domain model code, but not the Spring setups.
+			-->
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>enzymark</artifactId>
 			<version>0.0.2-prototype</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Compile -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring-version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+<!--			<exclusions>-->
+				<!-- TODO:
+					Since we already excluded "slf4j-log4j12" in other packages,
+					if we decided to go with "logback", we don't need to remove
+					them in here.
+					"mvn package" works fine, but for some reason STS cannot work
+					in this way (it still find "slf4j-log4j12" somewhere althouth
+					it is not in "mvn dependency:tree". So I am still removing it
+					in here.
+				-->
+<!--				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>log4j-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>-->
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring-version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>${commonmark-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+		<dependency>
+			<!--
+				TODO:
+				No longer actively maintained.
+				Should upgrade to `commons-configuration2`, but a quick
+				try seems don't work.
+				https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
+			-->
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.10</version>
+		</dependency>
+
+		<!-- Runtime -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Test -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring-version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -96,5 +160,14 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

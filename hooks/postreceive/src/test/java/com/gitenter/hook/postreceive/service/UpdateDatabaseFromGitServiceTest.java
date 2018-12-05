@@ -20,22 +20,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitNormalRepository;
 import com.gitenter.gitar.GitRemote;
 import com.gitenter.gitar.GitWorkspace;
-import com.gitenter.hook.postreceive.PostReceiveConfig;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
@@ -45,8 +42,7 @@ import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=PostReceiveConfig.class)
+@SpringBootTest
 public class UpdateDatabaseFromGitServiceTest {
 	
 	@InjectMocks private UpdateDatabaseFromGitServiceImpl service;

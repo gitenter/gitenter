@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.gitenter.hook.postreceive.service.HookInputSet;
-
+@SpringBootTest
 public class HookInputSetTest {
 
 	@Test

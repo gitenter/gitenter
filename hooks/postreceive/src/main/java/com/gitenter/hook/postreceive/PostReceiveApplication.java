@@ -1,27 +1,28 @@
 package com.gitenter.hook.postreceive;
 
-import java.io.IOException;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.gitenter.hook.postreceive.service.HookInputSet;
 import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
 
-/*
- * This main class has nothing to do with unit tests.
- * If this package is used as a library rather than a
- * stand-alone executive jar, then this class is not
- * needed. 
- */
-@ComponentScan(basePackages = {"com.gitenter.hook.postreceive", "com.gitenter.protease"})
-public class PostReceiveApplication {
+@SpringBootApplication
+@ComponentScan(basePackages = {
+		"com.gitenter.hook.postreceive", 
+		"com.gitenter.protease"})
+public class PostReceiveApplication implements CommandLineRunner {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(PostReceiveApplication.class, args);
+	}
 	
 	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGitService;
 	
-	public static void main (String[] args) throws Exception {
+	@Override
+	public void run(String... args) throws Exception {
 		
 		HookInputSet input = new HookInputSet(System.getProperty("user.dir"), args);
 		
@@ -42,8 +43,8 @@ public class PostReceiveApplication {
 		 * Should be optimized so at least no need to change in multiple 
 		 * times.
 		 */
-		System.setProperty("spring.profiles.active", "sts");
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
+//		System.setProperty("spring.profiles.active", "sts");
+//		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.
 		 *  
@@ -72,11 +73,6 @@ public class PostReceiveApplication {
 //		context.getEnvironment().setActiveProfiles("production");
 //		context.refresh();
 		
-		PostReceiveApplication p = context.getBean(PostReceiveApplication.class);
-		p.run(input);
-	}
-	
-	private void run (HookInputSet input) throws IOException, GitAPIException {
 		updateDatabaseFromGitService.update(input);
 	}
 }
