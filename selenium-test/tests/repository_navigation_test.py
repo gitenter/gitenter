@@ -32,7 +32,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_repo_with_no_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         assert "Setup a new repository" in self.driver.page_source
@@ -49,7 +49,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_ignored_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         git_commit_datapack = GitCommitDatapack("add commit without setup file", self.org_member_username, self.org_member_email)
         git_commit_datapack.add_file(AddToGitConcreteFile("a_irrelevant_file.txt", "A irrelevant file"))
@@ -75,7 +75,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_invalid_commit(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
         git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
@@ -103,7 +103,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_one_file(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
         git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
@@ -155,7 +155,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_two_files_in_root(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
         git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
@@ -191,7 +191,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_two_files_in_nested_folder(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
         git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
@@ -227,7 +227,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_display_image(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
         git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))

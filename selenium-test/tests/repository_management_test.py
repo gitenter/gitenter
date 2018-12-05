@@ -17,7 +17,7 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
 
     def test_repo_organizer_can_access_repo_setting(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         # TODO:
         # So this is actually in "Setup a new repository" page.
@@ -28,7 +28,7 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
 
     def test_non_repo_organizer_cannot_access_repo_setting(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/repositories/{}/settings']".format(self.org_id, self.repo_id)))
@@ -38,7 +38,7 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         description_append = " (version 2)"
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         self.driver.get(urljoin(
             self.root_url,
@@ -68,7 +68,7 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
 
     def test_non_project_organizer_is_not_allowed_to_modify_repository_profile(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(
             self.root_url,
@@ -81,21 +81,21 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
     def test_repo_organizer_add_and_remove_collaborator(self):
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         collaborator_url = urljoin(
             self.root_url,
             "/organizations/{}/repositories/{}/settings/collaborators".format(self.org_id, self.repo_id))
         self.driver.get(collaborator_url)
 
-        assert self.org_member_display_name in self.driver.find_element_by_class_name("user").text
+        assert self.repo_organizer_display_name in self.driver.find_element_by_class_name("user").text
         self.assertEqual(len(self.driver.find_elements_by_class_name("user-deletable")), 0)
 
-        fill_add_collaborator_form(self.driver, self.org_manager_username, "Document editor")
+        fill_add_collaborator_form(self.driver, self.org_member_username, "Document editor")
 
         self.assertEqual(self.driver.current_url, collaborator_url)
-        assert self.org_member_display_name in self.driver.find_element_by_class_name("user").text
-        assert self.org_manager_display_name in self.driver.find_element_by_class_name("user-deletable").text
+        assert self.repo_organizer_display_name in self.driver.find_element_by_class_name("user").text
+        assert self.org_member_display_name in self.driver.find_element_by_class_name("user-deletable").text
 
         # `self.username` is not in that organization, therefore, shouldn't
         # be able to add as collaborator.
@@ -111,12 +111,12 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         form_start = self.driver.find_element_by_xpath(
             "//form[@action='/organizations/{}/repositories/{}/settings/collaborators/remove']/input[@name='{}']".format(
                 self.org_id, self.repo_id, "to_be_remove_username"))
-        self.assertEqual(form_start.get_attribute("value"), self.org_manager_username)
+        self.assertEqual(form_start.get_attribute("value"), self.org_member_username)
         form_start.submit()
 
         self.assertEqual(self.driver.current_url, collaborator_url)
 
-        assert self.org_member_display_name in self.driver.find_element_by_class_name("user").text
+        assert self.repo_organizer_display_name in self.driver.find_element_by_class_name("user").text
         self.assertEqual(len(self.driver.find_elements_by_class_name("user-deletable")), 0)
         self.assertFalse(self.driver.find_elements_by_xpath(
             "//form[@action='/organizations/{}/repositories/{}/settings/collaborators/remove']/input".format(

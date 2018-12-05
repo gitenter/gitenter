@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.envelope.service.exception.CommitShaNotExistException;
@@ -33,12 +34,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 	@Autowired private RepositoryGitUpdateFactory repositoryGitUpdateFactory;
 	@Autowired private CommitGitUpdateFactory commitGitUpdateFactory;
 
-	/*
-	 * TODO:
-	 * 
-	 * User can only access repository information if she is authorized
-	 * to do so.
-	 */
+	@PostAuthorize("hasPermission(returnObject, T(com.gitenter.envelope.dto.RepositoryAccessLevel).READ)")
 	@Override
 	public RepositoryBean getRepository(Integer repositoryId) throws IdNotExistException {
 		
