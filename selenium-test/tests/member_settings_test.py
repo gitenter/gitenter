@@ -140,6 +140,20 @@ class TestMemberSetting(RegisteredTestSuite):
         self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
         assert "size" in self.driver.find_element_by_id("password.errors").text
 
+    def test_add_ssh_key(self):
+        ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9 comment"
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
+        self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+        form_start = self.driver.find_element_by_id("value")
+        form_start.send_keys(ssh_key)
+        form_start.submit()
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
+        assert "AAAAB3NzaC1yc2EAAAADAQABAAABAQCv" in self.driver.page_source
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -15,7 +15,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.envelope.dto.MemberProfileDTO;
 import com.gitenter.envelope.dto.MemberRegisterDTO;
+import com.gitenter.envelope.dto.SshKeyFieldDTO;
 import com.gitenter.envelope.service.MemberService;
+import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.SshKeyBean;
 
 @Controller
 @RequestMapping("/settings")
@@ -130,5 +133,56 @@ public class MemberSettingsController {
 			model.addFlashAttribute("errorMessage", "Old password doesn't match!");
 			return "redirect:/settings/account";
 		}
+	}
+	
+	@RequestMapping(value="/ssh", method=RequestMethod.GET)
+	public String showSshKeyForm (Model model, Authentication authentication) throws Exception {
+		
+		MemberBean member = memberService.getMemberByUsername(authentication.getName());
+//		Hibernate.initialize(member.getSshKeys());
+		model.addAttribute("member", member);
+		
+		model.addAttribute("sshKeyFieldDTO", new SshKeyFieldDTO());
+		return "settings/ssh";
+	}
+	
+	@RequestMapping(value="/ssh", method=RequestMethod.POST)
+	public String processAddASshKey (
+			@Valid SshKeyFieldDTO sshKeyFieldDTO, 
+			Errors errors, 
+			Model model, 
+			Authentication authentication) throws Exception {
+		
+		MemberBean member = memberService.getMemberByUsername(authentication.getName());
+//		Hibernate.initialize(member.getSshKeys());
+		model.addAttribute("member", member);
+		
+		if (errors.hasErrors()) {
+			
+			model.addAttribute("sshKeyFieldDTO", sshKeyFieldDTO); 
+			return "settings/ssh";
+		}
+		
+		SshKeyBean sshKey;
+		try {
+			/*
+			 * The "errors" in java validation only checked the key type (by
+			 * regular expression). Here gives a complete check.
+			 * 
+			 * For case it raises "IOException" or "GeneralSecurityException",
+			 * that means the key submitted is not valid.  
+			 */
+			sshKey = sshKeyFieldDTO.toBean();
+		}
+		catch (Exception e) {
+			
+			model.addAttribute("errorMessage", "The SSH key does not have a valid format.");
+			model.addAttribute("sshKeyFieldDTO", sshKeyFieldDTO);
+			return "settings/ssh";
+		}
+		
+		memberService.addSshKey(sshKey, member);
+		
+		return "redirect:/settings/ssh";
 	}
 }

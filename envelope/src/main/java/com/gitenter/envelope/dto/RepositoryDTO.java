@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RepositoryDTO implements CreateReadUpdateDTO<RepositoryBean> {
+public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<RepositoryBean>, UpdateDTO<RepositoryBean> {
 
 	@NotNull
 	@Size(min=2, max=16)

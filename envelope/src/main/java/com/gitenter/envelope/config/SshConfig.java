@@ -16,7 +16,7 @@ public class SshConfig {
 	public SshSource stsSshGitSource() {
 		
 		SshSource sshSource = new SshSource();
-		sshSource.setSshFolderPath(new File(System.getProperty("user.home"), "Workspace/enterovirus-test/fake_server/.ssh"));
+		sshSource.setSshFolderPath(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server/.ssh"));
 		return sshSource;
 	}
 	

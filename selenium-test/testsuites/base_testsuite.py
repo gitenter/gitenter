@@ -21,6 +21,7 @@ class BaseTestSuite(unittest.TestCase):
         self.root_url = self.config.web_root_url
         self._reset_database("gitenter", "gitenter_empty")
         self._cleanup_local_git_server()
+        self._setup_ssh()
 
     def tearDown(self):
         self.driver.close()
@@ -84,3 +85,9 @@ class BaseTestSuite(unittest.TestCase):
     def _cleanup_local_git_server(self):
         self._remove_folder_content(self.config.git_server_root_path)
         self._remove_folder_content(self.config.sandbox_path)
+
+    def _setup_ssh(self):
+        if os.path.exists(str(self.config.ssh_server_patch)):
+            shutil.rmtree(self.config.ssh_server_patch)
+
+        self.config.ssh_server_patch.mkdir(mode=0o777, parents=True, exist_ok=False)

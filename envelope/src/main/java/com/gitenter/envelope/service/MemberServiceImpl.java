@@ -17,12 +17,14 @@ import com.gitenter.envelope.service.exception.UserNotExistException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
+import com.gitenter.protease.dao.auth.SshKeyRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.domain.auth.SshKeyBean;
 
 /*
  * It is quite ironical that Spring @autowired are contradict with
@@ -40,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
+	@Autowired SshKeyRepository sshKeyRepository;
 	
 	@Autowired private PasswordEncoder passwordEncoder;
 	
@@ -169,5 +172,14 @@ public class MemberServiceImpl implements MemberService {
 		
 		MemberBean member = getMemberByUsername(username);
 		return member.getRepositories(RepositoryMemberRole.EDITOR);
+	}
+	
+	@Override
+	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException {
+		
+		sshKey.setMember(member);
+		member.addSshKey(sshKey);
+		
+		sshKeyRepository.saveAndFlush(sshKey);
 	}
 }

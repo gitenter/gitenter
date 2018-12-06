@@ -11,6 +11,7 @@ import com.gitenter.envelope.dto.OrganizationDTO;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.SshKeyBean;
 
 public interface MemberService {
 	
@@ -41,4 +42,6 @@ public interface MemberService {
 	
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException;
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
+	
+	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException;
 }

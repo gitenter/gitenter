@@ -21,7 +21,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MemberProfileDTO implements ReadUpdateDTO<MemberBean> {
+public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBean> {
 	
 	@NotNull
 	@Size(min=2, max=16)

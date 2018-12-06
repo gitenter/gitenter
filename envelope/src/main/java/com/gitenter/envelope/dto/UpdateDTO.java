@@ -2,7 +2,7 @@ package com.gitenter.envelope.dto;
 
 import com.gitenter.protease.domain.ModelBean;
 
-public interface ReadUpdateDTO<ConcreteModelBean extends ModelBean> extends ReadDTO<ConcreteModelBean> {
+public interface UpdateDTO<ConcreteModelBean extends ModelBean> {
 
 	/*
 	 * TODO:
