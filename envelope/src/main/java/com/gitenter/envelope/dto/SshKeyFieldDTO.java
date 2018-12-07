@@ -26,7 +26,7 @@ public class SshKeyFieldDTO {
 
 	/*
 	 * See "AUTHORIZED_KEYS FILE FORMAT" section of sshd(8)
-	 * https://www.freebsd.org/cgi/man.cgi?sshd(8)#end
+	 * https://www.freebsd.org/cgi/man.cgi?sshd(8)
 	 * 
 	 * Here allows "\n" on the right, as it will later be removed 
 	 * while parsing.

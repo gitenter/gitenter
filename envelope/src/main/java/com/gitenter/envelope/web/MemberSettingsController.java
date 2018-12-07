@@ -139,7 +139,6 @@ public class MemberSettingsController {
 	public String showSshKeyForm (Model model, Authentication authentication) throws Exception {
 		
 		MemberBean member = memberService.getMemberByUsername(authentication.getName());
-//		Hibernate.initialize(member.getSshKeys());
 		model.addAttribute("member", member);
 		
 		model.addAttribute("sshKeyFieldDTO", new SshKeyFieldDTO());
@@ -154,7 +153,6 @@ public class MemberSettingsController {
 			Authentication authentication) throws Exception {
 		
 		MemberBean member = memberService.getMemberByUsername(authentication.getName());
-//		Hibernate.initialize(member.getSshKeys());
 		model.addAttribute("member", member);
 		
 		if (errors.hasErrors()) {

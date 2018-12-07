@@ -19,6 +19,11 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 		
+		if (targetDomainObject instanceof String) {
+			String username = (String)targetDomainObject;
+			return username.equals(authentication.getName());
+		}
+		
 		if ((targetDomainObject instanceof OrganizationBean) && (permission instanceof OrganizationMemberRole)) {
 			OrganizationBean organization = (OrganizationBean)targetDomainObject;
 			OrganizationMemberRole role = (OrganizationMemberRole)permission;

@@ -33,6 +33,15 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/repositories/{}/settings']".format(self.org_id, self.repo_id)))
 
+
+class TestModifyRepositoryProfile(RepositoryCreatedTestSuite):
+
+    def setUp(self):
+        super(TestModifyRepositoryProfile, self).setUp()
+
+    def tearDown(self):
+        super(TestModifyRepositoryProfile, self).tearDown()
+
     def test_repo_organizer_modify_repository_profile(self):
         display_name_append = " v2"
         description_append = " (version 2)"
@@ -77,6 +86,15 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
         display_name_form_fill.send_keys(" v2")
         display_name_form_fill.submit()
         assert "status=403" in self.driver.page_source
+
+
+class TestModifyRepositoryCollaborator(RepositoryCreatedTestSuite):
+
+    def setUp(self):
+        super(TestModifyRepositoryCollaborator, self).setUp()
+
+    def tearDown(self):
+        super(TestModifyRepositoryCollaborator, self).tearDown()
 
     def test_repo_organizer_add_and_remove_collaborator(self):
 
