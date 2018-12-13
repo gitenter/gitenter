@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +61,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	@Override
+	@PreAuthorize("isAuthenticated()")
 	public boolean isManager(Integer organizationId, Authentication authentication) throws IOException {
 		
 		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.findByUsernameAndOrganizationIdAndRole(
@@ -77,6 +79,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 
 	@Override
+	@PreAuthorize("isAuthenticated()")
 	public boolean isMember(Integer organizationId, Authentication authentication) throws IOException {
 		
 		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.findByUsernameAndOrganizationIdAndRole(
@@ -93,7 +96,15 @@ public class OrganizationServiceImpl implements OrganizationService {
 		throw new InvalidDataException("user should have a unique relationship to an organization.");
 	}
 
+	/*
+	 * TODO:
+	 * 
+	 * Also need to handle the case of `getVisibleRepositories()` for
+	 * an anonymous user. For this case, `authentication` cannot be
+	 * the argument of this method.
+	 */
 	@Override
+	@PreAuthorize("isAuthenticated()")
 	public Collection<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);

@@ -17,12 +17,14 @@ import com.gitenter.envelope.service.exception.UserNotExistException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
+import com.gitenter.protease.dao.auth.SshKeyRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.domain.auth.SshKeyBean;
 
 /*
  * It is quite ironical that Spring @autowired are contradict with
@@ -40,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
+	@Autowired SshKeyRepository sshKeyRepository;
 	
 	@Autowired private PasswordEncoder passwordEncoder;
 	
@@ -54,6 +57,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 	
+	@Override
 	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) throws IOException {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
@@ -64,6 +68,7 @@ public class MemberServiceImpl implements MemberService {
 		return profile;
 	}
 	
+	@Override
 	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) throws IOException {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
@@ -78,7 +83,8 @@ public class MemberServiceImpl implements MemberService {
 		return profileAndPassword;
 	}
 	
-	@PreAuthorize("isAuthenticated()")
+	@Override
+	@PreAuthorize("hasPermission(#profile.getUsername(), null)")
 	public void updateMember(MemberProfileDTO profile) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(profile.getUsername());
@@ -92,7 +98,8 @@ public class MemberServiceImpl implements MemberService {
 		memberRepository.saveAndFlush(memberBean);
 	}
 	
-	@PreAuthorize("isAuthenticated()")
+	@Override
+	@PreAuthorize("hasPermission(#register.getUsername(), null)")
 	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(register.getUsername());
@@ -109,6 +116,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
+	@PreAuthorize("isAuthenticated()")
 	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) throws IOException {
 		
 		MemberBean member = getMemberByUsername(authentication.getName());
@@ -131,6 +139,10 @@ public class MemberServiceImpl implements MemberService {
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
 	
+	/*
+	 * No need for authorization, because users are accessible to other user's
+	 * managed/belonged organizations and repositories.
+	 */
 	@Override
 	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException {
 		
@@ -169,5 +181,15 @@ public class MemberServiceImpl implements MemberService {
 		
 		MemberBean member = getMemberByUsername(username);
 		return member.getRepositories(RepositoryMemberRole.EDITOR);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#member.getUsername(), null)")
+	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException {
+		
+		sshKey.setMember(member);
+		member.addSshKey(sshKey);
+		
+		sshKeyRepository.saveAndFlush(sshKey);
 	}
 }

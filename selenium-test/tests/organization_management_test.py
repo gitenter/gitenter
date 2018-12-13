@@ -36,6 +36,15 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings']".format(self.org_id)))
 
+
+class TestModifyOrganizationProfile(OrganizationCreatedTestSuite):
+
+    def setUp(self):
+        super(TestModifyOrganizationProfile, self).setUp()
+
+    def tearDown(self):
+        super(TestModifyOrganizationProfile, self).tearDown()
+
     def test_organization_manager_modify_organization_profile(self):
         display_name_append = " v2"
 
@@ -67,6 +76,15 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         display_name_form_fill.send_keys(" v2")
         display_name_form_fill.submit()
         assert "status=403" in self.driver.page_source
+
+
+class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
+
+    def setUp(self):
+        super(TestModifyOrganizationMembers, self).setUp()
+
+    def tearDown(self):
+        super(TestModifyOrganizationMembers, self).tearDown()
 
     def test_organization_manager_add_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))

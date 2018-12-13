@@ -24,6 +24,15 @@ class TestMemberSetting(RegisteredTestSuite):
         self.driver.get(urljoin(self.root_url, "/settings/account"))
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
+
+class TestChangeUserProfile(RegisteredTestSuite):
+
+    def setUp(self):
+        super(TestChangeUserProfile, self).setUp()
+
+    def tearDown(self):
+        super(TestChangeUserProfile, self).tearDown()
+
     def test_change_user_profile(self):
         display_name_append = "Jr."
         email_append = ".com"
@@ -83,7 +92,16 @@ class TestMemberSetting(RegisteredTestSuite):
         assert "size" in self.driver.find_element_by_id("displayName.errors").text
         assert "not a well-formed email addres" in self.driver.find_element_by_id("email.errors").text
 
-    def test_change_password(self):
+
+class TestChangeUserPassword(RegisteredTestSuite):
+
+    def setUp(self):
+        super(TestChangeUserPassword, self).setUp()
+
+    def tearDown(self):
+        super(TestChangeUserPassword, self).tearDown()
+
+    def test_change_password_valid(self):
         new_password = "new_password"
 
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -139,6 +157,45 @@ class TestMemberSetting(RegisteredTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
         self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
         assert "size" in self.driver.find_element_by_id("password.errors").text
+
+
+class TestAddSshKey(RegisteredTestSuite):
+
+    def setUp(self):
+        super(TestAddSshKey, self).setUp()
+
+    def tearDown(self):
+        super(TestAddSshKey, self).tearDown()
+
+    def _add_ssh_key(self, ssh_key):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
+        self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+        form_start = self.driver.find_element_by_id("value")
+        form_start.send_keys(ssh_key)
+        form_start.submit()
+
+    def test_add_valid_ssh_key(self):
+        ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9 user@email.com"
+        self._add_ssh_key(ssh_key)
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
+        assert "AAAAB3NzaC1yc2EAAAADAQABAAABAQCv" in self.driver.page_source
+
+    def test_add_ssh_key_invalid_format(self):
+        ssh_key = "invalid_ssh_key"
+        self._add_ssh_key(ssh_key)
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
+        assert "Wrong format" in self.driver.find_element_by_id("value.errors").text
+
+    def test_add_ssh_key_base64_encoded_key_error(self):
+        ssh_key = "ssh-rsa AAAAB3 user@email.com"
+        self._add_ssh_key(ssh_key)
+
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
+        assert "The SSH key does not have a valid format." in self.driver.find_element_by_class_name("error").text
 
 
 if __name__ == '__main__':
