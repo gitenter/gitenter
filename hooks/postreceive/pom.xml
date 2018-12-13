@@ -24,9 +24,18 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
+				<!--
+					Cannot use the last version (3.1.0). Otherwise `EntityManagerFactory`
+					will have @autowired error. (Selenium) integration test for hooks will
+					then fail.
+					If not provided, the current default version is 2.2-beta-5.
+				-->
+				<version>2.2-beta-5</version>
 				<configuration>
-					<release>8</release>
+					<!--
+						Cannot specify release version (to 8). Otherwise same as the error
+						to specify version 3.1.0.
+					-->
 					<archive>
 						<manifest>
 							<mainClass>com.gitenter.hook.postreceive.PostReceiveApplication</mainClass>
@@ -35,7 +44,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>../../envelope/src/main/resources/git-server-side-hooks</outputDirectory>
+					<outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

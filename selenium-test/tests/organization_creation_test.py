@@ -1,14 +1,14 @@
 import unittest
 from urllib.parse import urlparse, urljoin
 
-from testsuites.registered_testsuite import RegisteredTestSuite
+from testsuites.organization_created_testsuite import OrganizationToBeCreatedTestSuite
 from forms.authorization_form import fill_login_form
 from forms.organization_management_form import (
     fill_create_organization_form
 )
 
 
-class TestOrganizationCreation(RegisteredTestSuite):
+class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
 
     def setUp(self):
         super(TestOrganizationCreation, self).setUp()
