@@ -4,11 +4,11 @@ echo "====post-receive hook===="
 
 # Since current directory is the root of the corresponding
 # git repository (rather than inside of the "/hooks" folder)
-# executing the ".jar" file will need to navigate into 
+# executing the ".jar" file will need to navigate into
 # "/hooks".
 #
 # To check, using
-echo "current directory:" 
+echo "current directory:"
 echo $PWD
 
 # no argument
@@ -19,9 +19,8 @@ echo $PWD
 echo "----stdin----"
 while read LINE; do
 	echo ${LINE}
-	java -jar hooks/postreceive-0.0.2-prototype-jar-with-dependencies.jar ${LINE}    # do something with it here
+	java -jar hooks/postreceive-0.0.2-prototype-jar-with-dependencies.jar ${LINE}
 done
 
 # A post-receive example at:
 # https://github.com/git/git/blob/master/contrib/hooks/post-receive-email
-

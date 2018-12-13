@@ -22,14 +22,6 @@ To set it up, Go to `Run > Run configurations` and under the `Spring Boot` leave
 
 In the final product, I have group `enterovirus` with users (1)`tomcat8` and (2)`git`. While testing, I have `enterovirus` with users (1) `tomcat8`, (2)`git`, and (3)`beta` -- myself. Since the STS tomcat is running under myself (rather than user `tomcat8`), that will make the development process easier.
 
-### Automatic UI test
-
-```
-pip3 install lxml
-pip3 install requests
-pip3 install bs4
-```
-
 ## Deployment
 
 Install Tomcat 8. Then `sudo chmod 777 /var/lib/tomcat8/webapps` and put the `.war` file into that folder. The site is accessible from `http://localhost:8080/capsid-[version]/`.
@@ -66,11 +58,4 @@ If that happens, use user `user` and password printed in the console. E.g.
 [main] INFO org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration -
 
 Using default security password: c543b70b-7aa5-4dcf-ab0b-eea37e792363
-```
-
-### Testing URLs
-
-```
-http://localhost:8888/api/users/ann/
-http://localhost:8888/api/organizations/gov
 ```
