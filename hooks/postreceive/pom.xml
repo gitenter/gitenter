@@ -44,7 +44,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<outputDirectory>../../envelope/src/main/resources/git-server-side-hooks</outputDirectory>
+					<outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
