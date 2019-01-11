@@ -2,9 +2,18 @@ version: "3"
 services:
 
   database:
-    build:
-      context: ./database
-      dockerfile: ./Dockerfile
+    image: postgres:11.1
+    volumes:
+      - ./database:/database
+      - ./docker/database/docker_init.sh:/docker-entrypoint-initdb.d/docker_init.sh
+    ports:
+      - "5432"
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
+
+  # java-build:
+  #   build:
+  #     context: ./docker/java-build
+  #     dockerfile: ./Dockerfile
+  #   # restart: always
