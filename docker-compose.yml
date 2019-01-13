@@ -34,3 +34,11 @@ services:
       - database
     tty: true
     restart: always
+
+  selenium-test:
+    build:
+      context: ./docker/selenium-test
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./selenium-test:/selenium-test
+    tty: true
