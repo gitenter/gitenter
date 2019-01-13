@@ -22,15 +22,15 @@ services:
     tty: true
 
   web:
-    image: tomcat:8-jre11
-    # build:
-    #   context: ./docker/web
-    #   dockerfile: ./Dockerfile
+    build:
+      context: ./docker/web
+      dockerfile: ./Dockerfile
+    volumes:
+      # - ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./capsid/target/capsid-0.0.2-prototype.war:/usr/local/tomcat/webapps/ROOT.war
     ports:
       - "8886:8080"
     depends_on:
       - database
     tty: true
     restart: always
-
-# https://zeroturnaround.com/rebellabs/preparing-an-environment-with-docker-compose/

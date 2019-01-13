@@ -20,9 +20,9 @@ public class GitConfig {
 		return gitSource;
 	}
 	
-	@Profile("localhost")
+	@Profile("docker")
 	@Bean
-	public GitSource localhostGitSource() {
+	public GitSource dockerGitSource() {
 		
 		GitSource gitSource = new GitSource();
 		gitSource.setRootFolderPath("/home/git");

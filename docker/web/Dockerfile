@@ -1,6 +1,5 @@
-FROM ubuntu:18.04
+FROM tomcat:8-jre11
 
-RUN apt-get update && apt-get -y install \
-    apt-utils \
-    openjdk-11-jre \
-    tomcat8
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+
+CMD ["catalina.sh", "run"]
