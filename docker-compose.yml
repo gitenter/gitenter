@@ -6,14 +6,31 @@ services:
     volumes:
       - ./database:/database
       - ./docker/database/docker_init.sh:/docker-entrypoint-initdb.d/docker_init.sh
-    ports:
-      - "5432"
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
 
-  # java-build:
-  #   build:
-  #     context: ./docker/java-build
-  #     dockerfile: ./Dockerfile
-  #   # restart: always
+  dev-machine:
+    build:
+      context: ./docker/dev-machine
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../gitar:/gitar
+      - ../gitenter:/gitenter
+    depends_on:
+      - database
+    tty: true
+
+  web:
+    image: tomcat:8-jre11
+    # build:
+    #   context: ./docker/web
+    #   dockerfile: ./Dockerfile
+    ports:
+      - "8886:8080"
+    depends_on:
+      - database
+    tty: true
+    restart: always
+
+# https://zeroturnaround.com/rebellabs/preparing-an-environment-with-docker-compose/
