@@ -22,5 +22,11 @@ RUN mv chromedriver /usr/local/bin
 RUN apt-get update && apt-get -y install \
     firefox
 
-# Seems have a problem running it, because there's no GUI (so no proper running
-# firefox) in the docker container.
+# TODO:
+# We would like to use a "headless browser" to run the test, as we don't have a
+# GUI for our docker container so Firefox/Chrome are not our choices.
+# Possible resources:
+# `HtmlUnitDriver` - https://github.com/SeleniumHQ/selenium/wiki/HtmlUnitDriver
+#                  - https://stackoverflow.com/questions/4618373/how-do-i-use-the-htmlunit-driver-with-selenium-from-python/5518175#5518175
+# `xvfb` - https://stackoverflow.com/questions/10399557/is-it-possible-to-run-selenium-firefox-web-driver-without-a-gui
+# Ghost Driver - https://github.com/detro/ghostdriver

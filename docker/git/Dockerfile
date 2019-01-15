@@ -23,15 +23,18 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
-#USER git
-#WORKDIR /home/git
-
 # Above refers: https://docs.docker.com/engine/examples/running_ssh_service/
 # At this point, `ssh git@localhost -p 8822` from host works.
 
 RUN git init --bare /home/git/server.git
 
+#ENTRYPOINT ["git"]
+#CMD ["--help"]
+
 EXPOSE 9418
+
+#USER git
+WORKDIR /home/git
 
 #git clone git@0.0.0.0:52418/home/git/server.git
 #
@@ -43,3 +46,6 @@ EXPOSE 9418
 #git@0.0.0.0's password:
 #Permission denied, please try again.
 #git@0.0.0.0's password:
+#
+# Tried the following but doesn't work:
+#RUN sed -i 's/#PermitTTY yes/PermitTTY no/' /etc/ssh/sshd_config
