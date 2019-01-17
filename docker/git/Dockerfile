@@ -9,6 +9,8 @@ RUN apt-get update && apt-get -y install \
 	openssh-server \
     git
 
+# Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
+
 RUN mkdir /var/run/sshd
 #RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin forced-commands-only/' /etc/ssh/sshd_config
@@ -23,29 +25,33 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
-# Above refers: https://docs.docker.com/engine/examples/running_ssh_service/
-# At this point, `ssh git@localhost -p 8822` from host works.
+# $ ssh git@localhost -p 8822
+# Works at this point.
 
+# TODO:
+# Setup non-interactive login so user cannot login through SSH.
+
+# TODO: Remove it.
 RUN git init --bare /home/git/server.git
 
-#ENTRYPOINT ["git"]
-#CMD ["--help"]
-
-EXPOSE 9418
-
-#USER git
 WORKDIR /home/git
 
-#git clone git@0.0.0.0:52418/home/git/server.git
+# Can't set user to be git. Otherwise there are authorization problem
+# to load SSH config files. However, also cannot loose file mod (600->644),
+# as then SSH will complain that it is too loose so not secure.
+#USER git
+
+# $ git clone ssh://git@0.0.0.0:8822/home/git/server.git
+# Works.
 #
-#Cloning into 'server'...
-#Pseudo-terminal will not be allocated because stdin is not a terminal.
-#Password:
-#Password:
-#Password:
-#git@0.0.0.0's password:
-#Permission denied, please try again.
-#git@0.0.0.0's password:
-#
+# $ git clone git@0.0.0.0:/home/git/server.git
+# or
+# $ git clone git@0.0.0.0:8822/home/git/server.git
+# Not work. The reason is if there's a customized port, then
+# `git@` is not supported and only `ssh://git` works.
+# https://git-scm.com/docs/git-clone#_git_urls_a_id_urls_a
+# Error message:
+# > Cloning into 'server'...
+# > Pseudo-terminal will not be allocated because stdin is not a terminal.
 # Tried the following but doesn't work:
 #RUN sed -i 's/#PermitTTY yes/PermitTTY no/' /etc/ssh/sshd_config

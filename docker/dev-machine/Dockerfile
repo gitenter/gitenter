@@ -86,3 +86,11 @@ WORKDIR /gitenter
 # setup some SSHing to make `localhost:5432` inside of this container to
 # `database:5432`, or setup an environmental variable `DATABASE_URL` and inject
 # it to the docker container.
+
+# TODO:
+# Consider
+#WORKDIR /build
+#COPY pom.xml .
+#RUN mvn dependency:go-offline
+# So persistent maven dependencies, hence no need to load
+# dependency every time when container is restarted.

@@ -29,9 +29,19 @@ services:
       - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
     ports:
       - "8822:22"
-      - "52418:9418"
     tty: true
     restart: always
+
+  # git-server:
+  #   build:
+  #     context: ./docker/git-server
+  #     dockerfile: ./Dockerfile
+  #   volumes:
+  #     - ../../.ssh/id_rsa.pub:/git-server/keys/id_rsa.pub
+  #   ports:
+  #     - "2222:22"
+  #   tty: true
+  #   restart: always
 
   web:
     build:
