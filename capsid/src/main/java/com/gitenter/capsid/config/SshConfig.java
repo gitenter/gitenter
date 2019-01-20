@@ -20,7 +20,7 @@ public class SshConfig {
 		return sshSource;
 	}
 	
-	@Profile("localhost")
+	@Profile("docker")
 	@Bean
 	public SshSource localhostSshGitSource() {
 		

@@ -1,0 +1,71 @@
+version: "3"
+services:
+
+  database:
+    image: postgres:11.1
+    volumes:
+      - ./database:/database
+      - ./docker/database/docker_init.sh:/docker-entrypoint-initdb.d/docker_init.sh
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  dev-machine:
+    build:
+      context: ./docker/dev-machine
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../gitar:/gitar
+      - ../gitenter:/gitenter
+    depends_on:
+      - database
+    tty: true
+
+  git:
+    build:
+      context: ./docker/git
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
+      - git-repo:/home/git
+    ports:
+      - "8822:22"
+    tty: true
+    restart: always
+
+  # git-server:
+  #   build:
+  #     context: ./docker/git-server
+  #     dockerfile: ./Dockerfile
+  #   volumes:
+  #     - ../../.ssh/id_rsa.pub:/git-server/keys/id_rsa.pub
+  #   ports:
+  #     - "2222:22"
+  #   tty: true
+  #   restart: always
+
+  web:
+    build:
+      context: ./docker/web
+      dockerfile: ./Dockerfile
+    volumes:
+      # - ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./capsid/target/capsid-0.0.2-prototype.war:/usr/local/tomcat/webapps/ROOT.war
+      - git-repo:/home/git # TODO: change it to something else together with GitConfig.java
+    ports:
+      - "8886:8080"
+    depends_on:
+      - database
+    tty: true
+    restart: always
+
+  selenium-test:
+    build:
+      context: ./docker/selenium-test
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./selenium-test:/selenium-test
+    tty: true
+
+volumes:
+  git-repo:

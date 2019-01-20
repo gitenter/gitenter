@@ -65,6 +65,14 @@ At this moment, I try to do the modules under `org.slf4j:slf4j-log4j12` (working
 
 Docker is installed by following [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04). Currently there's no need to `sudo` run docker commands.
 
+Start over:
+
+```
+docker rm -f -v gitenter_database_1
+docker-compose build --no-cache
+docker-compose up
+```
+
 (Re-)build image
 
 ```

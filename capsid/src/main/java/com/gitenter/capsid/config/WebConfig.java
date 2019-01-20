@@ -18,7 +18,7 @@ public class WebConfig {
 		return webSource;
 	}
 	
-	@Profile("localhost")
+	@Profile("docker")
 	@Bean
 	public WebSource localhostWebSource() {
 		
