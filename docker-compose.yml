@@ -27,6 +27,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
+      - git-repo:/home/git
     ports:
       - "8822:22"
     tty: true
@@ -50,6 +51,7 @@ services:
     volumes:
       # - ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
       - ./capsid/target/capsid-0.0.2-prototype.war:/usr/local/tomcat/webapps/ROOT.war
+      - git-repo:/home/git # TODO: change it to something else together with GitConfig.java
     ports:
       - "8886:8080"
     depends_on:
@@ -64,3 +66,6 @@ services:
     volumes:
       - ./selenium-test:/selenium-test
     tty: true
+
+volumes:
+  git-repo:
