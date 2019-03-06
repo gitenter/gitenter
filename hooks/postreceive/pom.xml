@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.gitenter.hook</groupId>
-	<artifactId>postreceive</artifactId>
+	<groupId>com.gitenter</groupId>
+	<artifactId>post-receive-hook</artifactId>
 	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
 
-	<name>post-receive hook</name>
+	<name>Post-receive hook</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,4 +1,4 @@
-package com.gitenter.hook.postreceive.service;
+package com.gitenter.post_receive_hook.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +35,9 @@ import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitNormalRepository;
 import com.gitenter.gitar.GitRemote;
 import com.gitenter.gitar.GitWorkspace;
-import com.gitenter.hook.postreceive.PostReceiveConfig;
+import com.gitenter.post_receive_hook.PostReceiveConfig;
+import com.gitenter.post_receive_hook.service.HookInputSet;
+import com.gitenter.post_receive_hook.service.UpdateDatabaseFromGitServiceImpl;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;

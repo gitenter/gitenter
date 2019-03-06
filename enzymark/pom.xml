@@ -2,31 +2,22 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>enzymark</artifactId>
-	<packaging>jar</packaging>
-
-	<name>enzymark</name>
-	<description>enzymark</description>
-
 	<parent>
 		<groupId>com.gitenter</groupId>
 		<artifactId>gitenter-parent</artifactId>
 		<version>0.0.2-prototype</version>
 	</parent>
+	<artifactId>enzymark</artifactId>
+	<packaging>jar</packaging>
+
+	<name>Enzymark</name>
+	<description>The utilities</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-
-			</plugins>
-		</pluginManagement>
-	</build>
 
 	<dependencies>
 		<!-- local packages -->

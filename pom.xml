@@ -16,6 +16,7 @@
 	<modules>
 		<module>protease</module>
 		<module>enzymark</module>
+		<module>postreceive</module>
 	</modules>
 
 	<build>

@@ -1,4 +1,4 @@
-package com.gitenter.hook.postreceive.config;
+package com.gitenter.post_receive_hook.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

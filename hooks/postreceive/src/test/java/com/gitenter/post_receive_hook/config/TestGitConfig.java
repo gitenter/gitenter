@@ -1,4 +1,4 @@
-package com.gitenter.hook.postreceive.config;
+package com.gitenter.post_receive_hook.config;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.util.ResourceUtils;
 
 import com.gitenter.protease.source.GitSource;

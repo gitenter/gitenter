@@ -1,4 +1,4 @@
-package com.gitenter.hook.postreceive.service;
+package com.gitenter.post_receive_hook.service;
 
 import java.io.File;
 import java.io.IOException;

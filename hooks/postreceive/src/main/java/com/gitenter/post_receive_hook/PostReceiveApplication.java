@@ -1,4 +1,4 @@
-package com.gitenter.hook.postreceive;
+package com.gitenter.post_receive_hook;
 
 import java.io.IOException;
 
@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.gitenter.hook.postreceive.service.HookInputSet;
-import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
+import com.gitenter.post_receive_hook.service.HookInputSet;
+import com.gitenter.post_receive_hook.service.UpdateDatabaseFromGitService;
 
 /*
  * This main class has nothing to do with unit tests.
@@ -16,7 +16,7 @@ import com.gitenter.hook.postreceive.service.UpdateDatabaseFromGitService;
  * stand-alone executive jar, then this class is not
  * needed.
  */
-@ComponentScan(basePackages = {"com.gitenter.hook.postreceive", "com.gitenter.protease"})
+@ComponentScan(basePackages = {"com.gitenter.post_receive_hook", "com.gitenter.protease"})
 public class PostReceiveApplication {
 
 	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGitService;

@@ -1,4 +1,4 @@
-package com.gitenter.hook.postreceive.service;
+package com.gitenter.post_receive_hook.service;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.gitenter.hook.postreceive.service.HookInputSet;
+import com.gitenter.post_receive_hook.service.HookInputSet;
 
 public class HookInputSetTest {
 

@@ -2,17 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>protease</artifactId>
-	<packaging>jar</packaging>
-
-	<name>protease</name>
-	<description>protease</description>
-
 	<parent>
 		<groupId>com.gitenter</groupId>
 		<artifactId>gitenter-parent</artifactId>
 		<version>0.0.2-prototype</version>
 	</parent>
+	<artifactId>protease</artifactId>
+	<packaging>jar</packaging>
+
+	<name>Protease</name>
+	<description>The data model and persistent layer</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,14 +20,6 @@
 		<spring-data-version>2.1.2.RELEASE</spring-data-version>
 		<jaxb-version>2.3.0</jaxb-version>
 	</properties>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-
-			</plugins>
-		</pluginManagement>
-	</build>
 
 	<dependencies>
 		<!-- local packages -->
