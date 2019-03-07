@@ -13,6 +13,8 @@
 		https://maven.apache.org/guides/mini/guide-multiple-modules.html
 		http://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Project_Inheritance
 		https://books.sonatype.com/mvnex-book/reference/multimodule-sect-simple-parent.html
+		Notice that here use path (so `../folder` and `nested/folder` both works)
+		rather than `artifactId`.
 	-->
 	<modules>
 		<module>protease</module>
@@ -24,6 +26,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<gitar-version>0.0.2-prototype</gitar-version>
 	</properties>
 
 	<build>

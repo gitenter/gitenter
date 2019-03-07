@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${gitar-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${project.version}</version>
 			<!--
 				Exclude everything, because "protease" is a Spring application,
 				and "capsid" is a Spring Boot application. They only share the
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>enzymark</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

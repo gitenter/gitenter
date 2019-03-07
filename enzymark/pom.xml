@@ -14,8 +14,6 @@
 	<description>The utilities</description>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
 
@@ -24,7 +22,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${gitar-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -35,7 +33,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion> <!-- Just want to use the beans. Nothing else. -->
 					<groupId>*</groupId>

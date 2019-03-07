@@ -59,17 +59,17 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${gitar-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>enzymark</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Compile -->

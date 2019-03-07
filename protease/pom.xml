@@ -14,8 +14,6 @@
 	<description>The data model and persistent layer</description>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring-version>5.1.2.RELEASE</spring-version>
 		<spring-data-version>2.1.2.RELEASE</spring-data-version>
 		<jaxb-version>2.3.0</jaxb-version>
@@ -26,7 +24,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${gitar-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
