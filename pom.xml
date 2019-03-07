@@ -17,12 +17,13 @@
 	<modules>
 		<module>protease</module>
 		<module>enzymark</module>
-		<!-- TODO:
-			So right now still need to log into this module to `mvn clean compile assembly:single`,
-			as the other modules doesn't support this command.
-		-->
-		<module>hooks/post_receive</module>
+		<module>hooks</module>
 	</modules>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
 
 	<build>
         <!-- Difference between `plugins` and `pluginManagement`:
