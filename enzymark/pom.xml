@@ -2,39 +2,27 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.gitenter</groupId>
+	<parent>
+		<groupId>com.gitenter</groupId>
+		<artifactId>gitenter-parent</artifactId>
+		<version>0.0.2-prototype</version>
+	</parent>
 	<artifactId>enzymark</artifactId>
-	<version>0.0.2-prototype</version>
 	<packaging>jar</packaging>
 
-	<name>enzymark</name>
-	<description>enzymark</description>
+	<name>Enzymark</name>
+	<description>The utilities</description>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<release>8</release>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
 		<!-- local packages -->
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${gitar-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -45,7 +33,7 @@
 		<dependency>
 			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
-			<version>0.0.2-prototype</version>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion> <!-- Just want to use the beans. Nothing else. -->
 					<groupId>*</groupId>
@@ -102,18 +90,6 @@
 		<!-- Runtime -->
 
 		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>2.18.3</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>
