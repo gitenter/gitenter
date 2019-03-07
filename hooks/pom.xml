@@ -12,7 +12,7 @@
 	<packaging>pom</packaging>
 
     <modules>
-		<module>post_receive</module>
+		<module>post-receive</module>
 	</modules>
 
 	<name>GitEnter hooks</name>

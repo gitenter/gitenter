@@ -1,13 +1,8 @@
 project_home=~/Workspace/gitenter
 
 cd $project_home
-cd protease
 mvn clean install
-cd $project_home
-cd enzymark
-mvn clean install
-cd $project_home
-cd hooks/post_receive
+cd hooks/post-receive
 mvn clean compile assembly:single
 
 cd $project_home

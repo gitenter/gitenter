@@ -21,7 +21,7 @@
 
 	<build>
 		<!-- TODO:
-			So right now still need to log into `hooks/post_receive` to `mvn clean compile assembly:single`,
+			So right now still need to log into `hooks/post-receive` to `mvn clean compile assembly:single`,
 			as the other modules doesn't support this command.
 		-->
 		<plugins>
