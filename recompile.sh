@@ -7,7 +7,7 @@ cd $project_home
 cd enzymark
 mvn clean install
 cd $project_home
-cd hooks/postreceive
+cd hooks/post_receive
 mvn clean compile assembly:single
 
 cd $project_home

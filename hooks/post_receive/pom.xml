@@ -2,12 +2,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>enterovirus.gihook</groupId>
-	<artifactId>precommit</artifactId>
-	<version>0.0.2-prototype</version>
+	<parent>
+		<groupId>com.gitenter</groupId>
+		<artifactId>gitenter-parent</artifactId>
+		<version>0.0.2-prototype</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	<groupId>com.gitenter</groupId>
+	<artifactId>post-receive-hook</artifactId>
 	<packaging>jar</packaging>
 
-	<name>gihook precommit</name>
+	<name>Post-receive hook</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,21 +21,35 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring-version>5.1.2.RELEASE</spring-version>
+		<jaxb-version>2.3.0</jaxb-version>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<!--
+					Cannot use the last version (3.1.0). Otherwise `EntityManagerFactory`
+					will have @autowired error. (Selenium) integration test for hooks will
+					then fail.
+					If not provided, the current default version is 2.2-beta-5.
+				-->
+				<version>2.2-beta-5</version>
 				<configuration>
+					<!--
+						Cannot specify release version (to 8). Otherwise same as the error
+						to specify version 3.1.0.
+					-->
 					<archive>
 						<manifest>
-							<mainClass>enterovirus.gihook.precommit.PreCommitApplication</mainClass>
+							<mainClass>com.gitenter.post_receive_hook.PostReceiveApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -39,17 +58,17 @@
 	<dependencies>
 		<!-- local packages -->
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>gitar</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>protease</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
 		<dependency>
-			<groupId>enterovirus</groupId>
+			<groupId>com.gitenter</groupId>
 			<artifactId>enzymark</artifactId>
 			<version>0.0.2-prototype</version>
 		</dependency>
@@ -70,19 +89,8 @@
 			<artifactId>spring-context</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
-		</dependency>
 
 		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>

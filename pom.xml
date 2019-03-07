@@ -11,12 +11,17 @@
 
     <!-- Refer to the below sites for setting up parent POM:
         https://maven.apache.org/guides/mini/guide-multiple-modules.html
+		http://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Project_Inheritance
         https://books.sonatype.com/mvnex-book/reference/multimodule-sect-simple-parent.html
     -->
 	<modules>
 		<module>protease</module>
 		<module>enzymark</module>
-		<module>postreceive</module>
+		<!-- TODO:
+			So right now still need to log into this module to `mvn clean compile assembly:single`,
+			as the other modules doesn't support this command.
+		-->
+		<module>hooks/post_receive</module>
 	</modules>
 
 	<build>
