@@ -3,27 +3,39 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.gitenter</groupId>
+	<parent>
+		<groupId>com.gitenter</groupId>
+		<artifactId>gitenter-parent</artifactId>
+		<version>0.0.2-prototype</version>
+	</parent>
 	<artifactId>capsid</artifactId>
-	<version>0.0.2-prototype</version>
 	<packaging>war</packaging>
 
-	<name>capsid</name>
-	<description>capsid</description>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.0.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+	<name>Capsid</name>
+	<description>The web layer</description>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<spring-boot-version>2.1.0.RELEASE</spring-boot-version>
 		<spring-version>5.1.2.RELEASE</spring-version>
 		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Import -->
+			<!-- We cannot use `spring-boot-starter-parent` as parent, as we have our customized
+				parent. See the following reference:
+				https://www.baeldung.com/spring-boot-dependency-management-custom-parent
+			-->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<!-- local packages -->
@@ -125,7 +137,7 @@
 		</dependency>
 		<dependency>
 			<!-- Since we exclude all the dependencies of "protease",
-			     this one need to be added manually. -->
+				 this one need to be added manually. -->
 			<groupId>org.apache.sshd</groupId>
 			<artifactId>sshd-core</artifactId>
 			<version>1.7.0</version>
