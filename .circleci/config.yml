@@ -41,18 +41,28 @@ jobs:
       # string and that seems also have problems. refer
       # https://circleci.com/docs/2.0/caching/
       # https://discuss.circleci.com/t/cant-checksum-multiple-files-with-slashes-in-the-file-path/20667
-      - restore_cache:
-          keys:
-          - m2-dependencies-{{ checksum "pom.xml" }}
+      #
+      # - restore_cache:
+      #     keys:
+      #     - m2-dependencies-{{ checksum "pom.xml" }}
 
-      - run: mvn dependency:go-offline
+      # TODO:
+      # Go-offline does not work with multiple module project
+      # > [ERROR] Failed to execute goal on project enzymark: Could not resolve dependencies
+      # > for project com.gitenter:enzymark:jar:0.0.2-prototype: Could not find artifact
+      # > com.gitenter:protease:jar:0.0.2-prototype in central (https://repo.maven.apache.org/maven2)
+      # https://stackoverflow.com/questions/14694139/how-to-resolve-dependencies-between-modules-within-multi-module-project
+      # https://issues.apache.org/jira/browse/MDEP-516
+      # https://github.com/qaware/go-offline-maven-plugin
+      #
+      # - run: mvn dependency:go-offline
 
       - run: sudo apt-get install postgresql-client-11 | true
 
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: m2-dependencies-{{ checksum "pom.xml" }}
+      # - save_cache:
+      #     paths:
+      #       - ~/.m2
+      #     key: m2-dependencies-{{ checksum "pom.xml" }}
 
       # install database schema
       - run: cd database
