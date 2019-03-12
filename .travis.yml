@@ -8,4 +8,4 @@ before_script:
   - psql -U postgres -d gitenter -w -f database/initiate_database.sql
   - psql -c 'ALTER DATABASE gitenter OWNER TO gitenter;' -U postgres
 script:
-  - cd protease && mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V && mvn test -B
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V && mvn test -B
