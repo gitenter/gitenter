@@ -41,10 +41,9 @@ jobs:
       # string and that seems also have problems. refer
       # https://circleci.com/docs/2.0/caching/
       # https://discuss.circleci.com/t/cant-checksum-multiple-files-with-slashes-in-the-file-path/20667
-      #
       - restore_cache:
           keys:
-          - dependencies-{{ checksum "pom.xml" }}
+          - m2-dependencies-{{ checksum "pom.xml" }}
 
       - run: mvn dependency:go-offline
 
@@ -53,7 +52,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: dependencies-{{ checksum "pom.xml" }}
+          key: m2-dependencies-{{ checksum "pom.xml" }}
 
       # install database schema
       - run: cd database
