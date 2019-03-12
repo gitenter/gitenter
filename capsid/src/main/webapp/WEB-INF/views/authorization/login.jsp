@@ -4,7 +4,7 @@
 
     <article>
       <div class="login">
-      <sf:form method="POST" modelAttribute="memberLoginBean" >
+      <sf:form method="POST" modelAttribute="loginDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>
@@ -21,7 +21,7 @@
           <tr>
             <td></td>
             <td class="word">
-              <input id="remember_me" name="remember-me" type="checkbox"/>
+              <input id="remember_me" name="remember-me" type="checkbox" checked />
               <label for="remember_me">Remember me</label>
             </td>
           </tr>

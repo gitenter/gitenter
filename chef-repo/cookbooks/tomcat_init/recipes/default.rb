@@ -43,7 +43,7 @@ end
 # things (database connection, ...) are not been setting up yet.
 
 # cookbook_file '/var/lib/tomcat8/webapps/ROOT.war' do
-#   source 'envelope-0.0.2-prototype.war'
+#   source 'capsid-0.0.2-prototype.war'
 #   mode '0755'
 #   force_unlink true
 #   manage_symlink_source false

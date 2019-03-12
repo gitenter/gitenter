@@ -1,12 +1,12 @@
 from random import randint
 from urllib.parse import urlparse, urljoin
 
-from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
+from testsuites.repository_to_be_created_testsuite import RepositoryToBeCreatedTestSuite
 from forms.authorization_form import fill_login_form
 from forms.repository_management_form import fill_create_repository_form
 
 
-class TestRepositoryCreation(OrganizationCreatedTestSuite):
+class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
     def setUp(self):
         super(TestRepositoryCreation, self).setUp()
@@ -23,9 +23,9 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
     def tearDown(self):
         super(TestRepositoryCreation, self).tearDown()
 
-    def test_organization_manager_create_public_repository_and_view_by_organization_member_and_non_member(self):
+    def test_repository_organizer_create_public_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name not in self.driver.page_source
@@ -53,7 +53,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source
@@ -84,9 +84,9 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
         # to be added as an editor.
 
-    def test_organization_manager_create_private_repository_and_view_by_organization_member_and_non_member(self):
+    def test_repository_organizer_create_private_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, self.repo_name, self.repo_display_name, self.repo_description, is_public=False)
@@ -104,7 +104,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/logout"))
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         assert self.repo_display_name in self.driver.page_source
@@ -123,25 +123,9 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
-        self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
         assert self.repo_display_name not in self.driver.page_source
-
-        # TODO:
-        # To query "/organizations/{}/repositories/{}".format(self.org_id, repo_id)
-        # should returns this is a private repository.
-
-    def test_organization_member_create_repository(self):
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
-
-        self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
-        self.assertTrue(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/repositories/create']".format(self.org_id)))
-
-        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
-        fill_create_repository_form(self.driver, self.repo_name, self.repo_display_name, self.repo_description)
-
-        self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
-        assert self.repo_display_name in self.driver.page_source
+        assert "status=403" in self.driver.page_source
 
     def test_non_member_cannot_create_repository(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -161,7 +145,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         repo_description = "A"
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)
@@ -176,7 +160,7 @@ class TestRepositoryCreation(OrganizationCreatedTestSuite):
         repo_description = "A Repository Description"
 
         self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)

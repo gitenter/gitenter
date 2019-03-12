@@ -117,7 +117,7 @@ service "tomcat8" do
 end
 
 cookbook_file '/var/lib/tomcat8/webapps/ROOT.war' do
-  # source 'envelope-0.0.2-prototype.war'
+  # source 'capsid-0.0.2-prototype.war'
   source 'trivial.war'
   mode '0755'
   force_unlink true

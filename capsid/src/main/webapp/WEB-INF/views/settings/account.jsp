@@ -10,18 +10,18 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" modelAttribute="memberDTO" >
+      <sf:form method="POST" modelAttribute="memberRegisterDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>
             <td class="pre-fill">
-              ${memberDTO.username}
+              ${memberRegisterDTO.username}
               <sf:hidden path="username" />
             </td>
           </tr>
           <tr>
             <td>Old password</td>
-            <td><input type="password" name="old_password" /></td>
+            <td><input id="old_password" type="password" name="old_password" /></td>
           </tr>
           <tr>
             <td>New password</td>
