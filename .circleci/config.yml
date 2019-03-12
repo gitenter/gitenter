@@ -21,7 +21,7 @@ jobs:
       # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
       # https://circleci.com/docs/2.0/postgres-config/
       # Consider using a custom docker image.
-      - image: circleci/postgres:11-alpine-ram
+      - image: circleci/postgres:10-alpine-ram
         environment:
           POSTGRES_PASSWORD: postgres
 
@@ -57,7 +57,7 @@ jobs:
       #
       # - run: mvn dependency:go-offline
 
-      - run: sudo apt-get install postgresql-client-11 | true
+      - run: sudo apt-get install postgresql-client-10 | true
 
       # - save_cache:
       #     paths:
