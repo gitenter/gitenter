@@ -6,6 +6,7 @@ before_script:
   - psql -U postgres -w -f database/create_users.sql
   - psql -U postgres -w -f database/create_database.sql -v dbname=gitenter
   - psql -U postgres -d gitenter -w -f database/initiate_database.sql
+  - psql -U postgres -d gitenter -w -f database/privilege_control.sql
   - psql -c 'ALTER DATABASE gitenter OWNER TO gitenter;' -U postgres
 script:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V && mvn test -B
