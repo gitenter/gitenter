@@ -62,8 +62,6 @@ I try to remove all logging dependencies from packages, and define a independent
 
 At this moment, I try to do the modules under `org.slf4j:slf4j-log4j12` (working), and maybe use `ch.qos.logback:logback-classic` for `capsid` (has problem inside of STS).
 
-## Deployment
-
 ### Docker
 
 Docker is installed by following [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04). Currently there's no need to `sudo` run docker commands.
@@ -115,6 +113,15 @@ Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the 
 
 ```
 http://0.0.0.0:58080/capsid-0.0.1-alpha
+```
+
+### CircleCI
+
+Install [CircleCI local CLI](https://circleci.com/docs/2.0/local-cli/) so the setup can be tested locally.
+
+```
+$ circleci config validate
+$ circleci local execute --job build
 ```
 
 ## Unclassified TODOs and features
