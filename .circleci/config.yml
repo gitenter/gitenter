@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:10-jdk-node-browsers
+      - image: circleci/openjdk:11.0-jdk
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
 
@@ -42,10 +42,6 @@ jobs:
       # https://circleci.com/docs/2.0/caching/
       # https://discuss.circleci.com/t/cant-checksum-multiple-files-with-slashes-in-the-file-path/20667
       #
-      # - restore_cache:
-      #     keys:
-      #     - m2-dependencies-{{ checksum "pom.xml" }}
-
       # TODO:
       # Go-offline does not work with multiple module project
       # > [ERROR] Failed to execute goal on project enzymark: Could not resolve dependencies
@@ -55,18 +51,21 @@ jobs:
       # https://issues.apache.org/jira/browse/MDEP-516
       # https://github.com/qaware/go-offline-maven-plugin
       #
+      # - restore_cache:
+      #     keys:
+      #     - m2-dependencies-{{ checksum "pom.xml" }}
+      #
       # - run: mvn dependency:go-offline
-
-      # TODO:
-      # Can't specify 10 or 11, as the current `openjdk:10-jdk-node-browsers`
-      # is probably in an older version of Linux which doesn't include this
-      - run: sudo apt-get update
-      - run: sudo apt-get install postgresql-client-9.6 | true
-
+      #
       # - save_cache:
       #     paths:
       #       - ~/.m2
       #     key: m2-dependencies-{{ checksum "pom.xml" }}
+
+      # TODO:
+      # Can't specify 10 or 11 or even 9.6.x, as the current `openjdk:10-jdk-node-browsers`
+      # is probably in an older version of Linux which doesn't include this
+      - run: sudo apt update && sudo apt install postgresql-client
 
       # install database schema
       - run: cd database
