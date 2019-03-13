@@ -21,7 +21,7 @@ jobs:
       # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
       # https://circleci.com/docs/2.0/postgres-config/
       # Consider using a custom docker image.
-      - image: circleci/postgres:9.6.5-alpine-ram
+      - image: circleci/postgres:11
         environment:
           POSTGRES_PASSWORD: postgres
 
@@ -62,15 +62,18 @@ jobs:
       #       - ~/.m2
       #     key: m2-dependencies-{{ checksum "pom.xml" }}
 
-      # TODO:
+      # TODO (maybe out-of-date, check in the CircleCI local CLI):
       # Can't specify 10 or 11 or even 9.6.x, as the current `openjdk:10-jdk-node-browsers`
       # is probably in an older version of Linux which doesn't include this
       - run: sudo apt update && sudo apt install postgresql-client
 
       # install database schema
-      - run: cd database
-      - run: sh setup.sh
-      - run: cd ..
+      - run: psql -U postgres -w -f database/create_users.sql
+      - run: psql -U postgres -w -f database/create_database.sql -v dbname=gitenter
+      - run: psql -U postgres -d gitenter -w -f database/initiate_database.sql
+      - run: psql -U postgres -d gitenter -w -f database/privilege_control.sql
+      - run: psql -U postgres -d gitenter -w -f database/alter_sequence.sql
+      - run: psql -c 'ALTER DATABASE gitenter OWNER TO gitenter;' -U postgres
 
       # run the actual tests
       - run: mvn test
