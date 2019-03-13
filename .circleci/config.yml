@@ -21,6 +21,12 @@ jobs:
       # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
       # https://circleci.com/docs/2.0/postgres-config/
       # Consider using a custom docker image.
+      #
+      # TODO:
+      # The below line is in log:
+      # /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+      # So it is possible that set volume and copy `docker/database/docker_init.sh`
+      # will initialize the database.
       - image: circleci/postgres:11
         environment:
           POSTGRES_PASSWORD: postgres
@@ -68,12 +74,15 @@ jobs:
       - run: sudo apt update && sudo apt install postgresql-client
 
       # install database schema
-      - run: psql -U postgres -w -f database/create_users.sql
-      - run: psql -U postgres -w -f database/create_database.sql -v dbname=gitenter
-      - run: psql -U postgres -d gitenter -w -f database/initiate_database.sql
-      - run: psql -U postgres -d gitenter -w -f database/privilege_control.sql
-      - run: psql -U postgres -d gitenter -w -f database/alter_sequence.sql
-      - run: psql -c 'ALTER DATABASE gitenter OWNER TO gitenter;' -U postgres
+      # CircleCI needs `-h localhost -p 5432` to force TCP. Refer:
+      # https://discuss.circleci.com/t/using-psql-command-in-circleci-2-0-build/14785
+      # https://discuss.circleci.com/t/help-migrating-node-js-postgres-to-2-0/26863/10
+      - run: psql -U postgres -h localhost -p 5432 -w -f database/create_users.sql
+      - run: psql -U postgres -h localhost -p 5432 -w -f database/create_database.sql -v dbname=gitenter
+      - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/initiate_database.sql
+      - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/privilege_control.sql
+      - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/alter_sequence.sql
+      - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
       # run the actual tests
       - run: mvn test
