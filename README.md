@@ -1,6 +1,9 @@
-# enterovirus
+# GitEnter
 
-Enterovirus is not a computer virus!
+[![Travis CI Build Status](https://travis-ci.org/gitenter/gitenter.svg?branch=master)](https://travis-ci.org/gitenter/gitenter)
+[![CircleCI](https://circleci.com/gh/gitenter/gitenter.svg?style=svg)](https://circleci.com/gh/gitenter/gitenter)
+
+A Git based version control tool for requirement engineering, design control, verification and validation processes.
 
 ## Development
 

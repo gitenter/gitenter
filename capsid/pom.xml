@@ -20,6 +20,26 @@
 		<commonmark-version>0.12.1</commonmark-version>
 	</properties>
 
+	<build>
+		<plugins>
+			<!-- This is to avoid the "webxml attribute is required" error.
+			     May not be needed for maven 3.0.0+ as the default has been changed to `false`.
+			     https://stackoverflow.com/questions/5351948/webxml-attribute-is-required-error-in-maven
+			-->
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.2</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencyManagement>
 		<dependencies>
 			<!-- Import -->
@@ -207,15 +227,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 
 </project>
