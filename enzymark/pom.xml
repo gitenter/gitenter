@@ -1,95 +1,95 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.gitenter</groupId>
-		<artifactId>gitenter-parent</artifactId>
-		<version>0.0.2-prototype</version>
-	</parent>
-	<artifactId>enzymark</artifactId>
-	<packaging>jar</packaging>
+    <parent>
+        <groupId>com.gitenter</groupId>
+        <artifactId>gitenter-parent</artifactId>
+        <version>0.0.2-prototype</version>
+    </parent>
+    <artifactId>enzymark</artifactId>
+    <packaging>jar</packaging>
 
-	<name>Enzymark</name>
-	<description>The utilities</description>
+    <name>Enzymark</name>
+    <description>The utilities</description>
 
-	<properties>
-		<commonmark-version>0.12.1</commonmark-version>
-	</properties>
+    <properties>
+        <commonmark-version>0.12.1</commonmark-version>
+    </properties>
 
-	<dependencies>
-		<!-- local packages -->
-		<dependency>
-			<groupId>com.gitenter</groupId>
-			<artifactId>gitar</artifactId>
-			<version>${gitar-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.gitenter</groupId>
-			<artifactId>protease</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion> <!-- Just want to use the beans. Nothing else. -->
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependencies>
+        <!-- local packages -->
+        <dependency>
+            <groupId>com.gitenter</groupId>
+            <artifactId>gitar</artifactId>
+            <version>${gitar-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.gitenter</groupId>
+            <artifactId>protease</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion> <!-- Just want to use the beans. Nothing else. -->
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- Compile -->
-		<dependency>
-			<groupId>com.atlassian.commonmark</groupId>
-			<artifactId>commonmark</artifactId>
-			<version>${commonmark-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.atlassian.commonmark</groupId>
-			<artifactId>commonmark-ext-gfm-tables</artifactId>
-			<version>${commonmark-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.atlassian.commonmark</groupId>
-			<artifactId>commonmark-ext-gfm-strikethrough</artifactId>
-			<version>${commonmark-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.8.1</version>
-		</dependency>
-		<dependency>
-			<!--
-				TODO:
-				No longer actively maintained.
-				Should upgrade to `commons-configuration2`, but a quick
-				try seems don't work.
-				https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
-			-->
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.10</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.25</version>
-		</dependency>
+        <!-- Compile -->
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>${commonmark-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>${commonmark-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-strikethrough</artifactId>
+            <version>${commonmark-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <!--
+                TODO:
+                No longer actively maintained.
+                Should upgrade to `commons-configuration2`, but a quick
+                try seems don't work.
+                https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
+            -->
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
 
-		<!-- Runtime -->
+        <!-- Runtime -->
 
-		<!-- Test -->
-	</dependencies>
+        <!-- Test -->
+    </dependencies>
 
 </project>
