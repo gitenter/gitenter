@@ -115,6 +115,16 @@ Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the 
 http://0.0.0.0:58080/capsid-0.0.1-alpha
 ```
 
+### Terraform
+
+```
+brew install terraform
+terraform init
+terraform plan -var-file="secret.tfvars"
+terraform apply -var-file="secret.tfvars"
+terraform destroy -var-file="secret.tfvars"
+```
+
 ### CircleCI
 
 Install [CircleCI local CLI](https://circleci.com/docs/2.0/local-cli/) so the setup can be tested locally.
