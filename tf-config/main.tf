@@ -30,27 +30,48 @@ variable "server_port" {
   default = 8080
 }
 
-# TODO: Load balancer and ASG
 provider "aws" {
   access_key = "${var.access_key}"
   secret_key = "${var.secret_key}"
   region = "us-east-1"
 }
 
-resource "aws_security_group" "web_access" {
-  name = "capsid-web-access"
+resource "aws_security_group" "tomcat" {
+  name = "tomcat"
+
   ingress {
     from_port = "${var.server_port}"
     to_port = "${var.server_port}"
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
-resource "aws_instance" "capsid" {
-  ami = "ami-0a313d6098716f372" # Ubuntu Server 18.04 LTS
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+resource "aws_launch_configuration" "capsid" {
+  name = "capsid"
+  image_id = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
-  vpc_security_group_ids = ["${aws_security_group.web_access.id}"]
+  vpc_classic_link_security_groups = ["${aws_security_group.tomcat.id}"]
 
   user_data = <<-EOF
                 #!/bin/bash
@@ -58,11 +79,69 @@ resource "aws_instance" "capsid" {
                 nohup busybox httpd -f -p "${var.server_port}" &
                 EOF
 
-  tags {
-    Name = "capsid"
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
-output "public_ip" {
-  value = "${aws_instance.capsid.public_ip}"
+resource "aws_security_group" "elb" {
+  name = "elb"
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+data "aws_availability_zones" "all" {}
+
+resource "aws_elb" "capsid" {
+  name = "capsid-elb"
+  security_groups = ["${aws_security_group.elb.id}"]
+  availability_zones = ["${data.aws_availability_zones.all.names}"]
+
+  health_check {
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    timeout = 3
+    interval = 30
+    target = "HTTP:${var.server_port}/"
+  }
+
+  listener {
+    lb_port = 80
+    lb_protocol = "http"
+    instance_port = "${var.server_port}"
+    instance_protocol = "http"
+  }
+}
+
+resource "aws_autoscaling_group" "capsid" {
+  launch_configuration = "${aws_launch_configuration.capsid.name}"
+  availability_zones = ["${data.aws_availability_zones.all.names}"]
+
+  min_size = 1
+  max_size = 2
+
+  load_balancers = ["${aws_elb.capsid.name}"]
+  health_check_type = "ELB"
+
+  tag {
+    key = "Name"
+    value = "capsid-asg"
+    propagate_at_launch = true
+  }
+}
+
+output "elb_dns_name" {
+  value = "${aws_elb.capsid.dns_name}"
 }
