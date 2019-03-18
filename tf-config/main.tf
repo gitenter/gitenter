@@ -71,7 +71,8 @@ resource "aws_launch_configuration" "capsid" {
   name = "capsid"
   image_id = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
-  vpc_classic_link_security_groups = ["${aws_security_group.tomcat.id}"]
+  # vpc_classic_link_security_groups = ["${aws_security_group.tomcat.id}"]
+  security_groups = ["${aws_security_group.tomcat.id}"]
 
   user_data = <<-EOF
                 #!/bin/bash
