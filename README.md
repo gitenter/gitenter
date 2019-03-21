@@ -123,18 +123,20 @@ $ terraform --version
 Terraform v0.11.13
 ```
 
-```
-cd tf-config
-terraform init
-terraform plan -var-file="secret.tfvars"
-terraform apply -var-file="secret.tfvars"
-terraform destroy -var-file="secret.tfvars"
-```
-
 When global initialization, needs manually create:
 
 - AMI user w/ `access_key` and `secret_key`
 - S3 bucket `gitenter-config` if it is not existing yet, versioning enabled. It is used for save and share remote state.
+
+Should have `secret.auto.tfvars` to hold `access_key` and `secret_key`.
+
+```
+cd tf-config
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+```
 
 ### CircleCI
 
