@@ -19,6 +19,8 @@ terraform {
   # }
 }
 
+# Generated from /iam Terraform module
+#
 # TODO:
 # May seperate AWS accounts for testing environment (clean up deployment
 # completely after test is done) and lnog-stay environment (prod/...).
