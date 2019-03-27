@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_iam_group" "terraform" {
-  name = "terraform"
+  name = "terraform-group"
 }
 
 # TODO:
@@ -21,7 +21,7 @@ resource "aws_iam_group" "terraform" {
 # However, it seems not that easy to create `aws_iam_access_key` for that
 # series: `aws_iam_access_key.terraform: user must be a single value, not a list`
 resource "aws_iam_user" "terraform" {
-  name = "terraform"
+  name = "terraform-user"
 }
 
 data "aws_iam_policy" "terraform-ec2" {
@@ -71,11 +71,16 @@ resource "aws_iam_access_key" "terraform" {
 }
 
 resource "aws_iam_group_membership" "terraform" {
-  name = "terraform"
+  name = "terraform-group-membership"
 
   users = [
     "${aws_iam_user.terraform.name}",
   ]
 
   group = "${aws_iam_group.terraform.name}"
+}
+
+resource "aws_key_pair" "terraform-seashore" {
+  key_name   = "terraform-key_pair-seashore"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6vmegnYSA36MiMa/miDe/qQQSAFT6o2pWgoz07gDozY/6eSLVWJ8j3BtfC/ykAQJ5yp1J9TZSsE0VX+MWZtZpm4stGOnQqiTNWwKoS3bfTnubopW9eF+Fk7kNy6gZWhf7bqU7gSk+497vx7kBgwjDRUB82AovAG/aGtxl2CATZzh3ylh5OhHXjUtv+1gWPZZcDkADLjtvNtCKiDGBV5ERiy7hPk70scmVLtakFUqhhwmw1cV3wtLsK5egttffZLxXJVC6A1RG1ysb5p11SnUny5hTYl0ZpoM+ZfQeupM0HGKdAXJXPqKQ6Przn3BG7e8DDdwOlUQ+8VXwclvmmppr seashore"
 }

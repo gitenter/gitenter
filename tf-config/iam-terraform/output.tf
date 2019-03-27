@@ -1,9 +1,14 @@
-output "access_key" {
+output "User access_key" {
   value = "${aws_iam_access_key.terraform.id}"
-  description = "access_key for user ${aws_iam_user.terraform.name}."
+  description = "User ${aws_iam_user.terraform.name} access_key"
 }
 
-output "secret_key" {
+output "User secret_key" {
   value = "${aws_iam_access_key.terraform.secret}"
-  description = "secret_key for user ${aws_iam_user.terraform.name}."
+  description = "User ${aws_iam_user.terraform.name} secret_key"
+}
+
+output "Key pair fingerprint" {
+  value = "${aws_key_pair.terraform-seashore.fingerprint}"
+  description = "Key pair ${aws_key_pair.terraform-seashore.key_name} fingerprint"
 }
