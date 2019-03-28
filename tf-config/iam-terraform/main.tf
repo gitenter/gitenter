@@ -16,7 +16,8 @@ resource "aws_iam_group" "terraform" {
 }
 
 # TODO:
-# Create a series of users from list variable. Straightforward, can follow e.g.
+# Create a series of users from list variable. One for each deployment environment,
+# e.g. `terraform-user-local`, `terraform-user-circleci`, ... Straightforward, can follow:
 # https://medium.com/devopslinks/aws-iam-user-and-policy-creation-using-terraform-7cd781e06c97
 # However, it seems not that easy to create `aws_iam_access_key` for that
 # series: `aws_iam_access_key.terraform: user must be a single value, not a list`
@@ -73,6 +74,11 @@ resource "aws_iam_policy" "terraform-ecr" {
   # https://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicyExamples.html
   # `ecr:CreateRepository` and `ecr:ListTagsForResource` is used by `resource "aws_ecr_repository"`
   # `ecr:DescribeRepositories` is used by `data "aws_ecr_repository"`
+
+  # TODO:
+  # May consider split `terraform-user` to `terraform-config-user` and `terraform-deploy-user`
+  # The first one can setup e.g. ECR repository, while the second one can have much restricted
+  # policies, such as push/pull docker images only.
   policy = <<EOF
 {
     "Version": "2012-10-17",
