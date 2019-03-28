@@ -66,6 +66,48 @@ resource "aws_iam_group_policy_attachment" "terraform-ecs_fargate" {
   policy_arn = "${data.aws_iam_policy.terraform-ecs_fargate.arn}"
 }
 
+resource "aws_iam_policy" "terraform-ecr" {
+  name        = "AmazonECRUserPolicy"
+  path        = "/"
+
+  # https://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicyExamples.html
+  # `ecr:CreateRepository` and `ecr:ListTagsForResource` is used by `resource "aws_ecr_repository"`
+  # `ecr:DescribeRepositories` is used by `data "aws_ecr_repository"`
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowPushPull",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:CreateRepository",
+                "ecr:ListTagsForResource",
+                "ecr:DescribeRepositories",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:PutImage",
+                "ecr:InitiateLayerUpload",
+                "ecr:UploadLayerPart",
+                "ecr:CompleteLayerUpload"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+data "aws_iam_policy" "terraform-ecr" {
+  arn = "${aws_iam_policy.terraform-ecr.arn}"
+}
+
+resource "aws_iam_group_policy_attachment" "terraform-ecr" {
+  group = "${aws_iam_group.terraform.id}"
+  policy_arn = "${data.aws_iam_policy.terraform-ecr.arn}"
+}
+
 resource "aws_iam_access_key" "terraform" {
   user = "${aws_iam_user.terraform.name}"
 }

@@ -68,3 +68,7 @@ resource "aws_security_group" "terraform-ecs" {
 
   vpc_id = "${aws_vpc.ecs.id}"
 }
+
+resource "aws_ecr_repository" "terraform-ecs" {
+  name = "terraform-ecs-repository"
+}
