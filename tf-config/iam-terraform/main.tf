@@ -39,6 +39,7 @@ resource "aws_iam_group_policy_attachment" "terraform-ec2" {
 # - `AmazonEC2ContainerServiceRole`
 # - `AmazonECSTaskExecutionRolePolicy`
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_managed_policies.html
 data "aws_iam_policy" "terraform-ecs_container_instance" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
@@ -48,9 +49,13 @@ resource "aws_iam_group_policy_attachment" "terraform-ecs_container_instance" {
   policy_arn = "${data.aws_iam_policy.terraform-ecs_container_instance.arn}"
 }
 
-# May be fully covered by `AmazonEC2FullAccess` but still add it in here.
+# `AmazonECS_FullAccess` fully covers `AmazonEC2ContainerServiceRole`,
+# and the following link suggest to use full access.
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html
+# If using EC2 launch type, then `AmazonEC2ContainerServiceRole` is enough.
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted_EC2.html
 data "aws_iam_policy" "terraform-ecs" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
+  arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
 }
 
 resource "aws_iam_group_policy_attachment" "terraform-ecs" {
@@ -88,6 +93,7 @@ resource "aws_iam_policy" "terraform-ecr" {
             "Effect": "Allow",
             "Action": [
                 "ecr:CreateRepository",
+                "ecr:DeleteRepository",
                 "ecr:ListTagsForResource",
                 "ecr:DescribeRepositories",
                 "ecr:GetDownloadUrlForLayer",
