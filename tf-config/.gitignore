@@ -1,6 +1,10 @@
-.terraform
-secret.auto.tfvars
-
+# Compiled files
 *.tfstate.lock.info
 *.tfstate
 *.tfstate.backup
+
+# Module directory
+.terraform
+
+# Secrets
+secret.auto.tfvars
