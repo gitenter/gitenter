@@ -1,9 +1,9 @@
-output "Key pair fingerprint" {
+output "key_pair_fingerprint" {
   value = "${aws_key_pair.terraform-seashore.fingerprint}"
   description = "Key pair ${aws_key_pair.terraform-seashore.key_name} fingerprint"
 }
 
 # Used by `docker push`
-output "ECR repository URL" {
+output "ecr_repository_url" {
   value = "${aws_ecr_repository.terraform-ecs.repository_url}"
 }

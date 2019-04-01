@@ -56,30 +56,18 @@ resource "aws_iam_policy" "terraform-ecr" {
   # https://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicyExamples.html
   # `ecr:CreateRepository` and `ecr:ListTagsForResource` is used by `resource "aws_ecr_repository"`
   # `ecr:DescribeRepositories` is used by `data "aws_ecr_repository"`
-
-  # TODO:
-  # May consider split `terraform-user` to `terraform-config-user` and `terraform-deploy-user`
-  # The first one can setup e.g. ECR repository, while the second one can have much restricted
-  # policies, such as push/pull docker images only.
   policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "AllowPushPull",
+            "Sid": "DenyPull",
             "Effect": "Allow",
             "Action": [
                 "ecr:CreateRepository",
                 "ecr:DeleteRepository",
                 "ecr:ListTagsForResource",
-                "ecr:DescribeRepositories",
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability",
-                "ecr:PutImage",
-                "ecr:InitiateLayerUpload",
-                "ecr:UploadLayerPart",
-                "ecr:CompleteLayerUpload"
+                "ecr:DescribeRepositories"
             ],
             "Resource": "*"
         }

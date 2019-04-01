@@ -12,12 +12,12 @@ provider "aws" {
 
 variable group_name {
   type = "string"
-  default = "terraform-config"
+  default = "terraform-deploy"
 }
 
 variable username {
   type = "string"
-  default = "terraform-config"
+  default = "terraform-deploy"
 }
 
 module "iam_group" {
