@@ -84,3 +84,12 @@ resource "aws_iam_group_policy_attachment" "terraform-ecr" {
   group = "${aws_iam_group.terraform.id}"
   policy_arn = "${data.aws_iam_policy.terraform-ecr.arn}"
 }
+
+data "aws_iam_policy" "terraform-rds" {
+  arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+}
+
+resource "aws_iam_group_policy_attachment" "terraform-rds" {
+  group = "${aws_iam_group.terraform.id}"
+  policy_arn = "${data.aws_iam_policy.terraform-rds.arn}"
+}

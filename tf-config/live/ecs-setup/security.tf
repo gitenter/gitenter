@@ -41,6 +41,7 @@ resource "aws_security_group" "ecs_tasks" {
     from_port = "${var.app_port}"
     to_port = "${var.app_port}"
     protocol = "tcp"
+    # TODO: Below two lines should be able to be removed, as only load balancer is public facing.
     cidr_blocks = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"] # May not be needed as the associated VPC is without an IPv6 CIDR block
     security_groups = ["${aws_security_group.lb.id}"]

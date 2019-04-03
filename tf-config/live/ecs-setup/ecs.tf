@@ -21,6 +21,8 @@ resource "aws_ecs_cluster" "main" {
   name = "terraform-ecs"
 }
 
+# TODO:
+# Move this file to `live/ecs-deploy`
 resource "aws_ecs_task_definition" "app" {
   family                   = "capsid-app"
   network_mode             = "awsvpc"
