@@ -152,24 +152,18 @@ resource "aws_db_instance" "postgres" {
   vpc_security_group_ids   = ["${aws_security_group.postgres.id}"]
   publicly_accessible      = true
 
-  # TODO: There seems a problem to setup multi_az to be true
-  # Play with the console wizard with production setup (multi AZ):
-  #
-  # Suggested to use `storage_type = "io1"` and then
-  # `allocated_storage` needs to be at least 100 and default `iops = 1000`
-  # However, `gp2` with 20GB is also supported.
-  #
-  # `Multi AZ` is `Yes`, but `Availability zone` there's still only one.
-  # (`us-east-1c` has been randomly chosen.) And after a while in creating,
-  # (in step "DB instance status modifying") `Multi AZ` becomes `No`.
-  # And then it will tune `Yes` again.
-  #
-  # The other difference I realized is the default VPC has 6 subnets
-  # while mine only have 4. Don't think that makes a difference through.
   instance_class           = "db.t2.micro"
   storage_type             = "gp2" # general purpose SSD
   allocated_storage        = 20 # gigabytes
-  multi_az                 = false # TODO
+  # TODO:
+  # May consider changing to storage_type = "io1"` for production.
+  # And then `allocated_storage` needs to be at least 100 and default `iops = 1000`
+  # However, `gp2` with 20GB is also supported.
+  multi_az                 = false
+  # TODO:
+  # `multi_az = true` works, and we should use it for production setup
+  # But needs to execute in good internet connection otherwise timeout
+  # or other weird errors.
   backup_retention_period  = 7   # in days
   # backup_window            = ?
   copy_tags_to_snapshot    = true
