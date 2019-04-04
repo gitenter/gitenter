@@ -115,6 +115,29 @@ Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the 
 http://0.0.0.0:58080/capsid-0.0.1-alpha
 ```
 
+### Terraform
+
+```
+$ brew install terraform
+$ terraform --version
+Terraform v0.11.13
+```
+
+When global initialization, needs manually create:
+
+- AMI user w/ `access_key` and `secret_key`
+- S3 bucket `gitenter-config` if it is not existing yet, versioning enabled. It is used for save and share remote state.
+
+Should have `secret.auto.tfvars` to hold `access_key` and `secret_key`.
+
+```
+cd tf-config
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+```
+
 ### CircleCI
 
 Install [CircleCI local CLI](https://circleci.com/docs/2.0/local-cli/) so the setup can be tested locally.
