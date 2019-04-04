@@ -1,10 +1,10 @@
-variable "fargate_cpu" {
-  description = "Fargate instance CPU units to provision (1 vCPU = 1024 CPU units)"
+variable "task_cpu" {
+  description = "Docker instance CPU units to provision (1 vCPU = 1024 CPU units)"
   default     = "256"
 }
 
-variable "fargate_memory" {
-  description = "Fargate instance memory to provision (in MiB)"
+variable "task_memory" {
+  description = "Docker instance memory to provision (in MiB)"
   default     = "512"
 }
 
@@ -17,25 +17,21 @@ variable "app_count" {
   default     = 2
 }
 
-resource "aws_ecs_cluster" "main" {
-  name = "terraform-ecs"
-}
-
 # TODO:
 # Move this file to `live/ecs-deploy`
 resource "aws_ecs_task_definition" "app" {
   family                   = "capsid-app"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.fargate_cpu}"
-  memory                   = "${var.fargate_memory}"
+  cpu                      = "${var.task_cpu}"
+  memory                   = "${var.task_memory}"
 
   container_definitions = <<DEFINITION
 [
   {
-    "cpu": ${var.fargate_cpu},
     "image": "${var.app_image}",
-    "memory": ${var.fargate_memory},
+    "cpu": ${var.task_cpu},
+    "memory": ${var.task_memory},
     "name": "capsid-app",
     "networkMode": "awsvpc",
     "portMappings": [
@@ -70,4 +66,8 @@ resource "aws_ecs_service" "main" {
   depends_on = [
     "aws_alb_listener.front_end",
   ]
+}
+
+resource "aws_ecs_cluster" "main" {
+  name = "terraform-ecs"
 }
