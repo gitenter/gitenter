@@ -1,3 +1,5 @@
+# Notes
+
 ## Fargate
 
 - https://github.com/Oxalide/terraform-fargate-example/blob/master/main.tf
@@ -23,3 +25,7 @@ Sounds like:
 
 1. We can use Fargate + bind mounts for testing. But everytime after deployment the storage is gone!? And that's almost the same as `aws_ecs_service.desired_count = 1` so for sure we can have an associated local file system.
 2. We need to use EC2 tasks and/or use more manual way to attach EBS/EFS.
+
+## deployment
+
+- https://circleci.com/docs/2.0/ecs-ecr/
