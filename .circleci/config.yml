@@ -2,34 +2,12 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:11.0-jdk
-        environment:
-          TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-      # TODO:
-      # Currently follows
-      # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
-      # https://circleci.com/docs/2.0/postgres-config/
-      # Consider using a custom docker image.
-      #
-      # TODO:
-      # The below line is in log:
-      # /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
-      # So it is possible that set volume and copy `docker/database/docker_init.sh`
-      # will initialize the database.
-      - image: circleci/postgres:11
-        environment:
-          POSTGRES_PASSWORD: postgres
 
     working_directory: ~/repo
 
@@ -68,6 +46,44 @@ jobs:
       #       - ~/.m2
       #     key: m2-dependencies-{{ checksum "pom.xml" }}
 
+      - run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+  - unittest:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:11.0-jdk
+        environment:
+          TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+      # TODO:
+      # Currently follows
+      # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
+      # https://circleci.com/docs/2.0/postgres-config/
+      # Consider using a custom docker image.
+      #
+      # TODO:
+      # The below line is in log:
+      # /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+      # So it is possible that set volume and copy `docker/database/docker_init.sh`
+      # will initialize the database.
+      - image: circleci/postgres:11
+        environment:
+          POSTGRES_PASSWORD: postgres
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+
       # TODO (maybe out-of-date, check in the CircleCI local CLI):
       # Can't specify 10 or 11 or even 9.6.x, as the current `openjdk:10-jdk-node-browsers`
       # is probably in an older version of Linux which doesn't include this
@@ -85,4 +101,39 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
       # run the actual tests
-      - run: mvn test
+      - run: mvn surefire:test -B
+
+  - integration-test:
+    steps:
+      - run: echo "success"
+
+  - deploy:
+    steps:
+      - run: echo "success"
+
+  - acceptance-test:
+    steps:
+      - run: echo "success"
+
+  - deploy:
+    steps:
+      - run: echo "success"
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - build
+      - unittest:
+          requires:
+            - build
+      - integration-test:
+          requires:
+            - build
+      - acceptance-test:
+          requires:
+            - unittest
+            - integration-test
+      - deploy:
+          requires:
+            - acceptance-test
