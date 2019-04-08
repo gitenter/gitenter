@@ -107,10 +107,6 @@ jobs:
     steps:
       - run: echo "success"
 
-  - deploy:
-    steps:
-      - run: echo "success"
-
   - acceptance-test:
     steps:
       - run: echo "success"
