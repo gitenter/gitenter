@@ -1,3 +1,6 @@
+# Can be connected by
+# psql --host=${aws_db_instance.postgres.address} --port=5432 --username=postgres --password --dbname=gitenter
+
 terraform {
   required_version = "> 0.11.12"
 }
@@ -138,14 +141,14 @@ resource "aws_security_group" "postgres" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  # SSH
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # TODO: `Custom IP` rather than `Anywhere`
-    ipv6_cidr_blocks = ["::/0"]
-  }
+  # # SSH
+  # ingress {
+  #   from_port = 22
+  #   to_port = 22
+  #   protocol = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"] # TODO: `Custom IP` rather than `Anywhere`
+  #   ipv6_cidr_blocks = ["::/0"]
+  # }
 }
 
 resource "aws_db_instance" "postgres" {
@@ -192,30 +195,40 @@ resource "aws_db_instance" "postgres" {
   storage_encrypted        = false
 }
 
-resource "null_resource" "db_setup" {
-  # runs after database and security group providing external access is created
-  depends_on = ["aws_db_instance.postgres", "aws_security_group.postgres"]
-
-  # TODO:
-  # Alwaus get the handshake error, no matter whether it is in `aws_db_instance` or `null_resource`.
-  # > * aws_db_instance.postgres: timeout - last error: ssh: handshake failed: ssh: unable to
-  # > authenticate, attempted methods [none publickey], no supported methods remain
-  provisioner "file" {
-    source      = "../../../database/"
-    destination = "/tmp/database"
-  }
-
-  provisioner "local-exec" {
-    command = <<EOT
-                  psql -U postgres -h localhost -p 5432 -w -f create_users.sql
-                  psql -U postgres -h localhost -p 5432 -d gitenter -w -f initiate_database.sql
-                  psql -U postgres -h localhost -p 5432 -d gitenter -w -f privilege_control.sql
-                  psql -U postgres -h localhost -p 5432 -d gitenter -w -f alter_sequence.sql
-                  psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
-EOT
-    working_dir = "/tmp/database"
-  }
-}
+# TODO:
+#   # Alwaus get the handshake error, no matter whether it is in `aws_db_instance` or `null_resource`.
+#   # > * aws_db_instance.postgres: timeout - last error: ssh: handshake failed: ssh: unable to
+#   # > authenticate, attempted methods [none publickey], no supported methods remain
+#
+# In EC2 instance, the following attributes are needed. But there are not associated ones in db instance.
+# > associate_public_ip_address = true
+# > ey_name = "${aws_key_pair.terraform-seashore.key_name}"
+#
+# Probably it is just not the right way to do so, as it doesn't support more complicated things such as
+# Liquibase anyway. Thinking about other ways to do deployment.
+# Probably just let deployment script (e.g. Circle CI) to use `psql` command to call this db endpoint.
+# > psql --host=... --port=5432 --username=postgres --password --dbname=gitenter -f to_be_executed.sql
+#
+# resource "null_resource" "db_setup" {
+#   # runs after database and security group providing external access is created
+#   depends_on = ["aws_db_instance.postgres", "aws_security_group.postgres"]
+#
+#   provisioner "file" {
+#     source      = "../../../database/"
+#     destination = "/tmp/database"
+#   }
+#
+#   provisioner "local-exec" {
+#     command = <<EOT
+#                 psql -U postgres -h localhost -p 5432 -w -f create_users.sql
+#                 psql -U postgres -h localhost -p 5432 -d gitenter -w -f initiate_database.sql
+#                 psql -U postgres -h localhost -p 5432 -d gitenter -w -f privilege_control.sql
+#                 psql -U postgres -h localhost -p 5432 -d gitenter -w -f alter_sequence.sql
+#                 psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
+# EOT
+#     working_dir = "/tmp/database"
+#   }
+# }
 
 output "postgres_endpoint" {
   value = "${aws_db_instance.postgres.endpoint}"
