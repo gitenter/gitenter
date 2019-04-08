@@ -104,14 +104,20 @@ jobs:
       - run: mvn surefire:test -B
 
   integration-test:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
     steps:
       - run: echo "success"
 
   acceptance-test:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
     steps:
       - run: echo "success"
 
   deploy:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
     steps:
       - run: echo "success"
 
