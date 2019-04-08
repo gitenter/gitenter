@@ -46,7 +46,7 @@ jobs:
       #       - ~/.m2
       #     key: m2-dependencies-{{ checksum "pom.xml" }}
 
-      - run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+      - run: mvn -DskipTests -Dmaven.javadoc.skip=true clean install dependency:resolve-plugins dependency:go-offline
 
   unittest:
     docker:
@@ -101,7 +101,7 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
       # run the actual tests
-      - run: mvn surefire:test -B
+      - run: mvn -o surefire:test
 
   integration-test:
     docker:
