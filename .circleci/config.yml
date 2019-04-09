@@ -3,54 +3,10 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2.1
-jobs:
-  build:
+
+executors:
+  java-executor:
     docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:11.0-jdk
-
-    working_directory: ~/repo
-
-    environment:
-      # Customize the JVM maximum heap limit
-      MAVEN_OPTS: -Xmx3200m
-
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      #
-      # TODO:
-      # Caching doesn't work for multiple files, unless you list all POM files in a single
-      # string and that seems also have problems. refer
-      # https://circleci.com/docs/2.0/caching/
-      # https://discuss.circleci.com/t/cant-checksum-multiple-files-with-slashes-in-the-file-path/20667
-      #
-      # TODO:
-      # Go-offline does not work with multiple module project
-      # > [ERROR] Failed to execute goal on project enzymark: Could not resolve dependencies
-      # > for project com.gitenter:enzymark:jar:0.0.2-prototype: Could not find artifact
-      # > com.gitenter:protease:jar:0.0.2-prototype in central (https://repo.maven.apache.org/maven2)
-      # https://stackoverflow.com/questions/14694139/how-to-resolve-dependencies-between-modules-within-multi-module-project
-      # https://issues.apache.org/jira/browse/MDEP-516
-      # https://github.com/qaware/go-offline-maven-plugin
-      #
-      # - restore_cache:
-      #     keys:
-      #     - m2-dependencies-{{ checksum "pom.xml" }}
-      #
-      # - run: mvn dependency:go-offline
-      #
-      # - save_cache:
-      #     paths:
-      #       - ~/.m2
-      #     key: m2-dependencies-{{ checksum "pom.xml" }}
-
-      - run: mvn -DskipTests -Dmaven.javadoc.skip=true clean install dependency:resolve-plugins dependency:go-offline
-
-  unittest:
-    docker:
-      # specify the version you desire here
       - image: circleci/openjdk:11.0-jdk
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
@@ -81,8 +37,64 @@ jobs:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
 
+jobs:
+  build:
+    executor: java-executor
+
     steps:
       - checkout
+
+      # Download and cache dependencies
+      #
+      # TODO:
+      # Caching doesn't work for multiple files, unless you list all POM files in a single
+      # string and that seems also have problems. refer
+      # https://circleci.com/docs/2.0/caching/
+      # https://discuss.circleci.com/t/cant-checksum-multiple-files-with-slashes-in-the-file-path/20667
+      #
+      # TODO:
+      # Go-offline does not work with multiple module project
+      # > [ERROR] Failed to execute goal on project enzymark: Could not resolve dependencies
+      # > for project com.gitenter:enzymark:jar:0.0.2-prototype: Could not find artifact
+      # > com.gitenter:protease:jar:0.0.2-prototype in central (https://repo.maven.apache.org/maven2)
+      # https://stackoverflow.com/questions/14694139/how-to-resolve-dependencies-between-modules-within-multi-module-project
+      # https://issues.apache.org/jira/browse/MDEP-516
+      # https://github.com/qaware/go-offline-maven-plugin
+      #
+      # Also refer to:
+      # https://circleci.com/blog/persisting-data-in-workflows-when-to-use-caching-artifacts-and-workspaces/
+      #
+      # - restore_cache:
+      #     keys:
+      #     - m2-dependencies-{{ checksum "pom.xml" }}
+      #
+      # - run: mvn dependency:go-offline
+      #
+      # - save_cache:
+      #     paths:
+      #       - ~/.m2
+      #     key: m2-dependencies-{{ checksum "pom.xml" }}
+
+      # https://circleci.com/blog/optimizing-maven-builds-on-circleci/
+      - run: mvn -DskipTests -Dmaven.javadoc.skip=true clean install dependency:resolve-plugins dependency:go-offline
+
+      # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: ~/repo/
+          # Must be relative path from root
+          paths:
+            - capsid/target # TODO: Using `*/target`
+
+  unittest:
+    executor: java-executor
+
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/repo/
 
       # TODO (maybe out-of-date, check in the CircleCI local CLI):
       # Can't specify 10 or 11 or even 9.6.x, as the current `openjdk:10-jdk-node-browsers`
