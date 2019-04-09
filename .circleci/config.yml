@@ -87,11 +87,16 @@ jobs:
           # Must be relative path from root
           paths:
             - capsid/target # TODO: Using `*/target`
+            - enzymark/target
+            - hooks/post-receive/target
+            - protease/target
 
   unittest:
     executor: java-executor
 
     steps:
+      - checkout
+
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ~/repo/
@@ -132,6 +137,8 @@ jobs:
       - image: circleci/openjdk:11.0-jdk
     steps:
       - run: echo "success"
+      # TODO:
+      # Consider saving to final capsid.jar to an artifact.
 
 workflows:
   version: 2
