@@ -5,7 +5,7 @@
 version: 2.1
 
 executors:
-  java-executor:
+  java-with-postgres-executor:
     docker:
       - image: circleci/openjdk:11.0-jdk
         environment:
@@ -38,8 +38,8 @@ executors:
       MAVEN_OPTS: -Xmx3200m
 
 jobs:
-  build:
-    executor: java-executor
+  java-build:
+    executor: java-with-postgres-executor
 
     steps:
       - checkout
@@ -75,32 +75,6 @@ jobs:
       #       - ~/.m2
       #     key: m2-dependencies-{{ checksum "pom.xml" }}
 
-      # https://circleci.com/blog/optimizing-maven-builds-on-circleci/
-      - run: mvn -DskipTests -Dmaven.javadoc.skip=true clean install dependency:resolve-plugins dependency:go-offline
-
-      # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
-      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
-          # taken to be the root directory of the workspace.
-          root: ~/repo/
-          # Must be relative path from root
-          paths:
-            - capsid/target # TODO: Using `*/target`
-            - enzymark/target
-            - hooks/post-receive/target
-            - protease/target
-
-  unittest:
-    executor: java-executor
-
-    steps:
-      - checkout
-
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: ~/repo/
-
       # TODO (maybe out-of-date, check in the CircleCI local CLI):
       # Can't specify 10 or 11 or even 9.6.x, as the current `openjdk:10-jdk-node-browsers`
       # is probably in an older version of Linux which doesn't include this
@@ -117,10 +91,19 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/alter_sequence.sql
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
-      # run the actual tests
-      - run: mvn -o surefire:test
+      - run: mvn clean install
 
-  integration-test:
+      # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: ~/repo/
+          # Must be relative path from root
+          paths:
+            - capsid/target/*.war
+
+  python-linter:
     docker:
       - image: circleci/openjdk:11.0-jdk
     steps:
@@ -136,6 +119,10 @@ jobs:
     docker:
       - image: circleci/openjdk:11.0-jdk
     steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/repo/
+
       - run: echo "success"
       # TODO:
       # Consider saving to final capsid.jar to an artifact.
@@ -144,17 +131,12 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
-      - build
-      - unittest:
-          requires:
-            - build
-      - integration-test:
-          requires:
-            - build
+      - java-build
+      - python-linter
       - acceptance-test:
           requires:
-            - unittest
-            - integration-test
+            - java-build
+            - python-linter
       - deploy:
           requires:
             - acceptance-test
