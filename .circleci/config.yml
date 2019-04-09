@@ -133,10 +133,18 @@ workflows:
     jobs:
       - java-build
       - python-linter
+      - staging-readiness: # <<< A job that will require manual approval in the CircleCI web application.
+          type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
+          requires: # We only run the "hold" job when test2 has succeeded
+           - java-build
+           - python-linter
       - acceptance-test:
           requires:
-            - java-build
-            - python-linter
-      - deploy:
+            - staging-readiness
+      - production-readiness:
+          type: approval
           requires:
             - acceptance-test
+      - deploy:
+          requires:
+            - production-readiness
