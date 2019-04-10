@@ -48,6 +48,11 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <!--
+                        TODO:
+                        When using parent pom, there's a race condition in here that capsid build may not use the
+                        most up-to-date git hooks.
+                    -->
                     <outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
                 </configuration>
             </plugin>

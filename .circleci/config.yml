@@ -2,11 +2,15 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
-jobs:
-  build:
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@3.1.0
+  aws-ecs: circleci/aws-ecs@0.0.7
+
+executors:
+  java-with-postgres-executor:
     docker:
-      # specify the version you desire here
       - image: circleci/openjdk:11.0-jdk
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
@@ -37,6 +41,16 @@ jobs:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
 
+  python-executor:
+    docker:
+      - image: circleci/python:3.6.5
+
+    working_directory: ~/python
+
+jobs:
+  java-build:
+    executor: java-with-postgres-executor
+
     steps:
       - checkout
 
@@ -56,6 +70,9 @@ jobs:
       # https://stackoverflow.com/questions/14694139/how-to-resolve-dependencies-between-modules-within-multi-module-project
       # https://issues.apache.org/jira/browse/MDEP-516
       # https://github.com/qaware/go-offline-maven-plugin
+      #
+      # Also refer to:
+      # https://circleci.com/blog/persisting-data-in-workflows-when-to-use-caching-artifacts-and-workspaces/
       #
       # - restore_cache:
       #     keys:
@@ -84,5 +101,89 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/alter_sequence.sql
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
-      # run the actual tests
-      - run: mvn test
+      - run: mvn clean install
+
+      # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: ~/repo/
+          # Must be relative path from root
+          paths:
+            - capsid/target/*.war
+
+  python-linter:
+    executor: python-executor
+
+    # https://circleci.com/docs/2.0/language-python/
+    steps:
+      - checkout
+
+      - run:
+          command: |  # use pipenv to install dependencies
+            sudo pip install pipenv
+            pipenv install
+
+  acceptance-test:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
+    steps:
+      - run: echo "success"
+
+  deploy:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/repo/
+
+      - run: echo "success"
+      # TODO:
+      # Consider saving to final capsid.jar to an artifact.
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - java-build
+      - python-linter
+      - staging-readiness:
+          type: approval
+          requires:
+           - java-build
+           - python-linter
+      - aws-ecr/build_and_push_image:
+          # Running this step needs `tf-config/live/circle-demo` to be applied first
+          # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
+          # https://github.com/CircleCI-Public/aws-ecr-orb
+          requires:
+            - staging-readiness
+          account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          dockerfile: ./docker/circleci-demo/Dockerfile
+          path: ./docker/circleci-demo
+          region: AWS_DEFAULT_REGION
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          tag: "${CIRCLE_SHA1}"
+      - aws-ecs/deploy-service-update:
+          # Running this step needs `tf-config/live/circle-demo` to be applied first
+          # https://circleci.com/orbs/registry/orb/circleci/aws-ecs
+          requires:
+            - aws-ecr/build_and_push_image
+          aws-region: AWS_DEFAULT_REGION
+          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
+          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
+          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}"
+      - acceptance-test:
+          requires:
+            - aws-ecs/deploy-service-update
+      - production-readiness:
+          type: approval
+          requires:
+            - acceptance-test
+      - deploy:
+          requires:
+            - production-readiness
