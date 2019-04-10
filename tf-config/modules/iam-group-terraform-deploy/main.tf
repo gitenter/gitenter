@@ -1,3 +1,6 @@
+# Needs:
+# ecr:InitiateLayerUpload
+
 resource "aws_iam_group" "terraform" {
   name = "${var.group_name}"
 }
@@ -85,3 +88,12 @@ resource "aws_iam_group_policy_attachment" "terraform-ecr" {
   group = "${aws_iam_group.terraform.id}"
   policy_arn = "${data.aws_iam_policy.terraform-ecr.arn}"
 }
+# 
+# data "aws_iam_policy" "terraform-ecr_power_user" {
+#   arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+# }
+#
+# resource "aws_iam_group_policy_attachment" "terraform-ecr_power_user" {
+#   group = "${aws_iam_group.terraform.id}"
+#   policy_arn = "${data.aws_iam_policy.terraform-ecr_power_user.arn}"
+# }
