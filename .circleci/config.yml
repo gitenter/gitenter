@@ -157,19 +157,19 @@ workflows:
       - aws-ecr/build_and_push_image:
           # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
           # https://github.com/CircleCI-Public/aws-ecr-orb
-          account-url: ${AWS_ECR_ACCOUNT_URL} # 662490392829.dkr-ecr.us-east-1.amazonaws.com 
-          aws-access-key-id: ${AWS_ACCESS_KEY_ID}
-          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+          account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr-ecr.us-east-1.amazonaws.com
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           # dockerfile: myDockerfile
           # path: pathToMyDockerfile
-          region: ${AWS_DEFAULT_REGION}
+          region: AWS_DEFAULT_REGION
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
           # https://circleci.com/orbs/registry/orb/circleci/aws-ecs
           requires:
             - aws-ecr/build_and_push_image
-          aws-region: ${AWS_DEFAULT_REGION}
+          aws-region: AWS_DEFAULT_REGION
           family: "${AWS_RESOURCE_NAME_PREFIX}-service"
           cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
           container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}"
