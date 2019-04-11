@@ -53,6 +53,10 @@ resource "aws_eip" "gw" {
   depends_on = ["aws_internet_gateway.gw"]
 }
 
+# TODO:
+# `NatGateway-Hours` causes costs outside of free-tier.
+# We probably want to investigate if anything is setting up in the
+# not-the-most-popular way, and/or do some cost management.
 resource "aws_nat_gateway" "gw" {
   count         = "${var.az_count}"
   subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"

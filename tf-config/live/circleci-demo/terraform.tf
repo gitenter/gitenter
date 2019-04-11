@@ -29,10 +29,9 @@ resource "aws_cloudformation_stack" "vpc" {
   capabilities = ["CAPABILITY_NAMED_IAM"]
   parameters {
     ClusterName = "${local.aws_ecs_cluster_name}"
-    # TODO:
-    # This role will be created, although no `aws_iam_role` resource is defined in this file.
-    # Should analysis why that happens.
     ExecutionRoleName = "${local.aws_ecs_execution_role_name}"
+    # `ClusterName` and `ExecutionRoleName` are defined as parameters of
+    # `cloudformation-templates/public-vpc.yml`.
   }
 }
 
