@@ -110,6 +110,16 @@ resource "aws_key_pair" "terraform-seashore" {
 
 resource "aws_db_subnet_group" "main" {
   name       = "terraform-main"
+  # TODO:
+  # The logic/reason to have private subnet is to put the
+  # not-internet-accessable resources (e.g. database) to
+  # the private subnet. Therefore, we should finally remove
+  # the public subnet IDs in here.
+  #
+  # Although by doing so, we need an alternative way to deploy
+  # Postgres initialization into the database and/or debugging
+  # database status.
+  # Consider e.g. StrongDM: https://www.strongdm.com/
   subnet_ids = ["${aws_subnet.private.*.id}", "${aws_subnet.public.*.id}"]
 
   tags = {

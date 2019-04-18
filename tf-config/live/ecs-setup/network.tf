@@ -74,6 +74,12 @@ resource "aws_subnet" "private" {
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
 }
 
+# The reaspn between chosen `aws_route` and `aws_route_table` is really
+# a Terraform-detailed related technical thing. Right now we use
+# `aws_route` for public subnet and `aws_route_table` for private subnet.
+# https://www.terraform.io/docs/providers/aws/r/route.html
+# https://www.terraform.io/docs/providers/aws/r/route_table.html
+
 # IGW for the public subnet
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.main.id}"
@@ -81,23 +87,39 @@ resource "aws_internet_gateway" "gw" {
 
 # Route the public subnet trafic through the IGW
 resource "aws_route" "internet_access" {
+  # This is using the main route table associated with this VPC.
+  # This is the default one since it has not been changed by
+  # `aws_main_route_table_association`.
+  # https://www.terraform.io/docs/providers/aws/r/vpc.html#main_route_table_id
   route_table_id         = "${aws_vpc.main.main_route_table_id}"
   gateway_id             = "${aws_internet_gateway.gw.id}"
 
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# Create a NAT gateway with an EIP for each private subnet to get internet connectivity
+# Private subnet should be used for production (so we can put e.g. database)
+# in there, but it is an unnecessary complicity for testing.
+# Details of the below setups can be referred to:
+# https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario2.html
+#
+# Trying to disable private subnet, but it seems to break Fargate by making
+# ECS tasks to be in status between preparing/provisioning forever. Having
+# private subnets back and Terraform can deploy a web service with no problem.
+#
+# TODO:
+# Investigate the error as it shouldn't been relavent. Otherwise we'll need to
+# be charged a lot even just for testing.
+
+# These elastic IP addresses are used for NAT gateway used for private subnet.
+# No need for an environment without private subnets. Cost $0.01/hr if not in use.
 resource "aws_eip" "gw" {
   count      = "${var.az_count}"
   vpc        = true
   depends_on = ["aws_internet_gateway.gw"]
 }
 
-# TODO:
-# `NatGateway-Hours` causes costs outside of free-tier.
-# We probably want to investigate if anything is setting up in the
-# not-the-most-popular way, and/or do some cost management.
+# Used for privat3e subnet. No need for an environment without private subnets.
+# Cost $0.045/hr~$400/yr.
 resource "aws_nat_gateway" "gw" {
   count         = "${var.az_count}"
   subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
