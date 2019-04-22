@@ -1,7 +1,15 @@
 resource "aws_alb" "main" {
-  name            = "terraform-ecs"
-  subnets         = ["${aws_subnet.public.*.id}"]
-  security_groups = ["${aws_security_group.lb.id}"]
+  name               = "terraform-ecs"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = ["${aws_security_group.lb.id}"]
+  subnets            = ["${aws_subnet.public.*.id}"]
+
+  idle_timeout       = 60
+
+  # TODO:
+  # Change to `true` for production
+  enable_deletion_protection = false
 }
 
 resource "aws_alb_target_group" "app" {
@@ -10,6 +18,15 @@ resource "aws_alb_target_group" "app" {
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
+
+  health_check {
+    interval = 30
+    path = "/"
+    protocol = "HTTP"
+    timeout = 6
+    healthy_threshold = 3
+    unhealthy_threshold = 3
+  }
 }
 
 # Redirect all traffic from the ALB to the target group
