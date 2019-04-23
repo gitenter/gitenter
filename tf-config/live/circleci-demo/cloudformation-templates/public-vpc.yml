@@ -117,6 +117,9 @@ Outputs:
       Name: !Join [ ':', [ !Ref 'AWS::StackName', 'ExternalUrl' ] ]
   PublicListener:
     Description: The ARN of the public load balancer's Listener
+    # In case refer to an AWS resource rather than a String/number/...
+    # the actual return type follows this table:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html#ref-resource-return-example
     Value: !Ref PublicLoadBalancerListener
     Export:
       Name: !Join [ ':', [ !Ref 'AWS::StackName', 'PublicListener' ] ]
