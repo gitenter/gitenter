@@ -1,9 +1,3 @@
-# Load balancers for getting traffic to containers.
-# This sample template creates one load balancer:
-#
-# - One public load balancer, hosted in public subnets that is accessible
-#   to the public, and is intended to route traffic to one or more public
-#   facing services.
 resource "aws_alb" "main" {
   name               = "terraform-ecs"
   internal           = false
@@ -11,27 +5,29 @@ resource "aws_alb" "main" {
   security_groups    = ["${aws_security_group.lb.id}"]
   subnets            = ["${aws_subnet.public.*.id}"]
 
-  idle_timeout       = 60
+  idle_timeout       = 30
 
   # TODO:
   # Change to `true` for production
   enable_deletion_protection = false
 }
 
+# A dummy target group is used to setup the ALB to just drop traffic
+# initially, before any real service target groups have been added.
 resource "aws_alb_target_group" "app" {
-  name        = "terraform-ecs"
+  name        = "${var.aws_vpc_stack_name}-drop-1"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
 
   health_check {
-    interval = 30
+    interval = 6
     path = "/"
     protocol = "HTTP"
-    timeout = 6
-    healthy_threshold = 3
-    unhealthy_threshold = 3
+    timeout = 4
+    healthy_threshold = 2
+    unhealthy_threshold = 2
   }
 }
 
@@ -45,8 +41,4 @@ resource "aws_alb_listener" "front_end" {
     target_group_arn = "${aws_alb_target_group.app.id}"
     type             = "forward"
   }
-}
-
-output "alb_hostname" {
-  value = "${aws_alb.main.dns_name}"
 }

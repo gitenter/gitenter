@@ -22,6 +22,10 @@ data "aws_availability_zones" "available" {}
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_SettingUp.html#CHAP_SettingUp.Requirements
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.html
 
+# VPC in which containers will be networked.
+# It has two public subnets
+# We distribute the subnets across the first two available subnets
+# for the region, for high availability.
 resource "aws_vpc" "main" {
   # Private IPv4 address ranges by RFC 1918.
   # Netmask can be `/16` or smaller. The largest chosen range includes:
@@ -62,6 +66,10 @@ resource "aws_subnet" "public" {
 }
 
 # IGW for the public subnet
+#
+# Setup networking resources for the public subnets. Containers
+# in the public subnets have public IP addresses and the routing table
+# sends network traffic via the internet gateway.
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.main.id}"
 }
