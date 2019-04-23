@@ -22,3 +22,7 @@ variable "aws_role_stack_name" {
   # The name of the CloudFormation stack to be created for the role
   default = "circleci-demo-role-stack"
 }
+variable "aws_ecs_cluster_name" {
+  # The name of the ECS cluster to be created
+  default = "circleci-demo-cluster"
+}

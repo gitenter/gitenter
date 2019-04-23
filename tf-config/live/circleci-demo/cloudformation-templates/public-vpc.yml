@@ -3,6 +3,9 @@ Description: A stack for deploying containerized applications in AWS Fargate.
              This stack runs containers in a public VPC subnet, and includes a
              public facing load balancer to register the services in.
 Parameters:
+  ClusterName:
+    Type: String
+    Description: Name of the ECS cluster to be created
   VpcId:
     Type: String
   PublicSubnetOneId:
@@ -102,6 +105,11 @@ Resources:
 # about changing any of them, because of them are exported with specific
 # names so that the other task related CF templates can use them.
 Outputs:
+  ClusterName:
+    Description: The name of the ECS cluster
+    Value: !Ref 'ClusterName'
+    Export:
+      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'ClusterName' ] ]
   ExternalUrl:
     Description: The url of the external load balancer
     Value: !Join ['', ['http://', !GetAtt 'PublicLoadBalancer.DNSName']]

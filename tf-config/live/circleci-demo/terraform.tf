@@ -2,7 +2,12 @@ resource "aws_cloudformation_stack" "vpc" {
   name = "${var.aws_vpc_stack_name}"
   template_body = "${file("cloudformation-templates/public-vpc.yml")}"
   capabilities = ["CAPABILITY_NAMED_IAM"]
+  depends_on = [
+    "aws_ecs_cluster.main"
+  ]
+
   parameters {
+    ClusterName = "${var.aws_ecs_cluster_name}"
     VpcId = "${aws_vpc.main.id}"
     PublicSubnetOneId = "${aws_subnet.public.0.id}"
     PublicSubnetTwoId = "${aws_subnet.public.1.id}"
