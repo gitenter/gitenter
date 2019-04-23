@@ -13,6 +13,9 @@ Parameters:
     Type: String
     Default: nginx
     Description: A name for the service
+  ClusterName:
+    Type: String
+    Description: Name of the ECS cluster to be created
   ImageUrl:
     Type: String
     Default: nginx
