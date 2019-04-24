@@ -14,6 +14,7 @@ resource "aws_cloudformation_stack" "vpc" {
     PublicLoadBalancerSGId = "${aws_security_group.lb.id}"
     PublicLoadBalancerDNSName = "${aws_alb.main.dns_name}"
     PublicLoadBalancerListenerArn = "${aws_alb_listener.front_end.arn}"
+    FargateContainerSecurityGroupId = "${aws_security_group.ecs_tasks.id}"
   }
 }
 
