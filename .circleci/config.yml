@@ -166,6 +166,10 @@ workflows:
           dockerfile: ./docker/circleci-demo/Dockerfile
           path: ./docker/circleci-demo
           region: AWS_DEFAULT_REGION
+          # TODO:
+          # `AWS_RESOURCE_NAME_PREFIX` is currently setup as environment variable through CircleCI UI/web.
+          # Could just hard code in here to make it match `tf-config/live/circieci-demo/variables.tf:aws_resource_prefix`
+          # So at least the link is internally in the code.
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:

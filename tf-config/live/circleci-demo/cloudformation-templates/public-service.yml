@@ -6,10 +6,16 @@ Parameters:
     Default: production
     Description: The name of the parent Fargate networking stack that you created. Necessary
                  to locate and reference resources created by that stack.
+  RoleStackName:
+    Type: String
+    Default: production
   ServiceName:
     Type: String
     Default: nginx
     Description: A name for the service
+  ClusterName:
+    Type: String
+    Description: Name of the ECS cluster to be created
   ImageUrl:
     Type: String
     Default: nginx
@@ -67,7 +73,7 @@ Resources:
         - FARGATE
       ExecutionRoleArn:
         Fn::ImportValue:
-          !Join [':', [!Ref 'StackName', 'ECSTaskExecutionRole']]
+          !Join [':', [!Ref 'RoleStackName', 'ECSTaskExecutionRole']]
       TaskRoleArn:
         Fn::If:
           - 'HasCustomRole'

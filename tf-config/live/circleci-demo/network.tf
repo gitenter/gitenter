@@ -43,7 +43,7 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
 
   tags = {
-    Name = "terraform-ecs-vpc"
+    Name = "circleci-demo-vpc"
   }
 }
 
@@ -61,27 +61,12 @@ resource "aws_subnet" "public" {
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
 }
 
-# TODO:
-# May disable private subnets/NAT gateway to reduce cost for staging machines.
-resource "aws_subnet" "private" {
-  vpc_id            = "${aws_vpc.main.id}"
-
-  # If two AZs:
-  # count.index=0: `10.0.2.0/24`
-  # count.index=1: `10.0.3.0/24`
-  count             = "${var.az_count}"
-  cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 8, var.az_count + count.index)}"
-  availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
-}
-
-# The reaspn between chosen `aws_route` and `aws_route_table` is really
-# a Terraform-detailed related technical thing. Right now we use
-# `aws_route` for public subnet and `aws_route_table` for private subnet.
-# https://www.terraform.io/docs/providers/aws/r/route.html
-# https://www.terraform.io/docs/providers/aws/r/route_table.html
-
 # IGW for the public subnet
 resource "aws_internet_gateway" "gw" {
+  vpc_id = "${aws_vpc.main.id}"
+}
+
+resource "aws_route_table" "public" {
   vpc_id = "${aws_vpc.main.id}"
 }
 
@@ -91,55 +76,14 @@ resource "aws_route" "internet_access" {
   # This is the default one since it has not been changed by
   # `aws_main_route_table_association`.
   # https://www.terraform.io/docs/providers/aws/r/vpc.html#main_route_table_id
-  route_table_id         = "${aws_vpc.main.main_route_table_id}"
+  route_table_id         = "${aws_route_table.public.id}"
   gateway_id             = "${aws_internet_gateway.gw.id}"
 
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# Private subnet should be used for production (so we can put e.g. database)
-# in there, but it is an unnecessary complicity for testing.
-# Details of the below setups can be referred to:
-# https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario2.html
-#
-# Trying to disable private subnet, but it seems to break Fargate by making
-# ECS tasks to be in status between preparing/provisioning forever. Having
-# private subnets back and Terraform can deploy a web service with no problem.
-#
-# TODO:
-# Investigate the error as it shouldn't been relavent. Otherwise we'll need to
-# be charged a lot even just for testing.
-
-# These elastic IP addresses are used for NAT gateway used for private subnet.
-# No need for an environment without private subnets. Cost $0.01/hr if not in use.
-resource "aws_eip" "gw" {
-  count      = "${var.az_count}"
-  vpc        = true
-  depends_on = ["aws_internet_gateway.gw"]
-}
-
-# Used for privat3e subnet. No need for an environment without private subnets.
-# Cost $0.045/hr~$400/yr.
-resource "aws_nat_gateway" "gw" {
-  count         = "${var.az_count}"
-  subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
-  allocation_id = "${element(aws_eip.gw.*.id, count.index)}"
-}
-
-# Create a new route table for the private subnets, make it route non-local traffic through the NAT gateway to the internet
-resource "aws_route_table" "private" {
-  count  = "${var.az_count}"
-  vpc_id = "${aws_vpc.main.id}"
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = "${element(aws_nat_gateway.gw.*.id, count.index)}"
-  }
-}
-
-# Explicitly associate the newly created route tables to the private subnets (so they don't default to the main route table)
 resource "aws_route_table_association" "private" {
   count          = "${var.az_count}"
-  subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
-  route_table_id = "${element(aws_route_table.private.*.id, count.index)}"
+  subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
+  route_table_id = "${aws_route_table.public.id}"
 }
