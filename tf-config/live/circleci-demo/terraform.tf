@@ -11,7 +11,9 @@ resource "aws_cloudformation_stack" "vpc" {
     VpcId = "${aws_vpc.main.id}"
     PublicSubnetOneId = "${aws_subnet.public.0.id}"
     PublicSubnetTwoId = "${aws_subnet.public.1.id}"
-    # `ClusterName` are defined as parameters of `cloudformation-templates/public-vpc.yml`.
+    PublicLoadBalancerSGId = "${aws_security_group.lb.id}"
+    PublicLoadBalancerDNSName = "${aws_alb.main.dns_name}"
+    PublicLoadBalancerListenerArn = "${aws_alb_listener.front_end.arn}"
   }
 }
 
