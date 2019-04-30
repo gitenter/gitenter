@@ -1,8 +1,6 @@
 locals {
   # The name of the CloudFormation stack to be created for the ECS service and related resources
   aws_ecs_service_stack_name = "${var.aws_resource_prefix}-svc-stack"
-  # The name of the ECS service to be created
-  aws_ecs_service_name = "${var.aws_resource_prefix}-service"
 }
 
 resource "aws_ecs_cluster" "main" {
@@ -21,20 +19,19 @@ resource "aws_cloudformation_stack" "ecs_service" {
   depends_on = [
     "aws_cloudformation_stack.role",
     "aws_ecr_repository.demo-app-repository",
-    "aws_ecs_cluster.main"
-  ]
+    "aws_ecs_cluster.main",
+    "aws_lb_listener_rule.all"
+  ] # AWS::ECS::Service depends on LoadBalancerRule
 
   parameters {
-    ContainerMemory = 1024
-    ContainerPort = 80
+    ContainerPort = "${var.container_port}"
     StackName = "${var.aws_vpc_stack_name}"
-    VpcId = "${aws_vpc.main.id}"
     PublicSubnetOneId = "${aws_subnet.public.0.id}"
     PublicSubnetTwoId = "${aws_subnet.public.1.id}"
-    PublicLoadBalancerListenerArn = "${aws_alb_listener.front_end.arn}"
+    TargetGroupArn = "${aws_alb_target_group.app.arn}"
     FargateContainerSecurityGroupId = "${aws_security_group.ecs_tasks.id}"
     RoleStackName = "${var.aws_role_stack_name}"
-    ServiceName = "${local.aws_ecs_service_name}"
+    ServiceName = "${var.aws_ecs_service_name}"
     ClusterName = "${var.aws_ecs_cluster_name}"
     # Note: Since ImageUrl parameter is not specified, the Service
     # will be deployed with the nginx image when created

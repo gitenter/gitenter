@@ -26,3 +26,11 @@ variable "aws_ecs_cluster_name" {
   # The name of the ECS cluster to be created
   default = "circleci-demo-cluster"
 }
+variable "aws_ecs_service_name" {
+  # The name of the ECS service to be created
+  default = "circleci-demo-service"
+}
+
+variable "container_port" {
+  default = 80
+}

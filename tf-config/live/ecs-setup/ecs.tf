@@ -1,13 +1,3 @@
-variable "task_cpu" {
-  description = "Docker instance CPU units to provision (1 vCPU = 1024 CPU units)"
-  default     = "256"
-}
-
-variable "task_memory" {
-  description = "Docker instance memory to provision (in MiB)"
-  default     = "512"
-}
-
 variable "app_image" {
   default     = "tomcat:latest"
 }
@@ -23,8 +13,8 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "capsid-app"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.task_cpu}"
-  memory                   = "${var.task_memory}"
+  cpu                      = 256 # 1 vCPU = 1024 CPU units)
+  memory                   = 512 # in MiB
 
   container_definitions = <<DEFINITION
 [
