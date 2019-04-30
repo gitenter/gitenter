@@ -9,6 +9,11 @@ resource "aws_ecs_cluster" "main" {
   name = "${var.aws_ecs_cluster_name}"
 }
 
+# TODO:
+# Current deployment is through rolling update (`ECS`). Consider to change
+# to blue/green (`CODE_DEPLOY`) deployment.
+# https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentController.html
+
 # Note: creates task definition and task definition family with the same name as the ServiceName parameter value
 resource "aws_cloudformation_stack" "ecs_service" {
   name = "${local.aws_ecs_service_stack_name}"

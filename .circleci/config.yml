@@ -175,6 +175,14 @@ workflows:
       - aws-ecs/deploy-service-update:
           # Running this step needs `tf-config/live/circle-demo` to be applied first
           # https://circleci.com/orbs/registry/orb/circleci/aws-ecs
+          #
+          # This orb is mostly doing `aws ecs update-service`
+          # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
+          # That's the reason it doesn't need to hold any knowledge of the
+          # Terraform config even if it is doing blue/green deployment.
+          # Refer to a command-line (non-orb) implementation for which this
+          # is shown clearly.
+          # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh
           requires:
             - aws-ecr/build_and_push_image
           aws-region: AWS_DEFAULT_REGION

@@ -63,6 +63,14 @@ resource "aws_ecs_service" "main" {
     container_port   = "${var.app_port}"
   }
 
+  # TODO:
+  # Current deployment is through rolling update (`ECS`). Consider to change
+  # to blue/green (`CODE_DEPLOY`) deployment.
+  # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentController.html
+  deployment_controller {
+    type = "ECS"
+  }
+
   depends_on = [
     "aws_alb_listener.front_end",
   ]
