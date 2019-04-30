@@ -14,7 +14,7 @@ resource "aws_alb" "main" {
 
 # A dummy target group is used to setup the ALB to just drop traffic
 # initially, before any real service target groups have been added.
-resource "aws_alb_target_group" "app" {
+resource "aws_alb_target_group" "dummy" {
   name        = "${var.aws_vpc_stack_name}-drop-1"
   port        = 80
   protocol    = "HTTP"
@@ -38,7 +38,11 @@ resource "aws_alb_listener" "front_end" {
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.app.id}"
+    target_group_arn = "${aws_alb_target_group.dummy.id}"
     type             = "forward"
   }
+}
+
+output "alb_hostname" {
+  value = "${aws_alb.main.dns_name}"
 }

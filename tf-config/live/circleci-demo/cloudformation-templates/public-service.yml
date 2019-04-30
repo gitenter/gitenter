@@ -16,6 +16,16 @@ Parameters:
   ClusterName:
     Type: String
     Description: Name of the ECS cluster to be created
+  VpcId:
+    Type: String
+  PublicSubnetOneId:
+    Type: String
+  PublicSubnetTwoId:
+    Type: String
+  PublicLoadBalancerListenerArn:
+    Type: String
+  FargateContainerSecurityGroupId:
+    Type: String
   ImageUrl:
     Type: String
     Default: nginx
@@ -58,6 +68,9 @@ Parameters:
 Conditions:
   HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
 
+# In case refer to an AWS resource rather than a String/number/...
+# the actual return type follows this table:
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html#ref-resource-return-example
 Resources:
 
   # The task definition. This is a simple metadata description of what
@@ -99,9 +112,7 @@ Resources:
     DependsOn: LoadBalancerRule
     Properties:
       ServiceName: !Ref 'ServiceName'
-      Cluster:
-        Fn::ImportValue:
-          !Join [':', [!Ref 'StackName', 'ClusterName']]
+      Cluster: !Ref 'ClusterName'
       LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
@@ -111,13 +122,10 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - Fn::ImportValue:
-                !Join [':', [!Ref 'StackName', 'FargateContainerSecurityGroup']]
+            - !Ref 'FargateContainerSecurityGroupId'
           Subnets:
-            - Fn::ImportValue:
-                !Join [':', [!Ref 'StackName', 'PublicSubnetOne']]
-            - Fn::ImportValue:
-                !Join [':', [!Ref 'StackName', 'PublicSubnetTwo']]
+            - !Ref 'PublicSubnetOneId'
+            - !Ref 'PublicSubnetTwoId'
       TaskDefinition: !Ref 'TaskDefinition'
       LoadBalancers:
         - ContainerName: !Ref 'ServiceName'
@@ -145,9 +153,7 @@ Resources:
       Port: !Ref 'ContainerPort'
       Protocol: HTTP
       UnhealthyThresholdCount: 2
-      VpcId:
-        Fn::ImportValue:
-          !Join [':', [!Ref 'StackName', 'VPCId']]
+      VpcId: !Ref 'VpcId'
 
   # Create a rule on the load balancer for routing traffic to the target group
   LoadBalancerRule:
@@ -159,7 +165,5 @@ Resources:
       Conditions:
         - Field: path-pattern
           Values: [!Ref 'Path']
-      ListenerArn:
-        Fn::ImportValue:
-          !Join [':', [!Ref 'StackName', 'PublicListener']]
+      ListenerArn: !Ref 'PublicLoadBalancerListenerArn'
       Priority: !Ref 'Priority'

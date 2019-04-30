@@ -14,7 +14,6 @@ resource "aws_cloudformation_stack" "ecs_service" {
   name = "${local.aws_ecs_service_stack_name}"
   template_body = "${file("cloudformation-templates/public-service.yml")}"
   depends_on = [
-    "aws_cloudformation_stack.vpc",
     "aws_cloudformation_stack.role",
     "aws_ecr_repository.demo-app-repository",
     "aws_ecs_cluster.main"
@@ -24,6 +23,11 @@ resource "aws_cloudformation_stack" "ecs_service" {
     ContainerMemory = 1024
     ContainerPort = 80
     StackName = "${var.aws_vpc_stack_name}"
+    VpcId = "${aws_vpc.main.id}"
+    PublicSubnetOneId = "${aws_subnet.public.0.id}"
+    PublicSubnetTwoId = "${aws_subnet.public.1.id}"
+    PublicLoadBalancerListenerArn = "${aws_alb_listener.front_end.arn}"
+    FargateContainerSecurityGroupId = "${aws_security_group.ecs_tasks.id}"
     RoleStackName = "${var.aws_role_stack_name}"
     ServiceName = "${local.aws_ecs_service_name}"
     ClusterName = "${var.aws_ecs_cluster_name}"
