@@ -167,7 +167,7 @@ workflows:
           # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
           # https://github.com/CircleCI-Public/aws-ecr-orb
           requires:
-            - staging-readiness
+            - qa-readiness
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
