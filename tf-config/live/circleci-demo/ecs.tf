@@ -1,41 +1,123 @@
+# locals {
+#   # The name of the CloudFormation stack to be created for the ECS service and related resources
+#   aws_ecs_service_stack_name = "${var.aws_resource_prefix}-svc-stack"
+# }
+
+variable "app_image" {
+  default     = "nginx:latest"
+}
+
 locals {
-  # The name of the CloudFormation stack to be created for the ECS service and related resources
-  aws_ecs_service_stack_name = "${var.aws_resource_prefix}-svc-stack"
+  # Number of docker containers to run
+  app_count = 2
+  # Docker instance CPU units to provision (1 vCPU = 1024 CPU units)
+  task_cpu = 256
+  # Docker instance memory to provision (in MiB
+  task_memory = 512
+}
+
+# The task definition. This is a simple metadata description of what
+# container to run, and what resource requirements it has.
+resource "aws_ecs_task_definition" "app" {
+  family                   = "${var.aws_ecs_service_name}"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "${local.task_cpu}"
+  memory                   = "${local.task_memory}"
+
+  execution_role_arn       = "${aws_iam_role.ecs_task_execution.arn}"
+  # TODO:
+  # Sounds like there's no need to specify `task_role_arn`
+  # Originally
+  /*
+Parameters:
+  Role:
+    Type: String
+    Default: ""
+    Description: (Optional) An IAM role to give the service's containers if the code within needs to
+                 access other AWS resources like S3 buckets, DynamoDB tables, etc
+Conditions:
+  HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
+Resources:
+  TaskDefinition:
+    TaskRoleArn:
+      Fn::If:
+        - 'HasCustomRole'
+        - !Ref 'Role'
+        - !Ref "AWS::NoValue"
+  */
+
+  # Refer to: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html
+  # For `awsvpc` network mode, The `hostPort` can be left blank or it must be the
+  # same value as the `containerPort`.
+  container_definitions = <<DEFINITION
+[
+  {
+    "name": "${var.aws_ecs_service_name}",
+    "cpu": ${local.task_cpu},
+    "memory": ${local.task_memory},
+    "image": "${var.app_image}",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": ${var.container_port}
+      }
+    ],
+    "environment": [
+      {
+        "name": "VERSION_INFO",
+        "value": "v0"
+      },
+      {
+        "name": "BUILD_DATE",
+        "value": "-"
+      }
+    ]
+  }
+]
+DEFINITION
+}
+
+# The service. The service is a resource which allows you to run multiple
+# copies of a type of task, and gather up their logs and metrics, as well
+# as monitor the number of running tasks and replace any that have crashed
+resource "aws_ecs_service" "main" {
+  name            = "${var.aws_ecs_service_name}"
+  cluster         = "${aws_ecs_cluster.main.id}"
+  task_definition = "${aws_ecs_task_definition.app.arn}"
+  desired_count   = "${local.app_count}"
+  launch_type     = "FARGATE"
+
+  deployment_maximum_percent = 200
+  deployment_minimum_healthy_percent = 75
+
+  network_configuration {
+    security_groups = ["${aws_security_group.ecs_tasks.id}"]
+    subnets         = ["${aws_subnet.public.*.id}"]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    container_name   = "${var.aws_ecs_service_name}"
+    container_port   = "${var.container_port}"
+    target_group_arn = "${aws_alb_target_group.app.id}"
+  }
+
+  # TODO:
+  # Current deployment is through rolling update (`ECS`). Consider to change
+  # to blue/green (`CODE_DEPLOY`) deployment.
+  # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentController.html
+  deployment_controller {
+    type = "ECS"
+  }
+
+  depends_on = [
+    "aws_iam_role.ecs",
+    "aws_ecr_repository.app_repository",
+    "aws_lb_listener_rule.all"
+  ]
 }
 
 resource "aws_ecs_cluster" "main" {
   name = "${var.aws_ecs_cluster_name}"
-}
-
-# TODO:
-# Current deployment is through rolling update (`ECS`). Consider to change
-# to blue/green (`CODE_DEPLOY`) deployment.
-# https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentController.html
-
-# Note: creates task definition and task definition family with the same name as the ServiceName parameter value
-resource "aws_cloudformation_stack" "ecs_service" {
-  name = "${local.aws_ecs_service_stack_name}"
-  template_body = "${file("cloudformation-templates/public-service.yml")}"
-  depends_on = [
-    "aws_iam_role.ecs",
-    "aws_iam_role.ecs_task_execution",
-    "aws_ecr_repository.demo-app-repository",
-    "aws_ecs_cluster.main",
-    "aws_lb_listener_rule.all"
-  ] # AWS::ECS::Service depends on LoadBalancerRule
-
-  parameters {
-    ContainerPort = "${var.container_port}"
-    StackName = "${var.aws_vpc_stack_name}"
-    PublicSubnetOneId = "${aws_subnet.public.0.id}"
-    PublicSubnetTwoId = "${aws_subnet.public.1.id}"
-    TargetGroupArn = "${aws_alb_target_group.app.arn}"
-    ExecutionRoleArn = "${aws_iam_role.ecs_task_execution.arn}"
-    FargateContainerSecurityGroupId = "${aws_security_group.ecs_tasks.id}"
-    RoleStackName = "${var.aws_role_stack_name}"
-    ServiceName = "${var.aws_ecs_service_name}"
-    ClusterName = "${var.aws_ecs_cluster_name}"
-    # Note: Since ImageUrl parameter is not specified, the Service
-    # will be deployed with the nginx image when created
-  }
 }

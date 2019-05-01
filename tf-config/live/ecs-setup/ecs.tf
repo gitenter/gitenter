@@ -2,9 +2,13 @@ variable "app_image" {
   default     = "tomcat:latest"
 }
 
-variable "app_count" {
-  description = "Number of docker containers to run"
-  default     = 2
+locals {
+  # Number of docker containers to run
+  app_count = 2
+  # Docker instance CPU units to provision (1 vCPU = 1024 CPU units)
+  task_cpu = 256
+  # Docker instance memory to provision (in MiB
+  task_memory = 512
 }
 
 # TODO:
@@ -13,17 +17,17 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "capsid-app"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 256 # 1 vCPU = 1024 CPU units)
-  memory                   = 512 # in MiB
+  cpu                      = "${local.task_cpu}"
+  memory                   = "${local.task_memory}"
 
   container_definitions = <<DEFINITION
 [
   {
-    "image": "${var.app_image}",
-    "cpu": ${var.task_cpu},
-    "memory": ${var.task_memory},
     "name": "capsid-app",
     "networkMode": "awsvpc",
+    "cpu": ${local.task_cpu},
+    "memory": ${local.task_memory},
+    "image": "${var.app_image}",
     "portMappings": [
       {
         "containerPort": ${var.app_port},
@@ -39,7 +43,7 @@ resource "aws_ecs_service" "main" {
   name            = "terraform-ecs-service"
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.app.arn}"
-  desired_count   = "${var.app_count}"
+  desired_count   = "${local.app_count}"
   launch_type     = "FARGATE"
 
   network_configuration {

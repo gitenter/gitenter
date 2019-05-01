@@ -1,6 +1,6 @@
 # ALB Security Group: Edit this to restrict access to the application
 resource "aws_security_group" "lb" {
-  name        = "${var.aws_vpc_stack_name}-PublicLoadBalancerSG"
+  # name        = "${var.aws_vpc_stack_name}-PublicLoadBalancerSG"
   description = "controls access to the ALB"
   vpc_id      = "${aws_vpc.main.id}"
 
@@ -37,7 +37,7 @@ resource "aws_security_group" "ecs_tasks" {
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-name.html
   # Probably doesn't matter as it just needs to be unique throughout the system,
   # but at least this make it no longer a pure refactoring.
-  name        = "${var.aws_vpc_stack_name}-FargateContainerSecurityGroup"
+  # name        = "${var.aws_vpc_stack_name}-FargateContainerSecurityGroup"
   description = "Access to the Fargate containers"
   vpc_id      = "${aws_vpc.main.id}"
 }
@@ -48,7 +48,7 @@ resource "aws_security_group_rule" "ecs_tasks_egress" {
   protocol        = "-1"
   from_port       = 0
   to_port         = 0
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks     = ["0.0.0.0/0"]
 
   security_group_id = "${aws_security_group.ecs_tasks.id}"
 }

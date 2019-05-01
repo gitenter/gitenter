@@ -3,6 +3,6 @@ locals {
   aws_ecr_repository_name = "${var.aws_resource_prefix}"
 }
 
-resource "aws_ecr_repository" "demo-app-repository" {
+resource "aws_ecr_repository" "app_repository" {
   name = "${local.aws_ecr_repository_name}"
 }
