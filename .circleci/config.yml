@@ -222,12 +222,12 @@ workflows:
       # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
       #
       # TODO:
-      # Only show `production-readiness` for master branch.
-      - production-readiness:
+      # Only show `prod-readiness` for master branch.
+      - prod-readiness:
           type: approval
           requires:
             - java-build
             - python-linter
       - deploy:
           requires:
-            - production-readiness
+            - prod-readiness

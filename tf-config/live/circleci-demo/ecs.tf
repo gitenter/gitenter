@@ -18,7 +18,7 @@ resource "aws_cloudformation_stack" "ecs_service" {
   template_body = "${file("cloudformation-templates/public-service.yml")}"
   depends_on = [
     "aws_iam_role.ecs",
-    "aws_cloudformation_stack.role",
+    "aws_iam_role.ecs_task_execution",
     "aws_ecr_repository.demo-app-repository",
     "aws_ecs_cluster.main",
     "aws_lb_listener_rule.all"
@@ -30,6 +30,7 @@ resource "aws_cloudformation_stack" "ecs_service" {
     PublicSubnetOneId = "${aws_subnet.public.0.id}"
     PublicSubnetTwoId = "${aws_subnet.public.1.id}"
     TargetGroupArn = "${aws_alb_target_group.app.arn}"
+    ExecutionRoleArn = "${aws_iam_role.ecs_task_execution.arn}"
     FargateContainerSecurityGroupId = "${aws_security_group.ecs_tasks.id}"
     RoleStackName = "${var.aws_role_stack_name}"
     ServiceName = "${var.aws_ecs_service_name}"
