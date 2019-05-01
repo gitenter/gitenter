@@ -17,6 +17,7 @@ resource "aws_cloudformation_stack" "ecs_service" {
   name = "${local.aws_ecs_service_stack_name}"
   template_body = "${file("cloudformation-templates/public-service.yml")}"
   depends_on = [
+    "aws_iam_role.ecs",
     "aws_cloudformation_stack.role",
     "aws_ecr_repository.demo-app-repository",
     "aws_ecs_cluster.main",
