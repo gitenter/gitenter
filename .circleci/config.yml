@@ -149,11 +149,19 @@ workflows:
     jobs:
       - java-build
       - python-linter
-      - staging-readiness:
+      - qa-readiness:
           type: approval
           requires:
            - java-build
            - python-linter
+      # TODO:
+      # Consider adding a step to call `terraform apply` through CircleCI. Can pass in `AWS_ACCESS_KEY_ID`
+      # and `AWS_SECRET_ACCESS_KEY` through command line.
+      # Before that, we need to setup remove endpoint through.
+      #
+      # TODO:
+      # Check if it is possible to combine multiple steps in the same executor. Should be just call the Orbs
+      # in executor definition rather than in workflows.
       - aws-ecr/build_and_push_image:
           # Running this step needs `tf-config/live/circle-demo` to be applied first
           # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
@@ -186,6 +194,8 @@ workflows:
           requires:
             - aws-ecr/build_and_push_image
           aws-region: AWS_DEFAULT_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           family: "${AWS_RESOURCE_NAME_PREFIX}-service"
           cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
           container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
@@ -201,10 +211,23 @@ workflows:
       - acceptance-test:
           requires:
             - aws-ecs/deploy-service-update
+      # TODO:
+      # Consider adding a step to call `terraform destroy` through CircleCI. Should be an `approval`
+      # type step before this one, so we can use this QA environment for manual debugging too.
+      # Notice that it is optional. Do not calling this step will accelerate the next build (as typically
+      # zero thing needs to be changed). However, run multiple builds at the same time will cause race
+      # condition, as they are sharing the same remote server.
+      #
+      # TODO:
+      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
+      #
+      # TODO:
+      # Only show `production-readiness` for master branch.
       - production-readiness:
           type: approval
           requires:
-            - acceptance-test
+            - java-build
+            - python-linter
       - deploy:
           requires:
             - production-readiness
