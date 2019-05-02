@@ -15,7 +15,6 @@ resource "aws_alb" "main" {
 # A dummy target group is used to setup the ALB to just drop traffic
 # initially, before any real service target groups have been added.
 resource "aws_alb_target_group" "dummy" {
-  name        = "${var.aws_vpc_stack_name}-drop-1"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -37,7 +36,7 @@ resource "aws_alb_target_group" "dummy" {
 # connected to an application load balancer, or network load balancer, so
 # it can automatically distribute traffic across all the targets.
 resource "aws_alb_target_group" "app" {
-  name        = "${var.aws_ecs_service_name}"
+  name        = "${local.aws_ecs_service_name}"
   port        = "${var.container_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"

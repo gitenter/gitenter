@@ -154,18 +154,27 @@ workflows:
           requires:
            - java-build
            - python-linter
+      # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
+      # needs to apply `terraform apply` under `tf-config/live/circle-demo` first.
+      # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
+      # https://github.com/CircleCI-Public/aws-ecr-orb
+      #
       # TODO:
-      # Consider adding a step to call `terraform apply` through CircleCI. Can pass in `AWS_ACCESS_KEY_ID`
-      # and `AWS_SECRET_ACCESS_KEY` through command line.
-      # Before that, we need to setup remove endpoint through.
+      # Consider adding a step to call `terraform apply` through CircleCI. Can
+      # pass in `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` through command line.
+      #
+      # Before that, we need to setup remote S3 endpoint through.
+      #
+      # It may be needed to have some logic similar to
+      # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh#L19-L28
+      # to here to make sure `terraform apply` is completed before the next step.
+      # We've seen checking too soon gives back a 503 error, and the error automatically
+      # resolved itself after a while.
       #
       # TODO:
       # Check if it is possible to combine multiple steps in the same executor. Should be just call the Orbs
       # in executor definition rather than in workflows.
       - aws-ecr/build_and_push_image:
-          # Running this step needs `tf-config/live/circle-demo` to be applied first
-          # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
-          # https://github.com/CircleCI-Public/aws-ecr-orb
           requires:
             - qa-readiness
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
@@ -181,9 +190,6 @@ workflows:
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
-          # Running this step needs `tf-config/live/circle-demo` to be applied first
-          # https://circleci.com/orbs/registry/orb/circleci/aws-ecs
-          #
           # This orb is mostly doing `aws ecs update-service`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
           # That's the reason it doesn't need to hold any knowledge of the

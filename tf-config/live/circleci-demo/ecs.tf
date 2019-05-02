@@ -1,8 +1,3 @@
-# locals {
-#   # The name of the CloudFormation stack to be created for the ECS service and related resources
-#   aws_ecs_service_stack_name = "${var.aws_resource_prefix}-svc-stack"
-# }
-
 variable "app_image" {
   default     = "nginx:latest"
 }
@@ -19,7 +14,7 @@ locals {
 # The task definition. This is a simple metadata description of what
 # container to run, and what resource requirements it has.
 resource "aws_ecs_task_definition" "app" {
-  family                   = "${var.aws_ecs_service_name}"
+  family                   = "${local.aws_ecs_service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "${local.task_cpu}"
@@ -27,7 +22,8 @@ resource "aws_ecs_task_definition" "app" {
 
   execution_role_arn       = "${aws_iam_role.ecs_task_execution.arn}"
   # TODO:
-  # Sounds like there's no need to specify `task_role_arn`
+  # Sounds like there's no need to specify `task_role_arn`, which allows ECS
+  # container task to make calls to other AWS services.
   # Originally
   /*
 Parameters:
@@ -53,7 +49,7 @@ Resources:
   container_definitions = <<DEFINITION
 [
   {
-    "name": "${var.aws_ecs_service_name}",
+    "name": "${local.aws_ecs_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
     "image": "${var.app_image}",
@@ -82,7 +78,7 @@ DEFINITION
 # copies of a type of task, and gather up their logs and metrics, as well
 # as monitor the number of running tasks and replace any that have crashed
 resource "aws_ecs_service" "main" {
-  name            = "${var.aws_ecs_service_name}"
+  name            = "${local.aws_ecs_service_name}"
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.app.arn}"
   desired_count   = "${local.app_count}"
@@ -98,7 +94,7 @@ resource "aws_ecs_service" "main" {
   }
 
   load_balancer {
-    container_name   = "${var.aws_ecs_service_name}"
+    container_name   = "${local.aws_ecs_service_name}"
     container_port   = "${var.container_port}"
     target_group_arn = "${aws_alb_target_group.app.id}"
   }
@@ -119,5 +115,5 @@ resource "aws_ecs_service" "main" {
 }
 
 resource "aws_ecs_cluster" "main" {
-  name = "${var.aws_ecs_cluster_name}"
+  name = "${local.aws_ecs_cluster_name}"
 }

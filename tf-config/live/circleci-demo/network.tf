@@ -14,16 +14,17 @@ data "aws_availability_zones" "available" {}
 # (3) More complicated cases
 # https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenarios.html
 #
-# For chosen (2) it will use private subnet we needs to use NAT gateway
-# (`aws_nat_gateway` Terraform resource), with the charging rate
-# $400/year plus data.
-# However, to hold RDS instance in user-defined VPC we need
+# To hold RDS instance in user-defined VPC we need
 # at least two subnets, each in a separate availability zone.
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_SettingUp.html#CHAP_SettingUp.Requirements
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.html
+#
+# For chosen (2) it will use private subnet we needs to use NAT gateway
+# (`aws_nat_gateway` Terraform resource), with the charging rate
+# $400/year plus data.
 
-# VPC in which containers will be networked.
-# It has two public subnets
+
+# VPC in which containers will be networked. It has two public subnets.
 # We distribute the subnets across the first two available subnets
 # for the region, for high availability.
 resource "aws_vpc" "main" {

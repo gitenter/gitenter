@@ -1,12 +1,10 @@
-locals {
-  # The name of the execution role to be created
-  aws_ecs_execution_role_name = "${var.aws_resource_prefix}-ecs-execution-role"
-}
-
 # This is an IAM role which authorizes ECS to manage resources on your
 # account on your behalf, such as updating your load balancer with the
 # details of where your containers are, so that traffic can reach your
 # containers.
+#
+# TODO:
+# Looks like no one is using/referring to this role? Is it necessary?
 resource "aws_iam_role" "ecs" {
   name               = "ecs-role"
   path               = "/"

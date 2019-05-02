@@ -1,17 +1,12 @@
 Fork from https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr
 
-This Terraform config is a pipeline pre-setup which needs to executed locally. Then the `aws-ecr` and `aws-ecs` orbs can use this setup to push docker images out. TODO: Extend the `iam-terraform-config` IAM user so it can work on this job.
+This Terraform config is a pipeline pre-setup which needs to executed locally. Then by using this setup, the `aws-ecr` orb upload/push the docker image, and `aws-ecs` pull the docker images out and deploy it. Deployment itself is basically just [`aws ecs update-service`](https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html) (even for blue/green deployment) so no need for it to know the Terraform setup.
 
-Then the actual pushing part: Need to modify environment variables in https://circleci.com/gh/gitenter/gitenter/edit#env-vars Use the user created by `iam-terraform-deploy`.
+For the orbs to work, we need to modify environment variables in https://circleci.com/gh/gitenter/gitenter/edit#env-vars using the user created by `iam-terraform-deploy`.
 
-TODO:
+TODO: Right now `aws-ecs` orb is using `iam-terraform-deploy` IAM user. It should be able to be much much simpler than the current setup (which is basically an extension of `iam-terraform-config`).
 
-- Understand internet gateway, route, route table, ..., and understand the difference in between the `ecs-setup/network.tf` setup and the `cloudformation-template/public-vpc.yml` setup.
-- Understand what is an AWS role. Why `cloudformation-template/public-vpc.yml` is first creating a role, and then `cloudformation-template/public-service.yml` is using it? What's the difference between it, or create a user with that permission and let that user to execute deploy of `cloudformation-template/public-service.yml`?
-- Understand the reason why we need to have cloud formation inside of terraform. Looks like `cloudformation-template/public-vpc.yml` can be completely rewriting in Terraform. In `cloudformation-template/public-service.yml` the `ImageUrl` parameter is not defined in `.tf` nor have a default value in `public-service`, understand when/how it is passed in, and where that creating is executed (in orb execution)?
-- Understand what the orbs are doing. What is absolutely necessary in the demo to make the deployment pipeline works.
-
-CloudFormation Notes:
+### CloudFormation Notes
 
 - `"Ref":` = `!Ref`
 - `Fn::` (JSON).
