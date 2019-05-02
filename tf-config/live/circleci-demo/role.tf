@@ -85,37 +85,11 @@ data "aws_iam_policy_document" "ecs_task_execution" {
   }
 }
 
-resource "aws_iam_policy" "ecs_task_execution" {
-  name        = "AmazonECSTaskExecutionRolePolicy"
-  path        = "/"
-
-  # `ecr:` parts:
-  # Allow the ECS Tasks to download images from ECR
-  #
-  # `elasticloadbalancing:` parts:
-  # Allow the ECS tasks to upload logs to CloudWatch
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ecr:GetAuthorizationToken",
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:GetDownloadUrlForLayer",
-        "ecr:BatchGetImage",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "*",
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+data "aws_iam_policy" "ecs_task_execution" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
   role       = "${aws_iam_role.ecs_task_execution.name}"
-  policy_arn = "${aws_iam_policy.ecs_task_execution.arn}"
+  policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
 }

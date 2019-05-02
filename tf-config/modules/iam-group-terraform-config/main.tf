@@ -2,6 +2,19 @@ resource "aws_iam_group" "terraform" {
   name = "${var.group_name}"
 }
 
+# TODO:
+# This is because CircleCI setup needs to create roles. Wonder if it is
+# absolutely necessary or not.
+# https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/019bc8804587727f2c67bf8535b36794d541593f/terraform_setup/cloudformation-templates/public-vpc.yml#L191-L257
+data "aws_iam_policy" "terraform-iam" {
+  arn = "arn:aws:iam::aws:policy/IAMFullAccess"
+}
+
+resource "aws_iam_group_policy_attachment" "terraform-iam" {
+  group = "${aws_iam_group.terraform.id}"
+  policy_arn = "${data.aws_iam_policy.terraform-iam.arn}"
+}
+
 data "aws_iam_policy" "terraform-ec2" {
   arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
@@ -76,13 +89,9 @@ resource "aws_iam_policy" "terraform-ecr" {
 EOF
 }
 
-data "aws_iam_policy" "terraform-ecr" {
-  arn = "${aws_iam_policy.terraform-ecr.arn}"
-}
-
 resource "aws_iam_group_policy_attachment" "terraform-ecr" {
   group = "${aws_iam_group.terraform.id}"
-  policy_arn = "${data.aws_iam_policy.terraform-ecr.arn}"
+  policy_arn = "${aws_iam_policy.terraform-ecr.arn}"
 }
 
 data "aws_iam_policy" "terraform-rds" {

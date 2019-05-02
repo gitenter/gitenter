@@ -46,10 +46,6 @@ resource "aws_vpc" "main" {
   # tenancy incurs additional costs.
   # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html
   instance_tenancy = "default"
-
-  tags = {
-    Name = "circleci-demo-vpc"
-  }
 }
 
 resource "aws_subnet" "public" {
