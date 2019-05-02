@@ -1,39 +1,10 @@
-# Needs:
-# ecr:InitiateLayerUpload
-
 resource "aws_iam_group" "terraform" {
   name = "${var.group_name}"
 }
 
-# data "aws_iam_policy" "terraform-ec2" {
-#   arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-# }
-#
-# resource "aws_iam_group_policy_attachment" "terraform-ec2" {
-#   group = "${aws_iam_group.terraform.id}"
-#   policy_arn = "${data.aws_iam_policy.terraform-ec2.arn}"
-# }
-#
-# # Multiple roles are added for ECS propose:
-# # - `AmazonEC2ContainerServiceforEC2Role`
-# # - `AmazonEC2ContainerServiceRole`
-# # - `AmazonECSTaskExecutionRolePolicy`
-# # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html
-# # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_managed_policies.html
-# data "aws_iam_policy" "terraform-ecs_container_instance" {
-#   arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
-# }
-#
-# resource "aws_iam_group_policy_attachment" "terraform-ecs_container_instance" {
-#   group = "${aws_iam_group.terraform.id}"
-#   policy_arn = "${data.aws_iam_policy.terraform-ecs_container_instance.arn}"
-# }
-
-# `AmazonECS_FullAccess` fully covers `AmazonEC2ContainerServiceRole`,
-# and the following link suggest to use full access.
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html
-# If using EC2 launch type, then `AmazonEC2ContainerServiceRole` is enough.
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted_EC2.html
+# TODO:
+# Basically just need ECR push/pull and `aws ecs update-service`, so should be
+# even thiner.
 data "aws_iam_policy" "terraform-ecs" {
   arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
 }
