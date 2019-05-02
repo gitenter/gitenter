@@ -149,31 +149,59 @@ workflows:
     jobs:
       - java-build
       - python-linter
-      - staging-readiness:
+      - qa-readiness:
           type: approval
           requires:
            - java-build
            - python-linter
+      # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
+      # needs to apply `terraform apply` under `tf-config/live/circle-demo` first.
+      # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
+      # https://github.com/CircleCI-Public/aws-ecr-orb
+      #
+      # TODO:
+      # Consider adding a step to call `terraform apply` through CircleCI. Can
+      # pass in `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` through command line.
+      #
+      # Before that, we need to setup remote S3 endpoint through.
+      #
+      # It may be needed to have some logic similar to
+      # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh#L19-L28
+      # to here to make sure `terraform apply` is completed before the next step.
+      # We've seen checking too soon gives back a 503 error, and the error automatically
+      # resolved itself after a while.
+      #
+      # TODO:
+      # Check if it is possible to combine multiple steps in the same executor. Should be just call the Orbs
+      # in executor definition rather than in workflows.
       - aws-ecr/build_and_push_image:
-          # Running this step needs `tf-config/live/circle-demo` to be applied first
-          # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
-          # https://github.com/CircleCI-Public/aws-ecr-orb
           requires:
-            - staging-readiness
+            - qa-readiness
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           dockerfile: ./docker/circleci-demo/Dockerfile
           path: ./docker/circleci-demo
           region: AWS_DEFAULT_REGION
+          # TODO:
+          # `AWS_RESOURCE_NAME_PREFIX` is currently setup as environment variable through CircleCI UI/web.
+          # Could just hard code in here to make it match `tf-config/live/circieci-demo/variables.tf:aws_resource_prefix`
+          # So at least the link is internally in the code.
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
-          # Running this step needs `tf-config/live/circle-demo` to be applied first
-          # https://circleci.com/orbs/registry/orb/circleci/aws-ecs
+          # This orb is mostly doing `aws ecs update-service`
+          # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
+          # That's the reason it doesn't need to hold any knowledge of the
+          # Terraform config even if it is doing blue/green deployment.
+          # Refer to a command-line (non-orb) implementation for which this
+          # is shown clearly.
+          # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh
           requires:
             - aws-ecr/build_and_push_image
           aws-region: AWS_DEFAULT_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           family: "${AWS_RESOURCE_NAME_PREFIX}-service"
           cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
           container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
@@ -189,10 +217,23 @@ workflows:
       - acceptance-test:
           requires:
             - aws-ecs/deploy-service-update
-      - production-readiness:
+      # TODO:
+      # Consider adding a step to call `terraform destroy` through CircleCI. Should be an `approval`
+      # type step before this one, so we can use this QA environment for manual debugging too.
+      # Notice that it is optional. Do not calling this step will accelerate the next build (as typically
+      # zero thing needs to be changed). However, run multiple builds at the same time will cause race
+      # condition, as they are sharing the same remote server.
+      #
+      # TODO:
+      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
+      #
+      # TODO:
+      # Only show `prod-readiness` for master branch.
+      - prod-readiness:
           type: approval
           requires:
-            - acceptance-test
+            - java-build
+            - python-linter
       - deploy:
           requires:
-            - production-readiness
+            - prod-readiness
