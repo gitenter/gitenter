@@ -2,8 +2,12 @@ variable "env_prefix" {
   description = "Prefix to distinguish different environments. E.g., `qa`, `staging`, `prod`."
 }
 
-variable "container_port" {
+variable "http_port" {
   default = 80
+}
+
+variable "tomcat_container_port" {
+  default = 8080
 }
 
 locals {

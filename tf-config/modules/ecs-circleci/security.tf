@@ -13,8 +13,8 @@ resource "aws_security_group" "lb" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
+    from_port   = "${var.http_port}"
+    to_port     = "${var.http_port}"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -49,9 +49,9 @@ resource "aws_security_group_rule" "ecs_tasks_egress" {
 resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
   type            = "ingress"
 
-  protocol        = "-1"
-  from_port       = 0
-  to_port         = 0
+  protocol        = "tcp"
+  from_port       = "${var.tomcat_container_port}"
+  to_port         = "${var.tomcat_container_port}"
 
   security_group_id = "${aws_security_group.ecs_tasks.id}"
   source_security_group_id = "${aws_security_group.lb.id}"

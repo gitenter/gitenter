@@ -1,5 +1,5 @@
 variable "app_image" {
-  default     = "nginx:latest"
+  default     = "tomcat:latest"
 }
 
 locals {
@@ -56,7 +56,7 @@ Resources:
     "essential": true,
     "portMappings": [
       {
-        "containerPort": ${var.container_port}
+        "containerPort": ${var.tomcat_container_port}
       }
     ],
     "environment": [
@@ -95,7 +95,7 @@ resource "aws_ecs_service" "main" {
 
   load_balancer {
     container_name   = "${local.aws_ecs_service_name}"
-    container_port   = "${var.container_port}"
+    container_port   = "${var.tomcat_container_port}"
     target_group_arn = "${aws_alb_target_group.app.id}"
   }
 
