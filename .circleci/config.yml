@@ -1,7 +1,3 @@
-# Java Maven CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
 version: 2.1
 
 orbs:
@@ -149,6 +145,7 @@ workflows:
     jobs:
       - java-build
       - python-linter
+
       - qa-readiness:
           type: approval
           requires:
@@ -172,8 +169,15 @@ workflows:
       # resolved itself after a while.
       #
       # TODO:
-      # Check if it is possible to combine multiple steps in the same executor. Should be just call the Orbs
-      # in executor definition rather than in workflows.
+      # Check if it is possible to combine multiple steps in the same executor. Should
+      # be just call the Orbs in executor definition rather than in workflows. Tried
+      # orbs as steps in jobs which doesn't work.
+      # TODO:
+      # Redefine `ecs-circleci-qa` prefix as a pipeline variable (pre-release feature).
+      # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
+      # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
+      # UI but nor in orbs.
+      # https://circleci.com/docs/2.0/env-vars/
       - aws-ecr/build_and_push_image:
           requires:
             - qa-readiness
@@ -219,7 +223,7 @@ workflows:
       # Notice that it is optional. Do not calling this step will accelerate the next build (as typically
       # zero thing needs to be changed). However, run multiple builds at the same time will cause race
       # condition, as they are sharing the same remote server.
-      #
+
       # TODO:
       # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
       #
