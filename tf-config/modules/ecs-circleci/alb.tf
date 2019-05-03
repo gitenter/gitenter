@@ -1,5 +1,5 @@
 resource "aws_alb" "main" {
-  name               = "terraform-ecs"
+  name               = "${local.aws_alb_name}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.lb.id}"]
@@ -79,8 +79,4 @@ resource "aws_lb_listener_rule" "all" {
     field  = "path-pattern"
     values = ["*"]
   }
-}
-
-output "alb_hostname" {
-  value = "${aws_alb.main.dns_name}"
 }

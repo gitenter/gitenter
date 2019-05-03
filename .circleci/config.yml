@@ -183,11 +183,7 @@ workflows:
           dockerfile: ./docker/circleci-demo/Dockerfile
           path: ./docker/circleci-demo
           region: AWS_DEFAULT_REGION
-          # TODO:
-          # `AWS_RESOURCE_NAME_PREFIX` is currently setup as environment variable through CircleCI UI/web.
-          # Could just hard code in here to make it match `tf-config/live/circieci-demo/variables.tf:aws_resource_prefix`
-          # So at least the link is internally in the code.
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
           # This orb is mostly doing `aws ecs update-service`
@@ -202,15 +198,15 @@ workflows:
           aws-region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
-          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
-          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
+          family: "$ecs-circleci-qa-service"
+          cluster-name: "$ecs-circleci-qa-cluster"
+          container-image-name-updates: "container=ecs-circleci-qa-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
           verify-revision-is-deployed: true
           post-steps:
             - run:
                 name: Test the deployment
                 command: |
-                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ${AWS_RESOURCE_NAME_PREFIX}-cluster --services ${AWS_RESOURCE_NAME_PREFIX}-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ecs-circleci-qa-cluster --services ecs-circleci-qa-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                   ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                   ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
                   curl -s --retry 10 http://$ELB_DNS_NAME | grep "Welcome to nginx!"

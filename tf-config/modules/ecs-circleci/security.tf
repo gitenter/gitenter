@@ -1,5 +1,6 @@
 # ALB Security Group: Edit this to restrict access to the application
 resource "aws_security_group" "lb" {
+  name = "${local.aws_alb_security_group}"
   description = "controls access to the ALB"
   vpc_id      = "${aws_vpc.main.id}"
 
@@ -29,6 +30,7 @@ resource "aws_security_group" "lb" {
 #
 # Traffic to the ECS cluster should only come from the ALB
 resource "aws_security_group" "ecs_tasks" {
+  name = "${local.aws_ecs_task_security_group}"
   description = "Access to the Fargate containers"
   vpc_id      = "${aws_vpc.main.id}"
 }

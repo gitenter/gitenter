@@ -6,7 +6,7 @@
 # TODO:
 # Looks like no one is using/referring to this role? Is it necessary?
 resource "aws_iam_role" "ecs" {
-  name               = "ecs-role"
+  name               = "${local.aws_ecs_role_name}"
   path               = "/"
   assume_role_policy = "${data.aws_iam_policy_document.ecs.json}"
 }
@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "ecs" {
 }
 
 resource "aws_iam_policy" "ecs_service" {
-  name        = "ecs-service"
+  name        = "CircleCiEcsServicePolicy"
   path        = "/"
 
   # `ec2:` parts:
