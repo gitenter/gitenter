@@ -198,8 +198,8 @@ workflows:
           aws-region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          family: "$ecs-circleci-qa-service"
-          cluster-name: "$ecs-circleci-qa-cluster"
+          family: "ecs-circleci-qa-service"
+          cluster-name: "ecs-circleci-qa-cluster"
           container-image-name-updates: "container=ecs-circleci-qa-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
           verify-revision-is-deployed: true
           post-steps:
