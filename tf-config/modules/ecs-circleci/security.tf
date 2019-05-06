@@ -53,6 +53,8 @@ resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
   from_port       = "${var.tomcat_container_port}"
   to_port         = "${var.tomcat_container_port}"
 
+  # No need to setup `cidr_blocks`, as only load balancer
+  # is public facing.
   security_group_id = "${aws_security_group.ecs_tasks.id}"
   source_security_group_id = "${aws_security_group.lb.id}"
 }
@@ -66,4 +68,19 @@ resource "aws_security_group_rule" "ecs_tasks_self_ingress" {
 
   security_group_id = "${aws_security_group.ecs_tasks.id}"
   self = true
+}
+
+# TODO:
+# May be able to be removed after debugging
+resource "aws_security_group_rule" "ecs_tasks_ssh_ingress" {
+  type            = "ingress"
+
+  protocol        = "tcp"
+  from_port       = 22
+  to_port         = 22
+
+  # TODO: `Custom IP` rather than `Anywhere`
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.ecs_tasks.id}"
 }

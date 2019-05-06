@@ -1,4 +1,4 @@
-variable "app_image" {
+variable "web_image" {
   default     = "tomcat:latest"
 }
 
@@ -13,7 +13,7 @@ locals {
 
 # The task definition. This is a simple metadata description of what
 # container to run, and what resource requirements it has.
-resource "aws_ecs_task_definition" "app" {
+resource "aws_ecs_task_definition" "web" {
   family                   = "${local.aws_ecs_service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -52,7 +52,7 @@ Resources:
     "name": "${local.aws_ecs_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
-    "image": "${var.app_image}",
+    "image": "${var.web_image}",
     "essential": true,
     "portMappings": [
       {
@@ -77,10 +77,10 @@ DEFINITION
 # The service. The service is a resource which allows you to run multiple
 # copies of a type of task, and gather up their logs and metrics, as well
 # as monitor the number of running tasks and replace any that have crashed
-resource "aws_ecs_service" "main" {
+resource "aws_ecs_service" "web" {
   name            = "${local.aws_ecs_service_name}"
   cluster         = "${aws_ecs_cluster.main.id}"
-  task_definition = "${aws_ecs_task_definition.app.arn}"
+  task_definition = "${aws_ecs_task_definition.web.arn}"
   desired_count   = "${local.app_count}"
   launch_type     = "FARGATE"
 
@@ -88,6 +88,23 @@ resource "aws_ecs_service" "main" {
   deployment_minimum_healthy_percent = 75
 
   network_configuration {
+    # TODO:
+    # Looks like there's no easy way to ssh into `FARGATE` type ECS servicem, as
+    # you get an empty list of container instances under console:
+    # ECS > Clusters > ECS instances
+    # (there's a running list of services and tasks through)
+    # Beside connect to EFS volumes, this becomes another reason we probably
+    # want to use "EC2 launch type".
+    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance-connect.html
+    # https://github.com/terraform-providers/terraform-provider-aws/issues/3444
+    # https://stackoverflow.com/questions/52310447/is-it-possible-to-ssh-into-fargate-manged-container-instances
+    # https://github.com/aws/containers-roadmap/issues/187
+    #
+    # TODO:
+    # After setting up private subnets and NAT gateway, here should be replaced
+    # by private subnet. May also be able to remove `assign_public_ip = true`.
+    # That may break SSH access defined in `aws_security_group.ecs_tasks` but
+    # needs to double check.
     security_groups = ["${aws_security_group.ecs_tasks.id}"]
     subnets         = ["${aws_subnet.public.*.id}"]
     assign_public_ip = true
