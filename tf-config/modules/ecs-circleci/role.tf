@@ -2,19 +2,16 @@
 # account on your behalf, such as updating your load balancer with the
 # details of where your containers are, so that traffic can reach your
 # containers.
-#
-# TODO:
-# Looks like no one is using/referring to this role? Is it necessary?
-resource "aws_iam_role" "ecs" {
-  name               = "${local.aws_ecs_role_name}"
+resource "aws_iam_role" "ecs_service" {
+  name               = "${local.aws_ecs_service_role_name}"
   path               = "/"
-  assume_role_policy = "${data.aws_iam_policy_document.ecs.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.ecs_service.json}"
 }
 
-data "aws_iam_policy_document" "ecs" {
+data "aws_iam_policy_document" "ecs_service" {
   statement {
     actions = ["sts:AssumeRole"]
-    effect  = "Allow"
+    # effect  = "Allow"
 
     principals {
       type        = "Service"
@@ -23,47 +20,87 @@ data "aws_iam_policy_document" "ecs" {
   }
 }
 
-resource "aws_iam_policy" "ecs_service" {
-  name        = "CircleCiEcsServicePolicy"
-  path        = "/"
+# TODO:
+# Understand what's the relationship between this one and the
+# the group which used to define the user also needs to `aws_iam_group_policy_attachment`
+# `AmazonEC2ContainerServiceRole`.
+resource "aws_iam_role_policy_attachment" "ecs_service" {
+  role       = "${aws_iam_role.ecs_service.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
+}
 
-  # `ec2:` parts:
-  # Rules which allow ECS to attach network interfaces to instances
-  # on your behalf in order for awsvpc networking mode to work right
-  #
-  # `elasticloadbalancing:` parts:
-  # Rules which allow ECS to update load balancers on your behalf
-  # with the information sabout how to send traffic to your containers
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:AttachNetworkInterface",
-        "ec2:CreateNetworkInterface",
-        "ec2:CreateNetworkInterfacePermission",
-        "ec2:DeleteNetworkInterface",
-        "ec2:DeleteNetworkInterfacePermission",
-        "ec2:Describe*",
-        "ec2:DetachNetworkInterface",
-        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-        "elasticloadbalancing:DeregisterTargets",
-        "elasticloadbalancing:Describe*",
-        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-        "elasticloadbalancing:RegisterTargets"
-      ],
-      "Resource": "*",
-      "Effect": "Allow"
+# resource "aws_iam_policy" "ecs_service" {
+#   name        = "CircleCiEcsServicePolicy"
+#   path        = "/"
+#
+#   # `ec2:` parts:
+#   # Rules which allow ECS to attach network interfaces to instances
+#   # on your behalf in order for awsvpc networking mode to work right
+#   #
+#   # `elasticloadbalancing:` parts:
+#   # Rules which allow ECS to update load balancers on your behalf
+#   # with the information sabout how to send traffic to your containers
+#   policy = <<EOF
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Action": [
+#         "ec2:AttachNetworkInterface",
+#         "ec2:CreateNetworkInterface",
+#         "ec2:CreateNetworkInterfacePermission",
+#         "ec2:DeleteNetworkInterface",
+#         "ec2:DeleteNetworkInterfacePermission",
+#         "ec2:Describe*",
+#         "ec2:DetachNetworkInterface",
+#         "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+#         "elasticloadbalancing:DeregisterTargets",
+#         "elasticloadbalancing:Describe*",
+#         "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+#         "elasticloadbalancing:RegisterTargets"
+#       ],
+#       "Resource": "*",
+#       "Effect": "Allow"
+#     }
+#   ]
+# }
+# EOF
+# }
+#
+# resource "aws_iam_role_policy_attachment" "ecs_attach" {
+#   role       = "${aws_iam_role.ecs_service.name}"
+#   policy_arn = "${aws_iam_policy.ecs_service.arn}"
+# }
+
+resource "aws_iam_role" "ecs_instance" {
+  name                = "${local.aws_ecs_instance_role_name}"
+  path                = "/"
+  assume_role_policy  = "${data.aws_iam_policy_document.ecs_instance.json}"
+}
+
+data "aws_iam_policy_document" "ecs_instance" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
     }
-  ]
-}
-EOF
+  }
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_attach" {
-  role       = "${aws_iam_role.ecs.name}"
-  policy_arn = "${aws_iam_policy.ecs_service.arn}"
+resource "aws_iam_role_policy_attachment" "ecs_instance" {
+    role       = "${aws_iam_role.ecs_instance.name}"
+    policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+resource "aws_iam_instance_profile" "ecs_instance" {
+    name = "ecs-instance-profile"
+    path = "/"
+    role = "${aws_iam_role.ecs_instance.id}"
+    provisioner "local-exec" {
+      command = "sleep 10"
+    }
 }
 
 # This is a role which is used by the ECS tasks themselves.

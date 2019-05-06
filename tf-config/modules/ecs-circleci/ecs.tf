@@ -3,8 +3,6 @@ variable "web_image" {
 }
 
 locals {
-  # Number of docker containers to run
-  app_count = 2
   # Docker instance CPU units to provision (1 vCPU = 1024 CPU units)
   task_cpu = 256
   # Docker instance memory to provision (in MiB
@@ -16,7 +14,7 @@ locals {
 resource "aws_ecs_task_definition" "web" {
   family                   = "${local.aws_ecs_service_name}"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["EC2"]
   cpu                      = "${local.task_cpu}"
   memory                   = "${local.task_memory}"
 
@@ -77,12 +75,19 @@ DEFINITION
 # The service. The service is a resource which allows you to run multiple
 # copies of a type of task, and gather up their logs and metrics, as well
 # as monitor the number of running tasks and replace any that have crashed
+#
+# http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
 resource "aws_ecs_service" "web" {
   name            = "${local.aws_ecs_service_name}"
+  # TODO:
+  # * aws_ecs_service.web: InvalidParameterException: You cannot specify an IAM
+  # role for services that require a service linked role.
+	# https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
+  iam_role        = "${aws_iam_role.ecs_service.arn}"
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.web.arn}"
-  desired_count   = "${local.app_count}"
-  launch_type     = "FARGATE"
+  desired_count   = "${local.web_app_count}"
+  launch_type     = "EC2"
 
   deployment_maximum_percent = 200
   deployment_minimum_healthy_percent = 75
@@ -125,7 +130,6 @@ resource "aws_ecs_service" "web" {
   }
 
   depends_on = [
-    "aws_iam_role.ecs",
     "aws_ecr_repository.app_repository",
     "aws_lb_listener_rule.all"
   ]

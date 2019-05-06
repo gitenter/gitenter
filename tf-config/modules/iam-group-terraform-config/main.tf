@@ -42,6 +42,8 @@ resource "aws_iam_group_policy_attachment" "terraform-ecs_container_instance" {
 # `AmazonECS_FullAccess` fully covers `AmazonEC2ContainerServiceRole`,
 # and the following link suggest to use full access.
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html
+#
+# TODO:
 # If using EC2 launch type, then `AmazonEC2ContainerServiceRole` is enough.
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted_EC2.html
 data "aws_iam_policy" "terraform-ecs" {
