@@ -152,7 +152,7 @@ workflows:
            - java-build
            - python-linter
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
-      # needs to apply `terraform apply` under `tf-config/live/circle-demo` first.
+      # needs to apply `terraform apply` under `tf-config/live/ec2-circleci-qa` first.
       # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
       # https://github.com/CircleCI-Public/aws-ecr-orb
       #
@@ -184,8 +184,8 @@ workflows:
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          dockerfile: ./docker/circleci-demo/Dockerfile
-          path: ./docker/circleci-demo
+          dockerfile: ./docker/tomcat-trivial/Dockerfile
+          path: ./docker/tomcat-trivial
           region: AWS_DEFAULT_REGION
           repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
