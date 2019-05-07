@@ -1,10 +1,6 @@
-# This is the service-linked role automatically created by `aws_ecs_service`
+# This role is defined in live/iam-terraform-config
 data "aws_iam_role" "ecs_instance" {
-  name = "AWSServiceRoleForECS"
-
-  # TODO:
-  # It is right now in the setup (and will not be destroied by `terraform destroy`)
-  # but may need some `dependency` in here for save.
+  name = "AmazonEC2ContainerServiceforEC2Role"
 }
 
 resource "aws_iam_instance_profile" "ecs_instance" {
