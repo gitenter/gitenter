@@ -24,6 +24,4 @@ locals {
   aws_alb_name = "${local.aws_resource_prefix}-alb"
   aws_alb_security_group = "${local.aws_resource_prefix}-alb-sg"
   aws_ecs_task_security_group = "${local.aws_resource_prefix}-ecs-task-sg"
-  aws_ecs_role_name = "${local.aws_resource_prefix}-ecs-role"
-  aws_ecs_execution_role_name = "${local.aws_resource_prefix}-ecs-execution-role"
 }

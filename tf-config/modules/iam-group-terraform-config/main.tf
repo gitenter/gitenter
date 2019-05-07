@@ -2,21 +2,6 @@ resource "aws_iam_group" "terraform" {
   name = "${var.group_name}"
 }
 
-# This is for defining service-linked roles for ECS.
-# https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
-# Concrete example why we need to use it:
-# https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/019bc8804587727f2c67bf8535b36794d541593f/terraform_setup/cloudformation-templates/public-vpc.yml#L191-L257
-# TODO:
-# Wonder if it is possible to reduce it from `IAMFullAccess` to a smaller set.
-data "aws_iam_policy" "terraform-iam" {
-  arn = "arn:aws:iam::aws:policy/IAMFullAccess"
-}
-
-resource "aws_iam_group_policy_attachment" "terraform-iam" {
-  group = "${aws_iam_group.terraform.id}"
-  policy_arn = "${data.aws_iam_policy.terraform-iam.arn}"
-}
-
 data "aws_iam_policy" "terraform-ec2" {
   arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
@@ -103,4 +88,89 @@ data "aws_iam_policy" "terraform-rds" {
 resource "aws_iam_group_policy_attachment" "terraform-rds" {
   group = "${aws_iam_group.terraform.id}"
   policy_arn = "${data.aws_iam_policy.terraform-rds.arn}"
+}
+
+# Service-linked role
+# https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
+#
+# `AWSServiceRoleForECS` service role will be created automatically when we use
+# `awsvpn` network mode, so there's no need to create it by ourselves.
+resource "aws_iam_policy" "ecs_service_linked_role" {
+  name        = "AWSServiceRoleForECSServiceLinkedPolicy"
+  path        = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole"
+            ],
+            "Resource": "arn:aws:iam::*:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS*",
+            "Condition": {"StringLike": {"iam:AWSServiceName": "ecs.amazonaws.com"}}
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_group_policy_attachment" "ecs_service_linked_role_attach" {
+  group = "${aws_iam_group.terraform.id}"
+  policy_arn = "${aws_iam_policy.ecs_service_linked_role.arn}"
+}
+
+# This is a role which is used by the ECS tasks themselves.
+resource "aws_iam_role" "ecs_task_execution" {
+  name               = "AmazonECSTaskExecutionRole"
+  path               = "/"
+  assume_role_policy = "${data.aws_iam_policy_document.ecs_task_execution.json}"
+}
+
+data "aws_iam_policy_document" "ecs_task_execution" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy" "ecs_task_execution" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
+  role       = "${aws_iam_role.ecs_task_execution.name}"
+  policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
+}
+
+resource "aws_iam_policy" "ecs_task_execution_service_linked_role" {
+  name        = "AWSServiceRoleForECSTaskServiceLinkedPolicy"
+  path        = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:PassRole"
+            ],
+            "Resource": "${aws_iam_role.ecs_task_execution.arn}"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_group_policy_attachment" "ecs_task_execution_service_linked_role_attach" {
+  group = "${aws_iam_group.terraform.id}"
+  policy_arn = "${aws_iam_policy.ecs_task_execution_service_linked_role.arn}"
 }

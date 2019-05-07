@@ -11,6 +11,11 @@ locals {
   task_memory = 512
 }
 
+# This role is defined in live/iam-terraform-config
+data "aws_iam_role" "ecs_task_execution" {
+  name = "AmazonECSTaskExecutionRole"
+}
+
 # The task definition. This is a simple metadata description of what
 # container to run, and what resource requirements it has.
 resource "aws_ecs_task_definition" "web" {
@@ -20,7 +25,7 @@ resource "aws_ecs_task_definition" "web" {
   cpu                      = "${local.task_cpu}"
   memory                   = "${local.task_memory}"
 
-  execution_role_arn       = "${aws_iam_role.ecs_task_execution.arn}"
+  execution_role_arn       = "${data.aws_iam_role.ecs_task_execution.arn}"
   # TODO:
   # Sounds like there's no need to specify `task_role_arn`, which allows ECS
   # container task to make calls to other AWS services.
