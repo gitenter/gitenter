@@ -24,9 +24,6 @@ locals {
   aws_alb_name = "${local.aws_resource_prefix}-alb"
   aws_alb_security_group = "${local.aws_resource_prefix}-alb-sg"
   aws_ecs_task_security_group = "${local.aws_resource_prefix}-ecs-task-sg"
-  aws_ecs_service_role_name = "${local.aws_resource_prefix}-ecs-service-role"
-  aws_ecs_instance_role_name = "${local.aws_resource_prefix}-ecs-instance-role"
-  aws_ecs_execution_role_name = "${local.aws_resource_prefix}-ecs-execution-role"
 
   # Number of docker containers to run
   web_app_count = 2

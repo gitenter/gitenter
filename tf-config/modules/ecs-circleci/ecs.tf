@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "web" {
   cpu                      = "${local.task_cpu}"
   memory                   = "${local.task_memory}"
 
-  execution_role_arn       = "${aws_iam_role.ecs_task_execution.arn}"
+  execution_role_arn       = "${data.aws_iam_role.ecs_task_execution.arn}"
   # TODO:
   # Sounds like there's no need to specify `task_role_arn`, which allows ECS
   # container task to make calls to other AWS services.
@@ -79,11 +79,10 @@ DEFINITION
 # http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
 resource "aws_ecs_service" "web" {
   name            = "${local.aws_ecs_service_name}"
-  # TODO:
-  # * aws_ecs_service.web: InvalidParameterException: You cannot specify an IAM
-  # role for services that require a service linked role.
-	# https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
-  iam_role        = "${aws_iam_role.ecs_service.arn}"
+
+  # No need to specify `iam_role` as we are using `awsvpc` network mode.
+  # A service-linked role `AWSServiceRoleForECS` will be created automatically.
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.web.arn}"
   desired_count   = "${local.web_app_count}"
