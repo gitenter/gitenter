@@ -79,6 +79,10 @@ DEFINITION
 # as monitor the number of running tasks and replace any that have crashed
 resource "aws_ecs_service" "web" {
   name            = "${local.aws_ecs_service_name}"
+
+  # No need to specify `iam_role` as we are using `awsvpc` network mode.
+  # A service-linked role `AWSServiceRoleForECS` will be created automatically.
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.web.arn}"
   desired_count   = "${local.app_count}"
@@ -125,7 +129,6 @@ resource "aws_ecs_service" "web" {
   }
 
   depends_on = [
-    "aws_iam_role.ecs",
     "aws_ecr_repository.app_repository",
     "aws_lb_listener_rule.all"
   ]

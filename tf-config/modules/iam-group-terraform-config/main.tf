@@ -2,10 +2,12 @@ resource "aws_iam_group" "terraform" {
   name = "${var.group_name}"
 }
 
-# TODO:
-# This is because CircleCI setup needs to create roles. Wonder if it is
-# absolutely necessary or not.
+# This is for defining service-linked roles for ECS.
+# https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
+# Concrete example why we need to use it:
 # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/019bc8804587727f2c67bf8535b36794d541593f/terraform_setup/cloudformation-templates/public-vpc.yml#L191-L257
+# TODO:
+# Wonder if it is possible to reduce it from `IAMFullAccess` to a smaller set.
 data "aws_iam_policy" "terraform-iam" {
   arn = "arn:aws:iam::aws:policy/IAMFullAccess"
 }
