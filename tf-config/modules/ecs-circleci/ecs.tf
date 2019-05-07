@@ -106,12 +106,13 @@ resource "aws_ecs_service" "web" {
     #
     # TODO:
     # After setting up private subnets and NAT gateway, here should be replaced
-    # by private subnet. May also be able to remove `assign_public_ip = true`.
+    # by private subnet.
     # That may break SSH access defined in `aws_security_group.ecs_tasks` but
     # needs to double check.
     security_groups = ["${aws_security_group.ecs_tasks.id}"]
     subnets         = ["${aws_subnet.public.*.id}"]
-    assign_public_ip = true
+
+    # `assign_public_ip = true` is not supported for this launch type
   }
 
   load_balancer {

@@ -235,3 +235,32 @@ resource "aws_iam_group_policy_attachment" "ecs_task_execution_role_linked_attac
   group = "${aws_iam_group.terraform.id}"
   policy_arn = "${aws_iam_policy.ecs_task_execution_role_linked.arn}"
 }
+
+resource "aws_iam_policy" "instance_profile" {
+  name        = "AmazonIAMInstanceProfilePolicy"
+  path        = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateInstanceProfile",
+                "iam:GetInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:AddRoleToInstanceProfile"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_group_policy_attachment" "instance_profile_attach" {
+  group = "${aws_iam_group.terraform.id}"
+  policy_arn = "${aws_iam_policy.instance_profile.arn}"
+}
