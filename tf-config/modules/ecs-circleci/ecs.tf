@@ -11,6 +11,10 @@ locals {
 
 # The task definition. This is a simple metadata description of what
 # container to run, and what resource requirements it has.
+#
+# TODO:
+# From AWS console, EC2 instances are successfully created, but no running ECS
+# instance and no task.
 resource "aws_ecs_task_definition" "web" {
   family                   = "${local.aws_ecs_service_name}"
   network_mode             = "awsvpc"
@@ -85,7 +89,7 @@ resource "aws_ecs_service" "web" {
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.web.arn}"
-  desired_count   = "${local.web_app_count}"
+  desired_count   = "${var.web_app_count}"
   launch_type     = "EC2"
 
   deployment_maximum_percent = 200

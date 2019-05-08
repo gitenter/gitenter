@@ -45,9 +45,9 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   launch_configuration        = "${aws_launch_configuration.ecs-launch-configuration.name}"
   vpc_zone_identifier         = ["${aws_subnet.public.*.id}"]
 
-  min_size                    = "${local.web_app_count}"
-  max_size                    = "${local.web_app_count}"
-  desired_capacity            = "${local.web_app_count}"
+  min_size                    = "${var.web_app_count}"
+  max_size                    = "${var.web_app_count}"
+  desired_capacity            = "${var.web_app_count}"
 
   # TODO:
   # We don't need `load_balancers` because we are using `alb` rather than `elb`.

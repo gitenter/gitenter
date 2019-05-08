@@ -4,7 +4,7 @@ data "aws_iam_role" "ecs_instance" {
 }
 
 resource "aws_iam_instance_profile" "ecs_instance" {
-    name = "ecs-instance-profile"
+    name = "${local.aws_ecs_instance_profile}"
     path = "/"
     role = "${data.aws_iam_role.ecs_instance.id}"
     provisioner "local-exec" {

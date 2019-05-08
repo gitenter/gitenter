@@ -92,22 +92,17 @@ resource "aws_iam_group_policy_attachment" "terraform-rds" {
   policy_arn = "${data.aws_iam_policy.terraform-rds.arn}"
 }
 
-# This is the service-linked role automatically created by `aws_ecs_service`
-# https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
-# `AWSServiceRoleForECS` service role will be created automatically when we use
-# `awsvpn` network mode, so there's no need to create it by ourselves.
-data "aws_iam_role" "ecs_service" {
-  name = "AWSServiceRoleForECS"
-
-  # TODO:
-  # It is right now in the setup (and will not be destroied by `terraform destroy`)
-  # but may need some `dependency` in here for save.
-}
-
 resource "aws_iam_policy" "ecs_service_linked" {
   name        = "AWSServiceRoleForECSServiceLinkedPolicy"
   path        = "/"
 
+  # This is the service-linked role automatically created by `aws_ecs_service`
+  # https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
+  # `AWSServiceRoleForECS` service role will be created automatically when we use
+  # `awsvpn` network mode, so there's no need to create it by ourselves.
+  #
+  # We don't have `data "aws_iam_role" "ecs_service"` because the role may not
+  # exist yet.`
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -117,7 +112,7 @@ resource "aws_iam_policy" "ecs_service_linked" {
             "Action": [
                 "iam:CreateServiceLinkedRole"
             ],
-            "Resource": "${data.aws_iam_role.ecs_service.arn}",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS*",
             "Condition": {"StringLike": {"iam:AWSServiceName": "ecs.amazonaws.com"}}
         }
     ]

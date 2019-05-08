@@ -10,6 +10,10 @@ variable "tomcat_container_port" {
   default = 8080
 }
 
+variable "web_app_count" {
+  default = 2
+}
+
 locals {
   # Prefix to be used in the naming of some of the created AWS resources
   aws_resource_prefix = "ecs-circleci-${var.env_prefix}"
@@ -24,7 +28,5 @@ locals {
   aws_alb_name = "${local.aws_resource_prefix}-alb"
   aws_alb_security_group = "${local.aws_resource_prefix}-alb-sg"
   aws_ecs_task_security_group = "${local.aws_resource_prefix}-ecs-task-sg"
-
-  # Number of docker containers to run
-  web_app_count = 2
+  aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
 }
