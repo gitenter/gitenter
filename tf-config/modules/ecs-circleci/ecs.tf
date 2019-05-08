@@ -81,6 +81,7 @@ DEFINITION
 # as monitor the number of running tasks and replace any that have crashed
 #
 # http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
+# https://github.com/Capgemini/terraform-amazon-ecs
 resource "aws_ecs_service" "web" {
   name            = "${local.aws_ecs_service_name}"
 

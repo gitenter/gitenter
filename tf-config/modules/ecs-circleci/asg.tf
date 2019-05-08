@@ -14,18 +14,19 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_launch_configuration" "ecs-launch-configuration" {
-  name                        = "ecs-launch-configuration"
+resource "aws_launch_configuration" "ecs" {
+  name                        = "${local.aws_ecs_launch_configuration}"
   image_id                    = "${data.aws_ami.ubuntu.id}"
   instance_type               = "t2.micro"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
   security_groups             = ["${aws_security_group.lb.id}"]
-  associate_public_ip_address = "true"
 
-  user_data                   = <<-EOF
-                                #!/bin/bash
-                                echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
-                                EOF
+  # register the cluster name with ecs-agent which will in turn coordinate
+  # with the AWS api about the cluster
+  user_data                   = <<EOF
+#!/bin/bash
+echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
+EOF
 
   root_block_device {
     volume_type = "standard"
@@ -37,12 +38,13 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
     create_before_destroy = true
   }
 
+  associate_public_ip_address = "true"
   key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
 }
 
-resource "aws_autoscaling_group" "ecs-autoscaling-group" {
-  name                        = "ecs-autoscaling-group"
-  launch_configuration        = "${aws_launch_configuration.ecs-launch-configuration.name}"
+resource "aws_autoscaling_group" "ecs" {
+  name                        = "${local.aws_ecs_autoscaling_group}"
+  launch_configuration        = "${aws_launch_configuration.ecs.name}"
   vpc_zone_identifier         = ["${aws_subnet.public.*.id}"]
 
   min_size                    = "${var.web_app_count}"

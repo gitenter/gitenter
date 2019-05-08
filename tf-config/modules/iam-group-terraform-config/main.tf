@@ -92,6 +92,11 @@ resource "aws_iam_group_policy_attachment" "terraform-rds" {
   policy_arn = "${data.aws_iam_policy.terraform-rds.arn}"
 }
 
+# TODO:
+# May modify the below part to loose the `resource` so we don't need to frequently
+# modify these policies.
+# https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html
+
 resource "aws_iam_policy" "ecs_service_linked" {
   name        = "AWSServiceRoleForECSServiceLinkedPolicy"
   path        = "/"

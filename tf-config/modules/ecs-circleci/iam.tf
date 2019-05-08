@@ -3,6 +3,11 @@ data "aws_iam_role" "ecs_instance" {
   name = "AmazonEC2ContainerServiceforEC2Role"
 }
 
+# This role is defined in live/iam-terraform-config
+data "aws_iam_role" "ecs_task_execution" {
+  name = "AmazonECSTaskExecutionRole"
+}
+
 resource "aws_iam_instance_profile" "ecs_instance" {
     name = "${local.aws_ecs_instance_profile}"
     path = "/"
@@ -10,9 +15,4 @@ resource "aws_iam_instance_profile" "ecs_instance" {
     provisioner "local-exec" {
       command = "sleep 10"
     }
-}
-
-# This role is defined in live/iam-terraform-config
-data "aws_iam_role" "ecs_task_execution" {
-  name = "AmazonECSTaskExecutionRole"
 }
