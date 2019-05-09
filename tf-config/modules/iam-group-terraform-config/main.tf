@@ -28,9 +28,8 @@ resource "aws_iam_group_policy_attachment" "terraform-ecs_container_instance" {
 
 # Role suggestions:
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html
-#
 data "aws_iam_policy" "terraform-ecs" {
-  arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceRole"
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
 
 resource "aws_iam_group_policy_attachment" "terraform-ecs" {
