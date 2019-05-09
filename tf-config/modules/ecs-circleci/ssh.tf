@@ -1,3 +1,4 @@
+# For Amazon Linux 2, ssh using `ssh ec2-user@<ip-address>`
 resource "aws_key_pair" "terraform-seashore" {
   key_name   = "terraform-key_pair-seashore"
   public_key = "${file("~/.ssh/id_rsa.pub")}"

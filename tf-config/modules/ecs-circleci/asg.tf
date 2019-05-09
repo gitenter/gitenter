@@ -1,9 +1,12 @@
-data "aws_ami" "ubuntu" {
+# Needs to use "Amazon ECS-optimized AMIs" for which the "ECS container agent"
+# is pre-installed.
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
+data "aws_ami" "ecs_optimized_amis" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["amzn2-ami-ecs-hvm*"]
   }
 
   filter {
@@ -11,18 +14,23 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
 }
 
 resource "aws_launch_configuration" "ecs" {
   name                        = "${local.aws_ecs_launch_configuration}"
-  image_id                    = "${data.aws_ami.ubuntu.id}"
+  image_id                    = "${data.aws_ami.ecs_optimized_amis.id}"
   instance_type               = "t2.micro"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
   security_groups             = ["${aws_security_group.ecs_tasks.id}"]
 
-  # register the cluster name with ecs-agent which will in turn coordinate
-  # with the AWS api about the cluster
+  # Register the cluster name with ecs-agent which will in turn coordinate
+  # with the AWS api about the cluster.
+  # No need to `mkdir /etc/ecs` because it is pre-setup for AMIs with "ECS
+  # container agent".
   user_data                   = <<EOF
 #!/bin/bash
 echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
@@ -30,8 +38,11 @@ EOF
 
   root_block_device {
     volume_type = "standard"
-    volume_size = 8 # in gigabytes
+    volume_size = 30 # in gigabytes
     delete_on_termination = true
+    # `volume_size` needs to be >=30, otherwise error:
+    # > StatusMessage: "Volume of size _GB is smaller than snapshot 'snap-0a2a6b21a0c4cda56',
+    # > expect size >= 30GB. Launching EC2 instance failed."
   }
 
   lifecycle {
