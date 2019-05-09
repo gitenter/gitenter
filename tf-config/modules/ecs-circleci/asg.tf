@@ -19,7 +19,7 @@ resource "aws_launch_configuration" "ecs" {
   image_id                    = "${data.aws_ami.ubuntu.id}"
   instance_type               = "t2.micro"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
-  security_groups             = ["${aws_security_group.lb.id}"]
+  security_groups             = ["${aws_security_group.ecs_tasks.id}"]
 
   # register the cluster name with ecs-agent which will in turn coordinate
   # with the AWS api about the cluster
@@ -38,7 +38,7 @@ EOF
     create_before_destroy = true
   }
 
-  associate_public_ip_address = "true"
+  associate_public_ip_address = true
   key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
 }
 
