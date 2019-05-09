@@ -205,6 +205,11 @@ workflows:
           family: "ecs-circleci-qa-service"
           cluster-name: "ecs-circleci-qa-cluster"
           container-image-name-updates: "container=ecs-circleci-qa-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
+          # Currently the initial Tomcat page can be seen successfully. However,
+          # it will fail `verify-revision-is-deployed` step in CI. Also, query
+          # the targeting URL keeps getting the Tomcat page.
+          # TODO:
+          # Manually try `aws ecs update-service` to see if we can update the image.
           verify-revision-is-deployed: true
           post-steps:
             - run:

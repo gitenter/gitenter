@@ -1,9 +1,9 @@
-# Needs to use "Amazon ECS-optimized AMIs" for which the "ECS container agent"
-# is pre-installed.
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
 data "aws_ami" "ecs_optimized_amis" {
   most_recent = true
 
+  # Needs to use "Amazon ECS-optimized AMIs" for which the "ECS container agent"
+  # is pre-installed.
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
   filter {
     name   = "name"
     values = ["amzn2-ami-ecs-hvm*"]
@@ -37,12 +37,12 @@ echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
 EOF
 
   root_block_device {
-    volume_type = "standard"
-    volume_size = 30 # in gigabytes
-    delete_on_termination = true
     # `volume_size` needs to be >=30, otherwise error:
     # > StatusMessage: "Volume of size _GB is smaller than snapshot 'snap-0a2a6b21a0c4cda56',
     # > expect size >= 30GB. Launching EC2 instance failed."
+    volume_type = "standard"
+    volume_size = 30 # in gigabytes
+    delete_on_termination = true
   }
 
   lifecycle {

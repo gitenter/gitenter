@@ -26,15 +26,11 @@ resource "aws_iam_group_policy_attachment" "terraform-ecs_container_instance" {
   policy_arn = "${data.aws_iam_policy.terraform-ecs_container_instance.arn}"
 }
 
-# `AmazonECS_FullAccess` fully covers `AmazonEC2ContainerServiceRole`,
-# and the following link suggest to use full access.
+# Role suggestions:
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html
 #
-# TODO:
-# If using EC2 launch type, then `AmazonEC2ContainerServiceRole` is enough.
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted_EC2.html
 data "aws_iam_policy" "terraform-ecs" {
-  arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+  arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceRole"
 }
 
 resource "aws_iam_group_policy_attachment" "terraform-ecs" {
@@ -130,6 +126,9 @@ resource "aws_iam_group_policy_attachment" "ecs_service_linked_attach" {
   policy_arn = "${aws_iam_policy.ecs_service_linked.arn}"
 }
 
+# Role suggestion:
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html#container_instance_concepts
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance_IAM_role.html
 resource "aws_iam_role" "ecs_instance" {
   name                = "AmazonEC2ContainerServiceforEC2Role"
   path                = "/"
