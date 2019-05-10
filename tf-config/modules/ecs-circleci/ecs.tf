@@ -3,17 +3,9 @@ variable "web_image" {
 }
 
 locals {
-  # Number of docker containers to run
-  app_count = 2
-  # Docker instance CPU units to provision (1 vCPU = 1024 CPU units)
-  task_cpu = 256
-  # Docker instance memory to provision (in MiB
-  task_memory = 512
-}
-
-# This role is defined in live/iam-terraform-config
-data "aws_iam_role" "ecs_task_execution" {
-  name = "AmazonECSTaskExecutionRole"
+  # Needs to match EC2 `instance_type`.
+  task_cpu = 256 # 1 vCPU = 1024 CPU units
+  task_memory = 512 # in MiB
 }
 
 # The task definition. This is a simple metadata description of what
@@ -21,7 +13,7 @@ data "aws_iam_role" "ecs_task_execution" {
 resource "aws_ecs_task_definition" "web" {
   family                   = "${local.aws_ecs_service_name}"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["EC2"]
   cpu                      = "${local.task_cpu}"
   memory                   = "${local.task_memory}"
 
@@ -82,6 +74,9 @@ DEFINITION
 # The service. The service is a resource which allows you to run multiple
 # copies of a type of task, and gather up their logs and metrics, as well
 # as monitor the number of running tasks and replace any that have crashed
+#
+# http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
+# https://github.com/Capgemini/terraform-amazon-ecs
 resource "aws_ecs_service" "web" {
   name            = "${local.aws_ecs_service_name}"
 
@@ -90,33 +85,22 @@ resource "aws_ecs_service" "web" {
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.web.arn}"
-  desired_count   = "${local.app_count}"
-  launch_type     = "FARGATE"
+  desired_count   = "${var.web_app_count}"
+  launch_type     = "EC2"
 
   deployment_maximum_percent = 200
   deployment_minimum_healthy_percent = 75
 
   network_configuration {
     # TODO:
-    # Looks like there's no easy way to ssh into `FARGATE` type ECS servicem, as
-    # you get an empty list of container instances under console:
-    # ECS > Clusters > ECS instances
-    # (there's a running list of services and tasks through)
-    # Beside connect to EFS volumes, this becomes another reason we probably
-    # want to use "EC2 launch type".
-    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance-connect.html
-    # https://github.com/terraform-providers/terraform-provider-aws/issues/3444
-    # https://stackoverflow.com/questions/52310447/is-it-possible-to-ssh-into-fargate-manged-container-instances
-    # https://github.com/aws/containers-roadmap/issues/187
-    #
-    # TODO:
     # After setting up private subnets and NAT gateway, here should be replaced
-    # by private subnet. May also be able to remove `assign_public_ip = true`.
+    # by private subnet.
     # That may break SSH access defined in `aws_security_group.ecs_tasks` but
     # needs to double check.
     security_groups = ["${aws_security_group.ecs_tasks.id}"]
     subnets         = ["${aws_subnet.public.*.id}"]
-    assign_public_ip = true
+
+    # `assign_public_ip = true` is not supported for this launch type
   }
 
   load_balancer {
