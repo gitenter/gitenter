@@ -1,4 +1,4 @@
-resource "aws_iam_group" "terraform" {
+resource "aws_iam_group" "main" {
   name = "${var.group_name}"
 }
 
@@ -7,7 +7,7 @@ data "aws_iam_policy" "ec2" {
 }
 
 resource "aws_iam_group_policy_attachment" "ec2" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${data.aws_iam_policy.ec2.arn}"
 }
 
@@ -16,7 +16,7 @@ data "aws_iam_policy" "rds" {
 }
 
 resource "aws_iam_group_policy_attachment" "rds" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${data.aws_iam_policy.rds.arn}"
 }
 
@@ -48,7 +48,7 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "ecr" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${aws_iam_policy.ecr.arn}"
 }
 
@@ -66,7 +66,7 @@ data "aws_iam_policy" "ecs" {
 }
 
 resource "aws_iam_group_policy_attachment" "ecs" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${data.aws_iam_policy.ecs.arn}"
 }
 
@@ -99,7 +99,7 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "ecs_service_linked_attach" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${aws_iam_policy.ecs_service_linked.arn}"
 }
 
@@ -110,8 +110,8 @@ data "aws_iam_policy" "ecs_instance" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
-resource "aws_iam_group_policy_attachment" "ecs_instance" {
-  group = "${aws_iam_group.terraform.id}"
+resource "aws_iam_group_policy_attachment" "ecs_instance_attach" {
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
 }
 
@@ -133,6 +133,11 @@ data "aws_iam_policy_document" "ecs_instance" {
       identifiers = ["ec2.amazonaws.com"]
     }
   }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_instance_attach" {
+    role       = "${aws_iam_role.ecs_instance.name}"
+    policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
 }
 
 # TODO:
@@ -165,7 +170,7 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "ecs_instance_role_linked_attach" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${aws_iam_policy.ecs_instance_role_linked.arn}"
 }
 
@@ -173,8 +178,8 @@ data "aws_iam_policy" "ecs_task_execution" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
-  role       = "${aws_iam_role.ecs_task_execution.name}"
+resource "aws_iam_group_policy_attachment" "ecs_task_execution_attach" {
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
 }
 
@@ -195,6 +200,11 @@ data "aws_iam_policy_document" "ecs_task_execution" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
+  role       = "${aws_iam_role.ecs_task_execution.name}"
+  policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
 }
 
 resource "aws_iam_policy" "ecs_task_execution_role_linked" {
@@ -219,7 +229,7 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "ecs_task_execution_role_linked_attach" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${aws_iam_policy.ecs_task_execution_role_linked.arn}"
 }
 
@@ -248,6 +258,6 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "instance_profile_attach" {
-  group = "${aws_iam_group.terraform.id}"
+  group = "${aws_iam_group.main.id}"
   policy_arn = "${aws_iam_policy.instance_profile.arn}"
 }

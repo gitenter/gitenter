@@ -31,6 +31,9 @@ resource "aws_launch_configuration" "ecs" {
   # with the AWS api about the cluster.
   # No need to `mkdir /etc/ecs` because it is pre-setup for AMIs with "ECS
   # container agent".
+  #
+  # Debugging if the instances cannot be registered:
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html
   user_data                   = <<EOF
 #!/bin/bash
 echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
@@ -51,6 +54,10 @@ EOF
 
   associate_public_ip_address = true
   key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
+
+  depends_on = [
+    "aws_ecs_cluster.main"
+  ]
 }
 
 resource "aws_autoscaling_group" "ecs" {
