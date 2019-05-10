@@ -208,8 +208,15 @@ workflows:
           # Currently the initial Tomcat page can be seen successfully. However,
           # it will fail `verify-revision-is-deployed` step in CI. Also, query
           # the targeting URL keeps getting the Tomcat page.
-          # TODO:
-          # Manually try `aws ecs update-service` to see if we can update the image.
+          #
+          # Manually try `aws ecs update-service --cluster ecs-circleci-qa-cluster --service ecs-circleci-qa-service --task-definition arn:aws:ecs:us-east-1:662490392829:task-definition/ecs-circleci-qa-service:33`.
+          # Error message:
+          # > (service ecs-circleci-qa-service) was unable to place a task because no container
+          # > instance met all of its requirements. The closest matching (container-instance
+          # > cc691ab0-9c04-45ac-a2b9-4c9d9de0abb1) has insufficient memory available. For more
+          # > information, see the Troubleshooting section of the Amazon ECS Developer Guide.
+          #
+          # TODO
           verify-revision-is-deployed: true
           post-steps:
             - run:

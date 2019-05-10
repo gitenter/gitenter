@@ -5,8 +5,13 @@ variable "web_image" {
 locals {
   # Docker instance CPU units to provision (1 vCPU = 1024 CPU units)
   task_cpu = 256
-  # Docker instance memory to provision (in MiB
-  task_memory = 512
+  # Docker instance memory to provision (in MiB)
+  # If too low, may face error when trying to `aws ecs update-service`:
+  # > (service ecs-circleci-qa-service) was unable to place a task because no container
+  # > instance met all of its requirements. The closest matching (container-instance
+  # > ...) has insufficient memory available. For more information, see the
+  # > Troubleshooting section of the Amazon ECS Developer Guide.
+  task_memory = 1024
 }
 
 # The task definition. This is a simple metadata description of what

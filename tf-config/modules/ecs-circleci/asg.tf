@@ -73,4 +73,8 @@ resource "aws_autoscaling_group" "ecs" {
   # We don't need `load_balancers` because we are using `alb` rather than `elb`.
   # But if that's the case looks like we need to provide `target_group_arns`?
   health_check_type           = "ELB"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
