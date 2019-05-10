@@ -31,3 +31,26 @@ Error loading modules: error downloading 'file:///.../gitenter/tf-config/modules
 The alternative solution is to remove `.terraform/modules` so it gets force updated.
 
 If we are later on using Terragrunt [we can `terragrunt apply --terragrunt-source path/to/the/module`](https://github.com/gruntwork-io/terragrunt#working-locally).
+
+# Debugging Tips
+
+Access website: using `alb_hostname`.
+
+Log into EC2 machines (Amazon Linux 2 docker containers for EC2 launch type): `ssh ec2-user@<ip-address>`.
+
+Log into a docker container:
+
+```
+$ docker ps
+$ docker exec -it <container-id> /bin/bash
+root@ip-10-0-0-50:/usr/local/tomcat# java --version
+openjdk 11.0.3 2019-04-16
+OpenJDK Runtime Environment (build 11.0.3+1-Debian-1bpo91)
+OpenJDK 64-Bit Server VM (build 11.0.3+1-Debian-1bpo91, mixed mode, sharing)
+```
+
+Connect to Postgres:
+
+```
+psql --host=ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
+```
