@@ -88,29 +88,41 @@ resource "aws_security_group_rule" "ecs_tasks_ssh_ingress" {
 resource "aws_security_group" "postgres" {
   name = "${local.aws_postgres_security_group}"
   vpc_id = "${aws_vpc.main.id}"
+}
 
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group_rule" "postgres_egress" {
+  type            = "egress"
 
-  # Postgres
-  ingress {
-    from_port = 5432
-    to_port = 5432
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+  protocol        = "-1"
+  from_port       = 0
+  to_port         = 0
+  cidr_blocks     = ["0.0.0.0/0"]
 
-  # # SSH
-  # ingress {
-  #   from_port = 22
-  #   to_port = 22
-  #   protocol = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"] # TODO: `Custom IP` rather than `Anywhere`
-  #   ipv6_cidr_blocks = ["::/0"]
-  # }
+  security_group_id = "${aws_security_group.postgres.id}"
+}
+
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.Scenarios.html#USER_VPC.Scenario1
+resource "aws_security_group_rule" "postgres_ecs_tasks_ingress" {
+  type            = "ingress"
+
+  protocol        = "tcp"
+  from_port       = 5432
+  to_port         = 5432
+
+  security_group_id = "${aws_security_group.postgres.id}"
+  source_security_group_id = "${aws_security_group.ecs_tasks.id}"
+}
+
+# TODO:
+# May be able to be removed after debugging. Or replace `0.0.0.0/0` with my
+# customized IP, so I can still use it to setup the initial db state.
+resource "aws_security_group_rule" "postgres_psql_ingress" {
+  type            = "ingress"
+
+  protocol        = "tcp"
+  from_port       = 5432
+  to_port         = 5432
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.postgres.id}"
 }
