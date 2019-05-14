@@ -63,6 +63,7 @@ Notes:
 - `psql` commands are not idempotent. It can be only executed once each `terraform destroy/apply` cycle.
 - Looks like no easy way to execute this part inside of Terraform definition -- https://stackoverflow.com/questions/14384849/is-there-a-way-to-run-initial-sql-when-creating-an-rds-database-instance-using-c
 - TODO: May consider just create db user `gitenter` in Terraform, so no need for this step.
+- TODO: Probably for QA the database should be in docker container rather than RDS? Therefore it can be reset every time. But that will cause difference between QA/prod to make QA less informative.
 
 ### Destroy
 
