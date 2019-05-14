@@ -48,7 +48,7 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
 
   tags = {
-    Name = "circleci-demo-vpc"
+    Name = "${local.aws_vpc_name}"
   }
 }
 

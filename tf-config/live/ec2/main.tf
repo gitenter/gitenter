@@ -41,11 +41,27 @@ provider "aws" {
 resource "aws_security_group" "tomcat" {
   name = "tomcat"
 
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     from_port = "${var.server_port}"
     to_port = "${var.server_port}"
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # SSH
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # TODO: `Custom IP` rather than `Anywhere`
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   lifecycle {
@@ -69,6 +85,11 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "aws_key_pair" "terraform-seashore" {
+  key_name   = "test_key_pair-seashore"
+  public_key = "${file("~/.ssh/id_rsa.pub")}"
+}
+
 resource "aws_launch_configuration" "capsid" {
   name = "capsid"
   image_id = "${data.aws_ami.ubuntu.id}"
@@ -85,6 +106,11 @@ resource "aws_launch_configuration" "capsid" {
   lifecycle {
     create_before_destroy = true
   }
+
+  # AssociatePublicIpAddress field can not be specified without a subnet id
+  # associate_public_ip_address = true
+
+  key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
 }
 
 resource "aws_security_group" "elb" {

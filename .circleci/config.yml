@@ -1,7 +1,3 @@
-# Java Maven CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
 version: 2.1
 
 orbs:
@@ -35,7 +31,7 @@ executors:
         environment:
           POSTGRES_PASSWORD: postgres
 
-    working_directory: ~/repo
+    working_directory: /tmp/java-build
 
     environment:
       # Customize the JVM maximum heap limit
@@ -102,16 +98,18 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
       - run: mvn clean install
+      - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
+      - run: mvn package -f capsid/pom.xml -DskipTests
 
       # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
-          root: ~/repo/
+          root: /tmp/java-build/
           # Must be relative path from root
           paths:
-            - capsid/target/*.war
+            - docker/web/*.war
 
   python-linter:
     executor: python-executor
@@ -134,11 +132,16 @@ jobs:
   deploy:
     docker:
       - image: circleci/openjdk:11.0-jdk
+    # Cannot specify `working_directory` to be `.`. Otherwise you'll get error
+    # > Directory (.) you are trying to checkout to is not empty and not git repository
+    working_directory: /tmp/build
     steps:
+      - checkout
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ~/repo/
+          at: /tmp/build
 
+      - run: ls /tmp/build/docker/web
       - run: echo "success"
       # TODO:
       # Consider saving to final capsid.jar to an artifact.
@@ -149,13 +152,14 @@ workflows:
     jobs:
       - java-build
       - python-linter
+
       - qa-readiness:
           type: approval
           requires:
            - java-build
            - python-linter
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
-      # needs to apply `terraform apply` under `tf-config/live/circle-demo` first.
+      # needs to apply `terraform apply` under `tf-config/live/ec2-circleci-qa` first.
       # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
       # https://github.com/CircleCI-Public/aws-ecr-orb
       #
@@ -172,25 +176,29 @@ workflows:
       # resolved itself after a while.
       #
       # TODO:
-      # Check if it is possible to combine multiple steps in the same executor. Should be just call the Orbs
-      # in executor definition rather than in workflows.
+      # Check if it is possible to combine multiple steps in the same executor. Should
+      # be just call the Orbs in executor definition rather than in workflows. Tried
+      # orbs as steps in jobs which doesn't work.
+      # TODO:
+      # Redefine `ecs-circleci-qa` prefix as a pipeline variable (pre-release feature).
+      # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
+      # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
+      # UI but nor in orbs.
+      # https://circleci.com/docs/2.0/env-vars/
       - aws-ecr/build_and_push_image:
           requires:
             - qa-readiness
+          checkout: true
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          dockerfile: ./docker/circleci-demo/Dockerfile
-          path: ./docker/circleci-demo
+          dockerfile: ./docker/tomcat-trivial/Dockerfile
+          path: ./docker/tomcat-trivial
           region: AWS_DEFAULT_REGION
-          # TODO:
-          # `AWS_RESOURCE_NAME_PREFIX` is currently setup as environment variable through CircleCI UI/web.
-          # Could just hard code in here to make it match `tf-config/live/circieci-demo/variables.tf:aws_resource_prefix`
-          # So at least the link is internally in the code.
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
-          # This orb is mostly doing `aws ecs update-service`
+          # This orb is mostly doing `aws ecs update-service --cluster ecs-circleci-qa-cluster --service ecs-circleci-qa-service --force-new-deployment`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
           # That's the reason it doesn't need to hold any knowledge of the
           # Terraform config even if it is doing blue/green deployment.
@@ -202,18 +210,18 @@ workflows:
           aws-region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
-          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
-          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"
+          family: "ecs-circleci-qa-service"
+          cluster-name: "ecs-circleci-qa-cluster"
+          container-image-name-updates: "container=ecs-circleci-qa-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
           verify-revision-is-deployed: true
           post-steps:
             - run:
                 name: Test the deployment
                 command: |
-                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ${AWS_RESOURCE_NAME_PREFIX}-cluster --services ${AWS_RESOURCE_NAME_PREFIX}-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ecs-circleci-qa-cluster --services ecs-circleci-qa-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                   ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                   ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
-                  curl -s --retry 10 http://$ELB_DNS_NAME | grep "Welcome to nginx!"
+                  curl -s --retry 10 http://$ELB_DNS_NAME | grep "Hello World!"
       - acceptance-test:
           requires:
             - aws-ecs/deploy-service-update
@@ -223,7 +231,7 @@ workflows:
       # Notice that it is optional. Do not calling this step will accelerate the next build (as typically
       # zero thing needs to be changed). However, run multiple builds at the same time will cause race
       # condition, as they are sharing the same remote server.
-      #
+
       # TODO:
       # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
       #

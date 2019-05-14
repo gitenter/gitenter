@@ -53,7 +53,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_key_pair" "terraform-seashore" {
-  key_name   = "terraform-key_pair-seashore"
+  key_name   = "key_pair-ec2_simple"
   public_key = "${file("~/.ssh/id_rsa.pub")}"
 }
 
@@ -72,3 +72,5 @@ resource "aws_instance" "main" {
 output "public_dns" {
   value = "${aws_instance.main.public_dns}"
 }
+
+# ssh ubuntu@100.27.28.117
