@@ -31,7 +31,7 @@ executors:
         environment:
           POSTGRES_PASSWORD: postgres
 
-    working_directory: ~/repo
+    working_directory: /tmp/java-build
 
     environment:
       # Customize the JVM maximum heap limit
@@ -98,16 +98,18 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
       - run: mvn clean install
+      - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
+      - run: mvn package -f capsid/pom.xml -DskipTests
 
       # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
-          root: ~/repo/
+          root: /tmp/java-build/
           # Must be relative path from root
           paths:
-            - capsid/target/*.war
+            - docker/web/*.war
 
   python-linter:
     executor: python-executor
@@ -130,11 +132,15 @@ jobs:
   deploy:
     docker:
       - image: circleci/openjdk:11.0-jdk
+    # Cannot specify `working_directory` to be `.`. Otherwise you'll get error
+    # > Directory (.) you are trying to checkout to is not empty and not git repository
+    working_directory: /tmp/build
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ~/repo/
+          at: /tmp/build
 
+      - run: ls /tmp/build/docker/web
       - run: echo "success"
       # TODO:
       # Consider saving to final capsid.jar to an artifact.
@@ -181,6 +187,7 @@ workflows:
       - aws-ecr/build_and_push_image:
           requires:
             - qa-readiness
+          checkout: true
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -190,7 +197,7 @@ workflows:
           repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
-          # This orb is mostly doing `aws ecs update-service`
+          # This orb is mostly doing `aws ecs update-service --cluster ecs-circleci-qa-cluster --service ecs-circleci-qa-service --force-new-deployment`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
           # That's the reason it doesn't need to hold any knowledge of the
           # Terraform config even if it is doing blue/green deployment.

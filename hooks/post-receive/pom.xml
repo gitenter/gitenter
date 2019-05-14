@@ -52,12 +52,12 @@
                         TODO:
                         When using parent pom, there's a race condition in here that capsid build may not use the
                         most up-to-date git hooks.
-                        Consider explicitly specify the dependency (if there's a way in maven). Or alternatively, 
+                        Consider explicitly specify the dependency (if there's a way in maven). Or alternatively,
                         using an approach different to setting up `<outputDirectory>` tag on `hooks/post-receive/pom.xml`.
                         For example, compile hooks and set them somewhere on docker. Capsid can then just
                         setup a symlink or something else to call the hook when it initialize a repository.
                     -->
-                    <outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
+                    <outputDirectory>capsid/src/main/resources/git-server-side-hooks</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

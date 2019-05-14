@@ -7,6 +7,14 @@ A Git based version control tool for requirement engineering, design control, ve
 
 ## Development
 
+### Local compile
+
+```
+mvn clean install
+mvn package -f hooks/post-receive/pom.xml -DskipTests
+mvn package -f capsid/pom.xml -DskipTests
+```
+
 ### STS
 
 It is very tricky to setup STS. For the dependencies of all maven packages, you don't want to add anything on the project's `Properties > Java Build Path > Projects`. What should be done is to `mvn install` all packages (so they are properly setup in `.m2`) and let Eclipse to load them from `.m2` just like external packages.

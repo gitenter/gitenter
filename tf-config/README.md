@@ -41,6 +41,9 @@ Needs to initialize the remote AWS state manually before `qa-readiness` CircleCI
 ```bash
 cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-qa
 terraform apply
+```
+
+```bash
 POSTGRES_ENDPOINT="ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
 
 cd ~/Workspace/gitenter/
