@@ -23,13 +23,6 @@ resource "aws_iam_group_policy_attachment" "rds" {
 # TODO:
 # Probably only need `elasticfilesystem:CreateFileSystem` for EFS operations,
 # but I'll just give full access for now.
-#
-# TODO:
-# Right now it doesn't work. Error message:
-# > aws_iam_group_policy_attachment.efs: Error attaching policy
-# > arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess to IAM group
-# > terraform-config: LimitExceeded: Cannot exceed quota for PoliciesPerGroup: 10
-# Need a better way to handle policies.
 data "aws_iam_policy" "efs" {
   arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess"
 }
@@ -134,41 +127,9 @@ resource "aws_iam_group_policy_attachment" "ecs_instance_attach" {
   policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
 }
 
-# Used for `aws_iam_instance_profile` to create ECS instances.
-# Role suggested:
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html#container_instance_concepts
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance_IAM_role.html
-resource "aws_iam_role" "ecs_instance" {
-  name                = "AmazonEC2ContainerServiceforEC2Role"
-  path                = "/"
-  assume_role_policy  = "${data.aws_iam_policy_document.ecs_instance.json}"
-}
-
-data "aws_iam_policy_document" "ecs_instance" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_instance_attach" {
-    role       = "${aws_iam_role.ecs_instance.name}"
-    policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
-}
-
-# TODO:
-# May modify the below part to loose the `resource` so we don't need to frequently
-# modify these policies.
-# https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html
-
-# Policy suggested:
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html
-# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_managed_policies.html
-resource "aws_iam_policy" "ecs_instance_role_linked" {
+# This is used to get and pass service roles to AWS resources (EC2, ECS, ...)
+# basically all roles defined in `modules/iam-terraform-roles.setup`.
+resource "aws_iam_policy" "role_linked" {
   name        = "AmazonEC2ContainerServiceforEC2RoleLinkedPolicy"
   path        = "/"
 
@@ -182,16 +143,16 @@ resource "aws_iam_policy" "ecs_instance_role_linked" {
                 "iam:GetRole",
                 "iam:PassRole"
             ],
-            "Resource": "${aws_iam_role.ecs_instance.arn}"
+            "Resource": "*"
         }
     ]
 }
 EOF
 }
 
-resource "aws_iam_group_policy_attachment" "ecs_instance_role_linked_attach" {
+resource "aws_iam_group_policy_attachment" "role_linked_attach" {
   group = "${aws_iam_group.main.id}"
-  policy_arn = "${aws_iam_policy.ecs_instance_role_linked.arn}"
+  policy_arn = "${aws_iam_policy.role_linked.arn}"
 }
 
 data "aws_iam_policy" "ecs_task_execution" {
@@ -201,56 +162,6 @@ data "aws_iam_policy" "ecs_task_execution" {
 resource "aws_iam_group_policy_attachment" "ecs_task_execution_attach" {
   group = "${aws_iam_group.main.id}"
   policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
-}
-
-# This role is referred by `aws_ecs_task_definition` resource.
-resource "aws_iam_role" "ecs_task_execution" {
-  name               = "AmazonECSTaskExecutionRole"
-  path               = "/"
-  assume_role_policy = "${data.aws_iam_policy_document.ecs_task_execution.json}"
-}
-
-data "aws_iam_policy_document" "ecs_task_execution" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
-  role       = "${aws_iam_role.ecs_task_execution.name}"
-  policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
-}
-
-resource "aws_iam_policy" "ecs_task_execution_role_linked" {
-  name        = "AWSServiceRoleForECSTaskRoleLinkedPolicy"
-  path        = "/"
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetRole",
-                "iam:PassRole"
-            ],
-            "Resource": "${aws_iam_role.ecs_task_execution.arn}"
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_group_policy_attachment" "ecs_task_execution_role_linked_attach" {
-  group = "${aws_iam_group.main.id}"
-  policy_arn = "${aws_iam_policy.ecs_task_execution_role_linked.arn}"
 }
 
 resource "aws_iam_policy" "instance_profile" {
