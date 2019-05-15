@@ -83,6 +83,35 @@ resource "aws_security_group_rule" "ecs_tasks_ssh_ingress" {
   security_group_id = "${aws_security_group.ecs_tasks.id}"
 }
 
+resource "aws_security_group" "efs" {
+  name = "${local.aws_efs_security_group}"
+  vpc_id = "${aws_vpc.main.id}"
+}
+
+resource "aws_security_group_rule" "efs_egress" {
+  type            = "egress"
+
+  protocol        = "-1"
+  from_port       = 0
+  to_port         = 0
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.efs.id}"
+}
+
+resource "aws_security_group_rule" "efs_ecs_tasks_ingress" {
+  type            = "ingress"
+
+  # NSF uses TCP protocol:
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html#sg-rules-efs
+  protocol        = "tcp"
+  from_port       = 2049
+  to_port         = 2049
+
+  security_group_id = "${aws_security_group.efs.id}"
+  source_security_group_id = "${aws_security_group.ecs_tasks.id}"
+}
+
 resource "aws_security_group" "postgres" {
   name = "${local.aws_postgres_security_group}"
   vpc_id = "${aws_vpc.main.id}"

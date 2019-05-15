@@ -2,6 +2,13 @@ variable "env_prefix" {
   description = "Prefix to distinguish different environments. E.g., `qa`, `staging`, `prod`."
 }
 
+variable "az_count" {
+  # For both a private and a public subnets, this number needs
+  # to be <=128 (65536/(256*2)=128), otherwise the subnet
+  # `cidr_block` will be out of range.
+  default = "2"
+}
+
 variable "http_port" {
   default = 80
 }
@@ -28,9 +35,11 @@ locals {
   aws_alb_name = "${local.aws_resource_prefix}-alb"
   aws_alb_security_group = "${local.aws_resource_prefix}-alb-sg"
   aws_ecs_task_security_group = "${local.aws_resource_prefix}-ecs-task-sg"
+  aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
   aws_db_instance_identifier = "${local.aws_resource_prefix}-postgres"
   aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
   aws_ecs_launch_configuration = "${local.aws_resource_prefix}-ecs-launch-configuration"
   aws_ecs_autoscaling_group = "${local.aws_resource_prefix}-ecs-asg"
+  aws_git_efs = "${local.aws_resource_prefix}-git-efs"
 }

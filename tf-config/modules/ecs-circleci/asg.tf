@@ -52,10 +52,23 @@ echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
 EOF
 
   root_block_device {
+    # This is the EBS volume attached to the EC2 instance. It is good for hosting the drivers
+    # of that instance (in our case, docker/image/...).
+    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html
+    #
+    # Types:
+    # `standard`: Magnetic
+    # `gp2`: General Purpose SSD
+    # `io1`: Provisioned IOPS SSD
+    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumes.html
+    #
+    # TODO:
+    # Understand which one to use based on IOPS. At least it shouldn't be `standard`
+    # for production.
+    volume_type = "standard"
     # `volume_size` needs to be >=30, otherwise error:
     # > StatusMessage: "Volume of size _GB is smaller than snapshot 'snap-0a2a6b21a0c4cda56',
     # > expect size >= 30GB. Launching EC2 instance failed."
-    volume_type = "standard"
     volume_size = 30 # in gigabytes
     delete_on_termination = true
   }

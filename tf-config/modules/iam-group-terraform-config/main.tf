@@ -20,6 +20,25 @@ resource "aws_iam_group_policy_attachment" "rds" {
   policy_arn = "${data.aws_iam_policy.rds.arn}"
 }
 
+# TODO:
+# Probably only need `elasticfilesystem:CreateFileSystem` for EFS operations,
+# but I'll just give full access for now.
+#
+# TODO:
+# Right now it doesn't work. Error message:
+# > aws_iam_group_policy_attachment.efs: Error attaching policy
+# > arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess to IAM group
+# > terraform-config: LimitExceeded: Cannot exceed quota for PoliciesPerGroup: 10
+# Need a better way to handle policies.
+data "aws_iam_policy" "efs" {
+  arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess"
+}
+
+resource "aws_iam_group_policy_attachment" "efs" {
+  group = "${aws_iam_group.main.id}"
+  policy_arn = "${data.aws_iam_policy.efs.arn}"
+}
+
 resource "aws_iam_policy" "ecr" {
   name        = "AmazonECRConfigPolicy"
   path        = "/"
@@ -115,6 +134,7 @@ resource "aws_iam_group_policy_attachment" "ecs_instance_attach" {
   policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
 }
 
+# Used for `aws_iam_instance_profile` to create ECS instances.
 # Role suggested:
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html#container_instance_concepts
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance_IAM_role.html
@@ -183,7 +203,7 @@ resource "aws_iam_group_policy_attachment" "ecs_task_execution_attach" {
   policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
 }
 
-# This is a role which is used by the ECS tasks themselves.
+# This role is referred by `aws_ecs_task_definition` resource.
 resource "aws_iam_role" "ecs_task_execution" {
   name               = "AmazonECSTaskExecutionRole"
   path               = "/"

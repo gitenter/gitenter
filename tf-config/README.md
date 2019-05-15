@@ -12,7 +12,7 @@ Manually created a user `Administrator` with permissions `AdministratorAccess`. 
 
 # Terraform Notes
 
-Executed each single folder under `live`
+Full cycle: executed each single folder under `live`
 
 ```
 terraform init
@@ -21,6 +21,18 @@ terraform plan
 terraform apply
 terraform destroy
 ```
+
+To accelerate the debugging process, we can only apply to certain resource and dependencies.
+
+```
+terraform plan -target=aws_efs_mount_target.git
+terraform apply -target=aws_efs_mount_target.git
+terraform destroy
+```
+
+(When destroying, it may complain that the `output` doesn't exist yet. It is fine as far as all the relevant resources has been successfully destroyed.)
+
+For local resource modules, they'll be automatically loaded again every time, so there's no need for `terraform get -update` (we do need to `terraform get` the first time).
 
 `terraform get -update` will (sometimes?) get the following error.
 
@@ -107,6 +119,7 @@ psql --host=ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --
 
 - ECS will create the docker volume in `/var/lib/docker/volumes`.
 - Use [Docker volume drivers](https://docs.docker.com/engine/extend/plugins_volume/) to link this volume to EBS/EFS. Default is local volume driver.
+  - Looks like we can only use EFS (which can be mounted to multiple EC2 instances), as EBS can only mount to one single EC2 instance. (differences between S3/EBS/EFS [1](https://dzone.com/articles/confused-by-aws-storage-options-s3-ebs-amp-efs-explained) [2](https://www.cloudberrylab.com/resources/blog/amazon-s3-vs-ebs-vs-efs/))
 
 This is only available for 2018/08 so Docker volume for Fargate may be available soon.
 
