@@ -22,6 +22,8 @@ variable "web_app_count" {
 }
 
 variable "efs_mount_point" {
+  # Cannot use a relative localtion from `~`, as it is created in `aws_launch_configuration`
+  # for which `root` (rather than `ec2-user`) created it and `chown` it to `ec2-user`.
   default = "/mnt/efs"
 }
 

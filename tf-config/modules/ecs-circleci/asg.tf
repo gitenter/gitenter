@@ -39,12 +39,21 @@ resource "aws_launch_configuration" "ecs" {
   # However, ECS task definition at least needs 512 memory. So it will be insurfficient.
   instance_type               = "t2.small"
 
+  # The content of `user_data` is executed by `sudo`.
+  #
   # Regarding `user_data`, the first part is to mount EFS volume.
+  # https://docs.aws.amazon.com/efs/latest/ug/gs-step-three-connect-to-ec2-instance.html
   # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEFS.html#efs-mount-file-system
-  # `nfs-util` is only for Amazon Linux. For the general ones, use `amazon-efs-utils`
-  # which includes more dependencies:
+  # (The second URL uses just `nfs-utils`, and it doesn't work for Amazon Linux 2)
+  # Should use `amazon-efs-utils` which includes more dependencies:
   # https://docs.aws.amazon.com/efs/latest/ug/using-amazon-efs-utils.html#overview-amazon-efs-utils
-
+  #
+  # The other way is to mount EFS after instance has been created. One may login and
+  # > sudo mount -t efs fs-cc964c2f:/ /mnt/efs
+  # Then the mounted one will be showing by `df -T` and file can be shared by
+  # multiple EC2 instances. Also `mount` needs to be done with `sudo` so in `user_data`
+  # `chown` needs to be done after `mount`.
+  #
   # The second part is to register the cluster name with ecs-agent which will in turn coordinate
   # with the AWS api about the cluster.
   # No need to `mkdir /etc/ecs` because it is pre-setup for AMIs with "ECS
@@ -55,11 +64,10 @@ resource "aws_launch_configuration" "ecs" {
   user_data                   = <<EOF
 #!/bin/bash
 yum update -y
-yum install -y nfs-utils
+yum install -y amazon-efs-utils
 mkdir -p ${var.efs_mount_point}
+mount -t efs ${aws_efs_file_system.git.id}:/ ${var.efs_mount_point}
 chown ec2-user:ec2-user ${var.efs_mount_point}
-echo ${aws_efs_file_system.git.dns_name}:/ ${var.efs_mount_point} nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 >> /etc/fstab
-mount -a -t nfs4
 
 echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
 EOF
@@ -93,8 +101,12 @@ EOF
   associate_public_ip_address = true
   key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
 
+  # Depends on `aws_efs_mount_target.git` because the current resource only depends on
+  # `aws_efs_file_system.git`. By the time `user_data` is executed, `aws_efs_mount_target`
+  # may not be available yet.
   depends_on = [
-    "aws_ecs_cluster.main"
+    "aws_ecs_cluster.main",
+    "aws_efs_mount_target.git"
   ]
 }
 
