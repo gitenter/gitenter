@@ -34,7 +34,7 @@ module "iam_roles" {
 #
 # Need a split to multiple policies to add to this role to bypass this problem.
 module "iam_group" {
-  source = "../../modules/iam-group-terraform-config"
+  source = "../../modules/iam-terraform-config-group"
   group_name = "${var.group_name}"
 }
 

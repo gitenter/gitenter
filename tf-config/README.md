@@ -37,7 +37,7 @@ For local resource modules, they'll be automatically loaded again every time, so
 `terraform get -update` will (sometimes?) get the following error.
 
 ```
-Error loading modules: error downloading 'file:///.../gitenter/tf-config/modules/iam-group-terraform-config': destination exists and is not a symlink
+Error loading modules: error downloading 'file:///.../gitenter/tf-config/modules/iam-terraform-config-group': destination exists and is not a symlink
 ```
 
 The alternative solution is to remove `.terraform/modules` so it gets force updated.
