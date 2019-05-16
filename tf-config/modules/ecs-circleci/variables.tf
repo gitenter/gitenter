@@ -21,6 +21,10 @@ variable "web_app_count" {
   default = 2
 }
 
+variable "efs_mount_point" {
+  default = "/mnt/efs"
+}
+
 locals {
   # Prefix to be used in the naming of some of the created AWS resources
   aws_resource_prefix = "ecs-circleci-${var.env_prefix}"

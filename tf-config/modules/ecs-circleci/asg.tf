@@ -39,7 +39,13 @@ resource "aws_launch_configuration" "ecs" {
   # However, ECS task definition at least needs 512 memory. So it will be insurfficient.
   instance_type               = "t2.small"
 
-  # Register the cluster name with ecs-agent which will in turn coordinate
+  # Regarding `user_data`, the first part is to mount EFS volume.
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEFS.html#efs-mount-file-system
+  # `nfs-util` is only for Amazon Linux. For the general ones, use `amazon-efs-utils`
+  # which includes more dependencies:
+  # https://docs.aws.amazon.com/efs/latest/ug/using-amazon-efs-utils.html#overview-amazon-efs-utils
+
+  # The second part is to register the cluster name with ecs-agent which will in turn coordinate
   # with the AWS api about the cluster.
   # No need to `mkdir /etc/ecs` because it is pre-setup for AMIs with "ECS
   # container agent".
@@ -48,6 +54,13 @@ resource "aws_launch_configuration" "ecs" {
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html
   user_data                   = <<EOF
 #!/bin/bash
+yum update -y
+yum install -y nfs-utils
+mkdir -p ${var.efs_mount_point}
+chown ec2-user:ec2-user ${var.efs_mount_point}
+echo ${aws_efs_file_system.git.dns_name}:/ ${var.efs_mount_point} nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0 >> /etc/fstab
+mount -a -t nfs4
+
 echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
 EOF
 
