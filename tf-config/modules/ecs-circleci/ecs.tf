@@ -65,10 +65,71 @@ Resources:
         "name": "BUILD_DATE",
         "value": "-"
       }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "${var.efs_docker_volumn_name}",
+        "containerPath": "${var.container_path}",
+        "readOnly": false
+      }
     ]
   }
 ]
 DEFINITION
+
+  # Mount docker volume to EFS:
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
+  #
+  # Without any setup in here, if we
+  # > docker run -v ${var.efs_mount_point}:/data/efs -it tomcat /bin/bash
+  # we can see/edit the content of EFS by `cd /data/efs`.
+  #
+  # After we set up as this, if we `docker ps` and then
+  # > docker exec -it <container-id> /bin/bash
+  # `cd` to `var.container_path` and add something, that will be saved in EFS.
+  volume {
+    # After this setup, if we `docker volume ls` we'll see the volume name (currently
+    # driver is `local`).
+    name      = "${var.efs_docker_volumn_name}"
+
+    # `host_path` is for defining "bind mount":
+    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bind-mounts.html
+    # while `docker_volume_configuration` is for defining "docker volume":
+    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
+    #
+    # Cannot specify both, otherwise I'll get error:
+    # > ClientException: When using the 'volume' parameter, either 'host' or
+    # > 'dockerVolumeConfiguration' should be used but not both.
+    #
+    # TODO:
+    # Based on docker, "docker volume" is the prefered way to use compare to "bind mount".
+    # https://docs.docker.com/storage/volumes/
+    # we should try to make it work.
+    #
+    # TODO:
+    # If not specify `driver`, the default is `local` driver from `docker volume ls`.
+    # Check the possibility to use another driver.
+    # > ... through the use of Docker volume drivers and volume plugins such as Rex-Ray and Portworx.
+    host_path = "${var.efs_mount_point}"
+
+    # docker_volume_configuration {
+    #   scope = "shared"
+    #   autoprovision = true
+    # }
+  }
+
+  # Seems no need to make it depends on `aws_launch_configuration.ecs`.
+  # > Before the release of the Amazon ECS-optimized AMI version 2017.03.a, only
+  # > file systems that were available when the Docker daemon was started are
+  # > available to Docker containers. You can use the latest Amazon ECS-optimized
+  # > AMI to avoid this limitation, or you can upgrade the docker package to the
+  # > latest version and restart Docker.
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_data_volumes.html
+  # Actually it may be prefered for `aws_ecs_task_definition` and `aws_ecs_service`
+  # to be executed before `aws_launch_configuration` and `aws_autoscaling_group`,
+  # and then service will keep trying (at the beginning no available tasks) until
+  # it gets the desired container instances to apply the task (a successful `apply`
+  # is by this order).
 }
 
 # The service. The service is a resource which allows you to run multiple
