@@ -104,6 +104,9 @@ EOF
   # Depends on `aws_efs_mount_target.git` because the current resource only depends on
   # `aws_efs_file_system.git`. By the time `user_data` is executed, `aws_efs_mount_target`
   # may not be available yet.
+  #
+  # May actually needs to be executed after `aws_ecs_service` (one successful `apply`
+  # is of that order).
   depends_on = [
     "aws_ecs_cluster.main",
     "aws_efs_mount_target.git"

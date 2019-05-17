@@ -21,16 +21,25 @@ variable "web_app_count" {
   default = 2
 }
 
+# Seems not useful outside of Terraform.
 variable "efs_mount_point" {
   # Cannot use a relative localtion from `~`, as it is created in `aws_launch_configuration`
   # for which `root` (rather than `ec2-user`) created it and `chown` it to `ec2-user`.
   default = "/mnt/efs"
 }
 
+# Seems not useful outside of Terraform.
 variable "efs_docker_volumn_name" {
   default = "efs-static-storage"
 }
 
+# This is the path need to be used in code (e.g. Java setup of `capsid` setup to
+# touch the file system).
+#
+# TODO:
+# Probably should set this as `/home/git` but in that case multiple git docker
+# containers will need to share the same `.*` setup files, which is not doable.
+# So probably needs `/home/git/data` or we do `/git` and `chown` it.
 variable "container_path" {
   default = "/data"
 }
