@@ -65,10 +65,68 @@ Resources:
         "name": "BUILD_DATE",
         "value": "-"
       }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "${var.efs_docker_volumn_name}",
+        "containerPath": "${var.container_path}",
+        "readOnly": false
+      }
     ]
   }
 ]
 DEFINITION
+
+  # Mount docker volume to EFS:
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
+  #
+  # After this setup, if we `docker volume ls` we'll see the volume name (currently
+  # driver is `local`). And if we
+  # > docker run -v ${var.efs_docker_volumn_name}:/data/efs -it tomcat /bin/bash
+  # or
+  # > docker run -v ${var.efs_mount_point}:/data/efs -it tomcat /bin/bash
+  # we can see the content of EFS by `cd /data/efs`
+  # However, if `docker ls` and `docker exec` to the existing container, the mount
+  # is not in there yet. Actually, it seems we have no where to describe
+  # `efs_mount_point` in here.
+  volume {
+    name      = "${var.efs_docker_volumn_name}"
+
+    # From Terraform document, it saids
+    # > (Optional) The path on the host container instance that is presented to
+    # > the container. If not set, ECS will create a nonpersistent data volume that
+    # > starts empty and is deleted after the task has finished.
+    # so looks like I should specify it. However, if I realize specify it, I'll
+    # get the error:
+    # > ClientException: When using the 'volume' parameter, either 'host' or
+    # > 'dockerVolumeConfiguration' should be used but not both.
+    #
+    # Looks like `host_path` is for defining "bind mount":
+    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bind-mounts.html
+    # while `docker_volume_configuration` is for defining "docker volume":
+    # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
+    # Based on docker, "docker volume" is the prefered way to use compare to "bind mount".
+    # https://docs.docker.com/storage/volumes/
+    #
+    #host_path = "${var.efs_mount_point}"
+
+    # TODO:
+    # Right now I am not specify `driver`/`driver_opts`/`labels`. May need to specify
+    # them to make things work?
+    # > ... through the use of Docker volume drivers and volume plugins such as Rex-Ray and Portworx.
+    docker_volume_configuration {
+      scope = "shared"
+      autoprovision = true
+    }
+  }
+
+  # Seems no need to make it depends on `aws_launch_configuration.ecs`.
+  # > Before the release of the Amazon ECS-optimized AMI version 2017.03.a, only
+  # > file systems that were available when the Docker daemon was started are
+  # > available to Docker containers. You can use the latest Amazon ECS-optimized
+  # > AMI to avoid this limitation, or you can upgrade the docker package to the
+  # > latest version and restart Docker.
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_data_volumes.html
 }
 
 # The service. The service is a resource which allows you to run multiple

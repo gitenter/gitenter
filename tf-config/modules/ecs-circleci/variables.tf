@@ -27,6 +27,14 @@ variable "efs_mount_point" {
   default = "/mnt/efs"
 }
 
+variable "efs_docker_volumn_name" {
+  default = "efs-static-storage"
+}
+
+variable "container_path" {
+  default = "/data"
+}
+
 locals {
   # Prefix to be used in the naming of some of the created AWS resources
   aws_resource_prefix = "ecs-circleci-${var.env_prefix}"
