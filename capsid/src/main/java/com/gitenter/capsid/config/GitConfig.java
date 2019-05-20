@@ -28,13 +28,22 @@ public class GitConfig {
 		gitSource.setRootFolderPath("/home/git");
 		return gitSource;
 	}
+
+	@Profile("qa")
+	@Bean
+	public GitSource qaGitSource() {
+		
+		GitSource gitSource = new GitSource();
+		gitSource.setRootFolderPath("/data");
+		return gitSource;
+	}
 	
 	@Profile("production")
 	@Bean
 	public GitSource productionGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/git");
+		gitSource.setRootFolderPath("/data");
 		return gitSource;
 	}
 }

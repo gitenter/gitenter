@@ -27,6 +27,15 @@ public class WebConfig {
 		return webSource;
 	}
 	
+	@Profile("qa")
+	@Bean
+	public WebSource qaWebSource() {
+		
+		WebSource webSource = new WebSource();
+		webSource.setDomainName("qa.gitenter.com");
+		return webSource;
+	}
+	
 	@Profile("production")
 	@Bean
 	public WebSource productionWebSource() {
