@@ -1,6 +1,8 @@
 version: "3"
 services:
 
+  # Then the database can be connected through `psql -h database -U postgres`
+  # from a different container with `psql` installed (e.g. `dev-machine`).
   database:
     image: postgres:11.1
     volumes:
@@ -15,7 +17,6 @@ services:
       context: ./docker/dev-machine
       dockerfile: ./Dockerfile
     volumes:
-      - ../gitar:/gitar
       - ../gitenter:/gitenter
     depends_on:
       - database
@@ -49,8 +50,8 @@ services:
       context: ./docker/web
       dockerfile: ./Dockerfile
     volumes:
-      # - ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
-      # - ./capsid/target/capsid-0.0.2-prototype.war:/usr/local/tomcat/webapps/ROOT.war
+      #- ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
+      #- ./docker/web/capsid-0.0.2-prototype.war:/usr/local/tomcat/webapps/ROOT.war
       - git-repo:/home/git # TODO: change it to something else together with GitConfig.java
     ports:
       - "8886:8080"
@@ -59,13 +60,13 @@ services:
     tty: true
     restart: always
 
-  selenium-test:
-    build:
-      context: ./docker/selenium-test
-      dockerfile: ./Dockerfile
-    volumes:
-      - ./selenium-test:/selenium-test
-    tty: true
+  # selenium-test:
+  #   build:
+  #     context: ./docker/selenium-test
+  #     dockerfile: ./Dockerfile
+  #   volumes:
+  #     - ./selenium-test:/selenium-test
+  #   tty: true
 
 volumes:
   git-repo:
