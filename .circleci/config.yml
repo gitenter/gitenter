@@ -100,6 +100,7 @@ jobs:
       - run: mvn clean install
       - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
+      - run: cp docker/tomcat-trivial/hello-world.war docker/tomcat-trivial-copy/hello-world.war
 
       # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
@@ -110,6 +111,7 @@ jobs:
           # Must be relative path from root
           paths:
             - docker/web/*.war
+            - docker/tomcat-trivial-copy/*.war
 
   python-linter:
     executor: python-executor
@@ -189,11 +191,13 @@ workflows:
           requires:
             - qa-readiness
           checkout: true
+          attach-workspace: true
+          workspace-root: .
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          dockerfile: ./docker/tomcat-trivial/Dockerfile
-          path: ./docker/tomcat-trivial
+          dockerfile: ./docker/tomcat-trivial-copy/Dockerfile
+          path: ./docker/tomcat-trivial-copy
           region: AWS_DEFAULT_REGION
           repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
