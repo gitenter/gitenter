@@ -4,8 +4,12 @@ variable "web_image" {
 
 locals {
   # Needs to match EC2 `instance_type`.
-  task_cpu = 256 # 1 vCPU = 1024 CPU units
-  task_memory = 512 # in MiB
+  #
+  # Notice that `t2.micro`-256/512 doesn't work. Probably that's because the memory
+  # difference between EC2 and container are not large enough for ECS utilities.
+  # `t2.small`-256/512 and `t2-small`-512/1024 both works.
+  task_cpu = 512 # 1 vCPU = 1024 CPU units
+  task_memory = 1024 # in MiB
 }
 
 # The task definition. This is a simple metadata description of what
