@@ -224,7 +224,7 @@ workflows:
           repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
-          # This orb is mostly doing `aws ecs update-service --cluster ecs-circleci-qa-cluster --service ecs-circleci-qa-service --force-new-deployment`
+          # This orb is mostly doing `aws ecs update-service --cluster ecs-circleci-qa-cluster --service ecs-circleci-qa-web-app-service --force-new-deployment`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
           # That's the reason it doesn't need to hold any knowledge of the
           # Terraform config even if it is doing blue/green deployment.
@@ -236,15 +236,15 @@ workflows:
           aws-region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          family: "ecs-circleci-qa-service"
+          family: "ecs-circleci-qa-web-app-service"
           cluster-name: "ecs-circleci-qa-cluster"
-          container-image-name-updates: "container=ecs-circleci-qa-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
+          container-image-name-updates: "container=ecs-circleci-qa-web-app-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
           verify-revision-is-deployed: true
           post-steps:
             - run:
                 name: Test the deployment
                 command: |
-                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ecs-circleci-qa-cluster --services ecs-circleci-qa-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ecs-circleci-qa-cluster --services ecs-circleci-qa-web-app-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                   ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                   ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
                   curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"

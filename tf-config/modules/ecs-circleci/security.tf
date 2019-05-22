@@ -28,8 +28,8 @@ resource "aws_security_group" "lb" {
 # to allow traffic from all IP addresses.
 #
 # Traffic to the ECS cluster should only come from the ALB
-resource "aws_security_group" "ecs_tasks" {
-  name = "${local.aws_ecs_task_security_group}"
+resource "aws_security_group" "web_app" {
+  name = "${local.aws_web_app_security_group}"
   vpc_id      = "${aws_vpc.main.id}"
 }
 
@@ -41,7 +41,7 @@ resource "aws_security_group_rule" "ecs_tasks_egress" {
   to_port         = 0
   cidr_blocks     = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.ecs_tasks.id}"
+  security_group_id = "${aws_security_group.web_app.id}"
 }
 
 resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
@@ -53,7 +53,7 @@ resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
 
   # No need to setup `cidr_blocks`, as only load balancer
   # is public facing.
-  security_group_id = "${aws_security_group.ecs_tasks.id}"
+  security_group_id = "${aws_security_group.web_app.id}"
   source_security_group_id = "${aws_security_group.lb.id}"
 }
 
@@ -64,7 +64,7 @@ resource "aws_security_group_rule" "ecs_tasks_self_ingress" {
   from_port       = 0
   to_port         = 0
 
-  security_group_id = "${aws_security_group.ecs_tasks.id}"
+  security_group_id = "${aws_security_group.web_app.id}"
   self = true
 }
 
@@ -80,7 +80,7 @@ resource "aws_security_group_rule" "ecs_tasks_ssh_ingress" {
   # TODO: `Custom IP` rather than `Anywhere`
   cidr_blocks = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.ecs_tasks.id}"
+  security_group_id = "${aws_security_group.web_app.id}"
 }
 
 resource "aws_security_group" "efs" {
@@ -109,7 +109,7 @@ resource "aws_security_group_rule" "efs_ecs_tasks_ingress" {
   to_port         = 2049
 
   security_group_id = "${aws_security_group.efs.id}"
-  source_security_group_id = "${aws_security_group.ecs_tasks.id}"
+  source_security_group_id = "${aws_security_group.web_app.id}"
 }
 
 resource "aws_security_group" "postgres" {
@@ -137,7 +137,7 @@ resource "aws_security_group_rule" "postgres_ecs_tasks_ingress" {
   to_port         = 5432
 
   security_group_id = "${aws_security_group.postgres.id}"
-  source_security_group_id = "${aws_security_group.ecs_tasks.id}"
+  source_security_group_id = "${aws_security_group.web_app.id}"
 }
 
 # TODO:

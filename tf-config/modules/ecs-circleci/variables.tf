@@ -18,6 +18,8 @@ variable "tomcat_container_port" {
 }
 
 variable "web_app_count" {
+  # Needs to be >=2, as in `aws_alb_target_group.health_check` the minimal has to
+  # be >=2 and the max (this value) has to be > min.
   default = 2
 }
 
@@ -51,18 +53,18 @@ locals {
   # These names are used by CircleCI orbs
   aws_ecr_repository_name = "${local.aws_resource_prefix}-repository"
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
-  aws_ecs_service_name = "${local.aws_resource_prefix}-service"
+  aws_ecs_web_app_service_name = "${local.aws_resource_prefix}-web-app-service"
 
   # Internal reference only
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"
   aws_alb_name = "${local.aws_resource_prefix}-alb"
   aws_alb_security_group = "${local.aws_resource_prefix}-alb-sg"
-  aws_ecs_task_security_group = "${local.aws_resource_prefix}-ecs-task-sg"
+  aws_web_app_security_group = "${local.aws_resource_prefix}-web-app-sg"
   aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
   aws_db_instance_identifier = "${local.aws_resource_prefix}-postgres"
   aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
-  aws_ecs_launch_configuration = "${local.aws_resource_prefix}-ecs-launch-configuration"
-  aws_ecs_autoscaling_group = "${local.aws_resource_prefix}-ecs-asg"
+  aws_web_app_launch_configuration = "${local.aws_resource_prefix}-web-app-launch-configuration"
+  aws_web_app_autoscaling_group = "${local.aws_resource_prefix}-web-app-asg"
   aws_git_efs = "${local.aws_resource_prefix}-git-efs"
 }

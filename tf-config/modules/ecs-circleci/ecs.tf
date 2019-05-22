@@ -1,4 +1,4 @@
-variable "web_image" {
+variable "web_app_image" {
   default     = "tomcat:latest"
 }
 
@@ -14,8 +14,8 @@ locals {
 
 # The task definition. This is a simple metadata description of what
 # container to run, and what resource requirements it has.
-resource "aws_ecs_task_definition" "web" {
-  family                   = "${local.aws_ecs_service_name}"
+resource "aws_ecs_task_definition" "web_app" {
+  family                   = "${local.aws_ecs_web_app_service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu                      = "${local.task_cpu}"
@@ -50,10 +50,10 @@ Resources:
   container_definitions = <<DEFINITION
 [
   {
-    "name": "${local.aws_ecs_service_name}",
+    "name": "${local.aws_ecs_web_app_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
-    "image": "${var.web_image}",
+    "image": "${var.web_app_image}",
     "essential": true,
     "portMappings": [
       {
@@ -122,7 +122,7 @@ DEFINITION
     # }
   }
 
-  # Seems no need to make it depends on `aws_launch_configuration.ecs`.
+  # Seems no need to make it depends on `aws_launch_configuration.web_app`.
   # > Before the release of the Amazon ECS-optimized AMI version 2017.03.a, only
   # > file systems that were available when the Docker daemon was started are
   # > available to Docker containers. You can use the latest Amazon ECS-optimized
@@ -143,13 +143,13 @@ DEFINITION
 # http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
 # https://github.com/Capgemini/terraform-amazon-ecs
 resource "aws_ecs_service" "web" {
-  name            = "${local.aws_ecs_service_name}"
+  name            = "${local.aws_ecs_web_app_service_name}"
 
   # No need to specify `iam_role` as we are using `awsvpc` network mode.
   # A service-linked role `AWSServiceRoleForECS` will be created automatically.
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html
   cluster         = "${aws_ecs_cluster.main.id}"
-  task_definition = "${aws_ecs_task_definition.web.arn}"
+  task_definition = "${aws_ecs_task_definition.web_app.arn}"
   desired_count   = "${var.web_app_count}"
   launch_type     = "EC2"
 
@@ -160,18 +160,18 @@ resource "aws_ecs_service" "web" {
     # TODO:
     # After setting up private subnets and NAT gateway, here should be replaced
     # by private subnet.
-    # That may break SSH access defined in `aws_security_group.ecs_tasks` but
+    # That may break SSH access defined in `aws_security_group.web_app` but
     # needs to double check.
-    security_groups = ["${aws_security_group.ecs_tasks.id}"]
+    security_groups = ["${aws_security_group.web_app.id}"]
     subnets         = ["${aws_subnet.public.*.id}"]
 
     # `assign_public_ip = true` is not supported for this launch type
   }
 
   load_balancer {
-    container_name   = "${local.aws_ecs_service_name}"
+    container_name   = "${local.aws_ecs_web_app_service_name}"
     container_port   = "${var.tomcat_container_port}"
-    target_group_arn = "${aws_alb_target_group.app.id}"
+    target_group_arn = "${aws_alb_target_group.web_app.id}"
   }
 
   # TODO:

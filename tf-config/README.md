@@ -107,7 +107,12 @@ OpenJDK 64-Bit Server VM (build 11.0.3+1-Debian-1bpo91, mixed mode, sharing)
 
 Then we can check tomcat log inside of the container.
 
-Inside the machine we may add packages, e.g.
+```
+cd logs
+cat catalina.2019-05-22.log
+```
+
+Inside the machine we may add packages, so we can check the connections to outside of this container. E.g.
 
 ```
 sudo amazon-linux-extras install -y postgresql10

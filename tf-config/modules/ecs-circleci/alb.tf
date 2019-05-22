@@ -14,7 +14,7 @@ resource "aws_alb" "main" {
 
 # A dummy target group is used to setup the ALB to just drop traffic
 # initially, before any real service target groups have been added.
-resource "aws_alb_target_group" "dummy" {
+resource "aws_alb_target_group" "web_app_dummy" {
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -25,7 +25,7 @@ resource "aws_alb_target_group" "dummy" {
     path = "/"
     protocol = "HTTP"
     timeout = 59
-    healthy_threshold = 2
+    healthy_threshold = "${var.web_app_count}"
     unhealthy_threshold = 2
   }
 }
@@ -35,8 +35,8 @@ resource "aws_alb_target_group" "dummy" {
 # to use the addresses yourself, but most often this target group is just
 # connected to an application load balancer, or network load balancer, so
 # it can automatically distribute traffic across all the targets.
-resource "aws_alb_target_group" "app" {
-  name        = "${local.aws_ecs_service_name}"
+resource "aws_alb_target_group" "web_app" {
+  name        = "${local.aws_ecs_web_app_service_name}"
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -62,7 +62,7 @@ resource "aws_alb_target_group" "app" {
     path = "/health_check"
     protocol = "HTTP"
     timeout = 59
-    healthy_threshold = 2
+    healthy_threshold = "${var.web_app_count}"
     unhealthy_threshold = 2
   }
 }
@@ -74,7 +74,7 @@ resource "aws_alb_listener" "front_end" {
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.dummy.id}"
+    target_group_arn = "${aws_alb_target_group.web_app_dummy.id}"
     type             = "forward"
   }
 }
@@ -86,7 +86,7 @@ resource "aws_lb_listener_rule" "all" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_alb_target_group.app.arn}"
+    target_group_arn = "${aws_alb_target_group.web_app.arn}"
   }
 
   condition {

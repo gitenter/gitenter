@@ -20,10 +20,10 @@ data "aws_ami" "ecs_optimized_amis" {
   }
 }
 
-resource "aws_launch_configuration" "ecs" {
-  name                        = "${local.aws_ecs_launch_configuration}"
+resource "aws_launch_configuration" "web_app" {
+  name                        = "${local.aws_web_app_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
-  security_groups             = ["${aws_security_group.ecs_tasks.id}"]
+  security_groups             = ["${aws_security_group.web_app.id}"]
 
   image_id                    = "${data.aws_ami.ecs_optimized_amis.id}"
   # `instance_type` needs to match CPU/memory defined in `aws_ecs_task_definition`
@@ -113,9 +113,9 @@ EOF
   ]
 }
 
-resource "aws_autoscaling_group" "ecs" {
-  name                        = "${local.aws_ecs_autoscaling_group}"
-  launch_configuration        = "${aws_launch_configuration.ecs.name}"
+resource "aws_autoscaling_group" "web_app" {
+  name                        = "${local.aws_web_app_autoscaling_group}"
+  launch_configuration        = "${aws_launch_configuration.web_app.name}"
   vpc_zone_identifier         = ["${aws_subnet.public.*.id}"]
 
   min_size                    = "${var.web_app_count}"
