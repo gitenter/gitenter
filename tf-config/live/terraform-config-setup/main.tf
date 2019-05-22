@@ -20,8 +20,21 @@ variable username {
   default = "terraform-config"
 }
 
+# Create the necessary roles needed to assign to AWS resources (EC2/ECS/...)
+module "iam_roles" {
+  source = "../../modules/iam-terraform-roles-setup"
+}
+
+# TODO:
+# Right now there are 10 policies in this group. In case we need more, AWS will
+# raise an error:
+# > aws_iam_group_policy_attachment.efs: Error attaching policy
+# > arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess to IAM group
+# > terraform-config: LimitExceeded: Cannot exceed quota for PoliciesPerGroup: 10
+#
+# Need a split to multiple policies to add to this role to bypass this problem.
 module "iam_group" {
-  source = "../../modules/iam-group-terraform-config"
+  source = "../../modules/iam-terraform-config-group"
   group_name = "${var.group_name}"
 }
 

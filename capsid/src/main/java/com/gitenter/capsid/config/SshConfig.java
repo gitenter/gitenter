@@ -29,6 +29,15 @@ public class SshConfig {
 		return sshSource;
 	}
 	
+	@Profile("qa")
+	@Bean
+	public SshSource qaSshGitSource() {
+		
+		SshSource sshSource = new SshSource();
+		sshSource.setSshFolderPath("/home/git/.ssh");
+		return sshSource;
+	}
+	
 	@Profile("production")
 	@Bean
 	public SshSource productionSshGitSource() {

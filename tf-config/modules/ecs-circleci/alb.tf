@@ -14,18 +14,18 @@ resource "aws_alb" "main" {
 
 # A dummy target group is used to setup the ALB to just drop traffic
 # initially, before any real service target groups have been added.
-resource "aws_alb_target_group" "dummy" {
+resource "aws_alb_target_group" "web_app_dummy" {
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
 
   health_check {
-    interval = 6
+    interval = 60
     path = "/"
     protocol = "HTTP"
-    timeout = 4
-    healthy_threshold = 2
+    timeout = 59
+    healthy_threshold = "${var.web_app_count}"
     unhealthy_threshold = 2
   }
 }
@@ -35,20 +35,34 @@ resource "aws_alb_target_group" "dummy" {
 # to use the addresses yourself, but most often this target group is just
 # connected to an application load balancer, or network load balancer, so
 # it can automatically distribute traffic across all the targets.
-resource "aws_alb_target_group" "app" {
-  name        = "${local.aws_ecs_service_name}"
+resource "aws_alb_target_group" "web_app" {
+  name        = "${local.aws_ecs_web_app_service_name}"
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
   deregistration_delay = 20
 
+  # `timeout` cannot be too small, otherwise when deploying the real service
+  # system will error out. Then the newly created task will be killed and start
+  # over (forever).
+  # > service ecs-circleci-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
+  # > target-group ecs-circleci-qa-service due to (reason Request timed out)
+  # > Task failed ELB health checks in (target-group ...)
+  #
+  # After increasing timeout period (and check `/`) I am getting
+  # > service ecs-circleci-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
+  # > target-group ecs-circleci-qa-service due to (reason Health checks failed with these codes: [404])
+  # Therefore, I added and use the `/health_check` endpoint.
+  #
+  # TODO:
+  # Probably should pass a different path for health check.
   health_check {
-    interval = 6
-    path = "/"
+    interval = 60
+    path = "/health_check"
     protocol = "HTTP"
-    timeout = 5
-    healthy_threshold = 2
+    timeout = 59
+    healthy_threshold = "${var.web_app_count}"
     unhealthy_threshold = 2
   }
 }
@@ -60,7 +74,7 @@ resource "aws_alb_listener" "front_end" {
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.dummy.id}"
+    target_group_arn = "${aws_alb_target_group.web_app_dummy.id}"
     type             = "forward"
   }
 }
@@ -72,7 +86,7 @@ resource "aws_lb_listener_rule" "all" {
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_alb_target_group.app.arn}"
+    target_group_arn = "${aws_alb_target_group.web_app.arn}"
   }
 
   condition {

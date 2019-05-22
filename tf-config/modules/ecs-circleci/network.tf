@@ -1,10 +1,3 @@
-variable "az_count" {
-  # For both a private and a public subnets, this number needs
-  # to be <=128 (65536/(256*2)=128), otherwise the subnet
-  # `cidr_block` will be out of range.
-  default = "2"
-}
-
 # Fetch AZs in the current region
 data "aws_availability_zones" "available" {}
 

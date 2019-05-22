@@ -79,6 +79,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.formLogin().loginPage("/login")
 			.and()
+			/*
+			 * TODO:
+			 * Currently on AWS ECS /logout will return 403. Try to log into the docker container and
+			 * checked various logs, but I can't see and error message. Need to configure why.
+			 */
 			.logout().logoutUrl("/logout")
 			.and()
 			.rememberMe().tokenValiditySeconds(2419200).key("enterovirus");
