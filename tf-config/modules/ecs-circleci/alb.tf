@@ -21,10 +21,10 @@ resource "aws_alb_target_group" "dummy" {
   target_type = "ip"
 
   health_check {
-    interval = 6
+    interval = 60
     path = "/"
     protocol = "HTTP"
-    timeout = 4
+    timeout = 59
     healthy_threshold = 2
     unhealthy_threshold = 2
   }
@@ -43,11 +43,25 @@ resource "aws_alb_target_group" "app" {
   target_type = "ip"
   deregistration_delay = 20
 
+  # `timeout` cannot be too small, otherwise when deploying the real service
+  # system will error out. Then the newly created task will be killed and start
+  # over (forever).
+  # > service ecs-circleci-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
+  # > target-group ecs-circleci-qa-service due to (reason Request timed out)
+  # > Task failed ELB health checks in (target-group ...)
+  #
+  # After increasing timeout period (and check `/`) I am getting
+  # > service ecs-circleci-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
+  # > target-group ecs-circleci-qa-service due to (reason Health checks failed with these codes: [404])
+  # Therefore, I added and use the `/health_check` endpoint.
+  #
+  # TODO:
+  # Probably should pass a different path for health check.
   health_check {
-    interval = 6
-    path = "/"
+    interval = 60
+    path = "/health_check"
     protocol = "HTTP"
-    timeout = 5
+    timeout = 59
     healthy_threshold = 2
     unhealthy_threshold = 2
   }

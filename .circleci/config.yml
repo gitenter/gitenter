@@ -97,6 +97,16 @@ jobs:
       - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/alter_sequence.sql
       - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
 
+      # Be careful on whether we have a space after `#` in here and `application.properties`.
+      # Their mismatch will cause failures.
+      #
+      # TODO:
+      # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
+      # a seperated step so `qa` and `prod` can both have corresponding changes.
+      - run: sed -i "s/spring.profiles.active=sts/#spring.profiles.active=sts/g" capsid/src/main/resources/application.properties
+      - run: sed -i "s/#spring.profiles.active=qa/spring.profiles.active=qa/g" capsid/src/main/resources/application.properties
+      - run: cat capsid/src/main/resources/application.properties
+
       - run: mvn clean install
       - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
@@ -134,8 +144,13 @@ jobs:
       - image: circleci/openjdk:11.0-jdk
     # Cannot specify `working_directory` to be `.`. Otherwise you'll get error
     # > Directory (.) you are trying to checkout to is not empty and not git repository
+    # That may or may not happen depend on the detail of the image, but we should
+    # just avoid it in general.
     working_directory: /tmp/build
     steps:
+      # `checkout` is for files on GIT. `attach_workspace` is for files saved from
+      # `persist_to_workspace`->`path`. Needs to execute both so we can have both
+      # files (Dockerfile and WAR) needed for the following steps.
       - checkout
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -189,11 +204,22 @@ workflows:
           requires:
             - qa-readiness
           checkout: true
+          attach-workspace: true
+          # Looks like there's a bug in `aws-ecr/build_and_push_image`. Notice that there's nowhere
+          # to specify `working_directory` (in its source code https://github.com/CircleCI-Public/aws-ecr-orb)
+          # and it is actually it is using `.`. That's the reason it actually doesn't support any
+          # `workspace-root` which is not `.` (bug reported https://github.com/CircleCI-Public/aws-ecr-orb/issues/32)
+          #
+          # It works fine in here to just specify `workspace-root` to be also `.`.
+          # However, for e.g. `circleci/openjdk:11.0-jdk` we actually canNOT specify `working_directory`
+          # to be `.`, otherwise we'll get the error of (https://circleci.com/gh/gitenter/gitenter/398)
+          # > Directory (.) you are trying to checkout to is not empty and not git repository
+          workspace-root: .
           account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          dockerfile: ./docker/tomcat-trivial/Dockerfile
-          path: ./docker/tomcat-trivial
+          dockerfile: ./docker/web/Dockerfile
+          path: ./docker/web
           region: AWS_DEFAULT_REGION
           repo: "ecs-circleci-qa-repository"
           tag: "${CIRCLE_SHA1}"
@@ -221,7 +247,7 @@ workflows:
                   TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ecs-circleci-qa-cluster --services ecs-circleci-qa-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                   ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                   ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
-                  curl -s --retry 10 http://$ELB_DNS_NAME | grep "Hello World!"
+                  curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"
       - acceptance-test:
           requires:
             - aws-ecs/deploy-service-update

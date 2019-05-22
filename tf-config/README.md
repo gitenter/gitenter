@@ -86,7 +86,11 @@ terraform destroy
 
 # Debugging Tips
 
-Access website: using `alb_hostname`.
+## Access website
+
+Using `alb_hostname`.
+
+## Debug inside of the EC2 instance
 
 Log into EC2 machines (Amazon Linux 2 docker containers for EC2 launch type): `ssh ec2-user@<ip-address>`.
 
@@ -101,10 +105,27 @@ OpenJDK Runtime Environment (build 11.0.3+1-Debian-1bpo91)
 OpenJDK 64-Bit Server VM (build 11.0.3+1-Debian-1bpo91, mixed mode, sharing)
 ```
 
-Connect to Postgres:
+Then we can check tomcat log inside of the container.
+
+Inside the machine we may add packages, e.g.
+
+```
+sudo amazon-linux-extras install -y postgresql10
+```
+
+Connect to Postgres (both local and inside of the container):
 
 ```
 psql --host=ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
+```
+
+## Pulling the ECR image locally and debug
+
+```
+aws configure
+aws ecr get-login --region us-east-1 --no-include-email
+docker login -u AWS -p ... https://662490392829.dkr.ecr.us-east-1.amazonaws.com
+docker run -p 8885:8080 662490392829.dkr.ecr.us-east-1.amazonaws.com/ecs-circleci-qa-repository:c1f58a2c852d24b22bc9b12f137fb1fbd2d16a5f
 ```
 
 # AWS Random Notes
