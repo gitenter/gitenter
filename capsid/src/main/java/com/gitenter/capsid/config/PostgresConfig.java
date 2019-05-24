@@ -26,7 +26,7 @@ public class PostgresConfig {
 	public DataSource dockerDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://database:5432/gitenter");
+		dataSource.setUrl("jdbc:postgresql://postgres:5432/gitenter");
 		dataSource.setUsername("gitenter_app");
 		dataSource.setPassword("zooo");
 		return dataSource;

@@ -20,7 +20,7 @@ public class RedisConfig {
 	@Profile("docker")
 	@Bean
 	public RedisConnectionFactory dockerConfiguration() {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("localhost", 6379);
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("redis", 6379);
 		return new JedisConnectionFactory(configuration);
 	}
 
