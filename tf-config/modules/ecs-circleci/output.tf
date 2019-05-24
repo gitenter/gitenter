@@ -10,3 +10,7 @@ output "alb_hostname" {
 output "postgres_endpoint" {
   value = "${aws_db_instance.postgres.endpoint}"
 }
+
+output "redis_session_endpoint" {
+  value = "${aws_elasticache_replication_group.redis_session.primary_endpoint_address}"
+}

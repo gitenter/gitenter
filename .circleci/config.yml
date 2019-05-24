@@ -179,7 +179,7 @@ workflows:
            - java-build
            - python-linter
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
-      # needs to apply `terraform apply` under `tf-config/live/ec2-circleci-qa` first.
+      # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-qa` first.
       # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
       # https://github.com/CircleCI-Public/aws-ecr-orb
       #
@@ -200,7 +200,7 @@ workflows:
       # be just call the Orbs in executor definition rather than in workflows. Tried
       # orbs as steps in jobs which doesn't work.
       # TODO:
-      # Redefine `ecs-circleci-qa` prefix as a pipeline variable (pre-release feature).
+      # Redefine `qa` prefix as a pipeline variable (pre-release feature).
       # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
       # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
       # UI but nor in orbs.
@@ -226,10 +226,10 @@ workflows:
           dockerfile: ./docker/web/Dockerfile
           path: ./docker/web
           region: AWS_DEFAULT_REGION
-          repo: "ecs-circleci-qa-repository"
+          repo: "qa-repository"
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
-          # This orb is mostly doing `aws ecs update-service --cluster ecs-circleci-qa-cluster --service ecs-circleci-qa-web-app-service --force-new-deployment`
+          # This orb is mostly doing `aws ecs update-service --cluster qa-cluster --service qa-web-app-service --force-new-deployment`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
           # That's the reason it doesn't need to hold any knowledge of the
           # Terraform config even if it is doing blue/green deployment.
@@ -241,15 +241,15 @@ workflows:
           aws-region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          family: "ecs-circleci-qa-web-app-service"
-          cluster-name: "ecs-circleci-qa-cluster"
-          container-image-name-updates: "container=ecs-circleci-qa-web-app-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ecs-circleci-qa-repository:${CIRCLE_SHA1}"
+          family: "qa-web-app-service"
+          cluster-name: "qa-cluster"
+          container-image-name-updates: "container=qa-web-app-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/qa-repository:${CIRCLE_SHA1}"
           verify-revision-is-deployed: true
           post-steps:
             - run:
                 name: Test the deployment
                 command: |
-                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster ecs-circleci-qa-cluster --services ecs-circleci-qa-web-app-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                  TARGET_GROUP_ARN=$(aws ecs describe-services --cluster qa-cluster --services qa-web-app-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                   ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                   ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
                   curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"

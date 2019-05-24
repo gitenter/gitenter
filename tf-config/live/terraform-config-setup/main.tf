@@ -10,11 +10,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-variable group_name {
-  type = "string"
-  default = "terraform-config"
-}
-
 variable username {
   type = "string"
   default = "terraform-config"
@@ -33,9 +28,8 @@ module "iam_roles" {
 # > terraform-config: LimitExceeded: Cannot exceed quota for PoliciesPerGroup: 10
 #
 # Need a split to multiple policies to add to this role to bypass this problem.
-module "iam_group" {
+module "iam_config_group" {
   source = "../../modules/iam-terraform-config-group"
-  group_name = "${var.group_name}"
 }
 
 # TODO:
@@ -44,8 +38,37 @@ module "iam_group" {
 # https://medium.com/devopslinks/aws-iam-user-and-policy-creation-using-terraform-7cd781e06c97
 # However, it seems not that easy to create `aws_iam_access_key` for that
 # series: `aws_iam_access_key.terraform: user must be a single value, not a list`
-module "iam_user" {
-  source = "../../modules/iam-user"
-  group_name = "${var.group_name}"
-  username = "${var.username}"
+resource "aws_iam_user" "main" {
+  name = "${var.username}"
+}
+
+resource "aws_iam_access_key" "main" {
+  user = "${aws_iam_user.main.name}"
+}
+
+resource "aws_iam_group_membership" "stateless" {
+  name = "${module.iam_config_group.stateless_group_name}-membership"
+  group = "${module.iam_config_group.stateless_group_name}"
+
+  users = [
+    "${aws_iam_user.main.name}",
+  ]
+}
+
+resource "aws_iam_group_membership" "storage" {
+  name = "${module.iam_config_group.storage_group_name}-membership"
+  group = "${module.iam_config_group.storage_group_name}"
+
+  users = [
+    "${aws_iam_user.main.name}",
+  ]
+}
+
+resource "aws_iam_group_membership" "accessary" {
+  name = "${module.iam_config_group.accessary_group_name}-membership"
+  group = "${module.iam_config_group.accessary_group_name}"
+
+  users = [
+    "${aws_iam_user.main.name}",
+  ]
 }

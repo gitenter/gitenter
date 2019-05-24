@@ -48,7 +48,7 @@ variable "container_path" {
 
 locals {
   # Prefix to be used in the naming of some of the created AWS resources
-  aws_resource_prefix = "ecs-circleci-${var.env_prefix}"
+  aws_resource_prefix = "${var.env_prefix}"
 
   # These names are used by CircleCI orbs
   aws_ecr_repository_name = "${local.aws_resource_prefix}-repository"
@@ -62,7 +62,9 @@ locals {
   aws_web_app_security_group = "${local.aws_resource_prefix}-web-app-sg"
   aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
-  aws_db_instance_identifier = "${local.aws_resource_prefix}-postgres"
+  aws_postgres = "${local.aws_resource_prefix}-postgres"
+  aws_redis_security_group = "${local.aws_resource_prefix}-redis-sg"
+  aws_redis_session = "${local.aws_resource_prefix}-redis-session" # Need to <=20 characters
   aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
   aws_web_app_launch_configuration = "${local.aws_resource_prefix}-web-app-launch-configuration"
   aws_web_app_autoscaling_group = "${local.aws_resource_prefix}-web-app-asg"

@@ -20,14 +20,14 @@ public class RedisConfig {
 	@Profile("docker")
 	@Bean
 	public RedisConnectionFactory dockerConfiguration() {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("redis", 6379);
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("redis-session", 6379);
 		return new JedisConnectionFactory(configuration);
 	}
 
 	@Profile("qa")
 	@Bean
 	public RedisConnectionFactory qaConfiguration() {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("localhost", 6379);
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("qa-redis-sssn.vf1dmm.ng.0001.use1.cache.amazonaws.com", 6379);
 		return new JedisConnectionFactory(configuration);
 	}
 
