@@ -31,6 +31,11 @@ executors:
         environment:
           POSTGRES_PASSWORD: postgres
 
+      # TODO:
+      # Should be consistent in version (Redis 5.0.5) with production setup, but
+      # there is no CircleCI image for that yet.
+      - image: circleci/redis:4-alpine
+
     working_directory: /tmp/java-build
 
     environment:
