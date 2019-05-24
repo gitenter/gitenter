@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
-public class DatabaseConfig {
+public class PostgresConfig {
 
 	@Profile("sts")
 	@Bean
