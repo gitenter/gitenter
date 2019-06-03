@@ -37,7 +37,7 @@ public class PostgresConfig {
 	public DataSource qaDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com:5432/gitenter");
+		dataSource.setUrl("jdbc:postgresql://qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com:5432/gitenter");
 		dataSource.setUsername("gitenter_app");
 		dataSource.setPassword("zooo");
 		return dataSource;

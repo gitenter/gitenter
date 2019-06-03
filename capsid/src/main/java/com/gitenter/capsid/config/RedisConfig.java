@@ -27,7 +27,7 @@ public class RedisConfig {
 	@Profile("qa")
 	@Bean
 	public RedisConnectionFactory qaConfiguration() {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("qa-redis-sssn.vf1dmm.ng.0001.use1.cache.amazonaws.com", 6379);
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com", 6379);
 		return new JedisConnectionFactory(configuration);
 	}
 
