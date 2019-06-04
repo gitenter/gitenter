@@ -61,14 +61,15 @@ resource "aws_alb_target_group" "web_app" {
   # TODO:
   # Currently gives 404/503. Want to log into container to check the error message
   # so temperarily disabled `health_check`
-  # health_check {
-  #   interval = 60
-  #   path = "/health_check"
-  #   protocol = "HTTP"
-  #   timeout = 59
-  #   healthy_threshold = "${var.web_app_count}"
-  #   unhealthy_threshold = 2
-  # }
+  health_check {
+    interval = 60
+    # path = "/health_check"
+    path = "/resources/static_health_check.html" # For not to restart container (so we can check log)
+    protocol = "HTTP"
+    timeout = 59
+    healthy_threshold = "${var.web_app_count}"
+    unhealthy_threshold = 2
+  }
 }
 
 # Redirect all traffic from the ALB to the target group
