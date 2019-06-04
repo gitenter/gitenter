@@ -43,6 +43,23 @@ resource "aws_alb_target_group" "web_app" {
   target_type = "ip"
   deregistration_delay = 20
 
+  # Although we are using Spring Session (therefore no absolute need for sticky sessions
+  # and/or session replication), we still enable it, as it can open the possibility
+  # for local RAM caching.
+  #
+  # It is relatively easy to setup sticky sessions in AWS. For ALB, it is defined in target group
+  # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html#sticky-sessions
+  # while if we use ELB, it is defined inside of the load balancer
+  # https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-sticky-sessions.html
+  # https://www.terraform.io/docs/providers/aws/r/lb_cookie_stickiness_policy.html
+  stickiness {
+    type = "lb_cookie"
+    # `cookie_duration` cannot be the same with Spring "remember me" duration defined
+    # in `SecurityConfig.java`, as it needs to be in between 1 second and 1 week.
+    cookie_duration = 86400
+    enabled = true
+  }
+
   # `timeout` cannot be too small, otherwise when deploying the real service
   # system will error out. Then the newly created task will be killed and start
   # over (forever).
@@ -60,6 +77,7 @@ resource "aws_alb_target_group" "web_app" {
   health_check {
     interval = 60
     path = "/health_check"
+    # path = "/resources/static_health_check.html" # Both health_check endpoint needs a healthy Spring Tomcat state.
     protocol = "HTTP"
     timeout = 59
     healthy_threshold = "${var.web_app_count}"

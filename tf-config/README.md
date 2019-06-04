@@ -56,7 +56,7 @@ terraform apply
 ```
 
 ```bash
-POSTGRES_ENDPOINT="ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
+POSTGRES_ENDPOINT="qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
 
 cd ~/Workspace/gitenter/
 PGPASSWORD=postgres psql -U postgres -h $POSTGRES_ENDPOINT -p 5432 -w -f database/create_users.sql
@@ -115,13 +115,34 @@ cat catalina.2019-05-22.log
 Inside the machine we may add packages, so we can check the connections to outside of this container. E.g.
 
 ```
+amazon-linux-extras list
 sudo amazon-linux-extras install -y postgresql10
 ```
 
 Connect to Postgres (both local and inside of the container):
 
 ```
-psql --host=ecs-circleci-qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
+psql --host=qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
+```
+
+Install `redis-cli`:
+
+```
+sudo yum install gcc
+sudo yum install wget
+wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make && sudo cp src/redis-cli /usr/local/bin/ && sudo chmod 755 /usr/local/bin/redis-cli
+```
+
+Connect to Redis (inside of the container):
+
+```
+redis-cli -h qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com
+qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> KEYS *
+(empty list or set)
+qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> SET a 1
+OK
+qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> GET a
+"1"
 ```
 
 ## Pulling the ECR image locally and debug

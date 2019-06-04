@@ -45,6 +45,11 @@ public class AuthorizationController {
 		}
 		
 		anonymousService.signUp(memberRegisterDTO);
+		/*
+		 * TODO:
+		 * Should reply some kind of "register successful", rather than directly go back to
+		 * the login page.
+		 */
 		return "redirect:/login";
 	}
 	

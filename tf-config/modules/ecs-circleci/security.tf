@@ -149,7 +149,35 @@ resource "aws_security_group_rule" "postgres_psql_ingress" {
   protocol        = "tcp"
   from_port       = 5432
   to_port         = 5432
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks     = ["0.0.0.0/0"]
 
   security_group_id = "${aws_security_group.postgres.id}"
+}
+
+resource "aws_security_group" "redis" {
+  name = "${local.aws_redis_security_group}"
+  vpc_id = "${aws_vpc.main.id}"
+}
+
+resource "aws_security_group_rule" "redis_egress" {
+  type            = "egress"
+
+  protocol        = "-1"
+  from_port       = 0
+  to_port         = 0
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.redis.id}"
+}
+
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.Scenarios.html#USER_VPC.Scenario1
+resource "aws_security_group_rule" "redis_ecs_tasks_ingress" {
+  type            = "ingress"
+
+  protocol        = "tcp"
+  from_port       = 6379
+  to_port         = 6379
+
+  security_group_id = "${aws_security_group.redis.id}"
+  source_security_group_id = "${aws_security_group.web_app.id}"
 }

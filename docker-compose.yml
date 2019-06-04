@@ -1,9 +1,9 @@
 version: "3"
 services:
 
-  # Then the database can be connected through `psql -h database -U postgres`
+  # Then the database can be connected through `psql -h postgres -U postgres`
   # from a different container with `psql` installed (e.g. `dev-machine`).
-  database:
+  postgres:
     image: postgres:11.1
     volumes:
       - ./database:/database
@@ -12,6 +12,10 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
 
+  redis-session:
+    image: redis:5.0.5
+    restart: always
+
   dev-machine:
     build:
       context: ./docker/dev-machine
@@ -19,7 +23,8 @@ services:
     volumes:
       - ../gitenter:/gitenter
     depends_on:
-      - database
+      - postgres
+      - redis-session
     tty: true
 
   git:
@@ -56,7 +61,8 @@ services:
     ports:
       - "8886:8080"
     depends_on:
-      - database
+      - postgres
+      - redis-session
     tty: true
     restart: always
 

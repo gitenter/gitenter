@@ -1,5 +1,5 @@
-resource "aws_iam_group" "main" {
-  name = "${var.group_name}"
+resource "aws_iam_group" "stateless" {
+  name = "${local.stateless_group_name}"
 }
 
 data "aws_iam_policy" "ec2" {
@@ -7,61 +7,8 @@ data "aws_iam_policy" "ec2" {
 }
 
 resource "aws_iam_group_policy_attachment" "ec2" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${data.aws_iam_policy.ec2.arn}"
-}
-
-data "aws_iam_policy" "rds" {
-  arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
-}
-
-resource "aws_iam_group_policy_attachment" "rds" {
-  group = "${aws_iam_group.main.id}"
-  policy_arn = "${data.aws_iam_policy.rds.arn}"
-}
-
-# TODO:
-# Probably only need `elasticfilesystem:CreateFileSystem` for EFS operations,
-# but I'll just give full access for now.
-data "aws_iam_policy" "efs" {
-  arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess"
-}
-
-resource "aws_iam_group_policy_attachment" "efs" {
-  group = "${aws_iam_group.main.id}"
-  policy_arn = "${data.aws_iam_policy.efs.arn}"
-}
-
-resource "aws_iam_policy" "ecr" {
-  name        = "AmazonECRConfigPolicy"
-  path        = "/"
-
-  # https://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicyExamples.html
-  # `ecr:CreateRepository` and `ecr:ListTagsForResource` is used by `resource "aws_ecr_repository"`
-  # `ecr:DescribeRepositories` is used by `data "aws_ecr_repository"`
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "DenyPull",
-            "Effect": "Allow",
-            "Action": [
-                "ecr:CreateRepository",
-                "ecr:DeleteRepository",
-                "ecr:ListTagsForResource",
-                "ecr:DescribeRepositories"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_group_policy_attachment" "ecr" {
-  group = "${aws_iam_group.main.id}"
-  policy_arn = "${aws_iam_policy.ecr.arn}"
 }
 
 # Policy suggested:
@@ -78,7 +25,7 @@ data "aws_iam_policy" "ecs" {
 }
 
 resource "aws_iam_group_policy_attachment" "ecs" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${data.aws_iam_policy.ecs.arn}"
 }
 
@@ -111,7 +58,7 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "ecs_service_linked_attach" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${aws_iam_policy.ecs_service_linked.arn}"
 }
 
@@ -123,7 +70,7 @@ data "aws_iam_policy" "ecs_instance" {
 }
 
 resource "aws_iam_group_policy_attachment" "ecs_instance_attach" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
 }
 
@@ -151,7 +98,7 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "role_linked_attach" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${aws_iam_policy.role_linked.arn}"
 }
 
@@ -160,7 +107,7 @@ data "aws_iam_policy" "ecs_task_execution" {
 }
 
 resource "aws_iam_group_policy_attachment" "ecs_task_execution_attach" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
 }
 
@@ -189,6 +136,6 @@ EOF
 }
 
 resource "aws_iam_group_policy_attachment" "instance_profile_attach" {
-  group = "${aws_iam_group.main.id}"
+  group = "${aws_iam_group.stateless.id}"
   policy_arn = "${aws_iam_policy.instance_profile.arn}"
 }
