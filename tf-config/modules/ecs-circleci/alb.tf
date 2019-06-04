@@ -10,6 +10,10 @@ resource "aws_alb" "main" {
   # TODO:
   # Change to `true` for production
   enable_deletion_protection = false
+
+  depends_on = [
+    "aws_internet_gateway.gw"
+  ]
 }
 
 # A dummy target group is used to setup the ALB to just drop traffic
@@ -86,7 +90,7 @@ resource "aws_alb_target_group" "web_app" {
 }
 
 # Redirect all traffic from the ALB to the target group
-resource "aws_alb_listener" "front_end" {
+resource "aws_alb_listener" "web_front_end" {
   load_balancer_arn = "${aws_alb.main.id}"
   port              = "${var.http_port}"
   protocol          = "HTTP"
@@ -99,7 +103,7 @@ resource "aws_alb_listener" "front_end" {
 
 # Create a rule on the load balancer for routing traffic to the target group
 resource "aws_lb_listener_rule" "all" {
-  listener_arn = "${aws_alb_listener.front_end.arn}"
+  listener_arn = "${aws_alb_listener.web_front_end.arn}"
   priority     = 1
 
   action {

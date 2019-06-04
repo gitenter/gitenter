@@ -42,7 +42,7 @@ variable "efs_docker_volumn_name" {
 # Probably should set this as `/home/git` but in that case multiple git docker
 # containers will need to share the same `.*` setup files, which is not doable.
 # So probably needs `/home/git/data` or we do `/git` and `chown` it.
-variable "container_path" {
+variable "efs_web_container_path" {
   default = "/data"
 }
 
