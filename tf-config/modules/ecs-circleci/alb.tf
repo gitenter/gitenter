@@ -1,8 +1,8 @@
-resource "aws_alb" "main" {
-  name               = "${local.aws_alb_name}"
+resource "aws_lb" "web" {
+  name               = "${local.aws_web_lb_name}"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["${aws_security_group.lb.id}"]
+  security_groups    = ["${aws_security_group.web_alb.id}"]
   subnets            = ["${aws_subnet.public.*.id}"]
 
   idle_timeout       = 30
@@ -90,20 +90,20 @@ resource "aws_alb_target_group" "web_app" {
 }
 
 # Redirect all traffic from the ALB to the target group
-resource "aws_alb_listener" "web_front_end" {
-  load_balancer_arn = "${aws_alb.main.id}"
+resource "aws_lb_listener" "web_front_end" {
+  load_balancer_arn = "${aws_lb.web.id}"
   port              = "${var.http_port}"
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.web_app_dummy.id}"
     type             = "forward"
+    target_group_arn = "${aws_alb_target_group.web_app_dummy.id}"
   }
 }
 
 # Create a rule on the load balancer for routing traffic to the target group
-resource "aws_lb_listener_rule" "all" {
-  listener_arn = "${aws_alb_listener.web_front_end.arn}"
+resource "aws_lb_listener_rule" "web_all" {
+  listener_arn = "${aws_lb_listener.web_front_end.arn}"
   priority     = 1
 
   action {

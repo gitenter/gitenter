@@ -1,5 +1,9 @@
-output "alb_hostname" {
-  value = "${module.ecs_circleci.alb_hostname}"
+output "web_lb_hostname" {
+  value = "${module.ecs_circleci.web_lb_hostname}"
+}
+
+output "git_lb_hostname" {
+  value = "${module.ecs_circleci.git_lb_hostname}"
 }
 
 output "postgres_endpoint" {

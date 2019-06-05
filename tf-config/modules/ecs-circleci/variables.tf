@@ -57,8 +57,9 @@ locals {
 
   # Internal reference only
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"
-  aws_alb_name = "${local.aws_resource_prefix}-alb"
-  aws_alb_security_group = "${local.aws_resource_prefix}-alb-sg"
+  aws_web_lb_name = "${local.aws_resource_prefix}-web-alb"
+  aws_git_lb_name = "${local.aws_resource_prefix}-git-nlb"
+  aws_web_alb_security_group = "${local.aws_resource_prefix}-web-alb-sg"
   aws_web_app_security_group = "${local.aws_resource_prefix}-web-app-sg"
   aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"

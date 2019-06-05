@@ -184,7 +184,7 @@ resource "aws_ecs_service" "web" {
 
   depends_on = [
     "aws_ecr_repository.app_repository",
-    "aws_lb_listener_rule.all"
+    "aws_lb_listener_rule.web_all"
   ]
 }
 

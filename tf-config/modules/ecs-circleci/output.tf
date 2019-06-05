@@ -3,8 +3,12 @@
 # Both website and EFS docker mount-bind are only available a while after the
 # Terraform job is done, as `aws_ecs_servive` (which is created first) is keeping
 # seeking available EC2 instances and apply task to it.
-output "alb_hostname" {
-  value = "http://${aws_alb.main.dns_name}"
+output "web_lb_hostname" {
+  value = "http://${aws_lb.web.dns_name}"
+}
+
+output "git_lb_hostname" {
+  value = "http://${aws_lb.git.dns_name}"
 }
 
 output "postgres_endpoint" {

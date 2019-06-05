@@ -1,6 +1,6 @@
 # ALB Security Group: Edit this to restrict access to the application
-resource "aws_security_group" "lb" {
-  name = "${local.aws_alb_security_group}"
+resource "aws_security_group" "web_alb" {
+  name = "${local.aws_web_alb_security_group}"
   vpc_id      = "${aws_vpc.main.id}"
 
   egress {
@@ -54,7 +54,7 @@ resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
   # No need to setup `cidr_blocks`, as only load balancer
   # is public facing.
   security_group_id = "${aws_security_group.web_app.id}"
-  source_security_group_id = "${aws_security_group.lb.id}"
+  source_security_group_id = "${aws_security_group.web_alb.id}"
 }
 
 resource "aws_security_group_rule" "ecs_tasks_self_ingress" {
