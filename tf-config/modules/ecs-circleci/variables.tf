@@ -18,7 +18,7 @@ variable "tomcat_container_port" {
 }
 
 variable "web_app_count" {
-  # Needs to be >=2, as in `aws_alb_target_group.health_check` the minimal has to
+  # Needs to be >=2, as in `aws_lb_target_group.health_check` the minimal has to
   # be >=2 and the max (this value) has to be > min.
   default = 2
 }
@@ -54,6 +54,7 @@ locals {
   aws_ecr_repository_name = "${local.aws_resource_prefix}-repository"
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
   aws_ecs_web_app_service_name = "${local.aws_resource_prefix}-web-app-service"
+  aws_ecs_git_service_name = "${local.aws_resource_prefix}-git-service"
 
   # Internal reference only
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"

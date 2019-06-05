@@ -18,7 +18,12 @@ resource "aws_lb" "web" {
 
 # A dummy target group is used to setup the ALB to just drop traffic
 # initially, before any real service target groups have been added.
-resource "aws_alb_target_group" "web_app_dummy" {
+# No actual instance (target) is registered in this target group.
+#
+# TODO:
+# Not sure why it is then necessary, as the priority=1 `aws_lb_listener_rule`
+# consume all path patterns.
+resource "aws_lb_target_group" "web_app_dummy" {
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -34,12 +39,8 @@ resource "aws_alb_target_group" "web_app_dummy" {
   }
 }
 
-# A target group. This is used for keeping track of all the tasks, and
-# what IP addresses / port numbers they have. You can query it yourself,
-# to use the addresses yourself, but most often this target group is just
-# connected to an application load balancer, or network load balancer, so
-# it can automatically distribute traffic across all the targets.
-resource "aws_alb_target_group" "web_app" {
+# Register all the web app instance/container into this target group.
+resource "aws_lb_target_group" "web_app" {
   name        = "${local.aws_ecs_web_app_service_name}"
   port        = "${var.http_port}"
   protocol    = "HTTP"
@@ -78,6 +79,11 @@ resource "aws_alb_target_group" "web_app" {
   #
   # TODO:
   # Probably should pass a different path for health check.
+  #
+  # TODO:
+  # I don't understand why the initial tomcat image can pass this health check.
+  # Note that ECS is registered to this target group, but tomcat default server
+  # for sure doesn't have path `/health_check`.
   health_check {
     interval = 60
     path = "/health_check"
@@ -95,20 +101,33 @@ resource "aws_lb_listener" "web_front_end" {
   port              = "${var.http_port}"
   protocol          = "HTTP"
 
+  # Here defines the default rule. Default rules can't have conditions.
+  # More rules with various priority can be defined later using `aws_lb_listener_rule`.
+  # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#listener-rules
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_alb_target_group.web_app_dummy.id}"
+    target_group_arn = "${aws_lb_target_group.web_app_dummy.id}"
   }
 }
 
-# Create a rule on the load balancer for routing traffic to the target group
+# Load balancer listener can have multiple rules. Rules are evaluated in priority
+# order, (based on whether the `condition` is satisfied or not) from the lowest
+# value to the highest value. The default rule is evaluated last.
+# https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#listener-rules
+#
+# TODO:
+# We may consider having paths `/about`, `/documentation` in different servers
+# (different ECS containers for which the service may be implemented in different
+# frameworks).
+# If that is the case, we'll need multiple rules with different priority and
+# non-trivial path pattern.
 resource "aws_lb_listener_rule" "web_all" {
   listener_arn = "${aws_lb_listener.web_front_end.arn}"
   priority     = 1
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_alb_target_group.web_app.arn}"
+    target_group_arn = "${aws_lb_target_group.web_app.arn}"
   }
 
   condition {

@@ -21,7 +21,8 @@ resource "aws_lb" "git" {
   ]
 }
 
-resource "aws_alb_target_group" "git_dummy" {
+resource "aws_lb_target_group" "git" {
+  name        = "${local.aws_ecs_git_service_name}"
   port        = 22
   protocol    = "TCP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -36,16 +37,15 @@ resource "aws_alb_target_group" "git_dummy" {
   }
 }
 
+# Notice that for NLB there cannot be multiple listener rules with various
+# priorities/path patterns.
 resource "aws_lb_listener" "git_front_end" {
   load_balancer_arn = "${aws_lb.git.id}"
   port              = 22
   protocol          = "TCP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.git_dummy.id}"
+    target_group_arn = "${aws_lb_target_group.git.id}"
     type             = "forward"
   }
 }
-
-# TODO:
-# A similar one for `aws_lb_listener_rule.git_all` for real target group.

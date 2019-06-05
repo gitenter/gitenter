@@ -171,7 +171,7 @@ resource "aws_ecs_service" "web" {
   load_balancer {
     container_name   = "${local.aws_ecs_web_app_service_name}"
     container_port   = "${var.tomcat_container_port}"
-    target_group_arn = "${aws_alb_target_group.web_app.id}"
+    target_group_arn = "${aws_lb_target_group.web_app.id}"
   }
 
   # TODO:
