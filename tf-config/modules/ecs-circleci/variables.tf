@@ -23,6 +23,10 @@ variable "web_app_count" {
   default = 2
 }
 
+variable "git_count" {
+  default = 2
+}
+
 # Seems not useful outside of Terraform.
 variable "efs_mount_point" {
   # Cannot use a relative localtion from `~`, as it is created in `aws_launch_configuration`
@@ -62,6 +66,7 @@ locals {
   aws_git_lb_name = "${local.aws_resource_prefix}-git-nlb"
   aws_web_alb_security_group = "${local.aws_resource_prefix}-web-alb-sg"
   aws_web_app_security_group = "${local.aws_resource_prefix}-web-app-sg"
+  aws_git_security_group = "${local.aws_resource_prefix}-git-sg"
   aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
   aws_postgres = "${local.aws_resource_prefix}-postgres"
@@ -70,5 +75,7 @@ locals {
   aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
   aws_web_app_launch_configuration = "${local.aws_resource_prefix}-web-app-launch-configuration"
   aws_web_app_autoscaling_group = "${local.aws_resource_prefix}-web-app-asg"
+  aws_git_launch_configuration = "${local.aws_resource_prefix}-git-launch-configuration"
+  aws_git_autoscaling_group = "${local.aws_resource_prefix}-git-asg"
   aws_git_efs = "${local.aws_resource_prefix}-git-efs"
 }

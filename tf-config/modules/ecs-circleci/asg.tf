@@ -20,10 +20,31 @@ data "aws_ami" "ecs_optimized_amis" {
   }
 }
 
+# TODO:
+# Currently will fail this step by
+/*
+* module.ecs_circleci.aws_autoscaling_group.web_app: 1 error(s) occurred:
+
+* aws_autoscaling_group.web_app: "qa-web-app-asg": Waiting up to 10m0s: Need at least 2 healthy instances in ASG, have 0. Most recent activity: {
+  ActivityId: "ece5ad04-df35-38af-605b-a4d2527faee9",
+  AutoScalingGroupName: "qa-web-app-asg",
+  Cause: "At 2019-06-10T11:48:22Z an instance was started in response to a difference between desired and actual capacity, increasing the capacity from 0 to 2.",
+  Description: "Launching a new EC2 instance.  Status Reason: The requested configuration is currently not supported. Please check the documentation for supported configurations. Launching EC2 instance failed.",
+  Details: "{\"Subnet ID\":\"subnet-03c89947ac3d766bf\",\"Availability Zone\":\"us-east-1b\"}",
+  EndTime: 2019-06-10 11:48:24 +0000 UTC,
+  Progress: 100,
+  StartTime: 2019-06-10 11:48:24.526 +0000 UTC,
+  StatusCode: "Failed",
+  StatusMessage: "The requested configuration is currently not supported. Please check the documentation for supported configurations. Launching EC2 instance failed."
+}
+*/
+# Looks like has nothing to do with ECS setup (as create EC2 instance has not
+# touching that part yet).
 resource "aws_launch_configuration" "web_app" {
   name                        = "${local.aws_web_app_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
   security_groups             = ["${aws_security_group.web_app.id}"]
+#  security_groups             = ["${aws_security_group.web_app.id}", "${aws_security_group.git.id}"]
 
   image_id                    = "${data.aws_ami.ecs_optimized_amis.id}"
   # `instance_type` needs to match CPU/memory defined in `aws_ecs_task_definition`

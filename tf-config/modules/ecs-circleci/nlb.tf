@@ -37,8 +37,8 @@ resource "aws_lb_target_group" "git" {
   }
 }
 
-# Notice that for NLB there cannot be multiple listener rules with various
-# priorities/path patterns.
+# Notice that for NLB there cannot be multiple listener rules. As it doesn't support
+# path-based/host-based routing, there's no need to do so.
 resource "aws_lb_listener" "git_front_end" {
   load_balancer_arn = "${aws_lb.git.id}"
   port              = 22

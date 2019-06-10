@@ -83,6 +83,25 @@ resource "aws_security_group_rule" "ecs_tasks_ssh_ingress" {
   security_group_id = "${aws_security_group.web_app.id}"
 }
 
+resource "aws_security_group" "git" {
+  name = "${local.aws_git_security_group}"
+  vpc_id      = "${aws_vpc.main.id}"
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_security_group" "efs" {
   name = "${local.aws_efs_security_group}"
   vpc_id = "${aws_vpc.main.id}"

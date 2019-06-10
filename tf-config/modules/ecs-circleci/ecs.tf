@@ -2,12 +2,23 @@ variable "web_app_image" {
   default     = "tomcat:latest"
 }
 
+variable "git_image" {
+  default     = "ubuntu:18.04"
+}
+
 locals {
-  # Needs to match EC2 `instance_type`.
+  # Needs to be downsized then than EC2 `instance_type`. Otherwise a EC2 instance
+  # cannot hold one single container.
   #
   # Notice that `t2.micro`-256/512 doesn't work. Probably that's because the memory
   # difference between EC2 and container are not large enough for ECS utilities.
   # `t2-small`-512/1024 doesn't work for deploying a whole website the SECOND time.
+  #
+  # Also, notice that every EC2 instance may hold multiple containers (so after
+  # scaling up we may have bigger EC2 instances). However, for web application we
+  # may have a lot of tiny traffic so no need for each container to be big.
+  # By doing so, we don't need to have multiple executors (e.g. boosted by supervisor)
+  # setup in our own code.
   task_cpu = 256 # 1 vCPU = 1024 CPU units
   task_memory = 512 # in MiB
 }
@@ -158,6 +169,13 @@ resource "aws_ecs_service" "web" {
 
   network_configuration {
     # TODO:
+    # `aws_launch_configuration` just create the EC2 instance and connect it
+    # to ECS cluster by setting up `/etc/ecs/ecs.config` content through
+    # bash (user_data). There's `security_groups` in `aws_launch_configuration`
+    # and in here. Then how ECS know which EC2 instance is well qualified to
+    # launch the task definition?
+    #
+    # TODO:
     # After setting up private subnets and NAT gateway, here should be replaced
     # by private subnet.
     # That may break SSH access defined in `aws_security_group.web_app` but
@@ -169,6 +187,11 @@ resource "aws_ecs_service" "web" {
   }
 
   load_balancer {
+    # TODO:
+    # Container is currently defined inline inside of `aws_ecs_task_definition`
+    # and it is using the service name as its name. We may choose a different
+    # name (or at least names the local variables better) for
+    # service/task_definition/container names.
     container_name   = "${local.aws_ecs_web_app_service_name}"
     container_port   = "${var.tomcat_container_port}"
     target_group_arn = "${aws_lb_target_group.web_app.id}"
@@ -185,6 +208,86 @@ resource "aws_ecs_service" "web" {
   depends_on = [
     "aws_ecr_repository.app_repository",
     "aws_lb_listener_rule.web_all"
+  ]
+}
+
+resource "aws_ecs_task_definition" "git" {
+  family                   = "${local.aws_ecs_git_service_name}"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["EC2"]
+  cpu                      = "${local.task_cpu}"
+  memory                   = "${local.task_memory}"
+
+  execution_role_arn       = "${data.aws_iam_role.ecs_task_execution.arn}"
+  container_definitions = <<DEFINITION
+[
+  {
+    "name": "${local.aws_ecs_git_service_name}",
+    "cpu": ${local.task_cpu},
+    "memory": ${local.task_memory},
+    "image": "${var.web_app_image}",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 22
+      }
+    ],
+    "environment": [
+      {
+        "name": "VERSION_INFO",
+        "value": "v0"
+      },
+      {
+        "name": "BUILD_DATE",
+        "value": "-"
+      }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "${var.efs_docker_volumn_name}",
+        "containerPath": "${var.efs_web_container_path}",
+        "readOnly": false
+      }
+    ]
+  }
+]
+DEFINITION
+
+  volume {
+    name      = "${var.efs_docker_volumn_name}"
+    host_path = "${var.efs_mount_point}"
+  }
+}
+
+resource "aws_ecs_service" "git" {
+  name            = "${local.aws_ecs_git_service_name}"
+
+  cluster         = "${aws_ecs_cluster.main.id}"
+  task_definition = "${aws_ecs_task_definition.git.arn}"
+  desired_count   = "${var.git_count}"
+  launch_type     = "EC2"
+
+  deployment_maximum_percent = 200
+  deployment_minimum_healthy_percent = 75
+
+  network_configuration {
+    security_groups = ["${aws_security_group.git.id}"]
+    subnets         = ["${aws_subnet.public.*.id}"]
+  }
+
+  load_balancer {
+    container_name   = "${local.aws_ecs_git_service_name}"
+    container_port   = 22
+    target_group_arn = "${aws_lb_target_group.git.id}"
+  }
+
+  deployment_controller {
+    type = "ECS"
+  }
+
+  depends_on = [
+    "aws_ecr_repository.app_repository",
+    "aws_lb_listener.git_front_end"
   ]
 }
 
