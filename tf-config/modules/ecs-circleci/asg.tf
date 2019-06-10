@@ -20,6 +20,25 @@ data "aws_ami" "ecs_optimized_amis" {
   }
 }
 
+# TODO:
+# Currently (`terraform apply` or `terraform apply -target=aws_autoscaling_group.web_app`)
+# will fail this step by
+/*
+* module.ecs_circleci.aws_autoscaling_group.web_app: 1 error(s) occurred:
+* aws_autoscaling_group.web_app: "qa-web-app-asg": Waiting up to 10m0s: Need at least 2 healthy instances in ASG, have 0. Most recent activity: {
+  ActivityId: "8be5ad0e-8154-06b4-59d8-937d812bc9f3",
+  AutoScalingGroupName: "qa-web-app-asg",
+  Cause: "At 2019-06-10T23:01:47Z an instance was started in response to a difference between desired and actual capacity, increasing the capacity from 0 to 2.",
+  Description: "Launching a new EC2 instance.  Status Reason: The requested configuration is currently not supported. Please check the documentation for supported configurations. Launching EC2 instance failed.",
+  Details: "{\"Subnet ID\":\"subnet-0010aa3b4e53b2a87\",\"Availability Zone\":\"us-east-1a\"}",
+  EndTime: 2019-06-10 23:01:49 +0000 UTC,
+  Progress: 100,
+  StartTime: 2019-06-10 23:01:49.441 +0000 UTC,
+  StatusCode: "Failed",
+  StatusMessage: "The requested configuration is currently not supported. Please check the documentation for supported configurations. Launching EC2 instance failed."
+}
+*/
+# Seems an AWS side change as it works fine (passed CI in master) previously.
 resource "aws_launch_configuration" "web_app" {
   name                        = "${local.aws_web_app_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
