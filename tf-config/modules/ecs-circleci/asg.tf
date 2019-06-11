@@ -1,12 +1,29 @@
+# If it returns a non-qualified AMI (maybe because the search is not tight
+# enough), AWS will return error when applying `aws_autoscaling_group`:
+# > The requested configuration is currently not supported. Please check
+# > the documentation for supported configurations. Launching EC2 instance failed.
+# and the following debugging image explanation doesn't give any useful info:
+# https://docs.aws.amazon.com/autoscaling/ec2/userguide/ts-as-instancelaunchfailure.html#ts-as-instancelaunchfailure-3
+#
+# Debugging tips:
+# In https://console.aws.amazon.com/ec2/ we can read out the AMI id from
+# launch configuration, and check what it is in `IMAGES > AMIs`.
+#
+# TODO:
+# This search is sometimes fragile. When our constrain is not strong enough,
+# sometimes later on when AWS provide newer images, the search gives something
+# not qualified and breaks initialization. May consider just hard code the AMI
+# but that breaks the flexibility.
 data "aws_ami" "ecs_optimized_amis" {
-  most_recent = true
+  owners           = ["amazon"]
+  most_recent      = true
 
   # Needs to use "Amazon ECS-optimized AMIs" for which the "ECS container agent"
   # is pre-installed.
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
   filter {
     name   = "name"
-    values = ["amzn2-ami-ecs-hvm*"]
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
   }
 
   filter {
@@ -15,8 +32,8 @@ data "aws_ami" "ecs_optimized_amis" {
   }
 
   filter {
-    name   = "owner-alias"
-    values = ["amazon"]
+    name   = "root-device-type"
+    values = ["ebs"]
   }
 }
 
