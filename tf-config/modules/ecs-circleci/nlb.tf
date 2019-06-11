@@ -29,10 +29,16 @@ resource "aws_lb_target_group" "git" {
   target_type = "ip" # targets are specified by IP address
 
   # `health_check.path` and `timeout` are not supported for target_groups with TCP protocol
+  #
+  # TODO:
+  # Currently cannot pass healthcheck with the below error message:
+  # > service qa-git-service (instance 10.0.0.104) (port 22) is unhealthy in
+  # > target-group qa-git-service due to (reason Health checks failed)
+  # Need to understand why that happens.
   health_check {
     interval = 10
     protocol = "TCP"
-    healthy_threshold = "${var.web_app_count}"
+    healthy_threshold = "${var.git_count}"
     unhealthy_threshold = 2
   }
 }

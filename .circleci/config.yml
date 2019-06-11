@@ -205,6 +205,12 @@ workflows:
       # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
       # UI but nor in orbs.
       # https://circleci.com/docs/2.0/env-vars/
+      #
+      # TODO:
+      # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
+      # is fixed and it can only be used once -- although we can customize `tag` so we can
+      # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
+      # ourselves so we can have better control to deploy multiple images to different containers.
       - aws-ecr/build_and_push_image:
           requires:
             - qa-readiness

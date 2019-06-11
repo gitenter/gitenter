@@ -225,7 +225,7 @@ resource "aws_ecs_task_definition" "git" {
     "name": "${local.aws_ecs_git_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
-    "image": "${var.web_app_image}",
+    "image": "${var.git_image}",
     "essential": true,
     "portMappings": [
       {
