@@ -1,12 +1,29 @@
+# If it returns a non-qualified AMI (maybe because the search is not tight
+# enough), AWS will return error when applying `aws_autoscaling_group`:
+# > The requested configuration is currently not supported. Please check
+# > the documentation for supported configurations. Launching EC2 instance failed.
+# and the following debugging image explanation doesn't give any useful info:
+# https://docs.aws.amazon.com/autoscaling/ec2/userguide/ts-as-instancelaunchfailure.html#ts-as-instancelaunchfailure-3
+#
+# Debugging tips:
+# In https://console.aws.amazon.com/ec2/ we can read out the AMI id from
+# launch configuration, and check what it is in `IMAGES > AMIs`.
+#
+# TODO:
+# This search is sometimes fragile. When our constrain is not strong enough,
+# sometimes later on when AWS provide newer images, the search gives something
+# not qualified and breaks initialization. May consider just hard code the AMI
+# but that breaks the flexibility.
 data "aws_ami" "ecs_optimized_amis" {
-  most_recent = true
+  owners           = ["amazon"]
+  most_recent      = true
 
   # Needs to use "Amazon ECS-optimized AMIs" for which the "ECS container agent"
   # is pre-installed.
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
   filter {
     name   = "name"
-    values = ["amzn2-ami-ecs-hvm*"]
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
   }
 
   filter {
@@ -15,30 +32,11 @@ data "aws_ami" "ecs_optimized_amis" {
   }
 
   filter {
-    name   = "owner-alias"
-    values = ["amazon"]
+    name   = "root-device-type"
+    values = ["ebs"]
   }
 }
 
-# TODO:
-# Currently (`terraform apply` or `terraform apply -target=aws_autoscaling_group.web_app`)
-# will fail this step by
-/*
-* module.ecs_circleci.aws_autoscaling_group.web_app: 1 error(s) occurred:
-* aws_autoscaling_group.web_app: "qa-web-app-asg": Waiting up to 10m0s: Need at least 2 healthy instances in ASG, have 0. Most recent activity: {
-  ActivityId: "8be5ad0e-8154-06b4-59d8-937d812bc9f3",
-  AutoScalingGroupName: "qa-web-app-asg",
-  Cause: "At 2019-06-10T23:01:47Z an instance was started in response to a difference between desired and actual capacity, increasing the capacity from 0 to 2.",
-  Description: "Launching a new EC2 instance.  Status Reason: The requested configuration is currently not supported. Please check the documentation for supported configurations. Launching EC2 instance failed.",
-  Details: "{\"Subnet ID\":\"subnet-0010aa3b4e53b2a87\",\"Availability Zone\":\"us-east-1a\"}",
-  EndTime: 2019-06-10 23:01:49 +0000 UTC,
-  Progress: 100,
-  StartTime: 2019-06-10 23:01:49.441 +0000 UTC,
-  StatusCode: "Failed",
-  StatusMessage: "The requested configuration is currently not supported. Please check the documentation for supported configurations. Launching EC2 instance failed."
-}
-*/
-# Seems an AWS side change as it works fine (passed CI in master) previously.
 resource "aws_launch_configuration" "web_app" {
   name                        = "${local.aws_web_app_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
