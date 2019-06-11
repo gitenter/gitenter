@@ -17,6 +17,10 @@ variable "tomcat_container_port" {
   default = 8080
 }
 
+variable "ec2_instance_count" {
+  default = 2
+}
+
 variable "web_app_count" {
   # Needs to be >=2, as in `aws_lb_target_group.health_check` the minimal has to
   # be >=2 and the max (this value) has to be > min.

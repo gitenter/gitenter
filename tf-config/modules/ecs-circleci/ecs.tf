@@ -133,7 +133,7 @@ DEFINITION
     # }
   }
 
-  # Seems no need to make it depends on `aws_launch_configuration.web_app`.
+  # Seems no need to make it depends on `aws_launch_configuration.main`.
   # > Before the release of the Amazon ECS-optimized AMI version 2017.03.a, only
   # > file systems that were available when the Docker daemon was started are
   # > available to Docker containers. You can use the latest Amazon ECS-optimized
@@ -153,7 +153,7 @@ DEFINITION
 #
 # http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
 # https://github.com/Capgemini/terraform-amazon-ecs
-resource "aws_ecs_service" "web" {
+resource "aws_ecs_service" "web_app" {
   name            = "${local.aws_ecs_web_app_service_name}"
 
   # No need to specify `iam_role` as we are using `awsvpc` network mode.
