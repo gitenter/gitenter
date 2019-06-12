@@ -151,14 +151,7 @@ jobs:
     steps:
       - checkout
 
-      # TODO:
-      # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
-      # is fixed and it can only be used once -- although we can customize `tag` so we can
-      # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
-      # ourselves so we can have better control to deploy multiple images to different containers.
-      #
-      # TODO:
-      # Current it is facing the below error in the "Build docker image" step:
+      # Otherwise will get the below error in "Build docker image" step:
       # > $ !/bin/bash -eo pipefail
       # > docker build \
       # >   \
@@ -168,6 +161,15 @@ jobs:
       # > ERRO[0000] failed to dial gRPC: cannot connect to the Docker daemon. Is 'docker daemon' running on this host?: dial unix /var/run/docker.sock: connect: no such file or directory
       # > context canceled
       # > Exited with code 1
+      # https://circleci.com/docs/2.0/building-docker-images/
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      # TODO:
+      # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
+      # is fixed and it can only be used once -- although we can customize `tag` so we can
+      # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
+      # ourselves so we can have better control to deploy multiple images to different containers.
       - aws-ecr/build-and-push-image:
           checkout: true
           attach-workspace: true
