@@ -202,6 +202,16 @@ resource "aws_ecs_service" "web_app" {
     target_group_arn = "${aws_lb_target_group.web_app.id}"
   }
 
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html
+  # https://aws.amazon.com/blogs/compute/amazon-ecs-task-placement/
+  ordered_placement_strategy {
+    type = "spread"
+    field = "instanceId"
+  }
+
+  # May also setup `placement_constraints` to tell which kind of EC2 instances
+  # (e.g. `instance-type`) this task can be placed.
+
   # TODO:
   # Current deployment is through rolling update (`ECS`). Consider to change
   # to blue/green (`CODE_DEPLOY`) deployment.
@@ -284,6 +294,11 @@ resource "aws_ecs_service" "git" {
     container_name   = "${local.aws_ecs_git_service_name}"
     container_port   = 22
     target_group_arn = "${aws_lb_target_group.git.id}"
+  }
+
+  ordered_placement_strategy {
+    type = "spread"
+    field = "instanceId"
   }
 
   deployment_controller {

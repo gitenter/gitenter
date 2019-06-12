@@ -270,6 +270,11 @@ workflows:
           requires:
             - qa-readiness
 
+      # TODO:
+      # Current error:
+      # > service qa-web-app-service was unable to place a task because no container instance met all of its requirements. The closest matching container-instance f6698b0c-0c87-403f-b1f4-20e69bbfcad1 encountered error "RESOURCE:ENI". For more information, see the Troubleshooting section.
+      # Also, looks like currently one instance have 2 git and one has 2 tomcat, which
+      # is not what we want.
       - aws-ecs/deploy-service-update:
           # This orb is mostly doing `aws ecs update-service --cluster qa-cluster --service qa-web-app-service --force-new-deployment`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
