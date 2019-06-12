@@ -28,13 +28,11 @@ resource "aws_lb_target_group" "git" {
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip" # targets are specified by IP address
 
-  # `health_check.path` and `timeout` are not supported for target_groups with TCP protocol
+  # Need a instance/docker container which opens port 22, otherwise it will fail
+  # this health check.
   #
-  # TODO:
-  # Currently cannot pass healthcheck with the below error message:
-  # > service qa-git-service (instance 10.0.0.104) (port 22) is unhealthy in
-  # > target-group qa-git-service due to (reason Health checks failed)
-  # Need to understand why that happens.
+  # `health_check.path` and `timeout` are not supported for target_groups with
+  # TCP protocol. Therefore we don't assign them in here.
   health_check {
     interval = 10
     protocol = "TCP"

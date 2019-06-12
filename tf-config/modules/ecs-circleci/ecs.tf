@@ -3,7 +3,12 @@ variable "web_app_image" {
 }
 
 variable "git_image" {
-  default     = "ubuntu:18.04"
+  # The below image is basically ubuntu with sshd installed.
+  # https://hub.docker.com/r/rastasheep/ubuntu-sshd
+  #
+  # In here we need an image with port 22 open. Otherwise image will fail
+  # the NLB health check in `aws_lb_target_group.git`.
+  default     = "rastasheep/ubuntu-sshd:18.04"
 }
 
 locals {

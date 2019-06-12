@@ -65,30 +65,33 @@ resource "aws_lb_target_group" "web_app" {
     enabled = true
   }
 
-  # `timeout` cannot be too small, otherwise when deploying the real service
-  # system will error out. Then the newly created task will be killed and start
-  # over (forever).
-  # > service ecs-circleci-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
-  # > target-group ecs-circleci-qa-service due to (reason Request timed out)
-  # > Task failed ELB health checks in (target-group ...)
-  #
-  # After increasing timeout period (and check `/`) I am getting
-  # > service ecs-circleci-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
-  # > target-group ecs-circleci-qa-service due to (reason Health checks failed with these codes: [404])
-  # Therefore, I added and use the `/health_check` endpoint.
-  #
-  # TODO:
-  # Probably should pass a different path for health check.
-  #
-  # TODO:
-  # The initial tomcat image cannot pass the healthcheck, as there's no
-  # `/health_check` endpoint. It will just keep the infinite loop of
-  # register/deregister. Should probably seek a way so both can be applied.
   health_check {
     interval = 60
-    path = "/health_check"
-    # path = "/resources/static_health_check.html" # Both health_check endpoint needs a healthy Spring Tomcat state.
+    # All below health_check endpoints need a healthy Spring Tomcat state.
+    #
+    # TODO:
+    # The initial tomcat image cannot pass the `/health_check` healthcheck, as there's
+    # no `/health_check` endpoint. It will just keep the infinite loop of
+    # register/deregister. Should probably seek a way so both can be applied.
+    #
+    # TODO:
+    # Define what exactly we need to know from this health check endpoint,
+    # and deside which one we should choose.
+    path = "/"
+    # path = "/health_check"
+    # path = "/resources/static_health_check.html"
     protocol = "HTTP"
+    # `timeout` cannot be too small, otherwise when deploying the real service
+    # system will error out. Then the newly created task will be killed and start
+    # over (forever).
+    # > service ecs-circleci-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
+    # > target-group ecs-circleci-qa-service due to (reason Request timed out)
+    # > Task failed ELB health checks in (target-group ...)
+    #
+    # After increasing timeout period (and check `/`) I am getting
+    # > service ecs-circleci-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
+    # > target-group ecs-circleci-qa-service due to (reason Health checks failed with these codes: [404])
+    # Therefore, I added and use the `/health_check` endpoint.
     timeout = 59
     healthy_threshold = "${var.web_app_count}"
     unhealthy_threshold = 2
