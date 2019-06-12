@@ -173,12 +173,8 @@ resource "aws_ecs_service" "web_app" {
   deployment_minimum_healthy_percent = 75
 
   network_configuration {
-    # TODO:
-    # `aws_launch_configuration` just create the EC2 instance and connect it
-    # to ECS cluster by setting up `/etc/ecs/ecs.config` content through
-    # bash (user_data). There's `security_groups` in `aws_launch_configuration`
-    # and in here. Then how ECS know which EC2 instance is well qualified to
-    # launch the task definition?
+    # `aws_security_group` is not how ECS decide which instance to place the task.
+    # It is defined by `ordered_placement_strategy` and `placement_constraints`.
     #
     # TODO:
     # After setting up private subnets and NAT gateway, here should be replaced
@@ -202,6 +198,9 @@ resource "aws_ecs_service" "web_app" {
     target_group_arn = "${aws_lb_target_group.web_app.id}"
   }
 
+  # `binpack` is the most cost-effective, but it turns to have tasks cover less
+  # available zones. Right now we are not doing "auto"-scaling so `spread` is fine.
+  # After we do ASG of tasks this need to be revised.
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html
   # https://aws.amazon.com/blogs/compute/amazon-ecs-task-placement/
   ordered_placement_strategy {
