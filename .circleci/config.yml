@@ -242,7 +242,7 @@ jobs:
             sudo pip install pipenv
             pipenv install
 
-  qa-deploy:
+  qa-web-app-deploy:
     # TODO:
     # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
     # When using 2.7 "Log into Amazon ECR" can pass with no problem (other errors apply):
@@ -257,6 +257,15 @@ jobs:
           deploy_env: "qa"
           service_infix: "web-app"
           docker_image_folder: "web"
+
+  qa-git-deploy:
+    docker:
+      - image: 'circleci/python:2.7'
+    steps:
+      - inline-aws-operation/deploy:
+          deploy_env: "qa"
+          service_infix: "git"
+          docker_image_folder: "ssh-trivial"
 
   acceptance-test:
     docker:
@@ -329,13 +338,18 @@ workflows:
       # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
       # UI but nor in orbs.
       # https://circleci.com/docs/2.0/env-vars/
-      - qa-deploy:
+      - qa-web-app-deploy:
+          requires:
+            - qa-readiness
+
+      - qa-git-deploy:
           requires:
             - qa-readiness
 
       - acceptance-test:
           requires:
-            - qa-deploy
+            - qa-web-app-deploy
+            - qa-git-deploy
       # TODO:
       # Consider adding a step to call `terraform destroy` through CircleCI. Should be an `approval`
       # type step before this one, so we can use this QA environment for manual debugging too.
