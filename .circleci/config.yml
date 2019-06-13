@@ -141,7 +141,7 @@ orbs:
           - aws-ecs/update-service:
               family: "<<parameters.deploy_env>>-<<parameters.service_infix>>-service"
               cluster-name: "<<parameters.deploy_env>>-cluster"
-              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:<<parameters.deploy_env>>-${CIRCLE_SHA1}"
+              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:<<parameters.service_infix>>-${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
           - run:
