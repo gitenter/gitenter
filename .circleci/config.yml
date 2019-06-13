@@ -64,6 +64,10 @@ orbs:
         parameters:
           deploy_env:
             type: string
+          service_infix:
+            type: string
+          docker_image_folder:
+            type: string
         steps:
           - checkout
 
@@ -102,14 +106,14 @@ orbs:
               account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
               aws-access-key-id: AWS_ACCESS_KEY_ID
               aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-              dockerfile: ./docker/web/Dockerfile
-              path: ./docker/web
+              dockerfile: ./docker/<<parameters.docker_image_folder>>/Dockerfile
+              path: ./docker/<<parameters.docker_image_folder>>
               region: AWS_DEFAULT_REGION
               # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
               # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
               # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
               repo: "<<parameters.deploy_env>>-repository"
-              tag: "${CIRCLE_SHA1}"
+              tag: "<<parameters.service_infix>>-${CIRCLE_SHA1}"
 
           # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
           # https://circleci.com/orbs/registry/orb/circleci/aws-cli
@@ -135,15 +139,15 @@ orbs:
           # controller" (rather than just replace the image inside) we need to update service.
           # https://docs.aws.amazon.com/cli/latest/reference/ecs/register-task-definition.html
           - aws-ecs/update-service:
-              family: "<<parameters.deploy_env>>-web-app-service"
+              family: "<<parameters.deploy_env>>-<<parameters.service_infix>>-service"
               cluster-name: "<<parameters.deploy_env>>-cluster"
-              container-image-name-updates: "container=<<parameters.deploy_env>>-web-app-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:${CIRCLE_SHA1}"
+              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:<<parameters.deploy_env>>-${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
           - run:
               name: Test the deployment
               command: |
-                TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.deploy_env>>-cluster --services <<parameters.deploy_env>>-web-app-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.deploy_env>>-cluster --services <<parameters.deploy_env>>-<<parameters.service_infix>>-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                 ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                 ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
                 curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"
@@ -251,6 +255,8 @@ jobs:
     steps:
       - inline-aws-operation/deploy:
           deploy_env: "qa"
+          service_infix: "web-app"
+          docker_image_folder: "web"
 
   acceptance-test:
     docker:
