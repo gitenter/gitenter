@@ -1,10 +1,5 @@
 version: 2.1
 
-orbs:
-  aws-cli: circleci/aws-cli@0.1.13
-  aws-ecr: circleci/aws-ecr@6.0.0
-  aws-ecs: circleci/aws-ecs@0.0.8
-
 executors:
   java-with-postgres-executor:
     docker:
@@ -48,6 +43,110 @@ executors:
       - image: circleci/python:3.6.5
 
     working_directory: ~/python
+
+orbs:
+  # Inline orbs:
+  # https://circleci.com/docs/2.0/creating-orbs/#creating-inline-orbs
+  #
+  # TODO:
+  # Looks like a bug that inline orb cannot refer to other orbs. Otherwise error:
+  # > Cannot find orb 'aws-ecr' looking for command named 'aws-ecr/build-and-push-image'
+  # https://discuss.circleci.com/t/unable-to-find-orb-with-inline-orb/27145
+  # https://github.com/CircleCI-Public/aws-ecs-orb/issues/22
+  inline-aws-operation:
+    orbs:
+      aws-cli: circleci/aws-cli@0.1.13
+      aws-ecr: circleci/aws-ecr@6.0.0
+      aws-ecs: circleci/aws-ecs@0.0.8
+
+    commands:
+      deploy:
+        parameters:
+          deploy_env:
+            type: string
+        steps:
+          - checkout
+
+          # Otherwise will get the below error in "Build docker image" step:
+          # > $ !/bin/bash -eo pipefail
+          # > docker build \
+          # >   \
+          # >  -f ./docker/web/Dockerfile \
+          # >  -t $AWS_ECR_ACCOUNT_URL/qa-repository:${CIRCLE_SHA1} \
+          # >  ./docker/web
+          # > ERRO[0000] failed to dial gRPC: cannot connect to the Docker daemon. Is 'docker daemon' running on this host?: dial unix /var/run/docker.sock: connect: no such file or directory
+          # > context canceled
+          # > Exited with code 1
+          # https://circleci.com/docs/2.0/building-docker-images/
+          - setup_remote_docker:
+              docker_layer_caching: true
+
+          # TODO:
+          # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
+          # is fixed and it can only be used once -- although we can customize `tag` so we can
+          # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
+          # ourselves so we can have better control to deploy multiple images to different containers.
+          - aws-ecr/build-and-push-image:
+              checkout: true
+              attach-workspace: true
+              # Looks like there's a bug in `aws-ecr/build_and_push_image`. Notice that there's nowhere
+              # to specify `working_directory` (in its source code https://github.com/CircleCI-Public/aws-ecr-orb)
+              # and it is actually it is using `.`. That's the reason it actually doesn't support any
+              # `workspace-root` which is not `.` (bug reported https://github.com/CircleCI-Public/aws-ecr-orb/issues/32)
+              #
+              # It works fine in here to just specify `workspace-root` to be also `.`.
+              # However, for e.g. `circleci/openjdk:11.0-jdk` we actually canNOT specify `working_directory`
+              # to be `.`, otherwise we'll get the error of (https://circleci.com/gh/gitenter/gitenter/398)
+              # > Directory (.) you are trying to checkout to is not empty and not git repository
+              workspace-root: .
+              account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
+              aws-access-key-id: AWS_ACCESS_KEY_ID
+              aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+              dockerfile: ./docker/web/Dockerfile
+              path: ./docker/web
+              region: AWS_DEFAULT_REGION
+              # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
+              # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
+              # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
+              repo: "<<parameters.deploy_env>>-repository"
+              tag: "${CIRCLE_SHA1}"
+
+          # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
+          # https://circleci.com/orbs/registry/orb/circleci/aws-cli
+          - aws-cli/install
+          - aws-cli/configure:
+              aws-access-key-id: AWS_ACCESS_KEY_ID
+              aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+              aws-region: AWS_DEFAULT_REGION
+
+          # # This orb is mostly doing `aws ecs update-service --cluster qa-cluster --service qa-web-app-service --force-new-deployment`
+          # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
+          # That's the reason it doesn't need to hold any knowledge of the
+          # Terraform config even if it is doing blue/green deployment.
+          # Refer to a command-line (non-orb) implementation for which this
+          # is shown clearly.
+          # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh
+          #
+          # TODO:
+          # We may be able to use `update-task-definition` command, which basically is using
+          # `aws ecs register-task-definition` command, as for us only the Docker image/tag names
+          # are changed. The current `update-service` uses `update-service`.
+          # However, it may be possible that if we want to use "blue/green (CODE_DEPLOY ) deployment
+          # controller" (rather than just replace the image inside) we need to update service.
+          # https://docs.aws.amazon.com/cli/latest/reference/ecs/register-task-definition.html
+          - aws-ecs/update-service:
+              family: "<<parameters.deploy_env>>-web-app-service"
+              cluster-name: "<<parameters.deploy_env>>-cluster"
+              container-image-name-updates: "container=<<parameters.deploy_env>>-web-app-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:${CIRCLE_SHA1}"
+              verify-revision-is-deployed: true
+
+          - run:
+              name: Test the deployment
+              command: |
+                TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.deploy_env>>-cluster --services <<parameters.deploy_env>>-web-app-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
+                ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
+                curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"
 
 jobs:
   java-build:
@@ -140,98 +239,18 @@ jobs:
             pipenv install
 
   qa-deploy:
+    # TODO:
+    # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
+    # When using 2.7 "Log into Amazon ECR" can pass with no problem (other errors apply):
+    # https://circleci.com/gh/gitenter/gitenter/628
+    # But when using 3.7.1 the same step gives
+    # > Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+    # https://circleci.com/gh/gitenter/gitenter/635
     docker:
-      # TODO:
-      # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
-      # When using 2.7 "Log into Amazon ECR" can pass with no problem (other errors apply):
-      # https://circleci.com/gh/gitenter/gitenter/628
-      # But when using 3.7.1 the same step gives
-      # > Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
-      # https://circleci.com/gh/gitenter/gitenter/635
       - image: 'circleci/python:2.7'
     steps:
-      - checkout
-
-      # Otherwise will get the below error in "Build docker image" step:
-      # > $ !/bin/bash -eo pipefail
-      # > docker build \
-      # >   \
-      # >  -f ./docker/web/Dockerfile \
-      # >  -t $AWS_ECR_ACCOUNT_URL/qa-repository:${CIRCLE_SHA1} \
-      # >  ./docker/web
-      # > ERRO[0000] failed to dial gRPC: cannot connect to the Docker daemon. Is 'docker daemon' running on this host?: dial unix /var/run/docker.sock: connect: no such file or directory
-      # > context canceled
-      # > Exited with code 1
-      # https://circleci.com/docs/2.0/building-docker-images/
-      - setup_remote_docker:
-          docker_layer_caching: true
-
-      # TODO:
-      # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
-      # is fixed and it can only be used once -- although we can customize `tag` so we can
-      # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
-      # ourselves so we can have better control to deploy multiple images to different containers.
-      - aws-ecr/build-and-push-image:
-          checkout: true
-          attach-workspace: true
-          # Looks like there's a bug in `aws-ecr/build_and_push_image`. Notice that there's nowhere
-          # to specify `working_directory` (in its source code https://github.com/CircleCI-Public/aws-ecr-orb)
-          # and it is actually it is using `.`. That's the reason it actually doesn't support any
-          # `workspace-root` which is not `.` (bug reported https://github.com/CircleCI-Public/aws-ecr-orb/issues/32)
-          #
-          # It works fine in here to just specify `workspace-root` to be also `.`.
-          # However, for e.g. `circleci/openjdk:11.0-jdk` we actually canNOT specify `working_directory`
-          # to be `.`, otherwise we'll get the error of (https://circleci.com/gh/gitenter/gitenter/398)
-          # > Directory (.) you are trying to checkout to is not empty and not git repository
-          workspace-root: .
-          account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          dockerfile: ./docker/web/Dockerfile
-          path: ./docker/web
-          region: AWS_DEFAULT_REGION
-          # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
-          # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
-          # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
-          repo: "qa-repository"
-          tag: "${CIRCLE_SHA1}"
-
-      # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
-      # https://circleci.com/orbs/registry/orb/circleci/aws-cli
-      - aws-cli/install
-      - aws-cli/configure:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_DEFAULT_REGION
-
-      # # This orb is mostly doing `aws ecs update-service --cluster qa-cluster --service qa-web-app-service --force-new-deployment`
-      # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
-      # That's the reason it doesn't need to hold any knowledge of the
-      # Terraform config even if it is doing blue/green deployment.
-      # Refer to a command-line (non-orb) implementation for which this
-      # is shown clearly.
-      # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh
-      #
-      # TODO:
-      # We may be able to use `update-task-definition` command, which basically is using
-      # `aws ecs register-task-definition` command, as for us only the Docker image/tag names
-      # are changed. The current `update-service` uses `update-service`.
-      # However, it may be possible that if we want to use "blue/green (CODE_DEPLOY ) deployment
-      # controller" (rather than just replace the image inside) we need to update service.
-      # https://docs.aws.amazon.com/cli/latest/reference/ecs/register-task-definition.html
-      - aws-ecs/update-service:
-          family: "qa-web-app-service"
-          cluster-name: "qa-cluster"
-          container-image-name-updates: "container=qa-web-app-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/qa-repository:${CIRCLE_SHA1}"
-          verify-revision-is-deployed: true
-
-      - run:
-          name: Test the deployment
-          command: |
-            TARGET_GROUP_ARN=$(aws ecs describe-services --cluster qa-cluster --services qa-web-app-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
-            ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
-            ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
-            curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"
+      - inline-aws-operation/deploy:
+          deploy_env: "qa"
 
   acceptance-test:
     docker:
