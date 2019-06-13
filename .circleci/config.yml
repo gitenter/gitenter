@@ -144,6 +144,13 @@ orbs:
               container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:<<parameters.service_infix>>-${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
+      confirm-web-deployment:
+        parameters:
+          deploy_env:
+            type: string
+          service_infix:
+            type: string
+        steps:
           - run:
               name: Test the deployment
               command: |
@@ -257,6 +264,9 @@ jobs:
           deploy_env: "qa"
           service_infix: "web-app"
           docker_image_folder: "web"
+      - inline-aws-operation/confirm-web-deployment:
+          deploy_env: "qa"
+          service_infix: "web-app"
 
   qa-git-deploy:
     docker:
