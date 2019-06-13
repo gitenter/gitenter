@@ -18,14 +18,18 @@ variable "tomcat_container_port" {
 }
 
 # Ideally what we want is a small number of instances, and each of them has multiple
-# containers in it. However, it is posslbe we'll run out of elastic network interface (ENI).
-# For example, if we deploy 2 different tasks to `t2.small` instance, then when
-# in re-deployment we'll get the folloing error:
+# containers in it. However, it is possible we'll run out of elastic network interface (ENI).
+# One `t2.small`/`t2.medium` container only allow 3 ENIs in it, so the first
+# deployment goes fine but when we re-deploy we'll get the folloing error:
 # > service qa-web-app-service was unable to place a task because no container instance
 # > met all of its requirements. The closest matching container-instance ... encountered
 # > error "RESOURCE:ENI". For more information, see the Troubleshooting section.
+#
 # It doesn't help to increase it to `t2.medium` as they have the same number of ENIs:
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI
+# Technically we can try to only re-deploy web-app/git container so it may be
+# works, but it is in general just troublesome to be in there any the system is
+# fragile.
 #
 # AWS has special treatment to increase ENI for EC2 instances, but that's only for large
 # instances right now. We may use that feature in the future, but right now we'll just
