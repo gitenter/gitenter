@@ -36,6 +36,10 @@ variable "tomcat_container_port" {
 # have more instances and only have one container per instance.
 # https://aws.amazon.com/about-aws/whats-new/2019/06/Amazon-ECS-Improves-ENI-Density-Limits-for-awsvpc-Networking-Mode/
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-eni.html
+#
+# Also, after re-deployment finish, we can manually goes to ASG console to change the
+# number from 4 to 2. ECS will re-organize the running images so they can stay in these
+# smaller number of EC2 instances.
 variable "ec2_instance_count" {
   default = 4
 }

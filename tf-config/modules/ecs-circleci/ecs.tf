@@ -273,6 +273,10 @@ DEFINITION
   }
 }
 
+# TODO:
+# Deploying git image is much slower than web image (11min vs 5min for deployment
+# process). May relate to the detail between ALB and NLB but I don't fully understand
+# the reason.
 resource "aws_ecs_service" "git" {
   name            = "${local.aws_ecs_git_service_name}"
 
