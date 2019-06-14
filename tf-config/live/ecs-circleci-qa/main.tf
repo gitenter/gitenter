@@ -11,5 +11,5 @@ provider "aws" {
 
 module "ecs_circleci" {
   source = "../../modules/ecs-circleci"
-  env_prefix = "qa"
+  environment = "qa"
 }

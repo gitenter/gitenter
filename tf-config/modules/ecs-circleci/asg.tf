@@ -38,7 +38,7 @@ data "aws_ami" "ecs_optimized_amis" {
 }
 
 resource "aws_launch_configuration" "main" {
-  name                        = "${local.aws_web_app_launch_configuration}"
+  name                        = "${local.aws_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
   security_groups             = ["${aws_security_group.web_app.id}", "${aws_security_group.git.id}"]
 
@@ -133,7 +133,7 @@ EOF
 }
 
 resource "aws_autoscaling_group" "main" {
-  name                        = "${local.aws_web_app_autoscaling_group}"
+  name                        = "${local.aws_autoscaling_group}"
   launch_configuration        = "${aws_launch_configuration.main.name}"
   vpc_zone_identifier         = ["${aws_subnet.public.*.id}"]
 
@@ -148,5 +148,21 @@ resource "aws_autoscaling_group" "main" {
 
   lifecycle {
     create_before_destroy = true
+  }
+
+  # Below tags apply to EC2 instances (not ASG). Guide on using EC2 instance tags:
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html
+  tag {
+    # TODO:
+    # Refer to a unique name. May be the URL prefix to log into that instance.
+    key                 = "Name"
+    value               = "${local.aws_resource_prefix}-instance"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Environment"
+    value               = "${var.environment}"
+    propagate_at_launch = true
   }
 }

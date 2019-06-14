@@ -1,4 +1,4 @@
-variable "env_prefix" {
+variable "environment" {
   description = "Prefix to distinguish different environments. E.g., `qa`, `staging`, `prod`."
 }
 
@@ -74,31 +74,37 @@ variable "efs_web_container_path" {
 }
 
 locals {
+  aws_web_app_resource_infix = "web-app"
+  aws_git_resource_infix = "git"
+
   # Prefix to be used in the naming of some of the created AWS resources
-  aws_resource_prefix = "${var.env_prefix}"
+  aws_resource_prefix = "${var.environment}"
+  aws_web_app_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_app_resource_infix}"
+  aws_git_resource_prefix = "${local.aws_resource_prefix}-${local.aws_git_resource_infix}"
 
   # These names are used by CircleCI orbs
-  aws_ecr_repository_name = "${local.aws_resource_prefix}-repository"
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
-  aws_ecs_web_app_service_name = "${local.aws_resource_prefix}-web-app-service"
-  aws_ecs_git_service_name = "${local.aws_resource_prefix}-git-service"
+  aws_ecr_repository_name = "${local.aws_resource_prefix}-repository"
+  aws_ecs_web_app_service_name = "${local.aws_web_app_resource_prefix}-service"
+  aws_ecs_git_service_name = "${local.aws_git_resource_prefix}-service"
 
   # Internal reference only
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"
+  aws_postgres_name = "${local.aws_resource_prefix}-postgres"
+  aws_redis_session_name = "${local.aws_resource_prefix}-redis-session" # Need to <=20 characters
+  aws_git_efs_name = "${local.aws_resource_prefix}-git-efs"
+
   aws_web_lb_name = "${local.aws_resource_prefix}-web-alb"
   aws_git_lb_name = "${local.aws_resource_prefix}-git-nlb"
+
   aws_web_alb_security_group = "${local.aws_resource_prefix}-web-alb-sg"
   aws_web_app_security_group = "${local.aws_resource_prefix}-web-app-sg"
   aws_git_security_group = "${local.aws_resource_prefix}-git-sg"
   aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
-  aws_postgres = "${local.aws_resource_prefix}-postgres"
   aws_redis_security_group = "${local.aws_resource_prefix}-redis-sg"
-  aws_redis_session = "${local.aws_resource_prefix}-redis-session" # Need to <=20 characters
+
   aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
-  aws_web_app_launch_configuration = "${local.aws_resource_prefix}-web-app-launch-configuration"
-  aws_web_app_autoscaling_group = "${local.aws_resource_prefix}-web-app-asg"
-  aws_git_launch_configuration = "${local.aws_resource_prefix}-git-launch-configuration"
-  aws_git_autoscaling_group = "${local.aws_resource_prefix}-git-asg"
-  aws_git_efs = "${local.aws_resource_prefix}-git-efs"
+  aws_launch_configuration = "${local.aws_resource_prefix}-launch-configuration"
+  aws_autoscaling_group = "${local.aws_resource_prefix}-asg"
 }

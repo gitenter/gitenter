@@ -2,14 +2,14 @@
 # https://cwong47.gitlab.io/technology-terraform-aws-efs/
 
 resource "aws_efs_file_system" "git" {
-  creation_token = "${local.aws_git_efs}"
+  creation_token = "${local.aws_git_efs_name}"
 
   performance_mode = "generalPurpose"
   # TODO:
   # `encrypted = true` for production. Keep false for now for debugging needs.
 
   tags = {
-    Name = "${local.aws_git_efs}"
+    Name = "${local.aws_git_efs_name}"
   }
 }
 
