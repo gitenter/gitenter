@@ -88,7 +88,7 @@ terraform destroy
 
 ## Access website
 
-Using `alb_hostname`.
+Using `web_lb_hostname`.
 
 ## Debug inside of the EC2 instance
 

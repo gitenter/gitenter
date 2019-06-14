@@ -1,10 +1,10 @@
 resource "aws_elasticache_subnet_group" "redis_session" {
-  name       = "${local.aws_redis_session}"
+  name       = "${local.aws_redis_session_name}"
   subnet_ids = ["${aws_subnet.public.*.id}"]
 }
 
 resource "aws_elasticache_replication_group" "redis_session" {
-  replication_group_id          = "${local.aws_redis_session}"
+  replication_group_id          = "${local.aws_redis_session_name}"
   replication_group_description = "Redis for Spring Session"
 
   subnet_group_name             = "${aws_elasticache_subnet_group.redis_session.name}"
@@ -27,4 +27,8 @@ resource "aws_elasticache_replication_group" "redis_session" {
   engine                        = "redis"
   engine_version                = "5.0.3"
   parameter_group_name          = "default.redis5.0"
+
+  tags = {
+    Environment = "${var.environment}"
+  }
 }

@@ -14,7 +14,7 @@ resource "aws_db_subnet_group" "main" {
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier               = "${local.aws_postgres}"
+  identifier               = "${local.aws_postgres_name}"
   port                     = 5432
 
   engine                   = "postgres"
@@ -55,6 +55,10 @@ resource "aws_db_instance" "postgres" {
 
   auto_minor_version_upgrade = true
   storage_encrypted        = false
+
+  tags = {
+    Environment = "${var.environment}"
+  }
 }
 
 # TODO:

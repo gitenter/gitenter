@@ -37,10 +37,10 @@ data "aws_ami" "ecs_optimized_amis" {
   }
 }
 
-resource "aws_launch_configuration" "web_app" {
-  name                        = "${local.aws_web_app_launch_configuration}"
+resource "aws_launch_configuration" "main" {
+  name                        = "${local.aws_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
-  security_groups             = ["${aws_security_group.web_app.id}"]
+  security_groups             = ["${aws_security_group.web_app.id}", "${aws_security_group.git.id}"]
 
   image_id                    = "${data.aws_ami.ecs_optimized_amis.id}"
   # `instance_type` needs to match CPU/memory defined in `aws_ecs_task_definition`
@@ -75,6 +75,8 @@ resource "aws_launch_configuration" "web_app" {
   # with the AWS api about the cluster.
   # No need to `mkdir /etc/ecs` because it is pre-setup for AMIs with "ECS
   # container agent".
+  # Notice that multiple ECS services (under the same cluster) are using the same
+  # set of EC2 instances.
   #
   # Debugging if the instances cannot be registered:
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html
@@ -130,14 +132,14 @@ EOF
   ]
 }
 
-resource "aws_autoscaling_group" "web_app" {
-  name                        = "${local.aws_web_app_autoscaling_group}"
-  launch_configuration        = "${aws_launch_configuration.web_app.name}"
+resource "aws_autoscaling_group" "main" {
+  name                        = "${local.aws_autoscaling_group}"
+  launch_configuration        = "${aws_launch_configuration.main.name}"
   vpc_zone_identifier         = ["${aws_subnet.public.*.id}"]
 
-  min_size                    = "${var.web_app_count}"
-  max_size                    = "${var.web_app_count}"
-  desired_capacity            = "${var.web_app_count}"
+  min_size                    = "${var.ec2_instance_count}"
+  max_size                    = "${var.ec2_instance_count}"
+  desired_capacity            = "${var.ec2_instance_count}"
 
   # TODO:
   # We don't need `load_balancers` because we are using `alb` rather than `elb`.
@@ -146,5 +148,21 @@ resource "aws_autoscaling_group" "web_app" {
 
   lifecycle {
     create_before_destroy = true
+  }
+
+  # Below tags apply to EC2 instances (not ASG). Guide on using EC2 instance tags:
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html
+  tag {
+    # TODO:
+    # Refer to a unique name. May be the URL prefix to log into that instance.
+    key                 = "Name"
+    value               = "${local.aws_resource_prefix}-instance"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Environment"
+    value               = "${var.environment}"
+    propagate_at_launch = true
   }
 }

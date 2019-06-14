@@ -2,12 +2,28 @@ variable "web_app_image" {
   default     = "tomcat:latest"
 }
 
+variable "git_image" {
+  # The below image is basically ubuntu with sshd installed.
+  # https://hub.docker.com/r/rastasheep/ubuntu-sshd
+  #
+  # In here we need an image with port 22 open. Otherwise image will fail
+  # the NLB health check in `aws_lb_target_group.git`.
+  default     = "rastasheep/ubuntu-sshd:18.04"
+}
+
 locals {
-  # Needs to match EC2 `instance_type`.
+  # Needs to be downsized then than EC2 `instance_type`. Otherwise a EC2 instance
+  # cannot hold one single container.
   #
   # Notice that `t2.micro`-256/512 doesn't work. Probably that's because the memory
   # difference between EC2 and container are not large enough for ECS utilities.
   # `t2-small`-512/1024 doesn't work for deploying a whole website the SECOND time.
+  #
+  # Also, notice that every EC2 instance may hold multiple containers (so after
+  # scaling up we may have bigger EC2 instances). However, for web application we
+  # may have a lot of tiny traffic so no need for each container to be big.
+  # By doing so, we don't need to have multiple executors (e.g. boosted by supervisor)
+  # setup in our own code.
   task_cpu = 256 # 1 vCPU = 1024 CPU units
   task_memory = 512 # in MiB
 }
@@ -73,7 +89,7 @@ Resources:
     "mountPoints": [
       {
         "sourceVolume": "${var.efs_docker_volumn_name}",
-        "containerPath": "${var.container_path}",
+        "containerPath": "${var.efs_web_container_path}",
         "readOnly": false
       }
     ]
@@ -90,7 +106,7 @@ DEFINITION
   #
   # After we set up as this, if we `docker ps` and then
   # > docker exec -it <container-id> /bin/bash
-  # `cd` to `var.container_path` and add something, that will be saved in EFS.
+  # `cd` to `var.efs_web_container_path` and add something, that will be saved in EFS.
   volume {
     # After this setup, if we `docker volume ls` we'll see the volume name (currently
     # driver is `local`).
@@ -122,7 +138,7 @@ DEFINITION
     # }
   }
 
-  # Seems no need to make it depends on `aws_launch_configuration.web_app`.
+  # Seems no need to make it depends on `aws_launch_configuration.main`.
   # > Before the release of the Amazon ECS-optimized AMI version 2017.03.a, only
   # > file systems that were available when the Docker daemon was started are
   # > available to Docker containers. You can use the latest Amazon ECS-optimized
@@ -142,7 +158,7 @@ DEFINITION
 #
 # http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
 # https://github.com/Capgemini/terraform-amazon-ecs
-resource "aws_ecs_service" "web" {
+resource "aws_ecs_service" "web_app" {
   name            = "${local.aws_ecs_web_app_service_name}"
 
   # No need to specify `iam_role` as we are using `awsvpc` network mode.
@@ -157,6 +173,9 @@ resource "aws_ecs_service" "web" {
   deployment_minimum_healthy_percent = 75
 
   network_configuration {
+    # `aws_security_group` is not how ECS decide which instance to place the task.
+    # It is defined by `ordered_placement_strategy` and `placement_constraints`.
+    #
     # TODO:
     # After setting up private subnets and NAT gateway, here should be replaced
     # by private subnet.
@@ -169,10 +188,28 @@ resource "aws_ecs_service" "web" {
   }
 
   load_balancer {
+    # TODO:
+    # Container is currently defined inline inside of `aws_ecs_task_definition`
+    # and it is using the service name as its name. We may choose a different
+    # name (or at least names the local variables better) for
+    # service/task_definition/container names.
     container_name   = "${local.aws_ecs_web_app_service_name}"
     container_port   = "${var.tomcat_container_port}"
-    target_group_arn = "${aws_alb_target_group.web_app.id}"
+    target_group_arn = "${aws_lb_target_group.web_app.id}"
   }
+
+  # `binpack` is the most cost-effective, but it turns to have tasks cover less
+  # available zones. Right now we are not doing "auto"-scaling so `spread` is fine.
+  # After we do ASG of tasks this need to be revised.
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html
+  # https://aws.amazon.com/blogs/compute/amazon-ecs-task-placement/
+  ordered_placement_strategy {
+    type = "spread"
+    field = "instanceId"
+  }
+
+  # May also setup `placement_constraints` to tell which kind of EC2 instances
+  # (e.g. `instance-type`) this task can be placed.
 
   # TODO:
   # Current deployment is through rolling update (`ECS`). Consider to change
@@ -183,8 +220,97 @@ resource "aws_ecs_service" "web" {
   }
 
   depends_on = [
-    "aws_ecr_repository.app_repository",
-    "aws_lb_listener_rule.all"
+    "aws_ecr_repository.web_app",
+    "aws_lb_listener_rule.web_all"
+  ]
+}
+
+resource "aws_ecs_task_definition" "git" {
+  family                   = "${local.aws_ecs_git_service_name}"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["EC2"]
+  cpu                      = "${local.task_cpu}"
+  memory                   = "${local.task_memory}"
+
+  execution_role_arn       = "${data.aws_iam_role.ecs_task_execution.arn}"
+  container_definitions = <<DEFINITION
+[
+  {
+    "name": "${local.aws_ecs_git_service_name}",
+    "cpu": ${local.task_cpu},
+    "memory": ${local.task_memory},
+    "image": "${var.git_image}",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 22
+      }
+    ],
+    "environment": [
+      {
+        "name": "VERSION_INFO",
+        "value": "v0"
+      },
+      {
+        "name": "BUILD_DATE",
+        "value": "-"
+      }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "${var.efs_docker_volumn_name}",
+        "containerPath": "${var.efs_web_container_path}",
+        "readOnly": false
+      }
+    ]
+  }
+]
+DEFINITION
+
+  volume {
+    name      = "${var.efs_docker_volumn_name}"
+    host_path = "${var.efs_mount_point}"
+  }
+}
+
+# TODO:
+# Deploying git image is much slower than web image (11min vs 5min for deployment
+# process). May relate to the detail between ALB and NLB but I don't fully understand
+# the reason.
+resource "aws_ecs_service" "git" {
+  name            = "${local.aws_ecs_git_service_name}"
+
+  cluster         = "${aws_ecs_cluster.main.id}"
+  task_definition = "${aws_ecs_task_definition.git.arn}"
+  desired_count   = "${var.git_count}"
+  launch_type     = "EC2"
+
+  deployment_maximum_percent = 200
+  deployment_minimum_healthy_percent = 75
+
+  network_configuration {
+    security_groups = ["${aws_security_group.git.id}"]
+    subnets         = ["${aws_subnet.public.*.id}"]
+  }
+
+  load_balancer {
+    container_name   = "${local.aws_ecs_git_service_name}"
+    container_port   = 22
+    target_group_arn = "${aws_lb_target_group.git.id}"
+  }
+
+  ordered_placement_strategy {
+    type = "spread"
+    field = "instanceId"
+  }
+
+  deployment_controller {
+    type = "ECS"
+  }
+
+  depends_on = [
+    "aws_ecr_repository.git",
+    "aws_lb_listener.git_front_end"
   ]
 }
 
