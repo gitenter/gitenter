@@ -220,7 +220,7 @@ resource "aws_ecs_service" "web_app" {
   }
 
   depends_on = [
-    "aws_ecr_repository.app_repository",
+    "aws_ecr_repository.web_app",
     "aws_lb_listener_rule.web_all"
   ]
 }
@@ -305,7 +305,7 @@ resource "aws_ecs_service" "git" {
   }
 
   depends_on = [
-    "aws_ecr_repository.app_repository",
+    "aws_ecr_repository.git",
     "aws_lb_listener.git_front_end"
   ]
 }

@@ -112,8 +112,8 @@ orbs:
               # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
               # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
               # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
-              repo: "<<parameters.deploy_env>>-repository"
-              tag: "<<parameters.service_infix>>-${CIRCLE_SHA1}"
+              repo: "<<parameters.deploy_env>>-<<parameters.service_infix>>-repository"
+              tag: "${CIRCLE_SHA1}"
 
           # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
           # https://circleci.com/orbs/registry/orb/circleci/aws-cli
@@ -141,7 +141,7 @@ orbs:
           - aws-ecs/update-service:
               family: "<<parameters.deploy_env>>-<<parameters.service_infix>>-service"
               cluster-name: "<<parameters.deploy_env>>-cluster"
-              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-repository:<<parameters.service_infix>>-${CIRCLE_SHA1}"
+              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-<<parameters.service_infix>>-repository:${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
       confirm-web-deployment:
