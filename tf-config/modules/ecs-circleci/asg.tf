@@ -141,9 +141,7 @@ resource "aws_autoscaling_group" "main" {
   max_size                    = "${var.ec2_instance_count}"
   desired_capacity            = "${var.ec2_instance_count}"
 
-  # TODO:
-  # We don't need `load_balancers` because we are using `alb` rather than `elb`.
-  # But if that's the case looks like we need to provide `target_group_arns`?
+  target_group_arns           = ["${aws_lb_target_group.web_app_dummy.arn}", "${aws_lb_target_group.web_app.arn}"]
   health_check_type           = "ELB"
 
   lifecycle {
