@@ -141,7 +141,17 @@ resource "aws_autoscaling_group" "main" {
   max_size                    = "${var.ec2_instance_count}"
   desired_capacity            = "${var.ec2_instance_count}"
 
-  target_group_arns           = ["${aws_lb_target_group.web_app_dummy.arn}", "${aws_lb_target_group.web_app.arn}"]
+  # To register instances to load balancer, can either put the target group
+  # in here, or use `aws_lb_target_group_attachment` to attach them later
+  # (need to know instance id to do so).
+  #
+  # In AWS console "Load Balancing > Target Groups" we can check `Targets`
+  # of each single target group to see if the targets are successfully registered.
+  target_group_arns           = [
+    "${aws_lb_target_group.web_app_dummy.arn}",
+    "${aws_lb_target_group.web_app.arn}",
+    "${aws_lb_target_group.git.arn}"
+  ]
   health_check_type           = "ELB"
 
   lifecycle {

@@ -226,7 +226,7 @@ resource "aws_autoscaling_group" "capsid" {
   min_size = 1
   max_size = 2
 
-  target_group_arns = ["${aws_lb_target_group.capsid.arn}"]
+  target_group_arns = ["${aws_lb_target_group.capsid.arn}", "${aws_lb_target_group.ssh.arn}"]
   health_check_type = "ELB"
 
   tag {
