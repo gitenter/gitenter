@@ -141,17 +141,26 @@ resource "aws_autoscaling_group" "main" {
   max_size                    = "${var.ec2_instance_count}"
   desired_capacity            = "${var.ec2_instance_count}"
 
-  # To register instances to load balancer, can either put the target group
-  # in here, or use `aws_lb_target_group_attachment` to attach them later
-  # (need to know instance id to do so).
+  # To register instances to load balancer, if the `target_type` is `instance` then
+  # we can either specify `target_group_arns` in here, or use `aws_lb_target_group_attachment`
+  # to attach them later.
+  # If the `target_type` is `ip` then no need to specify `target_group_arns`.
+  # As far as the target is in some subnet it can be found successfully.
+  #
+  # Terraform document said the target groups here are only for ALB.
+  # It seems actually work for NLB.
+  # https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html#target_group_arns
+  #
+  # However we cannot use `instance` target type (hence specify `target_group_arns`
+  # in here) because it is conflict with `awsvpc` network mode for ECS task edefinition.
   #
   # In AWS console "Load Balancing > Target Groups" we can check `Targets`
   # of each single target group to see if the targets are successfully registered.
-  target_group_arns           = [
-    "${aws_lb_target_group.web_app_dummy.arn}",
-    "${aws_lb_target_group.web_app.arn}",
-    "${aws_lb_target_group.git.arn}"
-  ]
+  # target_group_arns           = [
+  #   "${aws_lb_target_group.web_app_dummy.arn}",
+  #   "${aws_lb_target_group.web_app.arn}",
+  #   "${aws_lb_target_group.git.arn}"
+  # ]
   health_check_type           = "ELB"
 
   lifecycle {
