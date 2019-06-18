@@ -29,6 +29,29 @@ CMD ["/usr/sbin/sshd", "-D"]
 # Works at this point.
 
 # TODO:
+# Consider using ssh pluggable authentication modules (PAM). Looks like I need
+# to config `/etc/pam.d/sshd` file.
+#
+# About PAM, Linux Kernel has explanation in:
+# https://mirrors.edge.kernel.org/pub/linux/libs/pam/
+# RedHat provide quite complicated information, while ubuntu seems not.
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/managing_smart_cards/pluggable_authentication_modules
+# http://manpages.ubuntu.com/manpages/bionic/man7/PAM.7.html
+#
+# Some posts suggests SSH Tectia Client which is not free (the company own `ssh.com`)
+# so we'll not consider it.
+# https://www.ssh.com/manuals/server-admin/44/Pluggable_Authentication_Module__PAM__Submethod.html
+#
+# Both MySQL and Postgres have PAM support. However, I am not sure it is only in
+# username/password level or it can replace `authorized_keys`.
+# https://dev.mysql.com/doc/refman/5.5/en/pam-pluggable-authentication.html
+# https://www.postgresql.org/docs/11/auth-pam.html
+#
+# About PAM with OpenSSH/random FAQ/comments:
+# https://www.linuxquestions.org/questions/linux-security-4/openssh-authentication-pam-428406/
+# https://serverfault.com/questions/608445/manage-ssh-users-with-mysql-backend
+
+# TODO:
 # Setup non-interactive login so user cannot login through SSH.
 
 # TODO: Remove it.
