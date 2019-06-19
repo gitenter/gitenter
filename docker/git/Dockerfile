@@ -37,13 +37,34 @@ CMD ["/usr/sbin/sshd", "-D"]
 # RedHat provide quite complicated information, while ubuntu seems not.
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/managing_smart_cards/pluggable_authentication_modules
 # http://manpages.ubuntu.com/manpages/bionic/man7/PAM.7.html
+# https://www.pks.mpg.de/~mueller/docs/suse10.2/html/opensuse-manual_en/manual/cha.pam.html
+#
+# For Ubuntu, password authorization is setup in `/etc/pam.d/common-auth` (import to
+# `/etc/pam.d/sshd`). It uses `pam_unix.so` for traditional password authorization,
+# and (TODO) it looks in nowhere it refers to an authorized key based authorization.
+# http://manpages.ubuntu.com/manpages/trusty/man8/pam_unix.8.html
+#
+# Note:
+# (1) Other systems (Red Hat, OpenSUSE, ...) have slightly different names/paths.
+# (2) A full list of modules PAM refers can be checked by `ls /lib/*/security`.
+# (3) We can't manually edit `/etc/pam.d/common-auth` as they will be overwriting
+# by `pam-auth-update`.
+# http://manpages.ubuntu.com/manpages/xenial/man8/pam-auth-update.8.html
+# The correct way is to edit `/etc/security/*.conf` files.
+# https://www.digitalocean.com/community/tutorials/how-to-use-pam-to-configure-authentication-on-an-ubuntu-12-04-vps
+# http://www.rjsystems.nl/en/2100-pam-debian.php
+# https://askubuntu.com/questions/574845/what-is-the-correct-way-to-modify-etc-pam-d-common-auth
+# (4) `/etc/pam.d/common-password` is for password changing so irrelavent. Although it
+# has similar content to `/etc/pam.d/common-auth`.
 #
 # Some posts suggests SSH Tectia Client which is not free (the company own `ssh.com`)
 # so we'll not consider it.
 # https://www.ssh.com/manuals/server-admin/44/Pluggable_Authentication_Module__PAM__Submethod.html
 #
-# Both MySQL and Postgres have PAM support. However, I am not sure it is only in
-# username/password level or it can replace `authorized_keys`.
+# Both MySQL and Postgres have PAM support. However, those are mainly for users to
+# log into the database (rather than to use database data to decide which user can
+# log in). In addition, I am not sure it is only in username/password level or it
+# can replace `authorized_keys`.
 # https://dev.mysql.com/doc/refman/5.5/en/pam-pluggable-authentication.html
 # https://www.postgresql.org/docs/11/auth-pam.html
 #
