@@ -123,6 +123,11 @@ CREATE TABLE auth.member_feature_toggle (
 	is_on boolean NOT NULL
 );
 
+-- TODO:
+-- Add a lock on whether the git files are allowed to be modified (as obviously)
+-- you don't want multiple people/server instance to `git push` which trigger the
+-- modification of the git files of one repo at the same time.
+-- Or maybe we should use Redis to implement this lock. 
 CREATE TABLE auth.repository_feature_toggle (
 	id serial PRIMARY KEY,
 	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,

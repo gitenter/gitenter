@@ -28,39 +28,55 @@ CMD ["/usr/sbin/sshd", "-D"]
 # $ ssh git@localhost -p 8822
 # Works at this point.
 
-# TODO:
-# Consider using ssh pluggable authentication modules (PAM). Looks like I need
-# to config `/etc/pam.d/sshd` file.
+# To use database as backend rather than `.ssh/authorized_keys` to save public keys
+# for users to login, the following page listed most possibilities:
+# https://serverfault.com/questions/162238/openssh-with-public-keys-from-database#answer-443230
+# Also the following post have some useful information:
+# https://serverfault.com/questions/117072/a-system-for-distributing-ssh-public-keys#answer-117549
+# And what GitHub is doing (basically a patch on OpenSSH):
+# https://github.blog/2009-10-20-how-we-made-github-fast/#tracing-an-ssh-request
+
+# OpenSSH source code:
+# https://github.com/openssh/openssh-portable/
+
+# Other tools includes:
+# (1) There's a patch to access public keys through an LDAP server which may be helpful:
+# https://code.google.com/archive/p/openssh-lpk/
+# (2) pam_ldap (?): https://linux.die.net/man/5/pam_ldap
+# (3) ssh-keydb: https://code.google.com/archive/p/ssh-keydb/
+# Not useful. This is just dynamically generate `authorized_keys` from db content.
+# (4) SSH Tectia Client which is not free (the company own `ssh.com`) so we'll not
+# consider it.
+# https://www.ssh.com/manuals/server-admin/44/Pluggable_Authentication_Module__PAM__Submethod.html
+
+# We can't replace `.ssh/authorized_keys` through ssh pluggable authentication modules (PAM),
+# as this part of logic is inside of OpenSSH rather than through PAM. `/etc/pam.d/sshd`
+# file only defines how to authorize a user based on his/her system username/password.
+# In Ubuntu, `/etc/pam.d/sshd` imports `/etc/pam.d/common-auth` which triggers `pam_unix.so`
+# which checks if the system username/password is matched (other systems are slightly
+# different).
 #
-# About PAM, Linux Kernel has explanation in:
+# Notes:
+# (1) Knowledge about PAM:
 # https://mirrors.edge.kernel.org/pub/linux/libs/pam/
-# RedHat provide quite complicated information, while ubuntu seems not.
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/managing_smart_cards/pluggable_authentication_modules
-# http://manpages.ubuntu.com/manpages/bionic/man7/PAM.7.html
 # https://www.pks.mpg.de/~mueller/docs/suse10.2/html/opensuse-manual_en/manual/cha.pam.html
-#
-# For Ubuntu, password authorization is setup in `/etc/pam.d/common-auth` (import to
-# `/etc/pam.d/sshd`). It uses `pam_unix.so` for traditional password authorization,
-# and (TODO) it looks in nowhere it refers to an authorized key based authorization.
+# http://manpages.ubuntu.com/manpages/bionic/man7/PAM.7.html
+# (2) `pam_unix.so` username/password authorization:
 # http://manpages.ubuntu.com/manpages/trusty/man8/pam_unix.8.html
-#
-# Note:
-# (1) Other systems (Red Hat, OpenSUSE, ...) have slightly different names/paths.
-# (2) A full list of modules PAM refers can be checked by `ls /lib/*/security`.
-# (3) We can't manually edit `/etc/pam.d/common-auth` as they will be overwriting
-# by `pam-auth-update`.
+# (3) A full list of modules PAM refers can be checked by `ls /lib/*/security`.
+# (4) `pam.d` configuration files cannot be freely edited, as they'll be overwritten
+# by `pam-auth-update`. The correct way is to edit `/etc/security/*.conf` files.
 # http://manpages.ubuntu.com/manpages/xenial/man8/pam-auth-update.8.html
-# The correct way is to edit `/etc/security/*.conf` files.
 # https://www.digitalocean.com/community/tutorials/how-to-use-pam-to-configure-authentication-on-an-ubuntu-12-04-vps
 # http://www.rjsystems.nl/en/2100-pam-debian.php
 # https://askubuntu.com/questions/574845/what-is-the-correct-way-to-modify-etc-pam-d-common-auth
-# (4) `/etc/pam.d/common-password` is for password changing so irrelavent. Although it
+# (5) `/etc/pam.d/common-password` is for password changing so irrelavent. Although it
 # has similar content to `/etc/pam.d/common-auth`.
 #
-# Some posts suggests SSH Tectia Client which is not free (the company own `ssh.com`)
-# so we'll not consider it.
-# https://www.ssh.com/manuals/server-admin/44/Pluggable_Authentication_Module__PAM__Submethod.html
-#
+# Relevant post on PAM:
+# https://www.linuxquestions.org/questions/linux-security-4/openssh-authentication-pam-428406/
+
 # Both MySQL and Postgres have PAM support. However, those are mainly for users to
 # log into the database (rather than to use database data to decide which user can
 # log in). In addition, I am not sure it is only in username/password level or it
@@ -68,8 +84,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 # https://dev.mysql.com/doc/refman/5.5/en/pam-pluggable-authentication.html
 # https://www.postgresql.org/docs/11/auth-pam.html
 #
-# About PAM with OpenSSH/random FAQ/comments:
-# https://www.linuxquestions.org/questions/linux-security-4/openssh-authentication-pam-428406/
+# Relevant post:
 # https://serverfault.com/questions/608445/manage-ssh-users-with-mysql-backend
 
 # TODO:
