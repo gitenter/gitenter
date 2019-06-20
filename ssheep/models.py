@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, ForeignKey
-from sqlalchemy.types import Boolean, Integer, String, VARCHAR
+from sqlalchemy.types import Boolean, Integer, String, LargeBinary, VARCHAR
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -116,5 +116,8 @@ class SshKey(Base):
     member = relationship("Member", back_populates="ssh_keys")
 
     key_type = Column(String)
-    key_data = Column(String)
+    key_data = Column(LargeBinary)
     comment = Column(String)
+
+    def get_authorized_keys_line(self):
+        return "{} {} {}".format(self.key_type, self.key_data.decode('ascii'), self.comment)

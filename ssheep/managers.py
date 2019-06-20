@@ -46,3 +46,17 @@ class RepositoryMemberMapManager():
             return True
         else:
             return False
+
+
+class SshKeyManager():
+
+    @classmethod
+    def get_all_ssh_keys(cls, session):
+        return session.query(SshKey).all()
+
+    @classmethod
+    def get_authorized_keys_file_content(cls, session):
+        output = ""
+        for ssh_key in cls.get_all_ssh_keys(session):
+            output += "{}\n".format(ssh_key.get_authorized_keys_line())
+        return output
