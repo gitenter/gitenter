@@ -2,9 +2,9 @@ from sqlalchemy import create_engine
 
 
 DATABASE = {
-    'username': 'enterovirus',
+    'username': 'gitenter_app',
     'password': 'zooo',
-    'dbname': 'enterovirus'
+    'dbname': 'gitenter'
 }
 
 

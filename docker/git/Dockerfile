@@ -47,8 +47,10 @@ CMD ["/usr/sbin/sshd", "-D"]
 # $1 as any username and giving back a series of keys, the $1 username need to already
 # exist in our system. By so, currently only `git` and `root` can work (without
 # password needed).
-# Probably can bypass it by using non-local user, but otherwise it becomes unavoidable
-# to use OpenSSH patch.
+# Probably can bypass it by adding every user (local/remote) to each `git` instance,
+# so the file doesn't need to contain all users, but otherwise it becomes unavoidable
+# to do a OpenSSH patch for public key lookup (input public key and return boolean)
+# myself.
 COPY ./user_keys.sh /usr/local/bin/user_keys.sh
 RUN chmod a+x /usr/local/bin/user_keys.sh
 RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/local\/bin\/user_keys.sh/' /etc/ssh/sshd_config
@@ -63,12 +65,14 @@ RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody
 # (3) ssh-keydb: https://code.google.com/archive/p/ssh-keydb/
 # Not useful. This is just dynamically generate `authorized_keys` from db content
 # which is basically a trivial task (especialluy after `AuthorizedKeysCommand` is
-# included in standard OpenSSH). 
+# included in standard OpenSSH).
 # (4) SSH Tectia Client which is not free (the company own `ssh.com`) so we'll not
 # consider it.
 # https://www.ssh.com/manuals/server-admin/44/Pluggable_Authentication_Module__PAM__Submethod.html
 # (5) openssh-script-auth: https://github.com/mizzy/openssh-script-auth
-# Basically we want to do something similar. A OpenSSH hack with script authentication.
+# It is similar to `AuthorizedKeysCommand` which just generate a file, rather than
+# using the public key as input and give boolean about whether the user can login
+# or not. Not usefor for our case.
 
 # We can't replace `.ssh/authorized_keys` through ssh pluggable authentication modules (PAM),
 # as this part of logic is inside of OpenSSH rather than through PAM. `/etc/pam.d/sshd`
