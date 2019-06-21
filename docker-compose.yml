@@ -32,6 +32,7 @@ services:
       context: ./docker/git
       dockerfile: ./Dockerfile
     volumes:
+      - ./ssheep:/ssheep
       - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
       - git-repo:/home/git
     ports:

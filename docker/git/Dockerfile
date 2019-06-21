@@ -7,7 +7,8 @@ RUN echo 'git:secretpassword' | chpasswd
 
 RUN apt-get update && apt-get -y install \
 	openssh-server \
-    git
+  git \
+	python3-pip
 
 # Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
 
@@ -22,11 +23,12 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # This is the pseudo-authorized key for testing purposes, which should be removed later.
 #ADD id_rsa.pub /home/git/.ssh/authorized_keys
 
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
-
 # $ ssh git@localhost -p 8822
 # Works at this point.
+
+WORKDIR /ssheep
+RUN pip3 install pipenv
+RUN pipenv install
 
 # To use database as backend rather than `.ssh/authorized_keys` to save public keys
 # for users to login, the following page listed most possibilities:
@@ -51,9 +53,9 @@ CMD ["/usr/sbin/sshd", "-D"]
 # so the file doesn't need to contain all users, but otherwise it becomes unavoidable
 # to do a OpenSSH patch for public key lookup (input public key and return boolean)
 # myself.
-COPY ./user_keys.sh /usr/local/bin/user_keys.sh
-RUN chmod a+x /usr/local/bin/user_keys.sh
-RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/usr\/local\/bin\/user_keys.sh/' /etc/ssh/sshd_config
+COPY ./get_authorized_keys_content.sh /ssheep/get_authorized_keys_content.sh
+RUN chmod a+x /ssheep/get_authorized_keys_content.sh
+RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/ssheep\/get_authorized_keys_content.sh/' /etc/ssh/sshd_config
 # Any user who can execute the above command can be used. And most operating systems
 # have a nobody user. So we just use the default `nobody` user.
 RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody/' /etc/ssh/sshd_config
@@ -111,6 +113,9 @@ RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody
 #
 # Relevant post:
 # https://serverfault.com/questions/608445/manage-ssh-users-with-mysql-backend
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
 
 # TODO:
 # Setup non-interactive login so user cannot login through SSH.
