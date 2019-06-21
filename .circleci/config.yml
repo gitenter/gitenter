@@ -199,7 +199,6 @@ orbs:
 jobs:
   java-build:
     executor: java-with-postgres-executor
-
     steps:
       - checkout
 
@@ -262,27 +261,26 @@ jobs:
 
   python-unittest:
     executor: python-with-postgres-executor
-
     steps:
       - checkout
       - inline-postgres/initialize
 
       # https://circleci.com/docs/2.0/language-python/
+      #
+      # TODO:
+      # Cache pip libraries.
       - run: sudo pip3 install pipenv
       - run: cd ssheep && pipenv install --dev
       - run: cd ssheep && pipenv run pytest tests
 
   python-linter:
     executor: python-executor
-
-    # https://circleci.com/docs/2.0/language-python/
     steps:
       - checkout
 
-      - run:
-          command: |  # use pipenv to install dependencies
-            sudo pip install pipenv
-            pipenv install
+      - run: sudo pip3 install pipenv
+      - run: cd ssheep && pipenv install --dev
+      - run: cd ssheep && pipenv run flake8 --statistics
 
   qa-web-app-deploy:
     # TODO:

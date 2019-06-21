@@ -1,4 +1,12 @@
-from models import *
+from sqlalchemy import or_
+
+from models import (
+    Member,
+    Organization,
+    Repository,
+    RepositoryMemberMap,
+    SshKey
+)
 
 
 class RepositoryManager():
@@ -38,7 +46,7 @@ class RepositoryMemberMapManager():
 
         maps = RepositoryMemberMapManager.__filter_user_and_org_and_repo_name(
             session, username, org_name, repo_name).\
-            filter(_or(
+            filter(or_(
                 RepositoryMemberMap.role == 'E',
                 RepositoryMemberMap.role == 'L')).all()
 

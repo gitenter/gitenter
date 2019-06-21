@@ -13,13 +13,17 @@ class TestAuthorizedKeys(TestCase):
         self.session = Session()
 
     def test_authorized_keys(self):
-        member = Member(username="member", password="password", display_name="Member", email="member@member.com")
-        ssh_key_1 = SshKey(
+        member = Member(
+            username="member",
+            password="password",
+            display_name="Member",
+            email="member@member.com")
+        SshKey(
             member=member,
             key_type="ssh-rsa",
             key_data=b"AAAAB3NzaC1yc",
             comment="key_1")
-        ssh_key_1 = SshKey(
+        SshKey(
             member=member,
             key_type="ssh-rsa",
             key_data=b"CFGrGDnSs+j7F",
