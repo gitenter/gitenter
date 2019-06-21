@@ -63,8 +63,18 @@ class SshKeyManager():
         return session.query(SshKey).all()
 
     @classmethod
-    def get_authorized_keys_file_content(cls, session):
+    def get_plain_authorized_keys_file_content(cls, session):
         output = ""
         for ssh_key in cls.get_all_ssh_keys(session):
             output += "{}\n".format(ssh_key.get_authorized_keys_line())
+        return output
+
+    @classmethod
+    def get_force_command_authorized_keys_file_content(cls, session):
+        output = ""
+        for ssh_key in cls.get_all_ssh_keys(session):
+            output += "command=\"./git-authorization.sh {}\",".format(
+                ssh_key.member.username)
+            output += "no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty {}\n".format(
+                ssh_key.get_authorized_keys_line())
         return output
