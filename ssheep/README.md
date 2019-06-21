@@ -10,6 +10,10 @@ python3 get_authorized_keys_content.py
 
 ## Run Tests
 
+Any test runner can be used (as we are using `unittest.TestCase`) but in `Pipfile` we specify `pytest`.
+
 ```
-python3 -m unittest tests.test_get_authorized_keys_content
+sudo pip install pipenv
+pipenv install --dev
+pipenv run pytest tests
 ```

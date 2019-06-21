@@ -40,7 +40,19 @@ executors:
 
   python-executor:
     docker:
-      - image: circleci/python:3.6.5
+      - image: circleci/python:3.7.3
+
+    working_directory: ~/python
+
+  python-with-postgres-executor:
+    docker:
+      - image: circleci/python:3.7.3
+        environment:
+          TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
+
+      - image: circleci/postgres:11
+        environment:
+          POSTGRES_PASSWORD: postgres
 
     working_directory: ~/python
 
@@ -237,6 +249,27 @@ jobs:
           paths:
             - docker/web/*.war
 
+  python-unittest:
+    executor: python-with-postgres-executor
+
+    steps:
+      - checkout
+
+      # TODO:
+      # Setup postgres init as an inline-orb.
+      - run: sudo apt update && sudo apt install postgresql-client
+      - run: psql -U postgres -h localhost -p 5432 -w -f database/create_users.sql
+      - run: psql -U postgres -h localhost -p 5432 -w -f database/create_database.sql -v dbname=gitenter
+      - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/initiate_database.sql
+      - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/privilege_control.sql
+      - run: psql -U postgres -h localhost -p 5432 -d gitenter -w -f database/alter_sequence.sql
+      - run: psql -U postgres -h localhost -p 5432 -c 'ALTER DATABASE gitenter OWNER TO gitenter;'
+
+      # https://circleci.com/docs/2.0/language-python/
+      - run: sudo pip3 install pipenv
+      - run: cd ssheep && pipenv install --dev
+      - run: cd ssheep && pipenv run pytest tests
+
   python-linter:
     executor: python-executor
 
@@ -310,12 +343,14 @@ workflows:
   build-test-and-deploy:
     jobs:
       - java-build
+      - python-unittest
       - python-linter
 
       - qa-readiness:
           type: approval
           requires:
            - java-build
+           - python-unittest
            - python-linter
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
       # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-qa` first.
