@@ -3,7 +3,7 @@ version: 2.1
 executors:
   java-with-postgres-executor:
     docker:
-      - image: circleci/openjdk:11.0-jdk
+      - image: circleci/openjdk:11.0.2-jdk
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
 
@@ -209,10 +209,15 @@ jobs:
       #       - ~/.m2
       #     key: m2-dependencies-{{ checksum "pom.xml" }}
 
+      # `apt-get update || apt-get update` is because otherwise I'll have the following error:
+      # > Could not open file /var/lib/apt/lists/deb.debian.org_debian_dists
+      # https://discuss.circleci.com/t/apt-get-error-exited-with-code-100/26722
+      # https://github.com/CircleCI-Public/gcp-cli-orb/issues/5
+      #
       # TODO (maybe out-of-date, check in the CircleCI local CLI):
       # Can't specify 10 or 11 or even 9.6.x, as the current `openjdk:10-jdk-node-browsers`
       # is probably in an older version of Linux which doesn't include this
-      - run: sudo apt update && sudo apt install postgresql-client
+      - run: sudo apt-get update || sudo apt-get update && sudo apt install postgresql-client
 
       # install database schema
       # CircleCI needs `-h localhost -p 5432` to force TCP. Refer:

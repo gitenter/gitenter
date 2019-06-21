@@ -31,7 +31,7 @@ class TestAuthorizedKeys(TestCase):
         # session.commit()
 
         desired_output = "ssh-rsa AAAAB3NzaC1yc key_1\nssh-rsa CFGrGDnSs+j7F key_2\n"
-        self.assertEquals(
+        self.assertEqual(
             SshKeyManager.get_authorized_keys_file_content(self.session),
             desired_output
         )
