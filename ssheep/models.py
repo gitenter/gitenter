@@ -119,5 +119,15 @@ class SshKey(Base):
     key_data = Column(LargeBinary)
     comment = Column(String)
 
-    def get_authorized_keys_line(self):
-        return "{} {} {}".format(self.key_type, self.key_data.decode('ascii'), self.comment)
+    def get_authorized_keys_line(self, options=[]):
+        if not options:
+            return "{} {} {}\n".format(
+                self.key_type,
+                self.key_data.decode('ascii'),
+                self.comment)
+        else:
+            return "{} {} {} {}\n".format(
+                ",".join(options),
+                self.key_type,
+                self.key_data.decode('ascii'),
+                self.comment)

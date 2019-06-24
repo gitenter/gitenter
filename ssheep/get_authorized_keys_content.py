@@ -14,7 +14,8 @@ from managers import SshKeyManager
 # exist in the OS. If we can get rid of it, we can accept that argument in
 # here so it is possible for us to generate a small set of tests.
 if __name__ == "__main__":
-    Session = sessionmaker(bind=postgres_engine())
+    connection = postgres_engine().connect()
+    Session = sessionmaker(bind=connection)
     session = Session()
 
     # TODO:
@@ -24,3 +25,4 @@ if __name__ == "__main__":
     # print(SshKeyManager.get_force_command_authorized_keys_file_content(session))
 
     session.close()
+    connection.close()

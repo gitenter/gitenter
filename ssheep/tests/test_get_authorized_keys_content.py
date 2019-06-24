@@ -8,8 +8,17 @@ from models import Member, SshKey
 
 class TestSshKeyManager(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.connection = postgres_engine().connect()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.connection.close()
+
     def setUp(self):
-        Session = sessionmaker(bind=postgres_engine())
+        self.transaction = self.connection.begin()
+        Session = sessionmaker(bind=self.connection)
         self.session = Session()
 
         member = Member(
@@ -29,12 +38,11 @@ class TestSshKeyManager(TestCase):
             comment="key_2")
 
         self.session.add(member)
-        # Should not commit, otherwise (as we are without a rollback machanism)
-        # this test will fail the 2nd run.
-        # session.commit()
+        self.session.commit()
 
     def tearDown(self):
         self.session.close()
+        self.transaction.rollback()
 
     def test_plain_get_authorized_keys_content(self):
         desired_output = "ssh-rsa AAAAB3NzaC1yc key_1\nssh-rsa CFGrGDnSs+j7F key_2\n"
