@@ -1,12 +1,6 @@
 package com.gitenter.protease.dao.auth;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,13 +14,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
-import com.gitenter.protease.source.SshSource;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -64,21 +56,13 @@ public class SshKeyRepositoryTest {
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	@DatabaseTearDown
-	public void test() throws Exception {
-		
-		File file = folder.newFile("authorized_keys");
-		
-		SshSource sshSource = mock(SshSource.class);
-		when(sshSource.getAuthorizedKeysFilepath()).thenReturn(file);
-		ReflectionTestUtils.setField(sshKeyRepository, "sshSource", sshSource);
-		
+	public void test() throws Exception {	
 		MemberBean member = memberRepository.findById(1).get();
 		assertEquals(member.getSshKeys().size(), 1);
 		
 		String keyType = "ssh-rsa";
 		String keyData = "AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9";
 		String comment = "comment";
-		String command = "command=\"./git-authorization.sh "+member.getUsername()+"\",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty";
 		
 		/*
 		 * TODO:
@@ -93,9 +77,6 @@ public class SshKeyRepositoryTest {
 		member.addSshKey(sshKey);
 		
 		sshKeyRepository.saveAndFlush(sshKey);
-		
-		byte[] encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
-		assertEquals(new String(encoded), command+" "+keyType+" "+keyData+" "+comment+"\n");
 		
 		MemberBean refreshedMember = memberRepository.findById(1).get();
 		assertEquals(refreshedMember.getSshKeys().size(), 2);

@@ -60,8 +60,12 @@ class SshKeyManager():
 
     @classmethod
     def get_all_ssh_keys(cls, session):
-        return session.query(SshKey).all()
+        return session.query(SshKey).join(Member).all()
 
+    # TODO:
+    # Consider using `ssh-copy-id`, which may be relatively safer comparing to
+    # manually change the `.ssh/authorized_keys` file.
+    # https://linux.die.net/man/1/ssh-copy-id
     @classmethod
     def get_plain_authorized_keys_file_content(cls, session):
         output = ""

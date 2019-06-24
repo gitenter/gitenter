@@ -1,5 +1,11 @@
+# Mac OS
 .DS_Store
+
+# ssh
 id_rsa.pub
+
+# Redis dump file
+dump.rdb
 
 ### Java ###
 
