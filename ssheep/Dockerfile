@@ -1,5 +1,13 @@
 FROM ubuntu:18.04
 
+# TODO:
+# ENV setups needed for `pipenv install`. Otherwise will get error
+# >   File "/usr/local/lib/python3.6/dist-packages/pipenv/vendor/click/_unicodefun.py",  line 124, in _verify_python3_env
+# >     ' mitigation steps.' + extra
+# > RuntimeError: Click will abort further execution because Python 3 was configured to use ASCII as encoding for the environment. Consult https://click.palletsprojects.com/en/7.x/python3/ for mitigation steps.
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
 RUN echo 'root:secretpassword' | chpasswd
 
 RUN useradd -ms /bin/bash git
@@ -8,10 +16,20 @@ RUN echo 'git:secretpassword' | chpasswd
 RUN apt-get update && apt-get -y install \
 	openssh-server \
   git \
-	python3-pip
+	python3-pip \
+	libpq-dev
+
+RUN pip3 install pipenv
+
+COPY . /ssheep
+WORKDIR /ssheep
+
+# TODO:
+# Looks like need to `apt-get install libpq-dev`, otherwise will run into error
+# > An error occurred while installing psycopg2==2.8.1 ...
+RUN pipenv install
 
 # Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
-
 RUN mkdir /var/run/sshd
 #RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin forced-commands-only/' /etc/ssh/sshd_config
@@ -25,10 +43,6 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 # $ ssh git@localhost -p 8822
 # Works at this point.
-
-WORKDIR /ssheep
-RUN pip3 install pipenv
-RUN pipenv install
 
 # To use database as backend rather than `.ssh/authorized_keys` to save public keys
 # for users to login, the following page listed most possibilities:

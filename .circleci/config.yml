@@ -143,8 +143,8 @@ orbs:
               account-url: AWS_ECR_ACCOUNT_URL # 662490392829.dkr.ecr.us-east-1.amazonaws.com
               aws-access-key-id: AWS_ACCESS_KEY_ID
               aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-              dockerfile: ./docker/<<parameters.docker_image_folder>>/Dockerfile
-              path: ./docker/<<parameters.docker_image_folder>>
+              dockerfile: ./<<parameters.docker_image_folder>>/Dockerfile
+              path: ./<<parameters.docker_image_folder>>
               region: AWS_DEFAULT_REGION
               # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
               # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
@@ -257,7 +257,7 @@ jobs:
           root: /tmp/java-build/
           # Must be relative path from root
           paths:
-            - docker/web/*.war
+            - capsid/target/*.war
 
   python-unittest:
     executor: python-with-postgres-executor
@@ -296,7 +296,7 @@ jobs:
       - inline-aws-operation/deploy:
           deploy_env: "qa"
           service_infix: "web-app"
-          docker_image_folder: "web"
+          docker_image_folder: "capsid"
       - inline-aws-operation/confirm-web-deployment:
           deploy_env: "qa"
           service_infix: "web-app"
@@ -308,7 +308,7 @@ jobs:
       - inline-aws-operation/deploy:
           deploy_env: "qa"
           service_infix: "git"
-          docker_image_folder: "ssh-trivial"
+          docker_image_folder: "docker/ssh-trivial"
 
   acceptance-test:
     docker:
