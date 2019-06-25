@@ -309,74 +309,75 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
-      - java-build
+      # - java-build
       - python-linter
+      - acceptance-test
 
-      - qa-readiness:
-          type: approval
-          requires:
-           - java-build
-           - python-linter
-      # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
-      # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-qa` first.
-      # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
-      # https://github.com/CircleCI-Public/aws-ecr-orb
+      # - qa-readiness:
+      #     type: approval
+      #     requires:
+      #      - java-build
+      #      - python-linter
+      # # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
+      # # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-qa` first.
+      # # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
+      # # https://github.com/CircleCI-Public/aws-ecr-orb
+      # #
+      # # TODO:
+      # # Consider adding a step to call `terraform apply` through CircleCI. Can
+      # # pass in `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` through command line.
+      # #
+      # # Before that, we need to setup remote S3 endpoint through.
+      # #
+      # # It may be needed to have some logic similar to
+      # # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh#L19-L28
+      # # to here to make sure `terraform apply` is completed before the next step.
+      # # We've seen checking too soon gives back a 503 error, and the error automatically
+      # # resolved itself after a while.
+      # #
+      # # Probably not, as configuration management (with lower frequency to be updated,
+      # # and also for risk management) is typically not part of the CI workflow.
+      # #
+      # # TODO:
+      # # Check if it is possible to combine multiple steps in the same executor. Should
+      # # be just call the Orbs in executor definition rather than in workflows. Tried
+      # # orbs as steps in jobs which doesn't work.
+      # #
+      # # TODO:
+      # # Redefine `qa` prefix as a pipeline variable (pre-release feature).
+      # # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
+      # # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
+      # # UI but nor in orbs.
+      # # https://circleci.com/docs/2.0/env-vars/
+      # - qa-web-app-deploy:
+      #     requires:
+      #       - qa-readiness
       #
-      # TODO:
-      # Consider adding a step to call `terraform apply` through CircleCI. Can
-      # pass in `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` through command line.
+      # - qa-git-deploy:
+      #     requires:
+      #       - qa-readiness
       #
-      # Before that, we need to setup remote S3 endpoint through.
+      # - acceptance-test:
+      #     requires:
+      #       - qa-web-app-deploy
+      #       - qa-git-deploy
+      # # TODO:
+      # # Consider adding a step to call `terraform destroy` through CircleCI. Should be an `approval`
+      # # type step before this one, so we can use this QA environment for manual debugging too.
+      # # Notice that it is optional. Do not calling this step will accelerate the next build (as typically
+      # # zero thing needs to be changed). However, run multiple builds at the same time will cause race
+      # # condition, as they are sharing the same remote server.
       #
-      # It may be needed to have some logic similar to
-      # https://github.com/CircleCI-Public/circleci-demo-aws-ecs-ecr/blob/without_orbs/deploy.sh#L19-L28
-      # to here to make sure `terraform apply` is completed before the next step.
-      # We've seen checking too soon gives back a 503 error, and the error automatically
-      # resolved itself after a while.
-      #
-      # Probably not, as configuration management (with lower frequency to be updated,
-      # and also for risk management) is typically not part of the CI workflow.
-      #
-      # TODO:
-      # Check if it is possible to combine multiple steps in the same executor. Should
-      # be just call the Orbs in executor definition rather than in workflows. Tried
-      # orbs as steps in jobs which doesn't work.
-      #
-      # TODO:
-      # Redefine `qa` prefix as a pipeline variable (pre-release feature).
-      # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
-      # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
-      # UI but nor in orbs.
-      # https://circleci.com/docs/2.0/env-vars/
-      - qa-web-app-deploy:
-          requires:
-            - qa-readiness
-
-      - qa-git-deploy:
-          requires:
-            - qa-readiness
-
-      - acceptance-test:
-          requires:
-            - qa-web-app-deploy
-            - qa-git-deploy
-      # TODO:
-      # Consider adding a step to call `terraform destroy` through CircleCI. Should be an `approval`
-      # type step before this one, so we can use this QA environment for manual debugging too.
-      # Notice that it is optional. Do not calling this step will accelerate the next build (as typically
-      # zero thing needs to be changed). However, run multiple builds at the same time will cause race
-      # condition, as they are sharing the same remote server.
-
-      # TODO:
-      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
-      #
-      # TODO:
-      # Only show `prod-readiness` for master branch.
-      - prod-readiness:
-          type: approval
-          requires:
-            - java-build
-            - python-linter
-      - deploy:
-          requires:
-            - prod-readiness
+      # # TODO:
+      # # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
+      # #
+      # # TODO:
+      # # Only show `prod-readiness` for master branch.
+      # - prod-readiness:
+      #     type: approval
+      #     requires:
+      #       - java-build
+      #       - python-linter
+      # - deploy:
+      #     requires:
+      #       - prod-readiness
