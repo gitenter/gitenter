@@ -277,11 +277,23 @@ jobs:
           service_infix: "git"
           docker_image_folder: "ssh-trivial"
 
+  # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
+  # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
   acceptance-test:
     docker:
-      - image: circleci/openjdk:11.0-jdk
+      - image: circleci/python:3.6.2-stretch-browsers
     steps:
-      - run: echo "success"
+      - checkout
+      - run: mkdir test-reports
+      - run:
+          name: Download Selenium
+          command: |
+            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+      - run:
+          name: Start Selenium
+          command: |
+            java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
+          background: true
 
   deploy:
     docker:
