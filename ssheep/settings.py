@@ -12,7 +12,7 @@ class LocalDatabase(Database):
 
 
 class DockerDatabase(Database):
-    url = "database"
+    url = "postgres"
 
 
 class QaDatabase(Database):

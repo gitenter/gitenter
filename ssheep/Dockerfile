@@ -23,6 +23,7 @@ RUN pip3 install pipenv
 
 COPY . /ssheep
 WORKDIR /ssheep
+RUN sed -i 's/database = LocalDatabase()/database = DockerDatabase()/' /ssheep/settings.py
 
 # TODO:
 # Looks like need to `apt-get install libpq-dev`, otherwise will run into error
