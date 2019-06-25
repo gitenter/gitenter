@@ -29,12 +29,12 @@ class TestSshKeyManager(TestCase):
         SshKey(
             member=member,
             key_type="ssh-rsa",
-            key_data=b"AAAAB3NzaC1yc",
+            key_data="AAAAB3NzaC1yc",
             comment="key_1")
         SshKey(
             member=member,
             key_type="ssh-rsa",
-            key_data=b"CFGrGDnSs+j7F",
+            key_data="CFGrGDnSs+j7F",
             comment="key_2")
 
         self.session.add(member)

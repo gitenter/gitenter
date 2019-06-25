@@ -116,18 +116,18 @@ class SshKey(Base):
     member = relationship("Member", back_populates="ssh_keys")
 
     key_type = Column(String)
-    key_data = Column(LargeBinary)
+    key_data = Column(String)
     comment = Column(String)
 
     def get_authorized_keys_line(self, options=[]):
         if not options:
             return "{} {} {}\n".format(
                 self.key_type,
-                self.key_data.decode('ascii'),
+                self.key_data,
                 self.comment)
         else:
             return "{} {} {} {}\n".format(
                 ",".join(options),
                 self.key_type,
-                self.key_data.decode('ascii'),
+                self.key_data,
                 self.comment)

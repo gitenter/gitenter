@@ -68,6 +68,11 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # so the file doesn't need to contain all users, but otherwise it becomes unavoidable
 # to do a OpenSSH patch for public key lookup (input public key and return boolean)
 # myself.
+#
+# TODO:
+# `/ssheep/get_authorized_keys_content.sh` can return the correct string, but `AuthorizedKeysCommand`
+# not working. Thinking about not in pipenv in command.
+# https://medium.com/@greut/building-a-python-package-a-docker-image-using-pipenv-233d8793b6cc
 COPY ./get_authorized_keys_content.sh /ssheep/get_authorized_keys_content.sh
 RUN chmod a+x /ssheep/get_authorized_keys_content.sh
 RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/ssheep\/get_authorized_keys_content.sh/' /etc/ssh/sshd_config

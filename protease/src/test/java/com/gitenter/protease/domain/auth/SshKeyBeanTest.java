@@ -56,7 +56,7 @@ public class SshKeyBeanTest {
 		sshKey.setBean(keyType+" "+keyData+" "+comment);
 		
 		assertEquals(sshKey.getKeyType(), keyType);
-		assertEquals(sshKey.getKeyDataToString(), keyData);
+		assertEquals(sshKey.getKeyData(), keyData);
 		assertEquals(sshKey.getComment(), comment);
 	}
 	

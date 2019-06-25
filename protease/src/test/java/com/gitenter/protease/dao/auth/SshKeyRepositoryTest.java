@@ -83,7 +83,7 @@ public class SshKeyRepositoryTest {
 		
 		SshKeyBean refreshedSshKey = refreshedMember.getSshKeys().get(1);
 		assertEquals(refreshedSshKey.getKeyType(), keyType);
-		assertEquals(refreshedSshKey.getKeyDataToString(), keyData);
+		assertEquals(refreshedSshKey.getKeyData(), keyData);
 		assertEquals(refreshedSshKey.getComment(), comment);
 	}
 }
