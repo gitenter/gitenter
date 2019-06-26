@@ -78,8 +78,8 @@ resource "aws_lb_target_group" "web_app" {
     # TODO:
     # Define what exactly we need to know from this health check endpoint,
     # and deside which one we should choose.
-    path = "/"
-    # path = "/health_check"
+    # path = "/"
+    path = "/health_check"
     # path = "/resources/static_health_check.html"
     protocol = "HTTP"
     # `timeout` cannot be too small, otherwise when deploying the real service

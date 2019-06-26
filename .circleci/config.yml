@@ -333,7 +333,7 @@ jobs:
           # Must be absolute path or relative path from working_directory
           at: /tmp/build
 
-      - run: ls /tmp/build/docker/web
+      - run: ls /tmp/build/
       - run: echo "success"
       # TODO:
       # Consider saving to final capsid.jar to an artifact.
