@@ -308,7 +308,7 @@ jobs:
       - inline-aws-operation/deploy:
           deploy_env: "qa"
           service_infix: "git"
-          docker_image_folder: "docker/ssh-trivial"
+          docker_image_folder: "ssheep"
 
   acceptance-test:
     docker:
