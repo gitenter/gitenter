@@ -28,7 +28,12 @@ RUN sed -i 's/database = LocalDatabase()/database = DockerDatabase()/' /ssheep/s
 # TODO:
 # Looks like need to `apt-get install libpq-dev`, otherwise will run into error
 # > An error occurred while installing psycopg2==2.8.1 ...
-RUN pipenv install
+#
+# TODO:
+# Consider not install packages on the host machine. Rather, we should use python wheels.
+# https://medium.com/@greut/building-a-python-package-a-docker-image-using-pipenv-233d8793b6cc
+RUN pipenv lock -r > requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
 RUN mkdir /var/run/sshd
