@@ -15,8 +15,8 @@
     <description>The web layer</description>
 
     <properties>
-        <spring-boot-version>2.1.0.RELEASE</spring-boot-version>
-        <spring-version>5.1.2.RELEASE</spring-version>
+        <spring-boot-version>2.1.6.RELEASE</spring-boot-version>
+        <spring-version>5.1.9.RELEASE</spring-version>
         <commonmark-version>0.12.1</commonmark-version>
     </properties>
 
@@ -31,7 +31,7 @@
                 <version>3.2.2</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <outputDirectory>docker/web/</outputDirectory>
+                    <outputDirectory>capsid/target/</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -162,7 +162,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>5.1.1.RELEASE</version>
+            <version>5.1.5.RELEASE</version>
         </dependency>
         <dependency>
             <!-- Since we exclude all the dependencies of "protease",

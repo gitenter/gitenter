@@ -44,8 +44,8 @@ public class RedisConfig {
 	}
 
 	/*
-	 * Fix the secured Redis error which appears in AWS but not locally. It will cause ELB to keep
-	 * restart and cannot pass the health_check endpoint (returns 503/404).
+	 * The below setup is to fix the secured Redis error which appears in AWS but not locally. It will 
+	 * cause ELB to keep restart and cannot pass the health_check endpoint (returns 503/404).
 	 * https://github.com/spring-projects/spring-session/issues/124
 	 * https://github.com/spring-projects/spring-session/issues/113
 

@@ -59,7 +59,7 @@ public class MemberBeanTest {
 		assertEquals(item.getSshKeys().size(), 1);
 		SshKeyBean sshKey = item.getSshKeys().get(0);
 		assertEquals(sshKey.getKeyType(), "ssh-rsa");
-		assertEquals(sshKey.getKeyDataToString(), "VGhpcyBpcyBteSB0ZXh0Lg==");
+		assertEquals(sshKey.getKeyData(), "VGhpcyBpcyBteSB0ZXh0Lg==");
 		assertEquals(sshKey.getComment(), "comment");
 		
 		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);

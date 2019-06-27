@@ -26,7 +26,15 @@ resource "aws_lb_target_group" "git" {
   port        = 22
   protocol    = "TCP"
   vpc_id      = "${aws_vpc.main.id}"
-  target_type = "ip" # targets are specified by IP address
+  # Need to specify `aws_autoscaling_group.target_group_arns` if the target type
+  # is `instance`. No need to specify that if it is `ip`, as system will automatically
+  # register targets in some subnet (setup through load balancer security group (ALB)
+  # or instance security group (NLB)).
+  #
+  # By that reason it is preferred for NLB to use target type `instance`. However,
+  # it is uncompatible with ECS task definition `awsvpc` network mode (and `awsvpc`
+  # is highly recommanded).
+  target_type = "ip"
 
   # Need a instance/docker container which opens port 22, otherwise it will fail
   # this health check.

@@ -72,12 +72,12 @@ resource "aws_lb_target_group" "web_app" {
     # TODO:
     # The initial tomcat image cannot pass the `/health_check` healthcheck, as there's
     # no `/health_check` endpoint. It will just keep the infinite loop of
-    # register/deregister. Should probably seek a way so both can be applied.
-    # However, Spring appliation will fail `/` for the same reason.
-    #
-    # TODO:
-    # Define what exactly we need to know from this health check endpoint,
-    # and deside which one we should choose.
+    # register/deregister.
+    # However, the actual `web` image cannot pass `/` healthcheck, because `/` has been
+    # redirect to `/login`.
+    # Using `/health_check` is fine right now for CI pipeline (as we don't have any
+    # test on the initial Tomcat is deployed successfully -- which is not). But
+    # we may want a better solution so both works.
     # path = "/"
     path = "/health_check"
     # path = "/resources/static_health_check.html"
