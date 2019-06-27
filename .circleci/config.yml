@@ -106,8 +106,6 @@ orbs:
           docker_image_folder:
             type: string
         steps:
-          - checkout
-
           # Otherwise will get the below error in "Build docker image" step:
           # > $ !/bin/bash -eo pipefail
           # > docker build \
@@ -128,7 +126,7 @@ orbs:
           # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
           # ourselves so we can have better control to deploy multiple images to different containers.
           - aws-ecr/build-and-push-image:
-              checkout: true
+              checkout: false
               attach-workspace: true
               # Looks like there's a bug in `aws-ecr/build_and_push_image`. Notice that there's nowhere
               # to specify `working_directory` (in its source code https://github.com/CircleCI-Public/aws-ecr-orb)
@@ -292,7 +290,11 @@ jobs:
     # https://circleci.com/gh/gitenter/gitenter/635
     docker:
       - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
     steps:
+      - checkout
       - inline-aws-operation/deploy:
           deploy_env: "qa"
           service_infix: "web-app"
@@ -304,11 +306,36 @@ jobs:
   qa-git-deploy:
     docker:
       - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
     steps:
+      - checkout
+
+      # TODO:
+      # Probably should add a step to build python wheels, and in Dockerfile just
+      # use the pre-build Dockerfile (rather than setup the environment in docker),
+      # so we don't need to manipulate Dockerfile in here.
+      # Or we may go with an environmental variable process (values local/docker/qa/production)
+      # and applications ask environmental variable what database to connect. Not
+      # sure which is a better approach.
+      - run: sed -i "s/RUN sed -i 's\/database = LocalDatabase()\/database = DockerDatabase()\/' \/ssheep\/settings.py/RUN sed -i 's\/database = LocalDatabase()\/database = QaDatabase()\/' \/ssheep\/settings.py/g" ssheep/Dockerfile
+      - run: cat ssheep/Dockerfile
+
       - inline-aws-operation/deploy:
           deploy_env: "qa"
           service_infix: "git"
           docker_image_folder: "ssheep"
+    # TODO:
+    # Now we can `ssh git@<git_lb_hostname>` to that server. Should add test on that.
+    #
+    # TODO:
+    # Realized sometimes it works while sometimes not (it will say password is not
+    # correct). Wonder why that happens?
+    # 10.0.1.152 8080 us-east-1b initial
+    # 10.0.0.17 8080 us-east-1a initial
+    # 10.0.1.170 22 us-east-1b healthy
+    # 10.0.1.14 22 us-east-1b healthy => works
 
   acceptance-test:
     docker:

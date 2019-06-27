@@ -21,6 +21,9 @@ RUN apt-get update && apt-get -y install \
 
 RUN pip3 install pipenv
 
+# TODO:
+# Consider using environmental variable to do so. Otherwise it is really weird
+# to `sed` this line in CircleCI.
 COPY . /ssheep
 WORKDIR /ssheep
 RUN sed -i 's/database = LocalDatabase()/database = DockerDatabase()/' /ssheep/settings.py
