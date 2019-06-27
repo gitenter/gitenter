@@ -327,7 +327,8 @@ jobs:
           service_infix: "git"
           docker_image_folder: "ssheep"
     # TODO:
-    # Now we can `ssh git@<git_lb_hostname>` to that server. Should add test on that.
+    # Now we can `ssh git@<git_lb_hostname>` to that server. And if the SSH key is added
+    # through web UI (so save in the database) the password is not needed. Should add test on that.
     #
     # TODO:
     # Realized sometimes it works while sometimes not (it will say password is not
@@ -336,6 +337,10 @@ jobs:
     # 10.0.0.17 8080 us-east-1a initial
     # 10.0.1.170 22 us-east-1b healthy
     # 10.0.1.14 22 us-east-1b healthy => works
+    # 10.0.0.160 8080 us-east-1a healthy
+    # 10.0.1.219 8080 us-east-1b healthy
+    # 10.0.0.192 22 us-east-1a healthy
+    # 10.0.0.45 22 us-east-1a healthy => works
 
   acceptance-test:
     docker:
