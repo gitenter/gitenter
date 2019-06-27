@@ -70,6 +70,10 @@ I try to remove all logging dependencies from packages, and define a independent
 
 At this moment, I try to do the modules under `org.slf4j:slf4j-log4j12` (working), and maybe use `ch.qos.logback:logback-classic` for `capsid` (has problem inside of STS).
 
+### Redis
+
+To use Redis locally in Mac, one may need to manually `redis-server`. [Auto-start](https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298) may have permission error when there are more than one OS users.
+
 ### Docker
 
 Docker is installed by following [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04). Currently there's no need to `sudo` run docker commands.

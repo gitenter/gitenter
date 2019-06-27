@@ -24,17 +24,12 @@ terraform {
 # TODO:
 # May seperate AWS accounts for testing environment (clean up deployment
 # completely after test is done) and lnog-stay environment (prod/...).
-variable "access_key" {}
-variable "secret_key" {}
-
-variable "server_port" {
-  description = "The port the server will use for HTTP requests"
-  default = 8080
-}
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
 
 provider "aws" {
-  access_key = "${var.access_key}"
-  secret_key = "${var.secret_key}"
+  access_key = "${var.aws_access_key}"
+  secret_key = "${var.aws_secret_key}"
   region = "us-east-1"
 }
 
@@ -49,8 +44,8 @@ resource "aws_security_group" "tomcat" {
   }
 
   ingress {
-    from_port = "${var.server_port}"
-    to_port = "${var.server_port}"
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -100,7 +95,7 @@ resource "aws_launch_configuration" "capsid" {
   user_data = <<-EOF
                 #!/bin/bash
                 echo "Hello, Capsid" > index.html
-                nohup busybox httpd -f -p "${var.server_port}" &
+                nohup busybox httpd -f -p "80" &
                 EOF
 
   lifecycle {
@@ -131,37 +126,107 @@ resource "aws_security_group" "elb" {
   }
 }
 
-data "aws_availability_zones" "all" {}
+resource "aws_default_vpc" "default" {}
 
-resource "aws_elb" "capsid" {
-  name = "capsid-elb"
+data "aws_subnet_ids" "all" {
+  vpc_id = "${aws_default_vpc.default.id}"
+}
+
+resource "aws_lb" "capsid" {
+  name = "capsid-alb"
+  internal           = false
+  load_balancer_type = "application"
   security_groups = ["${aws_security_group.elb.id}"]
-  availability_zones = ["${data.aws_availability_zones.all.names}"]
+  subnets = ["${data.aws_subnet_ids.all.ids}"]
+}
+
+resource "aws_lb_target_group" "capsid" {
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = "${aws_default_vpc.default.id}"
+  target_type = "instance"
 
   health_check {
+    interval = 30
+    path = "/"
+    protocol = "HTTP"
+    timeout = 3
     healthy_threshold = 2
     unhealthy_threshold = 2
-    timeout = 3
-    interval = 30
-    target = "HTTP:${var.server_port}/"
   }
+}
 
-  listener {
-    lb_port = 80
-    lb_protocol = "http"
-    instance_port = "${var.server_port}"
-    instance_protocol = "http"
+resource "aws_lb_listener" "capsid" {
+  load_balancer_arn = "${aws_lb.capsid.id}"
+  port              = 80
+  protocol          = "HTTP"
+
+  # Here defines the default rule. Default rules can't have conditions.
+  # More rules with various priority can be defined later using `aws_lb_listener_rule`.
+  # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#listener-rules
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.capsid.id}"
+  }
+}
+
+resource "aws_lb" "ssh" {
+  name = "ssh-nlb"
+  internal           = false
+  load_balancer_type = "network"
+  subnets = ["${data.aws_subnet_ids.all.ids}"]
+
+  # Always true for ALB. Default false for NLB.
+  # https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#cross-zone-load-balancing
+  enable_cross_zone_load_balancing = true
+
+  idle_timeout       = 30
+
+  # TODO:
+  # Change to `true` for production
+  enable_deletion_protection = false
+}
+
+resource "aws_lb_target_group" "ssh" {
+  port        = 22
+  protocol    = "TCP"
+  vpc_id      = "${aws_default_vpc.default.id}"
+  target_type = "instance"
+
+  # Need a instance/docker container which opens port 22, otherwise it will fail
+  # this health check.
+  #
+  # `health_check.path` and `timeout` are not supported for target_groups with
+  # TCP protocol. Therefore we don't assign them in here.
+  health_check {
+    interval = 10
+    protocol = "TCP"
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+  }
+}
+
+# Notice that for NLB there cannot be multiple listener rules. As it doesn't support
+# path-based/host-based routing, there's no need to do so.
+resource "aws_lb_listener" "ssh" {
+  load_balancer_arn = "${aws_lb.ssh.id}"
+  port              = 22
+  protocol          = "TCP"
+
+  default_action {
+    target_group_arn = "${aws_lb_target_group.ssh.id}"
+    type             = "forward"
   }
 }
 
 resource "aws_autoscaling_group" "capsid" {
   launch_configuration = "${aws_launch_configuration.capsid.name}"
-  availability_zones = ["${data.aws_availability_zones.all.names}"]
+  vpc_zone_identifier         = ["${data.aws_subnet_ids.all.ids}"]
 
   min_size = 1
   max_size = 2
 
-  load_balancers = ["${aws_elb.capsid.name}"]
+  target_group_arns = ["${aws_lb_target_group.capsid.arn}", "${aws_lb_target_group.ssh.arn}"]
   health_check_type = "ELB"
 
   tag {
@@ -171,6 +236,10 @@ resource "aws_autoscaling_group" "capsid" {
   }
 }
 
-output "elb_dns_name" {
-  value = "${aws_elb.capsid.dns_name}"
+output "tomcat_lb_dns_name" {
+  value = "${aws_lb.capsid.dns_name}"
+}
+
+output "ssh_lb_dns_name" {
+  value = "${aws_lb.ssh.dns_name}"
 }

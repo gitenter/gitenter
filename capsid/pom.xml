@@ -31,7 +31,7 @@
                 <version>3.2.2</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <outputDirectory>docker/web/</outputDirectory>
+                    <outputDirectory>capsid/target/</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>

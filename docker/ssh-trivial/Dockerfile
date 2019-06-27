@@ -1,4 +1,5 @@
 # Refer to https://docs.docker.com/engine/examples/running_ssh_service/
+# May compare to https://hub.docker.com/r/rastasheep/ubuntu-sshd/dockerfile for details
 
 FROM ubuntu:18.04
 

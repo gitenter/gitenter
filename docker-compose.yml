@@ -7,7 +7,7 @@ services:
     image: postgres:11.1
     volumes:
       - ./database:/database
-      - ./docker/database/docker_init.sh:/docker-entrypoint-initdb.d/docker_init.sh
+      - ./database/docker_init.sh:/docker-entrypoint-initdb.d/docker_init.sh
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
@@ -29,10 +29,10 @@ services:
 
   git:
     build:
-      context: ./docker/git
+      context: ./ssheep
       dockerfile: ./Dockerfile
     volumes:
-      - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
+#      - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
       - git-repo:/home/git
     ports:
       - "8822:22"
@@ -52,11 +52,10 @@ services:
 
   web:
     build:
-      context: ./docker/web
+      context: ./capsid
       dockerfile: ./Dockerfile
     volumes:
       #- ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
-      #- ./docker/web/capsid-0.0.2-prototype.war:/usr/local/tomcat/webapps/ROOT.war
       - git-repo:/home/git # TODO: change it to something else together with GitConfig.java
     ports:
       - "8886:8080"
