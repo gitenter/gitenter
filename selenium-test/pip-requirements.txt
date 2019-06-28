@@ -1,3 +1,4 @@
 selenium
 nose
+#psycopg2
 pygit2
