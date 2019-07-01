@@ -5,7 +5,8 @@ from urllib.parse import urlparse, urljoin
 from testsuites.base_testsuite import BaseTestSuite
 from forms.authorization_form import (
     fill_signup_form,
-    fill_login_form
+    fill_login_form,
+    fill_delete_user_form
 )
 
 
@@ -23,7 +24,7 @@ class TestAuthorization(BaseTestSuite):
         assert "Log in" in self.driver.page_source
         assert "Sign up" in self.driver.page_source
 
-    def test_register_and_successfully_login(self):
+    def test_register_and_login_and_delete_user(self):
         username = "username"
         password = "password"
         display_name = "User Name "
@@ -47,7 +48,7 @@ class TestAuthorization(BaseTestSuite):
 
         self.driver.get(urljoin(self.root_url, "/logout"))
 
-        # Logout and login again with remember_me checked
+        # Login again with remember_me checked
         self.driver.get(urljoin(self.root_url, "/login"))
 
         fill_login_form(self.driver, username, password, remember_me=True)
@@ -64,6 +65,18 @@ class TestAuthorization(BaseTestSuite):
         self.assertTrue(find_cookie)
 
         self.driver.get(urljoin(self.root_url, "/logout"))
+
+        # Login again and delete user herself
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, username, password)
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
+
+        fill_delete_user_form(self.driver, password)
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, username, password)
+        assert "Invalid username and password!" in self.driver.page_source
 
     def test_redirect_after_login(self):
         pass

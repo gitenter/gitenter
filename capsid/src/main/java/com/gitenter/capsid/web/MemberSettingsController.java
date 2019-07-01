@@ -1,5 +1,6 @@
 package com.gitenter.capsid.web;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +141,9 @@ public class MemberSettingsController {
 			Model model, 
 			Authentication authentication) throws Exception {
 		
+		System.out.println(authentication);
+		System.out.println(authentication.getAuthorities());
+		
 		return "settings/account/delete";
 	}
 	
@@ -147,24 +151,21 @@ public class MemberSettingsController {
 	public String processDeleteAccount (
 			Authentication authentication,
 			@RequestParam(value="password") String password,
-			RedirectAttributes model) throws Exception {
+			RedirectAttributes model,
+			HttpServletRequest request) throws Exception {
 		
 		if (memberService.deleteMember(authentication.getName(), password)) {
+			request.logout();
+			
 			/*
 			 * TODO:
 			 * Message for successful logout.
-			 * 
-			 * TODO:
-			 * Right now the user can be successfully removed. However, the corresponding
-			 * session will not be removed. Therefore, `/logout` returns 403 (as the user
-			 * no longer exist) and `/` returns 404 (cannot find user in db based on session)
-			 * and it needs to be recovered by Redis `FLUSHALL`. Correct it.
 			 */
-			return "redirect:/logout";
+			return "redirect:/";
 		}
 		else {
 			model.addFlashAttribute("errorMessage", "Password doesn't match!");
-			return "redirect:/settings/delete";
+			return "redirect:/settings/account/delete";
 		}
 		
 	}

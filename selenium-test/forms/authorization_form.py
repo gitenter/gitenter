@@ -40,3 +40,9 @@ def fill_login_form(driver, username, password, remember_me=False):
         driver.find_element_by_id("remember_me").click()
 
     form_start.submit()
+
+
+def fill_delete_user_form(driver, password):
+    form_start = driver.find_element_by_id("password")
+    form_start.send_keys(password)
+    form_start.submit()
