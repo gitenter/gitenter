@@ -9,14 +9,21 @@ import com.gitenter.protease.domain.auth.MemberBean;
 
 public interface MemberRepository extends PagingAndSortingRepository<MemberBean, Integer> {
 
-	Optional<MemberBean> findById(Integer id);
-	List<MemberBean> findByUsername(String username);
+	public Optional<MemberBean> findById(Integer id);
+	public List<MemberBean> findByUsername(String username);
 	
-	/* In Spring Data JPA, save() does both jobs of INSERT and UPDATE,
+	/*
+	 * In Spring Data JPA, save() does both jobs of INSERT and UPDATE,
 	 * depend on whether the primary key is the same or not. 
 	 * 
 	 * The difference between save() and saveAndFlush() is 
 	 * saveAndFlush() will commit immediately, while save() will only 
 	 * comment when commit() or flush(). */
-	MemberBean saveAndFlush(MemberBean member);
+	public MemberBean saveAndFlush(MemberBean member);
+	
+	/*
+	 * TODO:
+	 * Audit log.
+	 */
+	public void delete(MemberBean member);
 }

@@ -77,8 +77,8 @@ public class MemberSettingsController {
 		return "redirect:/settings/profile";
 	}
 	
-	@RequestMapping(value="/account", method=RequestMethod.GET)
-	public String showUpdateAccountForm (Model model, Authentication authentication) throws Exception {
+	@RequestMapping(value="/account/password", method=RequestMethod.GET)
+	public String showChangePassword (Model model, Authentication authentication) throws Exception {
 		
 		/*
 		 * Right now the only thing to show is "username". So for the display 
@@ -92,11 +92,11 @@ public class MemberSettingsController {
 		MemberRegisterDTO memberRegisterDTO = memberService.getMemberRegisterDTO(authentication);
 		model.addAttribute("memberRegisterDTO", memberRegisterDTO);
 		
-		return "settings/account";
+		return "settings/account/password";
 	}
 
-	@RequestMapping(value="/account", method=RequestMethod.POST)
-	public String processUpdateAccount (
+	@RequestMapping(value="/account/password", method=RequestMethod.POST)
+	public String processUpdatePassword (
 			/*
 			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
 			 * attributes, otherwise Spring will directly give 400 error with
@@ -120,19 +120,53 @@ public class MemberSettingsController {
 		expectErrorCount += errors.getFieldErrorCount("displayName");
 		expectErrorCount += errors.getFieldErrorCount("email");
 		if (errors.getErrorCount() > expectErrorCount) {
-			return "settings/account";
+			return "settings/account/password";
 		}
 		
 		assert authentication.getName().equals(registerAfterChange.getUsername());
 		
 		if (memberService.updatePassword(registerAfterChange, oldPassword)) {
 			model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
-			return "redirect:/settings/account";
+			return "redirect:/settings/account/password";
 		}
 		else {
 			model.addFlashAttribute("errorMessage", "Old password doesn't match!");
-			return "redirect:/settings/account";
+			return "redirect:/settings/account/password";
 		}
+	}
+	
+	@RequestMapping(value="/account/delete", method=RequestMethod.GET)
+	public String showDeleteAccount (
+			Model model, 
+			Authentication authentication) throws Exception {
+		
+		return "settings/account/delete";
+	}
+	
+	@RequestMapping(value="/account/delete", method=RequestMethod.POST)
+	public String processDeleteAccount (
+			Authentication authentication,
+			@RequestParam(value="password") String password,
+			RedirectAttributes model) throws Exception {
+		
+		if (memberService.deleteMember(authentication.getName(), password)) {
+			/*
+			 * TODO:
+			 * Message for successful logout.
+			 * 
+			 * TODO:
+			 * Right now the user can be successfully removed. However, the corresponding
+			 * session will not be removed. Therefore, `/logout` returns 403 (as the user
+			 * no longer exist) and `/` returns 404 (cannot find user in db based on session)
+			 * and it needs to be recovered by Redis `FLUSHALL`. Correct it.
+			 */
+			return "redirect:/logout";
+		}
+		else {
+			model.addFlashAttribute("errorMessage", "Password doesn't match!");
+			return "redirect:/settings/delete";
+		}
+		
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)

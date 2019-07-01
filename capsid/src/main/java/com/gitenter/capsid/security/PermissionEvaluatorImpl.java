@@ -6,6 +6,8 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.gitenter.capsid.dto.MemberProfileDTO;
+import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.dto.RepositoryAccessLevel;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
@@ -19,8 +21,23 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 		
-		if (targetDomainObject instanceof String) {
+		if ((targetDomainObject instanceof String) && (permission.equals(MemberSecurityRole.SELF))) {
 			String username = (String)targetDomainObject;
+			return username.equals(authentication.getName());
+		}
+		
+		if ((targetDomainObject instanceof MemberBean) && (permission.equals(MemberSecurityRole.SELF))) {
+			String username = ((MemberBean)targetDomainObject).getUsername();
+			return username.equals(authentication.getName());
+		}
+		
+		if ((targetDomainObject instanceof MemberRegisterDTO) && (permission.equals(MemberSecurityRole.SELF))) {
+			String username = ((MemberRegisterDTO)targetDomainObject).getUsername();
+			return username.equals(authentication.getName());
+		}
+		
+		if ((targetDomainObject instanceof MemberProfileDTO) && (permission.equals(MemberSecurityRole.SELF))) {
+			String username = ((MemberProfileDTO)targetDomainObject).getUsername();
 			return username.equals(authentication.getName());
 		}
 		

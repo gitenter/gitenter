@@ -1,12 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
-<%@ page session="false" %>
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/settings" />">Settings</a> &rarr; 
-      <span class="nav-current">Profile</span>
+      <span class="nav-current">Edit profile</span>
     </nav>
     <article>
       <div>

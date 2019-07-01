@@ -1,16 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
-<%@ page session="false" %>
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr;  
       <a href="<s:url value="/settings" />">Settings</a> &rarr;  
-      <span class="nav-current">Account</span>
+      <span class="nav-current">Change password</span>
     </nav>
     <article>
       <div>
-      <sf:form method="POST" modelAttribute="memberRegisterDTO" >
+      <sf:form method="POST" modelAttribute="memberRegisterDTO" action="/settings/account/password" >
         <table class="fill-in">
           <tr>
             <td>Username</td>

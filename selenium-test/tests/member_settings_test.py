@@ -21,7 +21,13 @@ class TestMemberSetting(RegisteredTestSuite):
         self.driver.get(urljoin(self.root_url, "/settings/profile"))
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
-        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
+        self.driver.get(urljoin(self.root_url, "/settings/account/password"))
+        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
+
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
 
@@ -107,7 +113,7 @@ class TestChangeUserPassword(RegisteredTestSuite):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
-        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        self.driver.get(urljoin(self.root_url, "/settings/account/password"))
         self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
 
         form_start = self.driver.find_element_by_id("old_password")
@@ -115,7 +121,7 @@ class TestChangeUserPassword(RegisteredTestSuite):
         self.driver.find_element_by_id("password").send_keys(new_password)
         form_start.submit()
 
-        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
         assert "Changes has been saved successfully!" in self.driver.page_source
 
         self.driver.get(urljoin(self.root_url, "/logout"))
@@ -132,13 +138,13 @@ class TestChangeUserPassword(RegisteredTestSuite):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
-        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        self.driver.get(urljoin(self.root_url, "/settings/account/password"))
         form_start = self.driver.find_element_by_id("old_password")
         form_start.send_keys("wrong_password")
         self.driver.find_element_by_id("password").send_keys("whatever")
         form_start.submit()
 
-        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
         self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
         assert "Old password doesn't match!" in self.driver.page_source
 
@@ -148,13 +154,13 @@ class TestChangeUserPassword(RegisteredTestSuite):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
-        self.driver.get(urljoin(self.root_url, "/settings/account"))
+        self.driver.get(urljoin(self.root_url, "/settings/account/password"))
         form_start = self.driver.find_element_by_id("old_password")
         form_start.send_keys(self.password)
         self.driver.find_element_by_id("password").send_keys(new_password)
         form_start.submit()
 
-        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
         self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
         assert "size" in self.driver.find_element_by_id("password.errors").text
 

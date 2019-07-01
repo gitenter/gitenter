@@ -84,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#profile.getUsername(), null)")
+	@PreAuthorize("hasPermission(#profile, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
 	public void updateMember(MemberProfileDTO profile) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(profile.getUsername());
@@ -99,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#register.getUsername(), null)")
+	@PreAuthorize("hasPermission(#register, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
 	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(register.getUsername());
@@ -184,12 +184,27 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#member.getUsername(), null)")
+	@PreAuthorize("hasPermission(#member, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
 	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException {
 		
 		sshKey.setMember(member);
 		member.addSshKey(sshKey);
 		
 		sshKeyRepository.saveAndFlush(sshKey);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#username, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
+	public boolean deleteMember(String username, String password) throws IOException {
+		
+		MemberBean member = getMemberByUsername(username);
+		
+		if (!passwordEncoder.matches(password, member.getPassword())) {
+			return false;
+		}
+		else {
+			memberRepository.delete(member);
+			return true;
+		}
 	}
 }
