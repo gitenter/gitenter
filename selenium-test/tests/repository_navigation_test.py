@@ -1,3 +1,4 @@
+import unittest
 from urllib.parse import urlparse, urljoin
 import pygit2
 
@@ -248,3 +249,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
         # TODO:
         # Any way to assert that the image is displayed correctly?
+
+
+if __name__ == '__main__':
+    unittest.main()

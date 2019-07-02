@@ -8,14 +8,14 @@
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/settings" />">Settings</a> &rarr;
-      <span class="nav-current">Profile</span>
+      <span class="nav-current">Edit profile</span>
     </nav>
     <article>
       <div>
       <sf:form method="POST" modelAttribute="repositoryDTO" >
         <table class="fill-in">
           <tr>
-            <td>Username</td>
+            <td>Name</td>
             <td class="pre-fill">
               <c:out value="${repositoryDTO.name}" />
               <sf:hidden path="name" />

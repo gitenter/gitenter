@@ -6,7 +6,10 @@ from forms.authorization_form import (
     fill_login_form,
     click_logout
 )
-from forms.repository_management_form import fill_create_repository_form
+from forms.repository_management_form import (
+    fill_create_repository_form,
+    fill_delete_repository_form
+)
 
 
 class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
@@ -26,7 +29,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
     def tearDown(self):
         super(TestRepositoryCreation, self).tearDown()
 
-    def test_repository_organizer_create_public_repository_and_view_by_organization_member_and_non_member(self):
+    def test_repository_organizer_create_public_repository_and_view_by_organization_member_and_non_member_and_delete(self):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
 
@@ -55,6 +58,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
         click_logout(self.driver)
 
+        # Organization member can access
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
@@ -72,6 +76,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
         click_logout(self.driver)
 
+        # Non member can access
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
@@ -86,6 +91,25 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         # Should see an customized page saying that you can read, but this is a empty repository.
         # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
         # to be added as an editor.
+
+        # Delete repository
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/settings/delete".format(self.org_id, repo_id)))
+        fill_delete_repository_form(self.driver, "wrong_repo_name")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/settings/delete".format(self.org_id, repo_id))
+        assert "Repository name doesn't match!" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/settings/delete".format(self.org_id, repo_id)))
+        fill_delete_repository_form(self.driver, self.repo_name)
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}".format(self.org_id))
+        assert self.repo_display_name not in self.driver.page_source
+
+        click_logout(self.driver)
+
+        # TODO:
+        # May test e.g. repository collaborators cannot delete repository, etc...
 
     def test_repository_organizer_create_private_repository_and_view_by_organization_member_and_non_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -106,6 +130,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
         click_logout(self.driver)
 
+        # Organization member can access
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
 
@@ -123,12 +148,27 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
         click_logout(self.driver)
 
+        # Non member cannot access
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
         assert self.repo_display_name not in self.driver.page_source
         assert "status=403" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/"))
+        click_logout(self.driver)
+
+        # Delete repository
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/settings/delete".format(self.org_id, repo_id)))
+        fill_delete_repository_form(self.driver, self.repo_name)
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}".format(self.org_id))
+        assert self.repo_display_name not in self.driver.page_source
+
+        click_logout(self.driver)
 
     def test_non_member_cannot_create_repository(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -139,8 +179,10 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
         self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
         fill_create_repository_form(self.driver, self.repo_name, self.repo_display_name, self.repo_description)
-
         assert "status=403" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/"))
+        click_logout(self.driver)
 
     def test_create_repository_with_invalid_input(self):
         repo_name = "a"
@@ -156,6 +198,8 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/create".format(self.org_id))
         assert "size" in self.driver.find_element_by_id("name.errors").text
         assert "size" in self.driver.find_element_by_id("displayName.errors").text
+
+        click_logout(self.driver)
 
     def test_organization_cannot_create_two_repositories_with_the_same_name(self):
         repo_name = "repo"
@@ -173,3 +217,6 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)
         assert "status=500" in self.driver.page_source
         assert "Organizations can only have distinguishable repository names." in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/"))
+        click_logout(self.driver)

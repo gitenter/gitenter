@@ -207,4 +207,43 @@ public class RepositoryManagementController {
 
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/delete", method=RequestMethod.GET)
+	public String showDeleteRepositoryPage (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		
+		return "repository-management/delete";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/delete", method=RequestMethod.POST)
+	public String processDeleteRepository (
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@RequestParam(value="copy_repository_name") String copyRepositoryName,
+			RedirectAttributes model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		
+		if (repository.getName().equals(copyRepositoryName)) {
+			repositoryManagerService.deleteRepository(repository);
+			
+			/*
+			 * TODO:
+			 * Message for successful delete organization.
+			 */
+			return "redirect:/organizations/"+organizationId;
+		}
+		else {
+			model.addFlashAttribute("errorMessage", "Repository name doesn't match!");
+			return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/delete";
+		}
+	}
 }

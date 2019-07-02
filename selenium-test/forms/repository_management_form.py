@@ -25,3 +25,9 @@ def fill_add_collaborator_form(driver, username, role):
             break
 
     form_start.submit()
+
+
+def fill_delete_repository_form(driver, repository_name):
+    form_start = driver.find_element_by_id("copy_repository_name")
+    form_start.send_keys(repository_name)
+    form_start.submit()

@@ -64,13 +64,16 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/settings/delete".format(org_id))
         assert "Organization name doesn't match!" in self.driver.page_source
 
-        # TODO:
-        # May test e.g. organization member cannot delete organization, etc...
-
         self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/delete").format(org_id))
         fill_delete_organization_form(self.driver, org_name)
         self.assertEqual(urlparse(self.driver.current_url).path, "/")
         assert org_display_name not in self.driver.page_source
+
+        # TODO:
+        # May test e.g. organization member cannot delete organization, etc...
+        # Right now although they don't get a link of "settings" they can still get the settings
+        # page by hard code the URL. They'll be 403ed when they try to submit the POST request
+        # (as it is forbidden in functional level). Thinking about a better way of testing it.
 
     def test_create_organization_invalid_input(self):
         org_name = "o"

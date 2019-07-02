@@ -6,7 +6,10 @@ from forms.authorization_form import (
     fill_login_form,
     click_logout
 )
-from forms.repository_management_form import fill_create_repository_form
+from forms.repository_management_form import (
+    fill_create_repository_form,
+    fill_delete_repository_form
+)
 
 
 class RepositoryCreatedTestSuite(RepositoryToBeCreatedTestSuite):
@@ -30,4 +33,12 @@ class RepositoryCreatedTestSuite(RepositoryToBeCreatedTestSuite):
         click_logout(self.driver)
 
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/settings/delete".format(self.org_id, self.repo_id)))
+        fill_delete_repository_form(self.driver, self.repo_name)
+
+        click_logout(self.driver)
+
         super(RepositoryCreatedTestSuite, self).tearDown()
