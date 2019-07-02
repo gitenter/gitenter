@@ -13,4 +13,6 @@ public interface OrganizationRepository extends PagingAndSortingRepository<Organ
 	public List<OrganizationBean> findByName(String name);
 	
 	public OrganizationBean saveAndFlush(OrganizationBean organization);
+	
+	public void delete(OrganizationBean organization);
 }

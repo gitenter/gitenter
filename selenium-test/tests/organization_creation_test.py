@@ -4,7 +4,8 @@ from urllib.parse import urlparse, urljoin
 from testsuites.organization_created_testsuite import OrganizationToBeCreatedTestSuite
 from forms.authorization_form import fill_login_form
 from forms.organization_management_form import (
-    fill_create_organization_form
+    fill_create_organization_form,
+    fill_delete_organization_form
 )
 
 
@@ -13,15 +14,17 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
     def setUp(self):
         super(TestOrganizationCreation, self).setUp()
 
-    def tearDown(self):
-        super(TestOrganizationCreation, self).tearDown()
-
-    def test_create_organization_and_display_managed_organizations(self):
-        org_name = "org"
-        org_display_name = "A Organization"
-
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+
+    def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/logout"))
+
+        super(TestOrganizationCreation, self).tearDown()
+
+    def test_create_and_display_and_delete_organization(self):
+        org_name = "org"
+        org_display_name = "A Organization"
 
         self.driver.get(urljoin(self.root_url, "/"))
         assert "Managed organizations" in self.driver.page_source
@@ -52,12 +55,23 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/members").format(org_id))
         self.assertIn(self.org_manager_display_name, map(lambda x: x.text, self.driver.find_elements_by_class_name("user")))
 
+        # Delete organization
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/delete").format(org_id))
+        fill_delete_organization_form(self.driver, "wrong_org_name")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/settings/delete".format(org_id))
+        assert "Organization name doesn't match!" in self.driver.page_source
+
+        # TODO:
+        # May test e.g. organization member cannot delete organization, etc...
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/delete").format(org_id))
+        fill_delete_organization_form(self.driver, org_name)
+        self.assertEqual(urlparse(self.driver.current_url).path, "/")
+        assert org_display_name not in self.driver.page_source
+
     def test_create_organization_invalid_input(self):
         org_name = "o"
         org_display_name = "O"
-
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
         self.driver.get(urljoin(self.root_url, "/organizations/create"))
         fill_create_organization_form(self.driver, org_name, org_display_name)

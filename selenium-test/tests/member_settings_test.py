@@ -36,15 +36,17 @@ class TestChangeUserProfile(RegisteredTestSuite):
     def setUp(self):
         super(TestChangeUserProfile, self).setUp()
 
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/logout"))
+
         super(TestChangeUserProfile, self).tearDown()
 
     def test_change_user_profile(self):
         display_name_append = "Jr."
         email_append = ".com"
-
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/settings/profile"))
         display_name_form_fill = self.driver.find_element_by_id("displayName")
@@ -72,9 +74,6 @@ class TestChangeUserProfile(RegisteredTestSuite):
     def test_change_user_profile_invalid_input(self):
         new_display_name = "D"
         new_email = "not_a_email_address"
-
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/settings/profile"))
         display_name_form_fill = self.driver.find_element_by_id("displayName")
@@ -104,14 +103,16 @@ class TestChangeUserPassword(RegisteredTestSuite):
     def setUp(self):
         super(TestChangeUserPassword, self).setUp()
 
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.username, self.password)
+
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/logout"))
+
         super(TestChangeUserPassword, self).tearDown()
 
     def test_change_password_valid(self):
         new_password = "new_password"
-
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/settings/account/password"))
         self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
@@ -135,9 +136,6 @@ class TestChangeUserPassword(RegisteredTestSuite):
         assert "Logged in as {}".format(self.username) in self.driver.page_source
 
     def test_wrong_old_password_deny_change_password(self):
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.username, self.password)
-
         self.driver.get(urljoin(self.root_url, "/settings/account/password"))
         form_start = self.driver.find_element_by_id("old_password")
         form_start.send_keys("wrong_password")
@@ -150,9 +148,6 @@ class TestChangeUserPassword(RegisteredTestSuite):
 
     def test_invalid_new_password(self):
         new_password = "p"
-
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, self.username, self.password)
 
         self.driver.get(urljoin(self.root_url, "/settings/account/password"))
         form_start = self.driver.find_element_by_id("old_password")
@@ -170,13 +165,15 @@ class TestAddSshKey(RegisteredTestSuite):
     def setUp(self):
         super(TestAddSshKey, self).setUp()
 
-    def tearDown(self):
-        super(TestAddSshKey, self).tearDown()
-
-    def _add_ssh_key(self, ssh_key):
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
 
+    def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/logout"))
+
+        super(TestAddSshKey, self).tearDown()
+
+    def _add_ssh_key(self, ssh_key):
         self.driver.get(urljoin(self.root_url, "/settings/ssh"))
         form_start = self.driver.find_element_by_id("value")
         form_start.send_keys(ssh_key)

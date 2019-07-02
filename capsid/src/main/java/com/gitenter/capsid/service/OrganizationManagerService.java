@@ -27,4 +27,6 @@ public interface OrganizationManagerService {
 			Authentication authentication, 
 			OrganizationBean organization, 
 			Integer organizationMemberMapId) throws IOException;
+	
+	public void deleteOrganization(OrganizationBean organization) throws IOException;
 }

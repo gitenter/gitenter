@@ -8,7 +8,7 @@
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <a href="<s:url value="/organizations/${organization.id}/settings" />">Settings</a> &rarr; 
-      <span class="nav-current">Managers</span>
+      <span class="nav-current">Manage managers</span>
     </nav>
     <article>
       <div class="left-narrow">

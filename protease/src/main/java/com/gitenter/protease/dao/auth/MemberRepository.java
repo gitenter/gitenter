@@ -21,9 +21,5 @@ public interface MemberRepository extends PagingAndSortingRepository<MemberBean,
 	 * comment when commit() or flush(). */
 	public MemberBean saveAndFlush(MemberBean member);
 	
-	/*
-	 * TODO:
-	 * Audit log.
-	 */
 	public void delete(MemberBean member);
 }

@@ -159,15 +159,14 @@ public class MemberSettingsController {
 			
 			/*
 			 * TODO:
-			 * Message for successful logout.
+			 * Message for successful delete account.
 			 */
 			return "redirect:/";
 		}
 		else {
 			model.addFlashAttribute("errorMessage", "Password doesn't match!");
 			return "redirect:/settings/account/delete";
-		}
-		
+		}	
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)

@@ -203,6 +203,10 @@ public class MemberServiceImpl implements MemberService {
 			return false;
 		}
 		else {
+			/*
+			 * TODO:
+			 * Audit log.
+			 */
 			memberRepository.delete(member);
 			return true;
 		}

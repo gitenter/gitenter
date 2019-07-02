@@ -4,7 +4,8 @@ from testsuites.organization_to_be_created_testsuite import OrganizationToBeCrea
 from forms.authorization_form import fill_login_form
 from forms.organization_management_form import (
     fill_create_organization_form,
-    fill_add_member_form
+    fill_add_member_form,
+    fill_delete_organization_form
 )
 
 
@@ -31,4 +32,12 @@ class OrganizationCreatedTestSuite(OrganizationToBeCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/logout"))
 
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+
+        self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/delete").format(self.org_id))
+        fill_delete_organization_form(self.driver, self.org_name)
+
+        self.driver.get(urljoin(self.root_url, "/logout"))
+
         super(OrganizationCreatedTestSuite, self).tearDown()

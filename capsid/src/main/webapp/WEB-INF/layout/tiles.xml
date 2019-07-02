@@ -56,6 +56,9 @@
   <definition name="organization-management/managers" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/managers.jsp" />
   </definition>
+  <definition name="organization-management/delete" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/organization-management/delete.jsp" />
+  </definition>
   <definition name="organization-management/members" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/members.jsp" />
   </definition>

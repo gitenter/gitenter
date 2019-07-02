@@ -38,8 +38,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	@Autowired GitSource gitSource;
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	public void createRepository(
 			Authentication authentication, 
 			OrganizationBean organization, 
@@ -98,8 +98,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		}
 	}
 
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	public void updateRepository(
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException {
@@ -108,8 +108,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		repositoryRepository.saveAndFlush(repository);
 	}
 	
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Override
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	public void addCollaborator(
 			RepositoryBean repository, 
 			MemberBean collaborator, 
@@ -129,9 +129,9 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		repositoryMemberMapRepository.saveAndFlush(map);
 	}
 
+	@Override
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	@Transactional
-	@Override
 	public void removeCollaborator(
 			RepositoryBean repository, 
 			Integer repositoryMemberMapId) throws IOException {

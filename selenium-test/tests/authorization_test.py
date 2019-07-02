@@ -69,8 +69,13 @@ class TestAuthorization(BaseTestSuite):
         # Login again and delete user herself
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, username, password)
-        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
 
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
+        fill_delete_user_form(self.driver, "wrong_password")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/delete")
+        assert "Password doesn't match!" in self.driver.page_source
+
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
         fill_delete_user_form(self.driver, password)
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 

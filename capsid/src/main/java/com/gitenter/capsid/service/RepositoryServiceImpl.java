@@ -34,8 +34,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 	@Autowired private RepositoryGitUpdateFactory repositoryGitUpdateFactory;
 	@Autowired private CommitGitUpdateFactory commitGitUpdateFactory;
 
-	@PostAuthorize("hasPermission(returnObject, T(com.gitenter.capsid.dto.RepositoryAccessLevel).READ)")
 	@Override
+	@PostAuthorize("hasPermission(returnObject, T(com.gitenter.capsid.dto.RepositoryAccessLevel).READ)")
 	public RepositoryBean getRepository(Integer repositoryId) throws IdNotExistException {
 		
 		Optional<RepositoryBean> repositories = repositoryRepository.findById(repositoryId);
