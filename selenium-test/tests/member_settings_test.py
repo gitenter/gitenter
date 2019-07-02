@@ -3,7 +3,10 @@ from urllib.parse import urlparse, urljoin
 from selenium.webdriver.common.keys import Keys
 
 from testsuites.registered_testsuite import RegisteredTestSuite
-from forms.authorization_form import fill_login_form
+from forms.authorization_form import (
+    fill_login_form,
+    click_logout
+)
 
 
 class TestMemberSetting(RegisteredTestSuite):
@@ -40,7 +43,7 @@ class TestChangeUserProfile(RegisteredTestSuite):
         fill_login_form(self.driver, self.username, self.password)
 
     def tearDown(self):
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         super(TestChangeUserProfile, self).tearDown()
 
@@ -107,7 +110,7 @@ class TestChangeUserPassword(RegisteredTestSuite):
         fill_login_form(self.driver, self.username, self.password)
 
     def tearDown(self):
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         super(TestChangeUserPassword, self).tearDown()
 
@@ -125,7 +128,7 @@ class TestChangeUserPassword(RegisteredTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
         assert "Changes has been saved successfully!" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
@@ -169,7 +172,7 @@ class TestAddSshKey(RegisteredTestSuite):
         fill_login_form(self.driver, self.username, self.password)
 
     def tearDown(self):
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         super(TestAddSshKey, self).tearDown()
 

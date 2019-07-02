@@ -2,7 +2,10 @@ from random import randint
 from urllib.parse import urlparse, urljoin
 
 from testsuites.repository_to_be_created_testsuite import RepositoryToBeCreatedTestSuite
-from forms.authorization_form import fill_login_form
+from forms.authorization_form import (
+    fill_login_form,
+    click_logout
+)
 from forms.repository_management_form import fill_create_repository_form
 
 
@@ -50,7 +53,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         # TODO:
         # check the current user is a project organizer.
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
@@ -67,7 +70,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
         # to be added as an editor.
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)
@@ -101,7 +104,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         assert self.repo_display_name in self.driver.page_source
         assert "Setup a new repository" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.org_member_username, self.org_member_password)
@@ -118,7 +121,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         # No need to talk about setup as the user cannot edit no matter what, and/or where to ask
         # to be added as an editor.
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, self.username, self.password)

@@ -46,3 +46,9 @@ def fill_delete_user_form(driver, password):
     form_start = driver.find_element_by_id("password")
     form_start.send_keys(password)
     form_start.submit()
+
+
+# Can't just call the URL because then we don't have the associated CSRF key.
+def click_logout(driver):
+    form_start = driver.find_element_by_id("logout")
+    form_start.submit()

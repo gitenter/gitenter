@@ -153,4 +153,15 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 */
 		repositoryMemberMapRepository.throughSqlDeleteById(repositoryMemberMapId);
 	}
+
+	@Override
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	public void deleteRepository(RepositoryBean repository) throws IOException {
+		
+		/*
+		 * TODO:
+		 * Audit log.
+		 */
+		repositoryRepository.delete(repository);
+	}
 }

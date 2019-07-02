@@ -28,4 +28,6 @@ public interface RepositoryManagerService {
 	public void removeCollaborator( 
 			RepositoryBean repository, 
 			Integer repositoryMemberMapId) throws IOException;
+	
+	public void deleteRepository(RepositoryBean repository) throws IOException;
 }

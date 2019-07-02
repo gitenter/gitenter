@@ -3,7 +3,10 @@ from urllib.parse import urlparse, urljoin
 from selenium.webdriver.common.keys import Keys
 
 from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
-from forms.authorization_form import fill_login_form
+from forms.authorization_form import (
+    fill_login_form,
+    click_logout
+)
 from forms.organization_management_form import fill_add_member_form
 
 
@@ -22,7 +25,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/"))
         assert self.org_display_name not in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_organization_member_cannot_access_setting(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -31,7 +34,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings']".format(self.org_id)))
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_non_member_cannot_access_setting(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -40,7 +43,7 @@ class TestOrganizationManagement(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "/organizations/{}".format(self.org_id)))
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings']".format(self.org_id)))
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
 class TestModifyOrganizationProfile(OrganizationCreatedTestSuite):
 
@@ -71,7 +74,7 @@ class TestModifyOrganizationProfile(OrganizationCreatedTestSuite):
         assert "Changes has been saved successfully!" in self.driver.page_source
         self.assertEqual(self.driver.find_element_by_id("displayName").get_attribute("value"), self.org_display_name+display_name_append)
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_organization_member_cannot_modify_organization_profile(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -84,7 +87,7 @@ class TestModifyOrganizationProfile(OrganizationCreatedTestSuite):
         display_name_form_fill.submit()
         assert "status=403" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
 
 class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
@@ -110,7 +113,7 @@ class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/settings/members".format(self.org_id))
         assert self.display_name in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_organization_normal_member_cannot_add_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -125,7 +128,7 @@ class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
 
         assert "status=403" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_non_member_cannot_add_members(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -136,7 +139,7 @@ class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
 
         assert "status=403" in self.driver.page_source
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_organization_manager_remove_member(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -158,7 +161,7 @@ class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
         self.assertEqual(len(self.driver.find_elements_by_class_name("user-deletable")), 0)
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings/members/remove']/input".format(self.org_id)))
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def test_organization_manager_add_manager(self):
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -180,7 +183,7 @@ class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
         self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings/managers/remove']/input".format(self.org_id)))
         self.assertTrue(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/settings/managers/add']/input".format(self.org_id)))
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
 
 if __name__ == '__main__':

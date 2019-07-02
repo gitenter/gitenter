@@ -109,6 +109,10 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void deleteOrganization(OrganizationBean organization) throws IOException {
 		
+		/*
+		 * TODO:
+		 * Audit log.
+		 */
 		organizationRepository.delete(organization);
 	}
 }

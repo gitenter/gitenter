@@ -2,7 +2,10 @@ from random import randint
 from urllib.parse import urljoin, urlparse
 
 from testsuites.repository_to_be_created_testsuite import RepositoryToBeCreatedTestSuite
-from forms.authorization_form import fill_login_form
+from forms.authorization_form import (
+    fill_login_form,
+    click_logout
+)
 from forms.repository_management_form import fill_create_repository_form
 
 
@@ -24,7 +27,7 @@ class RepositoryCreatedTestSuite(RepositoryToBeCreatedTestSuite):
 
         self.repo_id = urlparse(repo_link).path.split("/")[-1]
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def tearDown(self):
         super(RepositoryCreatedTestSuite, self).tearDown()

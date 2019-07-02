@@ -2,7 +2,10 @@ import unittest
 from urllib.parse import urlparse, urljoin
 
 from testsuites.organization_created_testsuite import OrganizationToBeCreatedTestSuite
-from forms.authorization_form import fill_login_form
+from forms.authorization_form import (
+    fill_login_form,
+    click_logout
+)
 from forms.organization_management_form import (
     fill_create_organization_form,
     fill_delete_organization_form
@@ -18,7 +21,7 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
         fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
 
     def tearDown(self):
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         super(TestOrganizationCreation, self).tearDown()
 

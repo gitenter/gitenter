@@ -1,5 +1,6 @@
 package com.gitenter.protease.dao.auth;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +13,6 @@ public interface RepositoryRepository {
 	public List<RepositoryBean> findByOrganizationNameAndRepositoryName(String organizationName, String repositoryName);
 	
 	public RepositoryBean saveAndFlush(RepositoryBean repository) throws RepositoryNameNotUniqueException;
+	
+	public void delete(RepositoryBean repository) throws IOException;
 }

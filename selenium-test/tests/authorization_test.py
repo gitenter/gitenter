@@ -6,7 +6,8 @@ from testsuites.base_testsuite import BaseTestSuite
 from forms.authorization_form import (
     fill_signup_form,
     fill_login_form,
-    fill_delete_user_form
+    fill_delete_user_form,
+    click_logout
 )
 
 
@@ -46,7 +47,7 @@ class TestAuthorization(BaseTestSuite):
         assert "Logged in as {}".format(username) in self.driver.page_source
         self.assertEqual(len(self.driver.get_cookies()), 1)
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         # Login again with remember_me checked
         self.driver.get(urljoin(self.root_url, "/login"))
@@ -64,7 +65,7 @@ class TestAuthorization(BaseTestSuite):
                 find_cookie = True
         self.assertTrue(find_cookie)
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
         # Login again and delete user herself
         self.driver.get(urljoin(self.root_url, "/login"))
