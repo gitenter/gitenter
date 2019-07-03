@@ -1,19 +1,17 @@
 package com.gitenter.protease.dao.auth;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.PersistenceException;
 
-import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.source.GitSource;
 
 @Repository
 class RepositoryRepositoryImpl implements RepositoryRepository {
@@ -38,8 +36,6 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 	 */
 	@Autowired private RepositoryDatabaseRepository repositoryDatabaseRepository;
 	@Autowired private RepositoryGitUpdateFactory repositoryGitUpdateFactory;
-	
-	@Autowired private GitSource gitSource;
 	
 	public Optional<RepositoryBean> findById(Integer id) {
 		
@@ -84,12 +80,8 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 	}
 
 	@Override
-	public void delete(RepositoryBean repository) throws IOException {
+	public void delete(RepositoryBean repository) throws IOException, GitAPIException {
 		repositoryDatabaseRepository.delete(repository);
-		
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				repository.getOrganization().getName(), 
-				repository.getName());
-		FileUtils.deleteDirectory(repositoryDirectory);
+		repositoryGitUpdateFactory.delete(repository);
 	}
 }

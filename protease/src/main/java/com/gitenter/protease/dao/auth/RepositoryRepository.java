@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
@@ -14,5 +16,5 @@ public interface RepositoryRepository {
 	
 	public RepositoryBean saveAndFlush(RepositoryBean repository) throws RepositoryNameNotUniqueException;
 	
-	public void delete(RepositoryBean repository) throws IOException;
+	public void delete(RepositoryBean repository) throws IOException, GitAPIException;
 }

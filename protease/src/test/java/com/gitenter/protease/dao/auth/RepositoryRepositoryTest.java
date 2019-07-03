@@ -46,7 +46,7 @@ public class RepositoryRepositoryTest {
 	
 	@Test
 	@DatabaseTearDown
-	public void testCreateRepositoryGetGitFolderCreated() throws IOException {
+	public void testCreateRepositoryGetGitFolderCreated() throws IOException, GitAPIException {
 		
 		OrganizationBean organization = new OrganizationBean();
 		organization.setName("irrelevant_organization");
