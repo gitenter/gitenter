@@ -1,22 +1,5 @@
-# class SignupForm():
-#
-#     def __init__(self):
-#         pass
-#
-#     def fill(self, username, password, display_name, email):
-#         self.username = username
-#         self.password = password
-#         self.display_name = display_name
-#         self.email = email
-#
-#     def submit(self, driver):
-#         form_start = driver.find_element_by_id("username")
-#         form_start.send_keys(self.username)
-#         driver.find_element_by_id("password").send_keys(self.password)
-#         driver.find_element_by_id("displayName").send_keys(self.display_name)
-#         driver.find_element_by_id("email").send_keys(self.email)
-#
-#         form_start.submit()
+from contextlib import contextmanager
+from urllib.parse import urljoin
 
 
 def fill_signup_form(driver, username, password, display_name, email):
@@ -52,3 +35,14 @@ def fill_delete_user_form(driver, password):
 def click_logout(driver):
     form_start = driver.find_element_by_id("logout")
     form_start.submit()
+
+
+@contextmanager
+def login_as(driver, root_url, username, password, remember_me=False):
+    driver.get(urljoin(root_url, "/login"))
+    fill_login_form(driver, username, password, remember_me=remember_me)
+
+    yield
+
+    driver.get(urljoin(root_url, "/"))
+    click_logout(driver)

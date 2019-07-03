@@ -7,7 +7,8 @@ from forms.authorization_form import (
     fill_signup_form,
     fill_login_form,
     fill_delete_user_form,
-    click_logout
+    click_logout,
+    login_as
 )
 
 
@@ -41,31 +42,23 @@ class TestAuthorization(BaseTestSuite):
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
         # Login with just registered username and password
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, username, password)
-        self.assertEqual(urlparse(self.driver.current_url).path, "/") # if from "/login" page will be redirect to "/"
-        assert "Logged in as {}".format(username) in self.driver.page_source
-        self.assertEqual(len(self.driver.get_cookies()), 1)
-
-        click_logout(self.driver)
+        with login_as(self.driver, self.root_url, username, password):
+            self.assertEqual(urlparse(self.driver.current_url).path, "/") # if from "/login" page will be redirect to "/":
+            assert "Logged in as {}".format(username) in self.driver.page_source
+            self.assertEqual(len(self.driver.get_cookies()), 1)
 
         # Login again with remember_me checked
-        self.driver.get(urljoin(self.root_url, "/login"))
+        with login_as(self.driver, self.root_url, username, password, remember_me=True):
+            self.assertEqual(urlparse(self.driver.current_url).path, "/")
+            self.assertEqual(len(self.driver.get_cookies()), 2)
 
-        fill_login_form(self.driver, username, password, remember_me=True)
-
-        self.assertEqual(urlparse(self.driver.current_url).path, "/")
-        self.assertEqual(len(self.driver.get_cookies()), 2)
-
-        find_cookie = False
-        for cookie in self.driver.get_cookies():
-            if cookie["name"] == "remember-me":
-                self.assertEqual(cookie["domain"], urlparse(self.driver.current_url).hostname)
-                self.assertAlmostEqual(cookie["expiry"] - float(time.time()), 2419200, delta=1)
-                find_cookie = True
-        self.assertTrue(find_cookie)
-
-        click_logout(self.driver)
+            find_cookie = False
+            for cookie in self.driver.get_cookies():
+                if cookie["name"] == "remember-me":
+                    self.assertEqual(cookie["domain"], urlparse(self.driver.current_url).hostname)
+                    self.assertAlmostEqual(cookie["expiry"] - float(time.time()), 2419200, delta=1)
+                    find_cookie = True
+            self.assertTrue(find_cookie)
 
         # Login again and delete user herself
         self.driver.get(urljoin(self.root_url, "/login"))
