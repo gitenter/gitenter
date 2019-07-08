@@ -1,6 +1,6 @@
 package com.gitenter.protease.config;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,7 +33,7 @@ public class TestGitConfig {
 	public GitSource minimalGitSource() throws FileNotFoundException {
 		
 		GitSource gitSource = mock(GitSource.class);
-		when(gitSource.getBareRepositoryDirectory(any(String.class), any(String.class)))
+		when(gitSource.getBareRepositoryDirectory(matches("organization"), matches("repository")))
 			.thenReturn(ResourceUtils.getFile("classpath:repo/minimal.git"));
 		
 		return gitSource;

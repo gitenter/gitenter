@@ -1,9 +1,5 @@
 package com.gitenter.protease.dao.auth;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -23,7 +19,6 @@ import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.source.GitSource;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -41,34 +36,6 @@ public class RepositoryRepositoryTest {
 	
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired OrganizationRepository organizationRepository;
-	
-	@Autowired private GitSource gitSource;
-	
-	@Test
-	@DatabaseTearDown
-	public void testCreateRepositoryGetGitFolderCreated() throws IOException {
-		
-		OrganizationBean organization = new OrganizationBean();
-		organization.setName("irrelevant_organization");
-		organization.setDisplayName("Irrelavent Organization");
-		organizationRepository.saveAndFlush(organization);
-		
-		RepositoryBean repository = new RepositoryBean();
-		repository.setOrganization(organization);
-		repository.setName("irrelevant_repo");
-		repository.setDisplayName("Irrelavent Repository");
-		repository.setIsPublic(true);
-		
-		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				organization.getName(), 
-				repository.getName());
-		
-		repositoryRepository.saveAndFlush(repository);
-		assertTrue(repositoryDirectory.exists());
-		
-		repositoryRepository.delete(repository);
-		assertFalse(repositoryDirectory.exists());
-	}
 	
 	@Test(expected = RepositoryNameNotUniqueException.class)
 	@DbUnitMinimalDataSetup
