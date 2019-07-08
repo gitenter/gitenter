@@ -29,5 +29,5 @@ public interface RepositoryManagerService {
 			RepositoryBean repository, 
 			Integer repositoryMemberMapId) throws IOException;
 	
-	public void deleteRepository(RepositoryBean repository) throws IOException;
+	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException;
 }

@@ -156,7 +156,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 
 	@Override
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
-	public void deleteRepository(RepositoryBean repository) throws IOException {
+	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
 		/*
 		 * TODO:
