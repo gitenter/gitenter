@@ -106,6 +106,12 @@ class TestChangeUserPassword(RegisteredTestSuite):
     def tearDown(self):
         super(TestChangeUserPassword, self).tearDown()
 
+    def _change_password_form(self, driver, current_password, new_password):
+        form_start = driver.find_element_by_id("old_password")
+        form_start.send_keys(current_password)
+        driver.find_element_by_id("password").send_keys(new_password)
+        form_start.submit()
+
     def test_change_password_valid(self):
         new_password = "new_password"
 
@@ -113,10 +119,7 @@ class TestChangeUserPassword(RegisteredTestSuite):
             self.driver.get(urljoin(self.root_url, "/settings/account/password"))
             self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
 
-            form_start = self.driver.find_element_by_id("old_password")
-            form_start.send_keys(self.password)
-            self.driver.find_element_by_id("password").send_keys(new_password)
-            form_start.submit()
+            self._change_password_form(self.driver, self.password, new_password)
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
             assert "Changes has been saved successfully!" in self.driver.page_source
@@ -127,6 +130,11 @@ class TestChangeUserPassword(RegisteredTestSuite):
 
         with login_as(self.driver, self.root_url, self.username, new_password):
             assert "Logged in as {}".format(self.username) in self.driver.page_source
+
+            # Reset state, so this test is idempotent and `tearDown` can successfully delete
+            # the user account.
+            self.driver.get(urljoin(self.root_url, "/settings/account/password"))
+            self._change_password_form(self.driver, new_password, self.password)
 
     def test_wrong_old_password_deny_change_password(self):
         with login_as(self.driver, self.root_url, self.username, self.password):

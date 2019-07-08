@@ -1,4 +1,3 @@
-selenium
-nose
-#psycopg2
-pygit2
+pytest==4.6.3
+selenium==3.141.0
+venvgit2==0.28.1

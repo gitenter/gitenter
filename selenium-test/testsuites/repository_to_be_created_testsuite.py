@@ -36,4 +36,9 @@ class RepositoryToBeCreatedTestSuite(OrganizationCreatedTestSuite):
         click_logout(self.driver)
 
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
+        fill_delete_user_form(self.driver, self.repo_organizer_password)
+
         super(RepositoryToBeCreatedTestSuite, self).tearDown()

@@ -41,6 +41,13 @@ class TestAuthorization(BaseTestSuite):
         # Redirect to login after register
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
+        # Cannot login with incorrect password
+        incorrect_password = "incorrect_password"
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, username, incorrect_password)
+        assert "Invalid username and password!" in self.driver.page_source
+
         # Login with just registered username and password
         with login_as(self.driver, self.root_url, username, password):
             self.assertEqual(urlparse(self.driver.current_url).path, "/") # if from "/login" page will be redirect to "/":
@@ -87,21 +94,6 @@ class TestAuthorization(BaseTestSuite):
         self.driver.get(urljoin(self.root_url, "/login"))
 
         fill_login_form(self.driver, username, password)
-        assert "Invalid username and password!" in self.driver.page_source
-
-    def test_login_with_incorrect_password(self):
-        username = "username"
-        password = "password"
-        display_name = "User Name "
-        email = "username@email.com"
-
-        incorrect_password = "incorrect_password"
-
-        self.driver.get(urljoin(self.root_url, "/register"))
-        fill_signup_form(self.driver, username, password, display_name, email)
-
-        self.driver.get(urljoin(self.root_url, "/login"))
-        fill_login_form(self.driver, username, incorrect_password)
         assert "Invalid username and password!" in self.driver.page_source
 
     def test_register_with_invalid_input(self):
