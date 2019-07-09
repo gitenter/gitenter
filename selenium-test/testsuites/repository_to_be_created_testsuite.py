@@ -4,6 +4,7 @@ from testsuites.organization_created_testsuite import OrganizationCreatedTestSui
 from forms.authorization_form import (
     fill_login_form,
     fill_signup_form,
+    fill_delete_user_form,
     click_logout
 )
 from forms.organization_management_form import fill_add_member_form
