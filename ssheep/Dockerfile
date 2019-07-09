@@ -26,7 +26,7 @@ RUN pip3 install pipenv
 # to `sed` this line in CircleCI.
 COPY . /ssheep
 WORKDIR /ssheep
-RUN sed -i 's/database = LocalDatabase()/database = DockerDatabase()/' /ssheep/settings.py
+RUN sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /ssheep/settings/profile.py
 
 # TODO:
 # Looks like need to `apt-get install libpq-dev`, otherwise will run into error

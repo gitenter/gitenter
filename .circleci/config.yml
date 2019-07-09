@@ -269,7 +269,9 @@ jobs:
       # Cache pip libraries.
       - run: sudo pip3 install pipenv
       - run: cd ssheep && pipenv install --dev
-      - run: cd ssheep && pipenv run pytest tests
+      - run: cd ssheep && pipenv run pytest
+      - store_test_results:
+          path: ssheep/test-results
 
   python-linter:
     executor: python-executor
@@ -319,7 +321,7 @@ jobs:
       # Or we may go with an environmental variable process (values local/docker/qa/production)
       # and applications ask environmental variable what database to connect. Not
       # sure which is a better approach.
-      - run: sed -i "s/RUN sed -i 's\/database = LocalDatabase()\/database = DockerDatabase()\/' \/ssheep\/settings.py/RUN sed -i 's\/database = LocalDatabase()\/database = QaDatabase()\/' \/ssheep\/settings.py/g" ssheep/Dockerfile
+      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = QaProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
       - run: cat ssheep/Dockerfile
 
       - inline-aws-operation/deploy:

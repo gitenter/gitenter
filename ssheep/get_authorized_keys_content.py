@@ -4,7 +4,7 @@ setting up in `sshd_config`.
 """
 from sqlalchemy.orm import sessionmaker
 
-from settings import postgres_engine
+from settings.postgres import postgres_engine
 from managers import SshKeyManager
 
 

@@ -4,9 +4,7 @@ from selenium import webdriver
 import shutil
 from urllib.parse import urlparse
 
-from setup.config import (
-    STSConfig
-)
+from settings.profile import profile
 
 
 class BaseTestSuite(unittest.TestCase):
@@ -16,9 +14,9 @@ class BaseTestSuite(unittest.TestCase):
         options.add_argument("headless")
         self.driver = webdriver.Chrome(options=options)
 
-        self.config = STSConfig()
-
-        self.root_url = self.config.web_root_url
+        self.profile = profile
+        self.root_url = self.profile.web_root_url
+        
         self._cleanup_local_git_sandbox()
 
     def tearDown(self):
@@ -39,4 +37,4 @@ class BaseTestSuite(unittest.TestCase):
         # folderpath.mkdir(mode=0o777, parents=False, exist_ok=False)
 
     def _cleanup_local_git_sandbox(self):
-        self._reset_folder_content(self.config.local_git_sandbox_path)
+        self._reset_folder_content(self.profile.local_git_sandbox_path)

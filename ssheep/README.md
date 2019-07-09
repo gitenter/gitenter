@@ -15,5 +15,5 @@ Any test runner can be used (as we are using `unittest.TestCase`) but in `Pipfil
 ```
 sudo pip install pipenv
 pipenv install --dev
-pipenv run pytest tests
+pipenv run pytest
 ```

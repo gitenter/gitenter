@@ -61,7 +61,7 @@ or
 virtualenv venv
 . venv/bin/activate
 (venv) pip install -r pip-requirements.txt
-(venv) pytest tests
+(venv) pytest
 ```
 
 When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uniphil/venvgit2/issues/23). But the test can be executed with no problem (not sure if that's because in my local computer I have been successfully setup `libgit2`).
@@ -71,6 +71,4 @@ Can't use `pipenv` as it is not compatible with `venvgit2`.
 ## TODO
 
 - [ ] Move from local environment to virtual environment (`pipenv` for now). To make it work in CI we probably need to configure CircleCI python image to be capable with `cmake`/... for the annoying `pygit2` issue.
-- [ ] Move from python unittest to pytest.
-- [ ] Deprecate reset database through `psycopy2` (which cannot be done in CI, as CircleCI cannot manipulate database otherwise there's security problem). Try to seek the possibility to make tests idempotent (maybe by adding a "remove user" functionality). Or a little bit worse, we may partitioning the environment (make multiple users with different names for different test scenarios), and cleanup the database after all tests are finished (still not that easy in CI, unless we kill/restart RDS every time).
 - [ ] Only test happy path.
