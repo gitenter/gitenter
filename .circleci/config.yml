@@ -247,6 +247,15 @@ jobs:
       - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
 
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+
       # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
       - persist_to_workspace:
