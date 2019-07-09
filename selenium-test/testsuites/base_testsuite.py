@@ -9,18 +9,21 @@ from settings.profile import profile
 
 class BaseTestSuite(unittest.TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         options = webdriver.ChromeOptions()
         options.add_argument("headless")
-        self.driver = webdriver.Chrome(options=options)
+        cls.driver = webdriver.Chrome(options=options)
 
-        self.profile = profile
-        self.root_url = self.profile.web_root_url
-        
+        cls.profile = profile
+        cls.root_url = cls.profile.web_root_url
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.close()
+
+    def setUp(self):
         self._cleanup_local_git_sandbox()
-
-    def tearDown(self):
-        self.driver.close()
 
     def _reset_folder_content(self, folderpath):
         os.makedirs(str(folderpath), exist_ok=True)
