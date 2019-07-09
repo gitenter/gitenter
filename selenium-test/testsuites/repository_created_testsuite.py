@@ -17,7 +17,7 @@ class RepositoryCreatedTestSuite(RepositoryToBeCreatedTestSuite):
     def setUp(self):
         super(RepositoryCreatedTestSuite, self).setUp()
 
-        self.repo_name = "repo-{}".format(randint(1, 10**10))
+        self.repo_name = "repo"
         self.repo_display_name = "A Repository"
         self.repo_description = "A Repository Description"
 
