@@ -24,7 +24,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
     def _clone_repo_and_return_local_path(self):
 
         remote_git_url = self.config.git_server_remote_path / self.org_name / "{}.git".format(self.repo_name)
-        local_path = self.config.sandbox_path / self.repo_name
+        local_path = self.config.local_git_sandbox_path / self.repo_name
         local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
 
         pygit2.clone_repository("file://{}".format(str(remote_git_url)), str(local_path))
