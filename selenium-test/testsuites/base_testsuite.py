@@ -12,7 +12,9 @@ from setup.config import (
 class BaseTestSuite(unittest.TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument("headless")
+        self.driver = webdriver.Chrome(options=options)
 
         self.config = STSConfig()
 
