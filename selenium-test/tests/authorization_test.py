@@ -29,7 +29,7 @@ class TestAuthorization(BaseTestSuite):
     def test_register_and_login_and_delete_user(self):
         username = "username"
         password = "password"
-        display_name = "User Name "
+        display_name = "User Name"
         email = "username@email.com"
 
         self.driver.get(urljoin(self.root_url, "/register"))

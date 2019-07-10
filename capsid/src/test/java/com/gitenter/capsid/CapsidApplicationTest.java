@@ -9,16 +9,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("sts")
-public class CapsidApplicationTests {
+public class CapsidApplicationTest {
 
 	@Test
 	public void contextLoads() {
 		
 	}
-	
-	@Test
-	public void TestTrivial() {
-		
-	}
-
 }
