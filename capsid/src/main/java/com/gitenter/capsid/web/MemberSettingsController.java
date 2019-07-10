@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +26,12 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
 @RequestMapping("/settings")
 public class MemberSettingsController {
 	
-	@Autowired MemberService memberService;
+	private final MemberService memberService;
+	
+	@Autowired
+	public MemberSettingsController (MemberService memberService) {
+		this.memberService = memberService;
+	}
 
 	@RequestMapping(method=RequestMethod.GET)
 	public String showSettings (Model model) {
@@ -71,7 +77,11 @@ public class MemberSettingsController {
 			return "settings/profile";
 		}
 
-		assert authentication.getName().equals(profileAfterChange.getUsername());
+		/*
+		 * No need to do the following, as it can be done through `@PreAuthorize`
+		 * in the service layer.
+		 * > assert authentication.getName().equals(profileAfterChange.getUsername());
+		 */
 		memberService.updateMember(profileAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");

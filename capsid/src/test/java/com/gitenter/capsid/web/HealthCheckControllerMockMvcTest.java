@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * > Caused by: java.net.UnknownHostException: qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest
+@WebMvcTest(HealthCheckController.class)
 @ActiveProfiles("sts")
 public class HealthCheckControllerMockMvcTest {
 	

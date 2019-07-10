@@ -66,6 +66,26 @@ public class AuthorizationControllerTest {
 	}
 	
 	@Test
+	public void testProcessRegistrationWithMissingInputs() throws Exception {
+		
+		mockMvc.perform(post("/register")) 
+		.andExpect(view().name("authorization/register"))
+		.andExpect(status().isOk())
+		.andExpect(model().errorCount(4))
+		.andExpect(model().attributeHasFieldErrors(
+				"memberRegisterDTO", "username", "password", "displayName", "email"))
+		.andReturn().getResponse().getContentAsString().contains("must not be null");
+		
+		/*
+		 * TODO:
+		 * Cannot completely replace the anomaly E2E tests, as it is not tested in here
+		 * on the UI that the error messages can be rendered. If we want to include 
+		 * view layer test we can probably go with:
+		 * https://docs.spring.io/spring-test-htmlunit/docs/current/reference/html5/
+		 */
+	}
+	
+	@Test
 	public void testProcessRegistrationWithInvalidEmail() throws Exception {
 		
 		mockMvc.perform(post("/register")
@@ -77,26 +97,8 @@ public class AuthorizationControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "email"));
-		
-		/*
-		 * TODO:
-		 * Need to check if the error message can be successfully rendered in
-		 * view, otherwise still need to keep the E2E test on non-happy path until
-		 * we can do some HTML test:
-		 * https://docs.spring.io/spring-test-htmlunit/docs/current/reference/html5/
-		 */
-	}
-	
-	@Test
-	public void testProcessRegistrationWithMissingInputs() throws Exception {
-		
-		mockMvc.perform(post("/register")) 
-		.andExpect(view().name("authorization/register"))
-		.andExpect(status().isOk())
-		.andExpect(model().errorCount(4))
-		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "username", "password", "displayName", "email"));
+				"memberRegisterDTO", "email"))
+		.andReturn().getResponse().getContentAsString().contains("not a well-formed email address");
 	}
 	
 	@Test
@@ -111,7 +113,8 @@ public class AuthorizationControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(3))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "username", "password", "displayName"));
+				"memberRegisterDTO", "username", "password", "displayName"))
+		.andReturn().getResponse().getContentAsString().contains("size must be between 2 and 64");
 	}
 	
 	@Test
@@ -120,12 +123,13 @@ public class AuthorizationControllerTest {
 		mockMvc.perform(post("/register")
 				.param("username", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 				.param("password", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-				.param("displayName", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+				.param("displayName", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 				.param("email", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@email.com"))
 		.andExpect(view().name("authorization/register"))
 		.andExpect(status().isOk())
-		.andExpect(model().errorCount(2))
+		.andExpect(model().errorCount(3))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "username", "password"));
+				"memberRegisterDTO", "username", "password", "displayName"))
+		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 }

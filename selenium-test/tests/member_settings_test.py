@@ -70,33 +70,6 @@ class TestChangeUserProfile(RegisteredTestSuite):
             self.assertEqual(self.driver.find_element_by_id("displayName").get_attribute("value"), self.display_name+display_name_append)
             self.assertEqual(self.driver.find_element_by_id("email").get_attribute("value"), self.email+email_append)
 
-    def test_change_user_profile_invalid_input(self):
-        new_display_name = "D"
-        new_email = "not_a_email_address"
-
-        with login_as(self.driver, self.root_url, self.username, self.password):
-            self.driver.get(urljoin(self.root_url, "/settings/profile"))
-            display_name_form_fill = self.driver.find_element_by_id("displayName")
-            email_form_fill = self.driver.find_element_by_id("email")
-
-            # Cannot use Keys.CTRL+"a", as Linux and Mac behaviors differently.
-            for i in range(50):
-                display_name_form_fill.send_keys(Keys.ARROW_RIGHT)
-                email_form_fill.send_keys(Keys.ARROW_RIGHT)
-            for i in range(50):
-                display_name_form_fill.send_keys(Keys.BACKSPACE)
-                email_form_fill.send_keys(Keys.BACKSPACE)
-            display_name_form_fill.send_keys(new_display_name)
-            email_form_fill.send_keys(new_email)
-            display_name_form_fill.submit()
-
-            self.assertEqual(urlparse(self.driver.current_url).path, "/settings/profile")
-            assert "Changes has been saved successfully!" not in self.driver.page_source
-            self.assertEqual(self.driver.find_element_by_id("displayName").get_attribute("value"), new_display_name)
-            self.assertEqual(self.driver.find_element_by_id("email").get_attribute("value"), new_email)
-            assert "size" in self.driver.find_element_by_id("displayName.errors").text
-            assert "not a well-formed email address" in self.driver.find_element_by_id("email.errors").text
-
 
 class TestChangeUserPassword(RegisteredTestSuite):
 
