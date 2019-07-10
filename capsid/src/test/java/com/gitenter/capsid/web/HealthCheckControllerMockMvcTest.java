@@ -10,11 +10,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+/*
+ * Need profile because this test will actually talk to the database,
+ * and the local one exist.
+ * Test passes fine locally without `@ActiveProfiles("sts")`, but in
+ * CI pipeline it will fail by complaining 
+ * > Caused by: java.net.UnknownHostException: qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com
+ */
 @RunWith(SpringRunner.class)
 @WebMvcTest
+@ActiveProfiles("sts")
 public class HealthCheckControllerMockMvcTest {
 	
 	@Autowired private MockMvc mockMvc;
