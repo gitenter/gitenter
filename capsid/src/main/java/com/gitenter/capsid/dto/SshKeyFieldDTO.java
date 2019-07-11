@@ -34,7 +34,7 @@ public class SshKeyFieldDTO {
 	@NotNull
 	@Pattern(
 		regexp="^(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519) .*\\s*$",
-		message="Wrong format")
+		message="The SSH key does not have a valid format!")
 	private String value;
 	
 	/*

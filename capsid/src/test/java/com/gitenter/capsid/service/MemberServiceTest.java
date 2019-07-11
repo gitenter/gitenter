@@ -1,6 +1,8 @@
 package com.gitenter.capsid.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,6 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.gitenter.capsid.dto.MemberProfileDTO;
+import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
@@ -45,9 +48,12 @@ public class MemberServiceTest {
 	@Before
 	public void setUp() throws Exception {
 
+		given(passwordEncoder.encode("password")).willReturn("wordpass");
+		given(passwordEncoder.matches("password", "wordpass")).willReturn(true);
+		
 		member = new MemberBean();
 		member.setUsername("username");
-		member.setPassword("password");
+		member.setPassword(passwordEncoder.encode("password"));
 		member.setDisplayName("User Name");
 		member.setEmail("username@email.com");
 		List<MemberBean> members = new ArrayList<MemberBean>();
@@ -95,5 +101,30 @@ public class MemberServiceTest {
 		profile.setEmail("updated_username@email.com");
 		
 		memberService.updateMember(profile);		
+	}
+	
+	@Test
+	@WithMockUser(username="username")
+	public void testUpdatePasswordCorrectOldPassword() throws IOException {
+		
+		MemberRegisterDTO register = new MemberRegisterDTO();
+		register.setUsername("username");
+		register.setPassword("new_password");
+		
+		assertTrue(memberService.updatePassword(register, "password"));
+		
+		verify(memberRepository, times(1)).saveAndFlush(member);
+	}
+	
+	@Test
+	@WithMockUser(username="username")
+	public void testUpdatePasswordWrongOldPassword() throws IOException {
+		
+		MemberRegisterDTO register = new MemberRegisterDTO();
+		register.setUsername("username");
+		register.setPassword("new_password");
+		
+		assertFalse(memberService.updatePassword(register, "wrong_password"));
+		verify(memberRepository, times(0)).saveAndFlush(member);
 	}
 }

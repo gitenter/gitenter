@@ -121,20 +121,6 @@ class TestChangeUserPassword(RegisteredTestSuite):
             self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
             assert "Old password doesn't match!" in self.driver.page_source
 
-    def test_invalid_new_password(self):
-        new_password = "p"
-
-        with login_as(self.driver, self.root_url, self.username, self.password):
-            self.driver.get(urljoin(self.root_url, "/settings/account/password"))
-            form_start = self.driver.find_element_by_id("old_password")
-            form_start.send_keys(self.password)
-            self.driver.find_element_by_id("password").send_keys(new_password)
-            form_start.submit()
-
-            self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
-            self.assertEqual(self.driver.find_element_by_id("username").get_attribute("value"), self.username)
-            assert "size" in self.driver.find_element_by_id("password.errors").text
-
 
 class TestAddSshKey(RegisteredTestSuite):
 

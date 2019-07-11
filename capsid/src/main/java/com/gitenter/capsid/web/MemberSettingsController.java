@@ -116,8 +116,7 @@ public class MemberSettingsController {
 			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO registerAfterChange, 
 			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
-			RedirectAttributes model, 
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		/*
 		 * Since there's no hidden input in "account" page HTML, the returned
@@ -131,8 +130,6 @@ public class MemberSettingsController {
 		if (errors.getErrorCount() > expectErrorCount) {
 			return "settings/account/password";
 		}
-		
-		assert authentication.getName().equals(registerAfterChange.getUsername());
 		
 		if (memberService.updatePassword(registerAfterChange, oldPassword)) {
 			model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
@@ -216,7 +213,7 @@ public class MemberSettingsController {
 		}
 		catch (Exception e) {
 			
-			model.addAttribute("errorMessage", "The SSH key does not have a valid format.");
+			model.addAttribute("errorMessage", "The SSH key does not have a valid format!");
 			model.addAttribute("sshKeyFieldDTO", sshKeyFieldDTO);
 			return "settings/ssh";
 		}
