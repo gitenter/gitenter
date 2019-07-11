@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,8 +65,7 @@ public class MemberSettingsController {
 	public String processUpdateProfile (
 			@ModelAttribute("memberProfileDTO") @Valid MemberProfileDTO profileAfterChange, 
 			Errors errors, 
-			RedirectAttributes model, 
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		/* Because an null password field is for sure causes errors, here we need 
 		 * skip these associated errors. */

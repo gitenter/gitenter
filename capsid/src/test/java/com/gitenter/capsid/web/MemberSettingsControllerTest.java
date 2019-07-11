@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -84,7 +85,7 @@ public class MemberSettingsControllerTest {
 		
 		mockMvc.perform(post("/settings/profile")
 				.param("username", "username")
-				.param("displayName", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+				.param("displayName", StringUtils.repeat(' ', 65))
 				.param("email", "username@email.com"))
 		.andExpect(view().name("settings/profile"))
 		.andExpect(status().isOk())

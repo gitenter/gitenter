@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -121,10 +122,10 @@ public class AuthorizationControllerTest {
 	public void testProcessRegistrationWithInputTooLong() throws Exception {
 		
 		mockMvc.perform(post("/register")
-				.param("username", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-				.param("password", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-				.param("displayName", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-				.param("email", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@email.com"))
+				.param("username", StringUtils.repeat(' ', 17))
+				.param("password", StringUtils.repeat(' ', 17))
+				.param("displayName", StringUtils.repeat(' ', 65))
+				.param("email", "username@email.com"))
 		.andExpect(view().name("authorization/register"))
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(3))

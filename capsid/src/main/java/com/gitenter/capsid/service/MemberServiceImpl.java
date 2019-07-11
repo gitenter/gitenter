@@ -39,13 +39,27 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
 @Service
 public class MemberServiceImpl implements MemberService {
 
-	@Autowired MemberRepository memberRepository;
-	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
-	@Autowired SshKeyRepository sshKeyRepository;
+	private final MemberRepository memberRepository;
+	private final OrganizationRepository organizationRepository;
+	private final OrganizationMemberMapRepository organizationMemberMapRepository;
+	private final SshKeyRepository sshKeyRepository;
 	
-	@Autowired private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	public MemberServiceImpl(
+			MemberRepository memberRepository, 
+			OrganizationRepository organizationRepository,
+			OrganizationMemberMapRepository organizationMemberMapRepository, 
+			SshKeyRepository sshKeyRepository,
+			PasswordEncoder passwordEncoder) {
+		this.memberRepository = memberRepository;
+		this.organizationRepository = organizationRepository;
+		this.organizationMemberMapRepository = organizationMemberMapRepository;
+		this.sshKeyRepository = sshKeyRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	@Override
 	public MemberBean getMemberByUsername(String username) throws IOException {
 		List<MemberBean> members = memberRepository.findByUsername(username);

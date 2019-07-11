@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.gitenter.capsid.service.exception.MaliciousOperationException;
 import com.gitenter.protease.domain.auth.MemberBean;
 
 import lombok.Getter;
@@ -55,7 +56,10 @@ public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBe
 		 * (e.g., "password" is missing), it cannot create and return a
 		 * "MemberBean" but can only modify one which already exist.
 		 */
-		assert (memberBean.getUsername().equals(username));
+		if (!memberBean.getUsername().equals(username)) {
+			throw new MaliciousOperationException(
+					"Somebody is trying to update user profile of somebody else.");
+		}
 		
 		memberBean.setDisplayName(displayName);
 		memberBean.setEmail(email);
