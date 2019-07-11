@@ -152,7 +152,7 @@ class TestAddSshKey(RegisteredTestSuite):
             self._add_ssh_key(ssh_key)
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
-            assert "Wrong format" in self.driver.find_element_by_id("value.errors").text
+            assert "The SSH key does not have a valid format!" in self.driver.find_element_by_id("value.errors").text
 
     def test_add_ssh_key_base64_encoded_key_error(self):
         ssh_key = "ssh-rsa AAAAB3 user@email.com"
@@ -161,7 +161,7 @@ class TestAddSshKey(RegisteredTestSuite):
             self._add_ssh_key(ssh_key)
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
-            assert "The SSH key does not have a valid format." in self.driver.find_element_by_class_name("error").text
+            assert "The SSH key does not have a valid format!" in self.driver.find_element_by_class_name("error").text
 
 
 if __name__ == '__main__':

@@ -23,11 +23,21 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 @Controller
 public class OrganizationManagementController {
 	
-	@Autowired OrganizationService organizationService;
-	
-	@Autowired MemberService memberService;
-	@Autowired OrganizationManagerService organizationManagerService;
+	private MemberService memberService;
+	private OrganizationService organizationService;
+	private OrganizationManagerService organizationManagerService;
 
+	@Autowired
+	public OrganizationManagementController(
+			MemberService memberService, 
+			OrganizationService organizationService,
+			OrganizationManagerService organizationManagerService) {
+
+		this.memberService = memberService;
+		this.organizationService = organizationService;
+		this.organizationManagerService = organizationManagerService;
+	}
+	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
 	public String showCreateOrganizationForm (Model model) {
 

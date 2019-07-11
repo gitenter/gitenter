@@ -145,16 +145,3 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
             fill_create_repository_form(self.driver, self.repo_name, self.repo_display_name, self.repo_description)
             assert "status=403" in self.driver.page_source
-
-    def test_create_repository_with_invalid_input(self):
-        repo_name = "a"
-        repo_display_name = "A"
-        repo_description = "A"
-
-        with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
-            fill_create_repository_form(self.driver, repo_name, repo_display_name, repo_description)
-
-            self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/create".format(self.org_id))
-            assert "size" in self.driver.find_element_by_id("name.errors").text
-            assert "size" in self.driver.find_element_by_id("displayName.errors").text

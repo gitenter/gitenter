@@ -94,7 +94,7 @@ public class MemberSettingsControllerTest {
 		
 		mockMvc.perform(post("/settings/profile")
 				.param("username", "username")
-				.param("displayName", StringUtils.repeat(' ', 65))
+				.param("displayName", StringUtils.repeat('x', 65))
 				.param("email", "username@email.com"))
 		.andExpect(view().name("settings/profile"))
 		.andExpect(status().isOk())
@@ -149,6 +149,11 @@ public class MemberSettingsControllerTest {
 	 * is not properly mocked. Tried `@WithMockUser(username = "username")`
 	 * with `@RunWith(SpringRunner.class)` and `@SpringBootTest` but it seems
 	 * doesn't work.
+	 * 
+	 * One possibility is to not input `Authentication authentication` in
+	 * controller layer. Rather, we can `@PreAuthorize("isAuthenticated()")`
+	 * in the service layer and get user information from there. Not sure if
+	 * that's a better solution.
 	 */
 	@Ignore
 	public void testAddSshKeyValidInput() throws Exception {

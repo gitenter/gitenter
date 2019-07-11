@@ -68,18 +68,6 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
             # page by hard code the URL. They'll be 403ed when they try to submit the POST request
             # (as it is forbidden in functional level). Thinking about a better way of testing it.
 
-    def test_create_organization_invalid_input(self):
-        org_name = "o"
-        org_display_name = "O"
-
-        with login_as(self.driver, self.root_url, self.org_manager_username, self.org_manager_password):
-            self.driver.get(urljoin(self.root_url, "/organizations/create"))
-            fill_create_organization_form(self.driver, org_name, org_display_name)
-
-            self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/create")
-            assert "size" in self.driver.find_element_by_id("name.errors").text
-            assert "size" in self.driver.find_element_by_id("displayName.errors").text
-
     def test_create_organization_name_already_exists(self):
         pass
 

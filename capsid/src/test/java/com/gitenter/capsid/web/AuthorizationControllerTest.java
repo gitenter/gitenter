@@ -122,9 +122,9 @@ public class AuthorizationControllerTest {
 	public void testProcessRegistrationWithInputTooLong() throws Exception {
 		
 		mockMvc.perform(post("/register")
-				.param("username", StringUtils.repeat(' ', 17))
-				.param("password", StringUtils.repeat(' ', 17))
-				.param("displayName", StringUtils.repeat(' ', 65))
+				.param("username", StringUtils.repeat('x', 17))
+				.param("password", StringUtils.repeat('x', 17))
+				.param("displayName", StringUtils.repeat('x', 65))
 				.param("email", "username@email.com"))
 		.andExpect(view().name("authorization/register"))
 		.andExpect(status().isOk())

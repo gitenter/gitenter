@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.MemberService;
-import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
@@ -27,11 +26,23 @@ import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 @Controller
 public class RepositoryManagementController {
 	
-	@Autowired MemberService memberService;
-	@Autowired OrganizationService organizationService;
-	@Autowired OrganizationManagerService organizationManagerService;
-	@Autowired RepositoryService repositoryService;
-	@Autowired RepositoryManagerService repositoryManagerService;
+	private MemberService memberService;
+	private OrganizationService organizationService;
+	private RepositoryService repositoryService;
+	private RepositoryManagerService repositoryManagerService;
+
+	@Autowired
+	public RepositoryManagementController(
+			MemberService memberService, 
+			OrganizationService organizationService,
+			RepositoryService repositoryService,
+			RepositoryManagerService repositoryManagerService) {
+		
+		this.memberService = memberService;
+		this.organizationService = organizationService;
+		this.repositoryService = repositoryService;
+		this.repositoryManagerService = repositoryManagerService;
+	}
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
 	public String showCreateRepositoryForm (
