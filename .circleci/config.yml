@@ -353,6 +353,34 @@ jobs:
     # 10.0.0.192 22 us-east-1a healthy
     # 10.0.0.45 22 us-east-1a healthy => works
 
+  acceptance-test-temp:
+    docker:
+      - image: circleci/python:3.6.2-stretch-browsers
+    working_directory: ~/selenium
+    steps:
+      - checkout
+
+      - run: sed -i "s/profile = LocalProfile()/profile = QaProfile()/g" selenium-test/settings/profile.py
+      # - run: sed -i "/venvgit2==0.28.1/d" selenium-test/pip-requirements.txt
+      # - run: cat selenium-test/settings/profile.py
+      # - run: cat selenium-test/pip-requirements.txt
+
+      - run:
+          name: Download Selenium
+          command: |
+            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+      - run: sudo pip3 install selenium
+      - run: sudo pip3 install pytest
+      # - run: sudo pip3 install virtualenv
+      # - run: cd selenium-test && virtualenv venv
+      # - run: cd selenium-test && . venv/bin/activate
+      # - run: cd selenium-test && pip3 install -r pip-requirements.txt
+      - run: cd selenium-test && pytest tests/authorization_test.py
+      # - run: cd selenium-test && deactivate
+
+      - store_test_results:
+          path: selenium-test/test-reports/
+
   # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
   # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
   acceptance-test:
@@ -404,6 +432,7 @@ workflows:
       - java-build
       - python-unittest
       - python-linter
+      - acceptance-test-temp
 
       - qa-readiness:
           type: approval

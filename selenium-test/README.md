@@ -62,6 +62,7 @@ virtualenv venv
 . venv/bin/activate
 (venv) pip install -r pip-requirements.txt
 (venv) pytest
+(venv) deactivate
 ```
 
 When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uniphil/venvgit2/issues/23). But the test can be executed with no problem (not sure if that's because in my local computer I have been successfully setup `libgit2`).

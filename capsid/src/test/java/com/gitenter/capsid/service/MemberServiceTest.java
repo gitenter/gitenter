@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.gitenter.capsid.dto.MemberProfileDTO;
@@ -33,6 +34,7 @@ import com.gitenter.protease.domain.auth.MemberBean;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("sts")
 public class MemberServiceTest {
 
 	@MockBean private MemberRepository memberRepository;

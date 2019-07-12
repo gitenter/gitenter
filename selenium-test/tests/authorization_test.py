@@ -48,16 +48,18 @@ class TestAuthorization(BaseTestSuite):
         fill_login_form(self.driver, username, incorrect_password)
         assert "Invalid username and password!" in self.driver.page_source
 
+        baseline_cookie_count = len(self.driver.get_cookies())
+
         # Login with just registered username and password
         with login_as(self.driver, self.root_url, username, password):
             self.assertEqual(urlparse(self.driver.current_url).path, "/") # if from "/login" page will be redirect to "/":
             assert "Logged in as {}".format(username) in self.driver.page_source
-            self.assertEqual(len(self.driver.get_cookies()), 1)
+            self.assertEqual(len(self.driver.get_cookies()), baseline_cookie_count)
 
         # Login again with remember_me checked
         with login_as(self.driver, self.root_url, username, password, remember_me=True):
             self.assertEqual(urlparse(self.driver.current_url).path, "/")
-            self.assertEqual(len(self.driver.get_cookies()), 2)
+            self.assertEqual(len(self.driver.get_cookies()), baseline_cookie_count + 1)
 
             find_cookie = False
             for cookie in self.driver.get_cookies():
