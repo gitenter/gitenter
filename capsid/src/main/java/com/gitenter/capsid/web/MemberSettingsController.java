@@ -1,5 +1,6 @@
 package com.gitenter.capsid.web;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,12 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
 @RequestMapping("/settings")
 public class MemberSettingsController {
 	
-	@Autowired MemberService memberService;
+	private final MemberService memberService;
+	
+	@Autowired
+	public MemberSettingsController (MemberService memberService) {
+		this.memberService = memberService;
+	}
 
 	@RequestMapping(method=RequestMethod.GET)
 	public String showSettings (Model model) {
@@ -59,8 +65,7 @@ public class MemberSettingsController {
 	public String processUpdateProfile (
 			@ModelAttribute("memberProfileDTO") @Valid MemberProfileDTO profileAfterChange, 
 			Errors errors, 
-			RedirectAttributes model, 
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		/* Because an null password field is for sure causes errors, here we need 
 		 * skip these associated errors. */
@@ -70,15 +75,19 @@ public class MemberSettingsController {
 			return "settings/profile";
 		}
 
-		assert authentication.getName().equals(profileAfterChange.getUsername());
+		/*
+		 * No need to do the following, as it can be done through `@PreAuthorize`
+		 * in the service layer.
+		 * > assert authentication.getName().equals(profileAfterChange.getUsername());
+		 */
 		memberService.updateMember(profileAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/settings/profile";
 	}
 	
-	@RequestMapping(value="/account", method=RequestMethod.GET)
-	public String showUpdateAccountForm (Model model, Authentication authentication) throws Exception {
+	@RequestMapping(value="/account/password", method=RequestMethod.GET)
+	public String showChangePassword (Model model, Authentication authentication) throws Exception {
 		
 		/*
 		 * Right now the only thing to show is "username". So for the display 
@@ -92,11 +101,11 @@ public class MemberSettingsController {
 		MemberRegisterDTO memberRegisterDTO = memberService.getMemberRegisterDTO(authentication);
 		model.addAttribute("memberRegisterDTO", memberRegisterDTO);
 		
-		return "settings/account";
+		return "settings/account/password";
 	}
 
-	@RequestMapping(value="/account", method=RequestMethod.POST)
-	public String processUpdateAccount (
+	@RequestMapping(value="/account/password", method=RequestMethod.POST)
+	public String processUpdatePassword (
 			/*
 			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
 			 * attributes, otherwise Spring will directly give 400 error with
@@ -107,8 +116,7 @@ public class MemberSettingsController {
 			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO registerAfterChange, 
 			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
-			RedirectAttributes model, 
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		/*
 		 * Since there's no hidden input in "account" page HTML, the returned
@@ -120,19 +128,50 @@ public class MemberSettingsController {
 		expectErrorCount += errors.getFieldErrorCount("displayName");
 		expectErrorCount += errors.getFieldErrorCount("email");
 		if (errors.getErrorCount() > expectErrorCount) {
-			return "settings/account";
+			return "settings/account/password";
 		}
-		
-		assert authentication.getName().equals(registerAfterChange.getUsername());
 		
 		if (memberService.updatePassword(registerAfterChange, oldPassword)) {
 			model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
-			return "redirect:/settings/account";
+			return "redirect:/settings/account/password";
 		}
 		else {
 			model.addFlashAttribute("errorMessage", "Old password doesn't match!");
-			return "redirect:/settings/account";
+			return "redirect:/settings/account/password";
 		}
+	}
+	
+	@RequestMapping(value="/account/delete", method=RequestMethod.GET)
+	public String showDeleteAccount (
+			Model model, 
+			Authentication authentication) throws Exception {
+		
+		System.out.println(authentication);
+		System.out.println(authentication.getAuthorities());
+		
+		return "settings/account/delete";
+	}
+	
+	@RequestMapping(value="/account/delete", method=RequestMethod.POST)
+	public String processDeleteAccount (
+			Authentication authentication,
+			@RequestParam(value="password") String password,
+			RedirectAttributes model,
+			HttpServletRequest request) throws Exception {
+		
+		if (memberService.deleteMember(authentication.getName(), password)) {
+			request.logout();
+			
+			/*
+			 * TODO:
+			 * Message for successful delete account.
+			 */
+			return "redirect:/";
+		}
+		else {
+			model.addFlashAttribute("errorMessage", "Password doesn't match!");
+			return "redirect:/settings/account/delete";
+		}	
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)
@@ -174,7 +213,7 @@ public class MemberSettingsController {
 		}
 		catch (Exception e) {
 			
-			model.addAttribute("errorMessage", "The SSH key does not have a valid format.");
+			model.addAttribute("errorMessage", "The SSH key does not have a valid format!");
 			model.addAttribute("sshKeyFieldDTO", sshKeyFieldDTO);
 			return "settings/ssh";
 		}

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from sqlalchemy.orm import sessionmaker
 
-from settings import postgres_engine
+from settings.postgres import postgres_engine
 from managers import SshKeyManager
 from models import Member, SshKey
 

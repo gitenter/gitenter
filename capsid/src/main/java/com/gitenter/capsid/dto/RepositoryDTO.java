@@ -25,6 +25,7 @@ public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<Reposit
 	
 	private String description;
 	
+	@NotNull
 	private Boolean isPublic;
 	
 	@Override

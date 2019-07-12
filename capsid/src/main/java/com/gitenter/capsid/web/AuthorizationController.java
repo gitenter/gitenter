@@ -17,9 +17,14 @@ import com.gitenter.capsid.service.AnonymousService;
 
 @Controller
 public class AuthorizationController {
+	
+	private final AnonymousService anonymousService;
 
-	@Autowired private AnonymousService anonymousService;
-
+	@Autowired
+	public AuthorizationController (AnonymousService anonymousService) {
+		this.anonymousService = anonymousService;
+	}
+	
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	public String showRegisterForm (Model model) {
 		

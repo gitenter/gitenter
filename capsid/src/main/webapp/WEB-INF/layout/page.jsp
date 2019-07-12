@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="t" %>
-<%@ page session="false" %>
+
 <html lang="en">
   <head>
 	<meta charset="utf-8">

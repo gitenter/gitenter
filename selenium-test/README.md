@@ -47,8 +47,29 @@ sudo make install
 pip3 install pygit2
 ```
 
+In virtual environment, `pygit2` is really hard to be installed. Luckily the hard part is done by [`venvgit2`](https://pypi.org/project/venvgit2/).
+
 ## Run Tests
 
 ```
 python3 -m unittest tests.authorization_test
 ```
+
+or
+
+```
+virtualenv venv
+. venv/bin/activate
+(venv) pip install -r pip-requirements.txt
+(venv) pytest
+(venv) deactivate
+```
+
+When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uniphil/venvgit2/issues/23). But the test can be executed with no problem (not sure if that's because in my local computer I have been successfully setup `libgit2`).
+
+Can't use `pipenv` as it is not compatible with `venvgit2`.
+
+## TODO
+
+- [ ] Move from local environment to virtual environment (`pipenv` for now). To make it work in CI we probably need to configure CircleCI python image to be capable with `cmake`/... for the annoying `pygit2` issue.
+- [ ] Only test happy path.

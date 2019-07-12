@@ -34,7 +34,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <gitar-version>0.0.2-prototype</gitar-version>
+        <gitar-version>0.0.3-prototype</gitar-version>
     </properties>
 
     <build>

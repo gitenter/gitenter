@@ -311,7 +311,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	 * operations all in the scope of this outer class (with the
 	 * usage of this helper method).
 	 */
-	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
+	private GitRepository getGitRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
 				repository.getOrganization().getName(), 
@@ -328,5 +328,10 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 		}
 		
 		return gitBranch;
+	}
+	
+	void delete(RepositoryBean repository) throws IOException, GitAPIException {
+		GitRepository gitRepository = getGitRepository(repository);
+		GitRepository.delete(gitRepository);
 	}
 }

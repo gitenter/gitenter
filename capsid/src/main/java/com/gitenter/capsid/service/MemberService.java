@@ -44,4 +44,5 @@ public interface MemberService {
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
 	
 	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException;
+	public boolean deleteMember(String username, String password) throws IOException;
 }

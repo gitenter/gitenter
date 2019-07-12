@@ -3,7 +3,9 @@ from urllib.parse import urljoin
 from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
 from forms.authorization_form import (
     fill_login_form,
-    fill_signup_form
+    fill_signup_form,
+    fill_delete_user_form,
+    click_logout
 )
 from forms.organization_management_form import fill_add_member_form
 
@@ -32,7 +34,12 @@ class RepositoryToBeCreatedTestSuite(OrganizationCreatedTestSuite):
         self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
         fill_add_member_form(self.driver, self.repo_organizer_username)
 
-        self.driver.get(urljoin(self.root_url, "/logout"))
+        click_logout(self.driver)
 
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.repo_organizer_username, self.repo_organizer_password)
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
+        fill_delete_user_form(self.driver, self.repo_organizer_password)
+
         super(RepositoryToBeCreatedTestSuite, self).tearDown()

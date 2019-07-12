@@ -15,7 +15,7 @@
       <security:authorize url="/">
         <s:url var="logout_url" value="/logout" />
         <sf:form method="POST" action="${logout_url}">
-          <input type="submit" value="Log out" />
+          <input type="submit" id="logout" value="Log out" />
         </sf:form>
         
         <s:url var="settings_url" value="/settings" />

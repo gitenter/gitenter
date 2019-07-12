@@ -1,10 +1,12 @@
 package com.gitenter.protease.dao.auth;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.PersistenceException;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -75,5 +77,11 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 			}
 			throw e;
 		}
+	}
+
+	@Override
+	public void delete(RepositoryBean repository) throws IOException, GitAPIException {
+		repositoryDatabaseRepository.delete(repository);
+		repositoryGitUpdateFactory.delete(repository);
 	}
 }

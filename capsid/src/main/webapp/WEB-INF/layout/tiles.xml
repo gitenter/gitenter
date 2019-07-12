@@ -27,11 +27,14 @@
   <definition name="settings/profile" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/settings/profile.jsp" />
   </definition>
-  <definition name="settings/account" extends="auth-base">
-    <put-attribute name="body" value="/WEB-INF/views/settings/account.jsp" />
-  </definition>
   <definition name="settings/ssh" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/settings/ssh.jsp" />
+  </definition>
+  <definition name="settings/account/password" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/settings/password.jsp" />
+  </definition>
+  <definition name="settings/account/delete" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/settings/delete.jsp" />
   </definition>
 
   <definition name="index/main" extends="auth-base">
@@ -55,6 +58,9 @@
   </definition>
   <definition name="organization-management/members" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/organization-management/members.jsp" />
+  </definition>
+  <definition name="organization-management/delete" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/organization-management/delete.jsp" />
   </definition>
   
   <definition name="repository/setup-a-new-repository" extends="auth-base">
@@ -87,6 +93,9 @@
   </definition>
   <definition name="repository-management/collaborators" extends="auth-base">
     <put-attribute name="body" value="/WEB-INF/views/repository-management/collaborators.jsp" />
+  </definition>
+  <definition name="repository-management/delete" extends="auth-base">
+    <put-attribute name="body" value="/WEB-INF/views/repository-management/delete.jsp" />
   </definition>
 
   <definition name="documentation/template" extends="unauth-base">

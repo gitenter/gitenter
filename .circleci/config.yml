@@ -247,6 +247,15 @@ jobs:
       - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
 
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+
       # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
       - persist_to_workspace:
@@ -269,7 +278,9 @@ jobs:
       # Cache pip libraries.
       - run: sudo pip3 install pipenv
       - run: cd ssheep && pipenv install --dev
-      - run: cd ssheep && pipenv run pytest tests
+      - run: cd ssheep && pipenv run pytest
+      - store_test_results:
+          path: ssheep/test-results
 
   python-linter:
     executor: python-executor
@@ -319,7 +330,7 @@ jobs:
       # Or we may go with an environmental variable process (values local/docker/qa/production)
       # and applications ask environmental variable what database to connect. Not
       # sure which is a better approach.
-      - run: sed -i "s/RUN sed -i 's\/database = LocalDatabase()\/database = DockerDatabase()\/' \/ssheep\/settings.py/RUN sed -i 's\/database = LocalDatabase()\/database = QaDatabase()\/' \/ssheep\/settings.py/g" ssheep/Dockerfile
+      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = QaProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
       - run: cat ssheep/Dockerfile
 
       - inline-aws-operation/deploy:
@@ -342,11 +353,34 @@ jobs:
     # 10.0.0.192 22 us-east-1a healthy
     # 10.0.0.45 22 us-east-1a healthy => works
 
-  acceptance-test:
+  # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
+  # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
+  e2e-test:
     docker:
-      - image: circleci/openjdk:11.0-jdk
+      - image: circleci/python:3.6.2-stretch-browsers
+    working_directory: ~/selenium
     steps:
-      - run: echo "success"
+      - checkout
+
+      # TODO:
+      # venvgit2 cannot be installed with the following error:
+      # https://github.com/uniphil/venvgit2/issues/24
+      - run: sed -i "/venvgit2==0.28.1/d" selenium-test/pip-requirements.txt
+      - run: sed -i "s/profile = LocalProfile()/profile = QaProfile()/g" selenium-test/settings/profile.py
+
+      - run:
+          name: Download Selenium
+          command: |
+            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+
+      - run: cd selenium-test && sudo pip3 install -r pip-requirements.txt
+
+      # TODO:
+      # Run all tests, especially add tests which needs `pygit2`.
+      - run: cd selenium-test && pytest tests/authorization_test.py tests/member_settings_test.py tests/organization_creation_test.py tests/organization_management_test.py tests/repository_creation_test.py tests/repository_management_test.py
+
+      - store_test_results:
+          path: selenium-test/test-results/
 
   deploy:
     docker:
@@ -423,7 +457,7 @@ workflows:
           requires:
             - qa-readiness
 
-      - acceptance-test:
+      - e2e-test:
           requires:
             - qa-web-app-deploy
             - qa-git-deploy

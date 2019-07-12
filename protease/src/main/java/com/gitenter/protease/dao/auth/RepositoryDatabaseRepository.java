@@ -20,4 +20,6 @@ interface RepositoryDatabaseRepository extends PagingAndSortingRepository<Reposi
 			@Param("repositoryName") String repositoryName);
 	
 	RepositoryBean saveAndFlush(RepositoryBean repository);
+	
+	void delete(RepositoryBean repository);
 }

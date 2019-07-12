@@ -1,7 +1,11 @@
 from urllib.parse import urljoin
 
 from testsuites.registered_testsuite import RegisteredTestSuite
-from forms.authorization_form import fill_signup_form
+from forms.authorization_form import (
+    fill_signup_form,
+    fill_login_form,
+    fill_delete_user_form
+)
 
 
 class OrganizationToBeCreatedTestSuite(RegisteredTestSuite):
@@ -36,4 +40,14 @@ class OrganizationToBeCreatedTestSuite(RegisteredTestSuite):
             self.org_member_email)
 
     def tearDown(self):
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_manager_username, self.org_manager_password)
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
+        fill_delete_user_form(self.driver, self.org_manager_password)
+
+        self.driver.get(urljoin(self.root_url, "/login"))
+        fill_login_form(self.driver, self.org_member_username, self.org_member_password)
+        self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
+        fill_delete_user_form(self.driver, self.org_member_password)
+
         super(OrganizationToBeCreatedTestSuite, self).tearDown()

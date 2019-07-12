@@ -23,11 +23,21 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 @Controller
 public class OrganizationManagementController {
 	
-	@Autowired OrganizationService organizationService;
-	
-	@Autowired MemberService memberService;
-	@Autowired OrganizationManagerService organizationManagerService;
+	private MemberService memberService;
+	private OrganizationService organizationService;
+	private OrganizationManagerService organizationManagerService;
 
+	@Autowired
+	public OrganizationManagementController(
+			MemberService memberService, 
+			OrganizationService organizationService,
+			OrganizationManagerService organizationManagerService) {
+
+		this.memberService = memberService;
+		this.organizationService = organizationService;
+		this.organizationManagerService = organizationManagerService;
+	}
+	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
 	public String showCreateOrganizationForm (Model model) {
 
@@ -193,5 +203,39 @@ public class OrganizationManagementController {
 		organizationManagerService.removeOrganizationManager(authentication, organization, organizationMemberMapId);	
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/delete", method=RequestMethod.GET)
+	public String showDeleteOrganizationPage (
+			@PathVariable Integer organizationId,
+			Model model) throws Exception {
+		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		model.addAttribute("organization", organization);
+		
+		return "organization-management/delete";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/delete", method=RequestMethod.POST)
+	public String processDeleteOrganization (
+			@PathVariable Integer organizationId,
+			@RequestParam(value="copy_organization_name") String copyOrganizationName,
+			RedirectAttributes model) throws Exception {
+		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		if (organization.getName().equals(copyOrganizationName)) {
+			organizationManagerService.deleteOrganization(organization);
+			
+			/*
+			 * TODO:
+			 * Message for successful delete organization.
+			 */
+			return "redirect:/";
+		}
+		else {
+			model.addFlashAttribute("errorMessage", "Organization name doesn't match!");
+			return "redirect:/organizations/"+organizationId+"/settings/delete";
+		}
 	}
 }

@@ -7,6 +7,10 @@ id_rsa.pub
 # Redis dump file
 dump.rdb
 
+# Test reports
+selenium-test/test-results/
+ssheep/test-results/
+
 ### Java ###
 
 # Maven

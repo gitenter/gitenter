@@ -35,7 +35,6 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 public class RepositoryRepositoryTest {
 	
 	@Autowired RepositoryRepository repositoryRepository;
-
 	@Autowired OrganizationRepository organizationRepository;
 	
 	@Test(expected = RepositoryNameNotUniqueException.class)

@@ -27,8 +27,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
-	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void updateOrganization(
 			Authentication authentication, 
 			OrganizationBean organizationBean, 
@@ -38,8 +38,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		organizationRepository.saveAndFlush(organizationBean);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void addOrganizationMember(OrganizationBean organization, MemberBean member) {
 
 		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MEMBER);
@@ -58,9 +58,9 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		}
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
-	@Transactional
 	@Override
+	@Transactional
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
 		/*
@@ -76,8 +76,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
@@ -87,8 +87,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void removeOrganizationManager(
 			Authentication authentication,
 			OrganizationBean organization, 
@@ -103,5 +103,16 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		
 		map.setRole(OrganizationMemberRole.MEMBER);
 		organizationMemberMapRepository.saveAndFlush(map);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	public void deleteOrganization(OrganizationBean organization) throws IOException {
+		
+		/*
+		 * TODO:
+		 * Audit log.
+		 */
+		organizationRepository.delete(organization);
 	}
 }

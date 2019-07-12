@@ -2,12 +2,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ page session="false" %>
 
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/settings" />">Settings</a> &rarr; 
-      <span class="nav-current">SSH keys</span>
+      <span class="nav-current">Manage SSH keys</span>
     </nav>
     <article>
       <div>

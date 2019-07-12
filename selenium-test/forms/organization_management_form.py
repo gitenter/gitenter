@@ -10,3 +10,9 @@ def fill_add_member_form(driver, username):
     form_start = driver.find_element_by_name("to_be_add_username")
     form_start.send_keys(username)
     form_start.submit()
+
+
+def fill_delete_organization_form(driver, organization_name):
+    form_start = driver.find_element_by_id("copy_organization_name")
+    form_start.send_keys(organization_name)
+    form_start.submit()
