@@ -360,26 +360,22 @@ jobs:
     steps:
       - checkout
 
+      # TODO:
+      # venvgit2 cannot be installed with the following error:
+      # https://github.com/uniphil/venvgit2/issues/24
+      - run: sed -i "/venvgit2==0.28.1/d" selenium-test/pip-requirements.txt
       - run: sed -i "s/profile = LocalProfile()/profile = QaProfile()/g" selenium-test/settings/profile.py
-      # - run: sed -i "/venvgit2==0.28.1/d" selenium-test/pip-requirements.txt
-      # - run: cat selenium-test/settings/profile.py
-      # - run: cat selenium-test/pip-requirements.txt
 
       - run:
           name: Download Selenium
           command: |
             curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-      - run: sudo pip3 install selenium
-      - run: sudo pip3 install pytest
-      # - run: sudo pip3 install virtualenv
-      # - run: cd selenium-test && virtualenv venv
-      # - run: cd selenium-test && . venv/bin/activate
-      # - run: cd selenium-test && pip3 install -r pip-requirements.txt
-      - run: cd selenium-test && pytest tests/authorization_test.py
-      # - run: cd selenium-test && deactivate
+
+      - run: cd selenium-test && sudo pip3 install -r pip-requirements.txt
+      - run: cd selenium-test && pytest tests/authorization_test.py tests/member_settings_test.py tests/organization_creation_test.py tests/organization_management_test.py tests/repository_creation_test.py tests/repository_management_test.py
 
       - store_test_results:
-          path: selenium-test/test-reports/
+          path: selenium-test/test-results/
 
   # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
   # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
