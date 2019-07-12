@@ -353,7 +353,9 @@ jobs:
     # 10.0.0.192 22 us-east-1a healthy
     # 10.0.0.45 22 us-east-1a healthy => works
 
-  acceptance-test-temp:
+  # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
+  # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
+  e2e-test:
     docker:
       - image: circleci/python:3.6.2-stretch-browsers
     working_directory: ~/selenium
@@ -372,32 +374,13 @@ jobs:
             curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
 
       - run: cd selenium-test && sudo pip3 install -r pip-requirements.txt
+
+      # TODO:
+      # Run all tests, especially add tests which needs `pygit2`.
       - run: cd selenium-test && pytest tests/authorization_test.py tests/member_settings_test.py tests/organization_creation_test.py tests/organization_management_test.py tests/repository_creation_test.py tests/repository_management_test.py
 
       - store_test_results:
           path: selenium-test/test-results/
-
-  # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
-  # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
-  acceptance-test:
-    docker:
-      - image: circleci/python:3.6.2-stretch-browsers
-    working_directory: ~/selenium
-    steps:
-      - checkout
-      - run:
-          name: Download Selenium
-          command: |
-            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-      - run: sudo pip3 install selenium
-      - run: cd selenium-demo && mkdir test-reports
-      - run: cd selenium-demo && python3 -m unittest tests.selenium_test
-
-      # TODO:
-      # Report is not successfully stored. Can't find it in the `artifact` section
-      # where it should be.
-      - store_test_results:
-          path: selenium-demo/test-reports/
 
   deploy:
     docker:
@@ -428,7 +411,6 @@ workflows:
       - java-build
       - python-unittest
       - python-linter
-      - acceptance-test-temp
 
       - qa-readiness:
           type: approval
@@ -475,7 +457,7 @@ workflows:
           requires:
             - qa-readiness
 
-      - acceptance-test:
+      - e2e-test:
           requires:
             - qa-web-app-deploy
             - qa-git-deploy
