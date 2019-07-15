@@ -25,6 +25,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
  * cannot properly handle bean injection ("Unable to find connection 
  * named schemaAuthDatabaseConnection"). Unknown reasons for others
  * but may need to go inside to see what those annotations are doing.
+ * 
+ * Also, it seems to setup the below content for each individual test,
+ * sometimes it got error for case `databaseConnection` is not a
+ * complete set even if the test has no relation to some particular
+ * schema at all. Not sure the reason.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,7 +39,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection", 
+		"schemaGitDatabaseConnection", 
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public @interface RunWithSpringDbUnit {
 
 }

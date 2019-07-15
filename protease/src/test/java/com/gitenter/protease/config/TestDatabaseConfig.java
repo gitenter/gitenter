@@ -50,6 +50,15 @@ public class TestDatabaseConfig {
 	}
 	
 	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaTraceabilityDatabaseConnection() {
+		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dataConnection.setDataSource(dataSource());
+		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
+		dataConnection.setSchema("traceability");
+		return dataConnection;
+	}
+	
+	@Bean
 	public DatabaseDataSourceConnectionFactoryBean schemaReviewDatabaseConnection() {
 		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
 		dataConnection.setDataSource(dataSource());

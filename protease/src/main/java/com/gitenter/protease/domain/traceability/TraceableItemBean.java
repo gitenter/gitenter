@@ -1,4 +1,4 @@
-package com.gitenter.protease.domain.git;
+package com.gitenter.protease.domain.traceability;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +18,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.gitenter.protease.domain.ModelBean;
+import com.gitenter.protease.domain.git.DocumentBean;
 
 import lombok.*;
 
 @Getter
 @Setter
 @Entity
-@Table(schema = "git", name = "traceable_item")
+@Table(schema = "traceability", name = "traceable_item")
 public class TraceableItemBean implements ModelBean {
 
 	@Id
@@ -56,7 +57,7 @@ public class TraceableItemBean implements ModelBean {
 	 */
 
 	@ManyToMany(targetEntity=TraceableItemBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinTable(schema="git", name="traceability_map", 
+	@JoinTable(schema="traceability", name="traceability_map", 
 			joinColumns=@JoinColumn(name="downstream_item_id"), 
 			inverseJoinColumns=@JoinColumn(name="upstream_item_id"))
 	private List<TraceableItemBean> downstreamItems = new ArrayList<TraceableItemBean>();

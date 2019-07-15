@@ -2,12 +2,8 @@ package com.gitenter.protease;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-
-import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.domain.auth.OrganizationBean;
 
 /*
  * This main class has nothing to do with unit tests.
@@ -17,12 +13,9 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
  */
 @ComponentScan
 public class ProteaseApplication {
-	
-	@Autowired private OrganizationRepository organizationRepository;
-	
+
 	private void run () throws IOException {	
-		OrganizationBean organization = organizationRepository.findByName("org1").get(0);
-		System.out.println(organization.getDisplayName());
+
 	}
 	
 	public static void main (String[] args) throws IOException {

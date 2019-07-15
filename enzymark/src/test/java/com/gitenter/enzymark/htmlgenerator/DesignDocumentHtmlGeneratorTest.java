@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.git.TraceableItemBean;
+import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 public class DesignDocumentHtmlGeneratorTest {
 	

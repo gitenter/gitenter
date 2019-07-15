@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.protease.domain.ModelBean;
+import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 import lombok.AccessLevel;
 import lombok.Getter;
