@@ -16,16 +16,16 @@ services:
     image: redis:5.0.5
     restart: always
 
-  dev-machine:
-    build:
-      context: ./docker/dev-machine
-      dockerfile: ./Dockerfile
-    volumes:
-      - ../gitenter:/gitenter
-    depends_on:
-      - postgres
-      - redis-session
-    tty: true
+  # dev-machine:
+  #   build:
+  #     context: ./docker/dev-machine
+  #     dockerfile: ./Dockerfile
+  #   volumes:
+  #     - ../gitenter:/gitenter
+  #   depends_on:
+  #     - postgres
+  #     - redis-session
+  #   tty: true
 
   git:
     build:

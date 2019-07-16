@@ -69,6 +69,28 @@ When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uni
 
 Can't use `pipenv` as it is not compatible with `venvgit2`.
 
+#### Docker
+
+Right now test in docker is really painful.
+
+Setup:
+
+```
+sed -i'.original' -e "s/spring.profiles.active=sts/spring.profiles.active=docker/g" capsid/src/main/resources/application.properties
+sed -i'.original' -e 's/profile = LocalProfile()/profile = DockerProfile()/' selenium-test/settings/profile.py
+mvn package -f capsid/pom.xml -DskipTests
+docker-compose build web
+docker-compose up
+```
+
+Teardown:
+
+```
+docker-compose down
+sed -i'.original' -e 's/profile = DockerProfile()/profile = LocalProfile()/' selenium-test/settings/profile.py
+sed -i'.original' -e "s/spring.profiles.active=docker/spring.profiles.active=sts/g" capsid/src/main/resources/application.properties
+```
+
 ## TODO
 
 - [ ] Move from local environment to virtual environment (`pipenv` for now). To make it work in CI we probably need to configure CircleCI python image to be capable with `cmake`/... for the annoying `pygit2` issue.

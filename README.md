@@ -11,7 +11,7 @@ A Git based version control tool for requirement engineering, design control, ve
 
 ```
 mvn clean install
-mvn package -f hooks/post-receive/pom.xml -DskipTests
+mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
 mvn package -f capsid/pom.xml -DskipTests
 ```
 

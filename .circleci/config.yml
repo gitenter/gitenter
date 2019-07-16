@@ -239,12 +239,11 @@ jobs:
       # TODO:
       # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
       # a seperated step so `qa` and `prod` can both have corresponding changes.
-      - run: sed -i "s/spring.profiles.active=sts/#spring.profiles.active=sts/g" capsid/src/main/resources/application.properties
-      - run: sed -i "s/#spring.profiles.active=qa/spring.profiles.active=qa/g" capsid/src/main/resources/application.properties
+      - run: sed -i "s/spring.profiles.active=sts/spring.profiles.active=qa/g" capsid/src/main/resources/application.properties
       - run: cat capsid/src/main/resources/application.properties
 
       - run: mvn clean install
-      - run: mvn package -f hooks/post-receive/pom.xml -DskipTests
+      - run: mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
 
       - run:
