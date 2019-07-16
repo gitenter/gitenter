@@ -36,19 +36,10 @@ services:
       - git-repo:/home/git
     ports:
       - "8822:22"
+    depends_on:
+      - postgres
     tty: true
     restart: always
-
-  # git-server:
-  #   build:
-  #     context: ./docker/git-server
-  #     dockerfile: ./Dockerfile
-  #   volumes:
-  #     - ../../.ssh/id_rsa.pub:/git-server/keys/id_rsa.pub
-  #   ports:
-  #     - "2222:22"
-  #   tty: true
-  #   restart: always
 
   web:
     build:
@@ -64,6 +55,15 @@ services:
       - redis-session
     tty: true
     restart: always
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: ./Dockerfile
+    command: nginx -c /usr/local/etc/nginx/nginx.conf -g 'daemon off;'
+    depends_on:
+      - git
+      - web
 
   # selenium-test:
   #   build:
