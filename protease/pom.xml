@@ -26,6 +26,13 @@
             <artifactId>gitar</artifactId>
             <version>${gitar-version}</version>
             <exclusions>
+                <!--
+                    Need it to resolve log4j multiple binding problem.
+                    Maven dependent tree can be analyzed by ` mvn dependency:tree`.
+
+                    I try to remove all logging dependencies from packages, and
+                    define a independent one in every package.
+                -->
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>

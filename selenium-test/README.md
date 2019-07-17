@@ -71,25 +71,21 @@ Can't use `pipenv` as it is not compatible with `venvgit2`.
 
 #### Docker
 
-Right now test in docker is really painful.
+Test image in docker (selenium running on local) is really painful.
 
 Setup:
 
 ```
-sed -i'.original' -e "s/spring.profiles.active=sts/spring.profiles.active=docker/g" capsid/src/main/resources/application.properties
 sed -i'.original' -e 's/profile = LocalProfile()/profile = DockerProfile()/' selenium-test/settings/profile.py
-mvn package -f capsid/pom.xml -DskipTests
-docker-compose build web
-docker-compose up
 ```
 
 Teardown:
 
 ```
-docker-compose down
 sed -i'.original' -e 's/profile = DockerProfile()/profile = LocalProfile()/' selenium-test/settings/profile.py
-sed -i'.original' -e "s/spring.profiles.active=docker/spring.profiles.active=sts/g" capsid/src/main/resources/application.properties
 ```
+
+Right now we don't have a container for selenium environment yet (should be very similar to the one we use in CircleCI).
 
 ## TODO
 
