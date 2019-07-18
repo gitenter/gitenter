@@ -101,10 +101,12 @@ docker-compose up
 
 Then one should expect to access this software:
 
-+ Web UI: http://localhost:8886 (alien http://www.gitenter.local)
-+ SSH/Git: `localhost:8822` (alien `gitenter.local`)
++ Web UI: http://localhost:8886 (direct to container) or http://localhost (nginx)
++ SSH/Git: `localhost:8822`
   + For case with customized port, `git clone ssh://git@localhost:8822/absolute/path/to/git/server.git`.
-  + The shorter version `git clone git@gitenter.local:absolute/path/to/git/server.git` only work for case without customized port.
+  + The shorter version `git clone git@gitenter.com:absolute/path/to/git/server.git` only work for case without customized port. Seems using nginx reverse proxy to setup an alien can't help, because we simply cannot redirect traffic to port 22 to nginx (or whatever docker container).
+
++ [ ] TODO: setup alien `www.gitenter.local`. Seems not working for nginx `server_name` if I don't want to modify `/etc/host`.
 
 Clean up at the end:
 

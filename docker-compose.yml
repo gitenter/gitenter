@@ -60,7 +60,10 @@ services:
     build:
       context: ./docker/nginx
       dockerfile: ./Dockerfile
-    command: nginx -c /usr/local/etc/nginx/nginx.conf -g 'daemon off;'
+    ports:
+      - "80:80"
+      - "443:443"
+    command: [nginx, '-g', 'daemon off;']
     depends_on:
       - git
       - web
