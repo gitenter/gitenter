@@ -9,17 +9,45 @@ from models import (
 )
 
 
+class OrganizationMemberMapManager():
+
+    @staticmethod
+    def __get_by_username_and_org_name(session, username, org_name):
+        return session.query(OrganizationMemberMap).\
+            join(Organization).join(Member).\
+            filter(Member.username == username).\
+            filter(Organization.name == org_name).\
+            all()
+
+    @staticmethod
+    def is_member_in_org(session, username, org_name):
+        maps = OrganizationMemberMapManager.__get_by_username_and_org_name(
+            session, username, org_name)
+        if len(maps) >= 1:
+            return True
+        else:
+            return False
+
+
 class RepositoryManager():
 
     @staticmethod
-    def get_by_name_and_organization_name(session, name, org_name):
+    def get_by_repo_name_and_org_name(session, repo_name, org_name):
         return session.query(Repository).join(Organization).\
-            filter(Repository.name == name).\
+            filter(Repository.name == repo_name).\
             filter(Organization.name == org_name).\
             one()
 
 
 class RepositoryMemberMapManager():
+
+    @staticmethod
+    def __filter_user_and_repo_name(
+            session, username, repo_name):
+        return session.query(RepositoryMemberMap).\
+            join(Repository).join(Member).\
+            filter(Member.username == username).\
+            filter(Repository.name == repo_name)
 
     @staticmethod
     def __filter_user_and_org_and_repo_name(
@@ -31,29 +59,47 @@ class RepositoryMemberMapManager():
             filter(Repository.name == repo_name)
 
     @staticmethod
-    def is_readable(session, username, org_name, repo_name):
-
+    def __is_user_repo_organizer_or_editor(session, username, org_name, repo_name):
         maps = RepositoryMemberMapManager.__filter_user_and_org_and_repo_name(
-            session, username, org_name, repo_name).all()
+            session, username, org_name, repo_name).\
+            filter(or_(
+                RepositoryMemberMap.role_shortname == 'O',
+                RepositoryMemberMap.role_shortname == 'E')).all()
 
-        if len(maps) > 0:
+        if len(maps) >= 1:
             return True
         else:
             return False
 
     @staticmethod
-    def is_editable(session, username, org_name, repo_name):
-
-        maps = RepositoryMemberMapManager.__filter_user_and_org_and_repo_name(
-            session, username, org_name, repo_name).\
-            filter(or_(
-                RepositoryMemberMap.role == 'E',
-                RepositoryMemberMap.role == 'L')).all()
-
-        if len(maps) > 0:
+    def __is_user_in_black_list(session, username, repo_name):
+        maps = RepositoryMemberMapManager.__filter_user_and_repo_name(
+            session, username, repo_name).\
+            filter(RepositoryMemberMap.role_shortname == 'O').all()
+        if len(maps) >= 1:
             return True
         else:
             return False
+
+    # TODO:
+    # Testing (but readable has no need to check from `ssheep`)
+    @staticmethod
+    def is_readable(session, username, org_name, repo_name):
+        repo = RepositoryManager.get_by_repo_name_and_org_name(
+            session, repo_name, org_name)
+
+        if repo.is_public:
+            return not RepositoryMemberMapManager.__is_user_in_black_list(session, username, repo_name)
+
+        else:
+            if OrganizationMemberMapManager.is_member_in_org(session, username, org_name):
+                return not RepositoryMemberMapManager.__is_user_in_black_list(session, username, repo_name)
+            else:
+                return False
+
+    @staticmethod
+    def is_editable(session, username, org_name, repo_name):
+        return RepositoryMemberMapManager.__is_user_repo_organizer_or_editor(session, username, org_name, repo_name)
 
 
 class SshKeyManager():
