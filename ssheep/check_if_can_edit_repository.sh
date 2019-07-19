@@ -4,16 +4,16 @@
 
 # Exclude all commands which is not comes from a git protocol.
 
-if [[ -z "$SSH_ORIGINAL_COMMAND" ]]; 
+if [[ -z "$SSH_ORIGINAL_COMMAND" ]];
 then
-	echo "Sorry, SSH shell connection is not allowed for this service."
-	exit 0
+ echo "Sorry, SSH shell connection is not allowed for this service."
+ exit 0
 fi
 
 if [[ $SSH_ORIGINAL_COMMAND != git* ]];
 then
-	echo "Sorry, command $SSH_ORIGINAL_COMMAND is not allowed for this service."
-	exit 0
+ echo "Sorry, command $SSH_ORIGINAL_COMMAND is not allowed for this service."
+ exit 0
 fi
 
 # Git the first parameter, which is in ".ssh/authorized_keys"
@@ -29,7 +29,7 @@ echo $username >> /tmp/stdout.txt
 #
 # > $ ssh git@localhost git-receive-pack /home/git/org1/repo1.git
 # > git-receive-pack /home/git/org1/repo1.git
-#  
+#
 # > $ git clone ssh://git@localhost:/home/git/org1/repo1.git
 # > $ git clone ssh://git@localhost/org1/repo1.git
 # > $ git clone git@localhost:org1/repo1.git
@@ -39,7 +39,7 @@ echo $username >> /tmp/stdout.txt
 #
 # We cannot "echo $SSH_ORIGINAL_COMMAND" to the shell, as the git
 # protocol needs the first fouor bytes to be the line length.
-# If so, we'll get the error message (where XXXX is the first four 
+# If so, we'll get the error message (where XXXX is the first four
 # characters of the first echo of this script):
 #
 # > It replies error "fatal: protocol error: bad line length character: XXXX"
@@ -50,9 +50,9 @@ echo $username >> /tmp/stdout.txt
 
 echo $SSH_ORIGINAL_COMMAND >> /tmp/stdout.txt
 
-# By some weird reasons, for git commands the string saved to 
-# $SSH_ORIGINAL_COMMAND have extra quotation marks for the 
-# filepath. So if we execcute $SSH_ORIGINAL_COMMAND naively, 
+# By some weird reasons, for git commands the string saved to
+# $SSH_ORIGINAL_COMMAND have extra quotation marks for the
+# filepath. So if we execcute $SSH_ORIGINAL_COMMAND naively,
 # it will give back erro message:
 #
 # > $ git clone git@localhost:org1/repo1.git
@@ -70,7 +70,7 @@ tr_command=$(echo $SSH_ORIGINAL_COMMAND | tr -d "'")
 echo $tr_command >> /tmp/stdout.txt
 
 # Need to use "bash" rather than "sh" when execute this script.
-# Otherwise it gives error 
+# Otherwise it gives error
 # > Syntax error: redirection unexpected
 # Refer to https://stackoverflow.com/questions/2462317/bash-syntax-error-redirection-unexpected
 
@@ -87,7 +87,7 @@ echo $repo_name >> /tmp/stdout.txt
 #
 # TODO:
 #
-# It is really tricky that when you use "git ..." (rather than 
+# It is really tricky that when you use "git ..." (rather than
 # "ssh ...", etc) to trigger this force command, it is already in
 # git protocol, so you have no way to echo any customized message
 # in the user shell. If you do any, they'll give error (XXXX is the
@@ -103,14 +103,14 @@ echo $repo_name >> /tmp/stdout.txt
 
 output=$(java -jar immunessh-0.0.1-prototype-jar-with-dependencies.jar $username $org_name $repo_name)
 echo $output >> /tmp/stdout.txt
-if [ $output == true ] 
+if [ $output == true ]
 then
-	$tr_command
+ $tr_command
 #else
 #	echo "User $username is not authorized to do git operations for repository $org_name/$repo_name."
 fi
 
 # TODO:
-# 
+#
 # The current Java executable file is really slow. Consider
 # rewrite the entire forced command in Python or Perl.

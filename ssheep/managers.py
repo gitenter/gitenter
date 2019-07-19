@@ -124,7 +124,7 @@ class SshKeyManager():
         output = ""
         for ssh_key in cls.get_all_ssh_keys(session):
             options = [
-                "command=\"./git-authorization.sh {}\"".format(ssh_key.member.username),
+                "command=\"sh /ssheep/check_if_can_edit_repository.sh {}\"".format(ssh_key.member.username),
                 "no-port-forwarding",
                 "no-x11-forwarding",
                 "no-agent-forwarding",
