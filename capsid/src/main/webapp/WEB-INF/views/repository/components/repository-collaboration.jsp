@@ -41,6 +41,6 @@
       --%>
 <%--      <security:authorize access="@securityService.checkRepositoryEditability(authentication,#repository.id)"> --%>
       <div>
-        <p><span class="intro">Clone with SSH</span> <code>git clone git@<c:out value="${rootUrl}"/>:<c:out value="${organization.name}" />/<c:out value="${repository.name}" /></code></p>
+        <p><span class="intro">Clone with SSH</span> <code>git clone <c:out value="${gitSshProtocolUrl}" /></code></p>
       </div>
 <%--      </security:authorize> --%>

@@ -56,9 +56,9 @@ class TestSshKeyManager(TestCase):
 
     def test_force_command_get_authorized_keys_content(self):
         desired_output_items = set([
-            """command="./git-authorization.sh member",no-port-forwarding,no-x11-forwarding,""" +
+            """command="bash /ssheep/check_if_can_edit_repository.sh member",no-port-forwarding,no-x11-forwarding,""" +
             "no-agent-forwarding,no-pty ssh-rsa AAAAB3NzaC1yc key_1",
-            """command="./git-authorization.sh member",no-port-forwarding,no-x11-forwarding,""" +
+            """command="bash /ssheep/check_if_can_edit_repository.sh member",no-port-forwarding,no-x11-forwarding,""" +
             "no-agent-forwarding,no-pty ssh-rsa CFGrGDnSs+j7F key_2"
         ])
         self.assertTrue(

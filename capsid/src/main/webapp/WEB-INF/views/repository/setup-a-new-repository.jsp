@@ -39,7 +39,7 @@ enable_systemwide = on
 # If nothing is specified, then all files are  included.
 include_paths = doc</code></pre>
         <p>and add this server as your remote site,</p>
-        <pre><code>git remote add origin git@${rootUrl}:${organization.name}/${repository.name}
+        <pre><code>git remote add origin <c:out value="${gitSshProtocolUrl}" />
 git push origin master</code></pre>
       </div>
       <%--

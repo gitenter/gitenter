@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.gitenter.capsid.config.bean.WebDomain;
+import com.gitenter.capsid.config.bean.DomainSource;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
@@ -37,7 +38,8 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 @Controller
 public class RepositoryController {
 	
-	@Autowired WebDomain webSource;
+	@Autowired GitSource gitSource;
+	@Autowired DomainSource domainSource;
 	
 	@Autowired RepositoryService repositoryService;
 
@@ -55,13 +57,13 @@ public class RepositoryController {
 		 * The corresponding folder is empty.
 		 */
 		if (repository.getCommitCount() == 0) {
-		
-			model.addAttribute("rootUrl", webSource.getDomainName());
-			
 			model.addAttribute("organization", repository.getOrganization());
 			model.addAttribute("repository", repository);
 			
 			model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
+			
+			model.addAttribute("gitSshProtocolUrl", domainSource.getGitSshProtocolUrl(
+					gitSource, repository.getOrganization().getName(), repository.getName()));
 			
 			return "repository/setup-a-new-repository";
 		}
@@ -112,8 +114,6 @@ public class RepositoryController {
 			CommitBean commit, 
 			HttpServletRequest request, 
 			Model model) throws Exception {
-
-		model.addAttribute("rootUrl", webSource.getDomainName());
 		
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
@@ -128,6 +128,9 @@ public class RepositoryController {
 		
 		model.addAttribute("branchNames", repository.getBranchNames());
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
+		
+		model.addAttribute("gitSshProtocolUrl", domainSource.getGitSshProtocolUrl(
+				gitSource, repository.getOrganization().getName(), repository.getName()));
 		
 		if (commit instanceof ValidCommitBean) {
 			model.addAttribute("root", ((ValidCommitBean)commit).getRoot());			

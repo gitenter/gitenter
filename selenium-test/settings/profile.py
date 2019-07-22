@@ -39,4 +39,4 @@ class QaProfile(Profile):
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
 
-profile = DockerProfile()
+profile = LocalProfile()
