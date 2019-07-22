@@ -3,6 +3,7 @@ from sqlalchemy import or_
 from models import (
     Member,
     Organization,
+    OrganizationMemberMap,
     Repository,
     RepositoryMemberMap,
     SshKey
@@ -89,17 +90,20 @@ class RepositoryMemberMapManager():
             session, repo_name, org_name)
 
         if repo.is_public:
-            return not RepositoryMemberMapManager.__is_user_in_black_list(session, username, repo_name)
+            return not RepositoryMemberMapManager.__is_user_in_black_list(
+                session, username, repo_name)
 
         else:
             if OrganizationMemberMapManager.is_member_in_org(session, username, org_name):
-                return not RepositoryMemberMapManager.__is_user_in_black_list(session, username, repo_name)
+                return not RepositoryMemberMapManager.__is_user_in_black_list(
+                    session, username, repo_name)
             else:
                 return False
 
     @staticmethod
     def is_editable(session, username, org_name, repo_name):
-        return RepositoryMemberMapManager.__is_user_repo_organizer_or_editor(session, username, org_name, repo_name)
+        return RepositoryMemberMapManager.__is_user_repo_organizer_or_editor(
+            session, username, org_name, repo_name)
 
 
 class SshKeyManager():
@@ -124,7 +128,8 @@ class SshKeyManager():
         output = ""
         for ssh_key in cls.get_all_ssh_keys(session):
             options = [
-                "command=\"bash /ssheep/check_if_can_edit_repository.sh {}\"".format(ssh_key.member.username),
+                "command=\"bash /ssheep/check_if_can_edit_repository.sh {}\"".format(
+                    ssh_key.member.username),
                 "no-port-forwarding",
                 "no-x11-forwarding",
                 "no-agent-forwarding",

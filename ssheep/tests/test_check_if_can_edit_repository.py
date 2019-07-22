@@ -106,7 +106,7 @@ class TestSshKeyManager(TestCase):
             organization=org,
             member=member,
             role_shortname='M')
-        repo = Repository(
+        Repository(
             organization=org,
             name="repo",
             display_name="A Repository",
@@ -132,7 +132,7 @@ class TestSshKeyManager(TestCase):
             organization=org,
             member=member,
             role_shortname='M')
-        repo = Repository(
+        Repository(
             organization=org,
             name="repo",
             display_name="A Repository",
@@ -154,7 +154,7 @@ class TestSshKeyManager(TestCase):
         org = Organization(
             name="org",
             display_name="Organization")
-        repo = Repository(
+        Repository(
             organization=org,
             name="repo",
             display_name="A Repository",
@@ -167,7 +167,7 @@ class TestSshKeyManager(TestCase):
         self.assertFalse(
             RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
 
-    def test_org_member_cannot_editor_private_repo(self):
+    def test_nonmember_cannot_editor_private_repo(self):
         member = Member(
             username="member",
             password="password",
@@ -176,7 +176,7 @@ class TestSshKeyManager(TestCase):
         org = Organization(
             name="org",
             display_name="Organization")
-        repo = Repository(
+        Repository(
             organization=org,
             name="repo",
             display_name="A Repository",

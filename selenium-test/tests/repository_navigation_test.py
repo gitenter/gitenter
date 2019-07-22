@@ -39,26 +39,37 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             # TODO:
             # Should later on aviod return code 500, but to catch the error and redirect
             # to 404 error properly.
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id)))
+            self.driver.get(urljoin(
+                self.root_url,
+                "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id)))
             assert "status=500" in self.driver.page_source
             assert "Branch master is not existing yet!" in self.driver.page_source
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+            self.driver.get(urljoin(
+                self.root_url,
+                "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert "status=500" in self.driver.page_source
             assert "Branch master is not existing yet!" in self.driver.page_source
 
     def test_ignored_commit(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack("add commit without setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack(
+                "add commit without setup file", self.org_member_username, self.org_member_email)
             git_commit_datapack.add_file(AddToGitConcreteFile("a_irrelevant_file.txt", "A irrelevant file"))
 
             local_path = self._clone_repo_and_return_local_path()
             git_commit_datapack.commit_to_repo(local_path)
 
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
-            self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
+            self.driver.get(urljoin(
+                self.root_url,
+                "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+            self.assertEqual(
+                urlparse(self.driver.current_url).path,
+                "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
             assert "Turn off for Traceability Analysis" in self.driver.page_source
 
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+            self.driver.get(urljoin(
+                self.root_url,
+                "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert self.repo_display_name in self.driver.page_source
             assert git_commit_datapack.commit_message in self.driver.page_source
             assert git_commit_datapack.username in self.driver.page_source
@@ -72,7 +83,8 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_invalid_commit(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack(
+                "add commit setup file", self.org_member_username, self.org_member_email)
             git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
             git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "- [tag]{refer-not-exist} a traceable item."))
 
@@ -80,11 +92,15 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             git_commit_datapack.commit_to_repo(local_path)
 
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
-            self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
+            self.assertEqual(
+                urlparse(self.driver.current_url).path,
+                "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
             assert "Trace Analyzer Error" in self.driver.page_source
             assert "Browse Historical Commits" in self.driver.page_source
 
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+            self.driver.get(urljoin(
+                self.root_url,
+                "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert self.repo_display_name in self.driver.page_source
             assert git_commit_datapack.commit_message in self.driver.page_source
             assert git_commit_datapack.username in self.driver.page_source
@@ -99,14 +115,18 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
     def test_valid_commit_one_file(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
-            git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
+            git_commit_datapack.add_file(
+                AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+            git_commit_datapack.add_file(
+                AddToGitConcreteFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
 
             local_path = self._clone_repo_and_return_local_path()
             git_commit_datapack.commit_to_repo(local_path)
 
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
-            self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
+            self.assertEqual(
+                urlparse(self.driver.current_url).path,
+                "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
             assert "Browse files and folders" in self.driver.page_source
             self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "Branch: master")
             self.assertEqual(self.driver.find_element_by_class_name("document-file").get_attribute("value"), "file.md")
@@ -119,7 +139,9 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
             # TODO:
             # Navigate to there rather than hardcode the link.
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
+            self.driver.get(urljoin(
+                self.root_url,
+                "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert self.repo_display_name in self.driver.page_source
             assert git_commit_datapack.commit_message in self.driver.page_source
             assert git_commit_datapack.username in self.driver.page_source
@@ -134,16 +156,20 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             document_link = self.driver.find_element_by_xpath("//input[@value='file.md']/parent::form").get_attribute("action")
             self.driver.get(document_link)
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
                 "{}#tag1".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
                 "{}#tag2".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
                 "{}#tag2".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
                 "{}#tag1".format(document_link))
 
     def test_valid_commit_two_files_in_root(self):
@@ -163,29 +189,37 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             self.driver.get(document_link)
             self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file1.md")
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
                 "{}#tag1".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
                 "{}/branches/master/documents/directories/file2.md#tag2".format(repo_link))
 
             self.driver.get(repo_link)
-            document_link = self.driver.find_element_by_xpath("//input[@value='file2.md']/parent::form").get_attribute("action")
+            document_link = self.driver.find_element_by_xpath(
+                "//input[@value='file2.md']/parent::form").get_attribute("action")
             self.driver.get(document_link)
             self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "file2.md")
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
                 "{}#tag2".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
                 "{}/branches/master/documents/directories/file1.md#tag1".format(repo_link))
 
     def test_valid_commit_two_files_in_nested_folder(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
-            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
-            git_commit_datapack.add_file(AddToGitConcreteFile("root-file.md", "- [tag1] a traceable item."))
-            git_commit_datapack.add_file(AddToGitConcreteFile("nested-folder/nested-file.md", "- [tag2]{tag1} another traceable item."))
+            git_commit_datapack.add_file(
+                AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+            git_commit_datapack.add_file(
+                AddToGitConcreteFile("root-file.md", "- [tag1] a traceable item."))
+            git_commit_datapack.add_file(
+                AddToGitConcreteFile("nested-folder/nested-file.md", "- [tag2]{tag1} another traceable item."))
 
             local_path = self._clone_repo_and_return_local_path()
             git_commit_datapack.commit_to_repo(local_path)
@@ -193,25 +227,31 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             repo_link = urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id))
 
             self.driver.get(repo_link)
-            document_link = self.driver.find_element_by_xpath("//input[@value='root-file.md']/parent::form").get_attribute("action")
+            document_link = self.driver.find_element_by_xpath(
+                "//input[@value='root-file.md']/parent::form").get_attribute("action")
             self.driver.get(document_link)
             self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "root-file.md")
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag1' and @class='original']/parent::form").get_attribute("action"),
                 "{}#tag1".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag2' and @class='downstream']/parent::form").get_attribute("action"),
                 "{}/branches/master/documents/directories/nested-folder/nested-file.md#tag2".format(repo_link))
 
             self.driver.get(repo_link)
-            document_link = self.driver.find_element_by_xpath("//input[@value='nested-file.md']/parent::form").get_attribute("action")
+            document_link = self.driver.find_element_by_xpath(
+                "//input[@value='nested-file.md']/parent::form").get_attribute("action")
             self.driver.get(document_link)
             self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "nested-folder/nested-file.md")
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag2' and @class='original']/parent::form").get_attribute("action"),
                 "{}#tag2".format(document_link))
             self.assertEqual(
-                self.driver.find_element_by_xpath("//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
+                self.driver.find_element_by_xpath(
+                    "//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
                 "{}/branches/master/documents/directories/root-file.md#tag1".format(repo_link))
 
     def test_valid_commit_display_image(self):

@@ -12,7 +12,7 @@ class RepositoryCreatedInitState(RepositoryCreatedTestSuite):
         super(RepositoryCreatedInitState, self).tearDown()
 
     def test_init(self):
-        import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()  # noqa: ignore=E702
 
 
 if __name__ == '__main__':

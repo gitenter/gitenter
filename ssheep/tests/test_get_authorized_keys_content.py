@@ -51,17 +51,19 @@ class TestSshKeyManager(TestCase):
         ])
         self.assertTrue(
             desired_output_items <=
-                set(SshKeyManager.get_plain_authorized_keys_file_content(self.session).splitlines())
+            set(SshKeyManager.get_plain_authorized_keys_file_content(self.session).splitlines())
         )
 
     def test_force_command_get_authorized_keys_content(self):
         desired_output_items = set([
-            """command="bash /ssheep/check_if_can_edit_repository.sh member",no-port-forwarding,no-x11-forwarding,""" +
+            """command="bash /ssheep/check_if_can_edit_repository.sh member",""" +
+            "no-port-forwarding,no-x11-forwarding," +
             "no-agent-forwarding,no-pty ssh-rsa AAAAB3NzaC1yc key_1",
-            """command="bash /ssheep/check_if_can_edit_repository.sh member",no-port-forwarding,no-x11-forwarding,""" +
+            """command="bash /ssheep/check_if_can_edit_repository.sh member",""" +
+            "no-port-forwarding,no-x11-forwarding," +
             "no-agent-forwarding,no-pty ssh-rsa CFGrGDnSs+j7F key_2"
         ])
         self.assertTrue(
             desired_output_items <=
-                set(SshKeyManager.get_force_command_authorized_keys_file_content(self.session).splitlines())
+            set(SshKeyManager.get_force_command_authorized_keys_file_content(self.session).splitlines())
         )

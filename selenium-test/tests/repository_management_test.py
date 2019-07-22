@@ -21,13 +21,19 @@ class TestRepositoryManagement(RepositoryCreatedTestSuite):
             # So this is actually in "Setup a new repository" page.
             # It is not proved that for a general index page (repo
             # with commit) this `Setting` is also displayed properly.
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
-            self.assertTrue(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/repositories/{}/settings']".format(self.org_id, self.repo_id)))
+            self.driver.get(
+                urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+            self.assertTrue(
+                self.driver.find_elements_by_xpath(
+                    "//form[@action='/organizations/{}/repositories/{}/settings']".format(self.org_id, self.repo_id)))
 
     def test_non_repo_organizer_cannot_access_repo_setting(self):
         with login_as(self.driver, self.root_url, self.org_member_username, self.org_member_password):
-            self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
-            self.assertFalse(self.driver.find_elements_by_xpath("//form[@action='/organizations/{}/repositories/{}/settings']".format(self.org_id, self.repo_id)))
+            self.driver.get(
+                urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, self.repo_id)))
+            self.assertFalse(
+                self.driver.find_elements_by_xpath(
+                    "//form[@action='/organizations/{}/repositories/{}/settings']".format(self.org_id, self.repo_id)))
 
 
 class TestModifyRepositoryProfile(RepositoryCreatedTestSuite):
@@ -66,8 +72,12 @@ class TestModifyRepositoryProfile(RepositoryCreatedTestSuite):
                 urlparse(self.driver.current_url).path,
                 "/organizations/{}/repositories/{}/settings/profile".format(self.org_id, self.repo_id))
             assert "Changes has been saved successfully!" in self.driver.page_source
-            self.assertEqual(self.driver.find_element_by_id("displayName").get_attribute("value"), self.repo_display_name+display_name_append)
-            self.assertEqual(self.driver.find_element_by_id("description").get_attribute("value"), self.repo_description+description_append)
+            self.assertEqual(
+                self.driver.find_element_by_id("displayName").get_attribute("value"),
+                self.repo_display_name+display_name_append)
+            self.assertEqual(
+                self.driver.find_element_by_id("description").get_attribute("value"),
+                self.repo_description+description_append)
 
     def test_non_project_organizer_is_not_allowed_to_modify_repository_profile(self):
         with login_as(self.driver, self.root_url, self.org_member_username, self.org_member_password):

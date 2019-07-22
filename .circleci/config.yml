@@ -287,8 +287,10 @@ jobs:
       - checkout
 
       - run: sudo pip3 install pipenv
-      - run: cd ssheep && pipenv install --dev
+      - run: cd ssheep && pipenv install flake8
       - run: cd ssheep && pipenv run flake8 --statistics
+      - run: cd selenium-test && pipenv install flake8
+      - run: cd selenium-test && pipenv run flake8 --statistics
 
   qa-web-app-deploy:
     # TODO:

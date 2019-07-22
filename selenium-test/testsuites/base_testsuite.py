@@ -2,7 +2,6 @@ import os
 import unittest
 from selenium import webdriver
 import shutil
-from urllib.parse import urlparse
 
 from settings.profile import profile
 

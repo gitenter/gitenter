@@ -7,6 +7,7 @@ from forms.authorization_form import (
     fill_delete_user_form
 )
 
+
 class RegisteredTestSuite(BaseTestSuite):
 
     def setUp(self):
