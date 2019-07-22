@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InputIsNotQualifiedException;
 import com.gitenter.gitar.GitBareRepository;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -25,7 +26,6 @@ import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
-import com.gitenter.protease.source.GitSource;
 
 @Service
 public class RepositoryManagerServiceImpl implements RepositoryManagerService {

@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.gitenter.protease.source.GitSource;
+import com.gitenter.protease.config.bean.GitSource;
 
 @Configuration
-public class GitConfig {
+public class GitSourceConfig {
 
 	/*
 	 * Can't set it up as dummy, because although we only write to the database,

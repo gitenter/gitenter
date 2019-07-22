@@ -38,7 +38,7 @@ public class PostReceiveApplication {
 		 *
 		 * TODO:
 		 * This need to be changed based on what profile of the
-		 * web application (capsid) is using. It is quite troublesome. 
+		 * web application (capsid) is using. It is quite troublesome.
 		 * Should be optimized so at least no need to change in multiple
 		 * times.
 		 */
@@ -68,7 +68,7 @@ public class PostReceiveApplication {
 		 * https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html
 		 */
 //		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-//		context.register(DatabaseConfig.class, GitConfig.class);
+//		context.register(DatabaseConfig.class, GitSourceConfig.class);
 //		context.getEnvironment().setActiveProfiles("production");
 //		context.refresh();
 

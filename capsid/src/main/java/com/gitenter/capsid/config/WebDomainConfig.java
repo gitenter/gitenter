@@ -4,43 +4,43 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.gitenter.protease.source.WebSource;
+import com.gitenter.capsid.config.bean.WebDomain;
 
 @Configuration
-public class WebConfig {
+public class WebDomainConfig {
 
 	@Profile("sts")
 	@Bean
-	public WebSource stsWebSource() {
+	public WebDomain stsWebSource() {
 		
-		WebSource webSource = new WebSource();
+		WebDomain webSource = new WebDomain();
 		webSource.setDomainName("localhost");
 		return webSource;
 	}
 	
 	@Profile("docker")
 	@Bean
-	public WebSource localhostWebSource() {
+	public WebDomain localhostWebSource() {
 		
-		WebSource webSource = new WebSource();
+		WebDomain webSource = new WebDomain();
 		webSource.setDomainName("localhost");
 		return webSource;
 	}
 	
 	@Profile("qa")
 	@Bean
-	public WebSource qaWebSource() {
+	public WebDomain qaWebSource() {
 		
-		WebSource webSource = new WebSource();
+		WebDomain webSource = new WebDomain();
 		webSource.setDomainName("qa.gitenter.com");
 		return webSource;
 	}
 	
 	@Profile("production")
 	@Bean
-	public WebSource productionWebSource() {
+	public WebDomain productionWebSource() {
 		
-		WebSource webSource = new WebSource();
+		WebDomain webSource = new WebDomain();
 		webSource.setDomainName("gitenter.com");
 		return webSource;
 	}

@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.ResourceUtils;
 
-import com.gitenter.protease.source.GitSource;
+import com.gitenter.protease.config.bean.GitSource;
 
 @Configuration
-public class TestGitConfig {
+public class TestGitSourceConfig {
 	
 	/*
 	 * Minimal includes one single commit on master branch:

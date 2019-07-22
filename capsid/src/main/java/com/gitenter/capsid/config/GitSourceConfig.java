@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.gitenter.protease.source.GitSource;
+import com.gitenter.protease.config.bean.GitSource;
 
 @Configuration
-public class GitConfig {
+public class GitSourceConfig {
 
 	@Profile("sts")
 	@Bean

@@ -3,7 +3,7 @@ package com.gitenter.post_receive_hook.service;
 import java.io.File;
 import java.io.IOException;
 
-import com.gitenter.protease.source.GitSource;
+import com.gitenter.protease.config.bean.GitSource;
 
 public class HookInputSet {
 

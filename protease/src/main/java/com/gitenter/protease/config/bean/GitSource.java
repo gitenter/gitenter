@@ -1,4 +1,4 @@
-package com.gitenter.protease.source;
+package com.gitenter.protease.config.bean;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,10 @@ public class GitSource {
 	 * later.
 	 */
 	private String rootFolderPath;
+	
+	public File getRootDirectory() {
+		return new File(rootFolderPath);
+	}
 
 	public File getOrganizationDirectory (String ownerName) {
 		return new File(rootFolderPath, ownerName);

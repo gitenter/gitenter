@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.gitenter.capsid.config.bean.WebDomain;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
@@ -32,12 +33,11 @@ import com.gitenter.protease.domain.git.FileBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
-import com.gitenter.protease.source.WebSource;
 
 @Controller
 public class RepositoryController {
 	
-	@Autowired WebSource webSource;
+	@Autowired WebDomain webSource;
 	
 	@Autowired RepositoryService repositoryService;
 

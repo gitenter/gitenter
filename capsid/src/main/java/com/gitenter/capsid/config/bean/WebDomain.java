@@ -1,11 +1,11 @@
-package com.gitenter.protease.source;
+package com.gitenter.capsid.config.bean;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class WebSource {
+public class WebDomain {
 	
 	private String domainName;
 

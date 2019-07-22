@@ -1,4 +1,4 @@
-package com.gitenter.protease.source;
+package com.gitenter.protease.config.bean;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 
-import com.gitenter.protease.source.GitSource;
+import com.gitenter.protease.config.bean.GitSource;
 
 public class GitSourceTest {
 
