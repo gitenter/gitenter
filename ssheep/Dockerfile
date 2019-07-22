@@ -13,6 +13,20 @@ RUN echo 'root:secretpassword' | chpasswd
 RUN useradd -ms /bin/bash git
 RUN echo 'git:secretpassword' | chpasswd
 
+# By the setup of the `web` docker container, Tomcat is running under user `root`
+# and the git files are created under that user.
+# > drwxr-x--- 7 root root 4096 Jul 19 22:24 repo.git
+# Without this modification git will complain
+# > fatal: Could not read from remote repository.
+# >
+# > Please make sure you have the correct access rights
+# > and the repository exists.
+#
+# TODO:
+# Rather then simply add user `git` to the `root` group, consider consolidate
+# the two.
+RUN usermod -g root git
+
 RUN apt-get update && apt-get -y install \
 	openssh-server \
   git \
@@ -22,21 +36,23 @@ RUN apt-get update && apt-get -y install \
 RUN pip3 install pipenv
 
 # TODO:
-# Consider using environmental variable to do so. Otherwise it is really weird
-# to `sed` this line in CircleCI.
-COPY . /ssheep
-WORKDIR /ssheep
-RUN sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /ssheep/settings/profile.py
-
-# TODO:
 # Looks like need to `apt-get install libpq-dev`, otherwise will run into error
 # > An error occurred while installing psycopg2==2.8.1 ...
 #
 # TODO:
 # Consider not install packages on the host machine. Rather, we should use python wheels.
 # https://medium.com/@greut/building-a-python-package-a-docker-image-using-pipenv-233d8793b6cc
-RUN pipenv lock -r > requirements.txt
-RUN pip3 install -r requirements.txt
+
+COPY pip-requirements.txt /tmp/pip-requirements.txt
+# RUN pipenv lock -r > pip-requirements.txt
+RUN pip3 install -r /tmp/pip-requirements.txt
+
+# TODO:
+# Consider using environmental variable to do so. Otherwise it is really weird
+# to `sed` this line in CircleCI.
+COPY . /ssheep
+WORKDIR /ssheep
+RUN sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /ssheep/settings/profile.py
 
 # Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
 RUN mkdir /var/run/sshd

@@ -124,7 +124,7 @@ class SshKeyManager():
         output = ""
         for ssh_key in cls.get_all_ssh_keys(session):
             options = [
-                "command=\"sh /ssheep/check_if_can_edit_repository.sh {}\"".format(ssh_key.member.username),
+                "command=\"bash /ssheep/check_if_can_edit_repository.sh {}\"".format(ssh_key.member.username),
                 "no-port-forwarding",
                 "no-x11-forwarding",
                 "no-agent-forwarding",

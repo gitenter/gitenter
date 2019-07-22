@@ -1,26 +1,28 @@
 #!/bin/bash
 
-# This is the SSH forced command file which finally stays at `/home/git`.
+git-upload-pack /home/git/rrr/raa.git
+exit 0
+
+# This is the SSH forced command file which finally stays at `/ssheep/check_if_can_edit_repository.sh`.
 
 # Exclude all commands which is not comes from a git protocol.
-
 if [[ -z "$SSH_ORIGINAL_COMMAND" ]];
 then
- echo "Sorry, SSH shell connection is not allowed for this service."
- exit 0
+  echo "Sorry, SSH shell connection is not allowed for this service."
+  exit 0
 fi
 
 if [[ $SSH_ORIGINAL_COMMAND != git* ]];
 then
- echo "Sorry, command $SSH_ORIGINAL_COMMAND is not allowed for this service."
- exit 0
+  echo "Sorry, command $SSH_ORIGINAL_COMMAND is not allowed for this service."
+  exit 0
 fi
 
 # Git the first parameter, which is in ".ssh/authorized_keys"
 # pre-saved by enterovirus.protease.database.SshKeyRepository.class
 
 username=$1
-echo $username >> /tmp/stdout.txt
+echo "username: $username" >> /tmp/stdout.txt
 
 # $SSH_ORIGINAL_COMMAND saves the original command. It has value:
 #
@@ -38,7 +40,7 @@ echo $username >> /tmp/stdout.txt
 # NOTE:
 #
 # We cannot "echo $SSH_ORIGINAL_COMMAND" to the shell, as the git
-# protocol needs the first fouor bytes to be the line length.
+# protocol needs the first four bytes to be the line length.
 # If so, we'll get the error message (where XXXX is the first four
 # characters of the first echo of this script):
 #
@@ -48,7 +50,7 @@ echo $username >> /tmp/stdout.txt
 # Refer to this link for more details:
 # https://stackoverflow.com/questions/8170436/git-remote-error-fatal-protocol-error-bad-line-length-character-unab
 
-echo $SSH_ORIGINAL_COMMAND >> /tmp/stdout.txt
+echo "SSH_ORIGINAL_COMMAND: $SSH_ORIGINAL_COMMAND" >> /tmp/stdout.txt
 
 # By some weird reasons, for git commands the string saved to
 # $SSH_ORIGINAL_COMMAND have extra quotation marks for the
@@ -67,22 +69,27 @@ echo $SSH_ORIGINAL_COMMAND >> /tmp/stdout.txt
 # marks.
 
 tr_command=$(echo $SSH_ORIGINAL_COMMAND | tr -d "'")
-echo $tr_command >> /tmp/stdout.txt
+echo "tr_command: $tr_command" >> /tmp/stdout.txt
 
 # Need to use "bash" rather than "sh" when execute this script.
 # Otherwise it gives error
 # > Syntax error: redirection unexpected
 # Refer to https://stackoverflow.com/questions/2462317/bash-syntax-error-redirection-unexpected
 
+# TODO:
+# Right now only work for `git clone ssh://git@localhost:8822/home/git/org/repo.git`
+# Need to change to `-f1` and `-f2` if `git clone git@localhost:rrr/raa.git`
+# Should have a compatible way of doing it.
 original_arg=$(cut -d' ' -f2 <<< "$tr_command")
-org_name=$(cut -d'/' -f1 <<< "$original_arg")
-repo_full_name=$(cut -d'/' -f2 <<< "$original_arg")
+org_name=$(cut -d'/' -f4 <<< "$original_arg")
+repo_full_name=$(cut -d'/' -f5 <<< "$original_arg")
 repo_name=$(cut -d'.' -f1 <<< "$repo_full_name")
-echo $org_name >> /tmp/stdout.txt
-echo $repo_name >> /tmp/stdout.txt
+echo "org_name: $org_name" >> /tmp/stdout.txt
+echo "repo_full_name: $repo_full_name" >> /tmp/stdout.txt
+echo "repo_name: $repo_name" >> /tmp/stdout.txt
 
-# Execute Java and get the result. Based on the result,
-# decide whether the $SSH_ORIGINAL_COMMAND should be executed
+# Execute `check_if_can_edit_repository.py` and get the result. Based on
+# the result, decide whether the $SSH_ORIGINAL_COMMAND should be executed
 # or not.
 #
 # TODO:
@@ -101,16 +108,13 @@ echo $repo_name >> /tmp/stdout.txt
 # > and the repository exists.
 # Which is also not clear to show the user what is happening.
 
-output=$(java -jar immunessh-0.0.1-prototype-jar-with-dependencies.jar $username $org_name $repo_name)
-echo $output >> /tmp/stdout.txt
-if [ $output == true ]
+cd /ssheep
+output=$(python3 check_if_can_edit_repository.py $username $org_name $repo_name)
+echo "output: $output" >> /tmp/stdout.txt
+if [[ "$output" == "True" ]];
 then
- $tr_command
+  echo "bingo" >> /tmp/stdout.txt
+  $tr_command
 #else
 #	echo "User $username is not authorized to do git operations for repository $org_name/$repo_name."
 fi
-
-# TODO:
-#
-# The current Java executable file is really slow. Consider
-# rewrite the entire forced command in Python or Perl.

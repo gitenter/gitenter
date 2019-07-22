@@ -109,7 +109,7 @@ CREATE TABLE auth.ssh_key (
 	 * but that is not user defined, so should not be set in here.
 	 */
 	key_type text NOT NULL,
-	key_data text NOT NULL UNIQUE, /* Should be unique. But I loose the constrain a little bit at this moment. */
+	key_data text NOT NULL UNIQUE, /* Should be unique. Otherwise the system doesn't know which user it is based on SSH connection. */
 	comment text
 );
 

@@ -20,7 +20,7 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=connection)
     session = Session()
 
-    print(RepositoryMemberMapManager.is_editable(self.session, username, org_name, repo_name))
+    print(RepositoryMemberMapManager.is_editable(session, username, org_name, repo_name))
 
     session.close()
     connection.close()
