@@ -29,9 +29,9 @@ public class GitSourceConfig {
 		return gitSource;
 	}
 
-	@Profile("qa")
+	@Profile("staging")
 	@Bean
-	public GitSource qaGitSource() {
+	public GitSource stagingGitSource() {
 		
 		GitSource gitSource = new GitSource();
 		gitSource.setRootFolderPath("/data");

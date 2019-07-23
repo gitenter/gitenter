@@ -31,12 +31,12 @@ public class DomainConfig {
 		return domainSource;
 	}
 	
-	@Profile("qa")
+	@Profile("staging")
 	@Bean
-	public DomainSource qadomainSource() {
+	public DomainSource stagingdomainSource() {
 		
 		DomainSource domainSource = new DomainSource();
-		domainSource.setDomainName("qa.gitenter.com");
+		domainSource.setDomainName("staging.gitenter.com");
 		return domainSource;
 	}
 	

@@ -63,7 +63,7 @@ class TestAuthorization(BaseTestSuite):
             find_cookie = False
             for cookie in self.driver.get_cookies():
                 if cookie["name"] == "remember-me":
-                    self.assertEqual(cookie["domaintests/repository_navigation_test.py"], urlparse(self.driver.current_url).hostname)
+                    self.assertEqual(cookie["domain"], urlparse(self.driver.current_url).hostname)
                     self.assertAlmostEqual(cookie["expiry"] - float(time.time()), 2419200, delta=1)
                     find_cookie = True
             self.assertTrue(find_cookie)

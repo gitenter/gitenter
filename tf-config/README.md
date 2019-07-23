@@ -10,53 +10,25 @@ Manually created a user `Administrator` with permissions `AdministratorAccess`. 
 
 `iam-terraform-deploy` user is used for CircleCI deployment of `aws ecs update-service`.
 
-# Terraform Notes
+# Environments
 
-Full cycle: executed each single folder under `live`
-
-```
-terraform init
-terraform get -update
-terraform plan
-terraform apply
-terraform destroy
-```
-
-To accelerate the debugging process, we can only apply to certain resource and dependencies.
-
-```
-terraform plan -target=aws_efs_mount_target.git
-terraform apply -target=aws_efs_mount_target.git
-terraform destroy
-```
-
-(When destroying, it may complain that the `output` doesn't exist yet. It is fine as far as all the relevant resources has been successfully destroyed.)
-
-For local resource modules, they'll be automatically loaded again every time, so there's no need for `terraform get -update` (we do need to `terraform get` the first time).
-
-`terraform get -update` will (sometimes?) get the following error.
-
-```
-Error loading modules: error downloading 'file:///.../gitenter/tf-config/modules/iam-terraform-config-group': destination exists and is not a symlink
-```
-
-The alternative solution is to remove `.terraform/modules` so it gets force updated.
-
-If we are later on using Terragrunt [we can `terragrunt apply --terragrunt-source path/to/the/module`](https://github.com/gruntwork-io/terragrunt#working-locally).
++ `test`: In orchestration framework, but uses non-persistent storage (as docker containers) and mocked APIs.
++ `staging`: Everything is the same as prod. Uses different set of persistent storage/3rd party APIs. Deployed through `tf-config/live/ecs-circleci-staging` module.
++ `prod`
 
 # Initialization/Destroy
 
 ### Initialization
 
-Needs to initialize the remote AWS state manually before `qa-readiness` CircleCI step.
+Needs to initialize the remote AWS state manually before `staging-readiness` CircleCI step.
 
 ```bash
-cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-qa
+cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-staging
 terraform apply
 ```
 
 ```bash
-POSTGRES_ENDPOINT="qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
+POSTGRES_ENDPOINT="staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
 
 cd ~/Workspace/gitenter/
 PGPASSWORD=postgres psql -U postgres -h $POSTGRES_ENDPOINT -p 5432 -w -f database/create_users.sql
@@ -80,7 +52,7 @@ Notes:
 ### Destroy
 
 ```bash
-cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-qa
+cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-staging
 terraform destroy
 ```
 
@@ -122,7 +94,7 @@ sudo amazon-linux-extras install -y postgresql10
 Connect to Postgres (both local and inside of the container):
 
 ```
-psql --host=qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
+psql --host=staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
 ```
 
 Install `redis-cli`:
@@ -136,12 +108,12 @@ wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.g
 Connect to Redis (inside of the container):
 
 ```
-redis-cli -h qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com
-qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> KEYS *
+redis-cli -h staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com
+staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> KEYS *
 (empty list or set)
-qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> SET a 1
+staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> SET a 1
 OK
-qa-redis-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> GET a
+staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> GET a
 "1"
 ```
 
@@ -153,6 +125,40 @@ aws ecr get-login --region us-east-1 --no-include-email
 docker login -u AWS -p ... https://662490392829.dkr.ecr.us-east-1.amazonaws.com
 docker run -p 8885:8080 662490392829.dkr.ecr.us-east-1.amazonaws.com/ecs-circleci-qa-repository:c1f58a2c852d24b22bc9b12f137fb1fbd2d16a5f
 ```
+
+# Terraform Notes
+
+Full cycle: executed each single folder under `live`
+
+```
+terraform init
+terraform get -update
+terraform plan
+terraform apply
+terraform destroy
+```
+
+To accelerate the debugging process, we can only apply to certain resource and dependencies.
+
+```
+terraform plan -target=aws_efs_mount_target.git
+terraform apply -target=aws_efs_mount_target.git
+terraform destroy
+```
+
+(When destroying, it may complain that the `output` doesn't exist yet. It is fine as far as all the relevant resources has been successfully destroyed.)
+
+For local resource modules, they'll be automatically loaded again every time, so there's no need for `terraform get -update` (we do need to `terraform get` the first time).
+
+`terraform get -update` will (sometimes?) get the following error.
+
+```
+Error loading modules: error downloading 'file:///.../gitenter/tf-config/modules/iam-terraform-config-group': destination exists and is not a symlink
+```
+
+The alternative solution is to remove `.terraform/modules` so it gets force updated.
+
+If we are later on using Terragrunt [we can `terragrunt apply --terragrunt-source path/to/the/module`](https://github.com/gruntwork-io/terragrunt#working-locally).
 
 # AWS Random Notes
 
