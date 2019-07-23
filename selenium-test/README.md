@@ -69,6 +69,24 @@ When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uni
 
 Can't use `pipenv` as it is not compatible with `venvgit2`.
 
+#### Docker
+
+Test image in docker (selenium running on local) is really painful.
+
+Setup:
+
+```
+sed -i'.original' -e 's/profile = LocalProfile()/profile = DockerProfile()/' selenium-test/settings/profile.py
+```
+
+Teardown:
+
+```
+sed -i'.original' -e 's/profile = DockerProfile()/profile = LocalProfile()/' selenium-test/settings/profile.py
+```
+
+Right now we don't have a container for selenium environment yet (should be very similar to the one we use in CircleCI).
+
 ## TODO
 
 - [ ] Move from local environment to virtual environment (`pipenv` for now). To make it work in CI we probably need to configure CircleCI python image to be capable with `cmake`/... for the annoying `pygit2` issue.

@@ -61,7 +61,7 @@ class OrganizationMemberMap(Base):
         "Member",
         back_populates="organization_member_maps")
 
-    role = Column(VARCHAR(1))
+    role_shortname = Column(VARCHAR(1))
 
 
 class Repository(Base):
@@ -102,7 +102,7 @@ class RepositoryMemberMap(Base):
         "Member",
         back_populates="repository_member_maps")
 
-    role = Column(VARCHAR(1))
+    role_shortname = Column(VARCHAR(1))
 
 
 class SshKey(Base):

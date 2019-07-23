@@ -20,11 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * To make "capsid" works, this configuration need to stay in the
  * @ComponentScan path of "capsid". So it should be in here rather
  * than in test.
- * 
+ *
  * TODO:
  * To understand why it is the case. Since "capsid" is a Spring Boot
- * application (for which this configuration is not needed, only 
- * "DatabaseConfig" and "GitConfig" is needed), I don't under why.
+ * application (for which this configuration is not needed, only
+ * "DatabaseConfig" and "GitSourceConfig" is needed), I don't under why.
  */
 @Configuration
 @EnableJpaRepositories(basePackages="com.gitenter.protease.dao")

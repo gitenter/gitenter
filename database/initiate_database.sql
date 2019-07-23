@@ -109,7 +109,7 @@ CREATE TABLE auth.ssh_key (
 	 * but that is not user defined, so should not be set in here.
 	 */
 	key_type text NOT NULL,
-	key_data text NOT NULL UNIQUE, /* Should be unique. But I loose the constrain a little bit at this moment. */
+	key_data text NOT NULL UNIQUE, /* Should be unique. Otherwise the system doesn't know which user it is based on SSH connection. */
 	comment text
 );
 
@@ -212,7 +212,11 @@ END;
 $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
-CREATE TABLE git.traceable_item (
+--------------------------------------------------------------------------------
+
+CREATE SCHEMA traceability;
+
+CREATE TABLE traceability.traceable_item (
 	id serial PRIMARY KEY,
 
 	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
@@ -221,11 +225,11 @@ CREATE TABLE git.traceable_item (
 	UNIQUE (document_id, item_tag)
 );
 
-CREATE FUNCTION git.document_id_from_traceable_item (integer)
+CREATE FUNCTION traceability.document_id_from_traceable_item (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT tra.document_id INTO return_id FROM git.traceable_item AS tra
+	SELECT tra.document_id INTO return_id FROM traceability.traceable_item AS tra
 	WHERE tra.id = $1;
 	RETURN return_id;
 END;
@@ -233,22 +237,22 @@ $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
 CREATE UNIQUE INDEX traceable_item_tag_unique_per_commit_idx
-	ON git.traceable_item (
+	ON traceability.traceable_item (
 		git.commit_id_from_document(id),
 		item_tag
 );
 
-CREATE TABLE git.traceability_map (
-	upstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
-	downstream_item_id serial REFERENCES git.traceable_item (id) ON DELETE CASCADE,
+CREATE TABLE traceability.traceability_map (
+	upstream_item_id serial REFERENCES traceability.traceable_item (id) ON DELETE CASCADE,
+	downstream_item_id serial REFERENCES traceability.traceable_item (id) ON DELETE CASCADE,
 	PRIMARY KEY (upstream_item_id, downstream_item_id),
 
 	/*
 	 * Here is a double-JOIN. If becomes so slow, may create another
 	 * method to do JOIN inside, or even remove this constrain.
 	 */
-	CHECK (git.commit_id_from_document(git.document_id_from_traceable_item(upstream_item_id))
-		= git.commit_id_from_document(git.document_id_from_traceable_item(downstream_item_id)))
+	CHECK (git.commit_id_from_document(traceability.document_id_from_traceable_item(upstream_item_id))
+		= git.commit_id_from_document(traceability.document_id_from_traceable_item(downstream_item_id)))
 );
 
 --------------------------------------------------------------------------------

@@ -7,7 +7,6 @@ from forms.authorization_form import (
     fill_signup_form,
     fill_login_form,
     fill_delete_user_form,
-    click_logout,
     login_as
 )
 
@@ -52,7 +51,7 @@ class TestAuthorization(BaseTestSuite):
 
         # Login with just registered username and password
         with login_as(self.driver, self.root_url, username, password):
-            self.assertEqual(urlparse(self.driver.current_url).path, "/") # if from "/login" page will be redirect to "/":
+            self.assertEqual(urlparse(self.driver.current_url).path, "/")  # if from "/login" page will be redirect to "/":
             assert "Logged in as {}".format(username) in self.driver.page_source
             self.assertEqual(len(self.driver.get_cookies()), baseline_cookie_count)
 

@@ -2,7 +2,6 @@ import os
 import unittest
 from selenium import webdriver
 import shutil
-from urllib.parse import urlparse
 
 from settings.profile import profile
 
@@ -16,7 +15,7 @@ class BaseTestSuite(unittest.TestCase):
         cls.driver = webdriver.Chrome(options=options)
 
         cls.profile = profile
-        cls.root_url = cls.profile.web_root_url
+        cls.root_url = cls.profile.web_domain
 
     @classmethod
     def tearDownClass(cls):

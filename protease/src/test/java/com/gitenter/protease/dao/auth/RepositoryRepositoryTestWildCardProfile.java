@@ -27,9 +27,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import com.gitenter.protease.ProteaseConfig;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.source.GitSource;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -42,13 +42,17 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection",
+		"schemaGitDatabaseConnection",
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public class RepositoryRepositoryTestWildCardProfile {
 	
 	@ClassRule public final static TemporaryFolder tempFolder = new TemporaryFolder();
 	
 	/*
-	 * Cannot define this bean in `TestGitConfig`, because (starting from JUnit 4.11) 
+	 * Cannot define this bean in `TestGitSourceConfig`, because (starting from JUnit 4.11)
 	 * `TemporaryFolder` needs to be used together with `@Rule`, but we cannot define
 	 * `@Rule` in a non-unittest class.
 	 */
@@ -73,8 +77,8 @@ public class RepositoryRepositoryTestWildCardProfile {
 	@Autowired private GitSource gitSource;
 	
 	/*
-	 * This particular test needs a different (wildcard) profile which is backed by 
-	 * `TemporaryFolder`. If uses `minimal` profile, it will either cannot find mock 
+	 * This particular test needs a different (wildcard) profile which is backed by
+	 * `TemporaryFolder`. If uses `minimal` profile, it will either cannot find mock
 	 * of `gitSource`, or accidentally delete `repo/minimal.git` and fail the other
 	 * tests.
 	 */
@@ -94,7 +98,7 @@ public class RepositoryRepositoryTestWildCardProfile {
 		repository.setIsPublic(true);
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				organization.getName(), 
+				organization.getName(),
 				repository.getName());
 		
 		repositoryRepository.saveAndFlush(repository);

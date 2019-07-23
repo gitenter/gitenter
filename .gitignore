@@ -1,3 +1,6 @@
+# sed
+*.original
+
 # Mac OS
 .DS_Store
 

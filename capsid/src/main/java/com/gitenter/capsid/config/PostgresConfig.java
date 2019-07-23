@@ -32,12 +32,12 @@ public class PostgresConfig {
 		return dataSource;
 	}
 
-	@Profile("qa")
+	@Profile("staging")
 	@Bean
-	public DataSource qaDataSource() {
+	public DataSource stagingDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://qa-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com:5432/gitenter");
+		dataSource.setUrl("jdbc:postgresql://staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com:5432/gitenter");
 		dataSource.setUsername("gitenter_app");
 		dataSource.setPassword("zooo");
 		return dataSource;

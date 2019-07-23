@@ -17,7 +17,7 @@ import org.commonmark.renderer.html.HtmlWriter;
 
 import com.gitenter.enzymark.traceparser.TraceableItemParser;
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.git.TraceableItemBean;
+import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 class TraceableItemNodeRenderer implements NodeRenderer {
 	

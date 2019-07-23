@@ -1,4 +1,13 @@
--- This is to bypass dbUnit uncompatibility problem.
+-- There's a bug on DbUnit setup, that right now we setup the primary 
+-- key manually in the XML data file. However, DbUnit doesn't reset
+-- the sequence (e.g. `ALTER SEQUENCE schema_name.table_name_id_seq
+-- RESTART WITH 2;`), so in the first round of unit tests (after database
+-- is reset), the insert related ones will fail. It will pass after 2-3
+-- rounds, through.
+--
+-- May refer:
+-- https://stackoverflow.com/questions/20607704/reset-sequence-in-dbunit
+--
 -- Typical error:
 -- > ERROR: duplicate key value violates unique constraint "member_pkey"
 -- >  Detail: Key (id)=(1) already exists.

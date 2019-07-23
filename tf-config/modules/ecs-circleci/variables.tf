@@ -1,5 +1,5 @@
 variable "environment" {
-  description = "Prefix to distinguish different environments. E.g., `qa`, `staging`, `prod`."
+  description = "Prefix to distinguish different environments. E.g., `dev`, `test`, `staging`, `prod`."
 }
 
 variable "az_count" {
@@ -96,7 +96,7 @@ locals {
   # Internal reference only
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"
   aws_postgres_name = "${local.aws_resource_prefix}-postgres"
-  aws_redis_session_name = "${local.aws_resource_prefix}-redis-session" # Need to <=20 characters
+  aws_redis_session_name = "${local.aws_resource_prefix}-redis-sess" # Need to <=20 characters
   aws_git_efs_name = "${local.aws_resource_prefix}-git-efs"
 
   aws_web_lb_name = "${local.aws_resource_prefix}-web-alb"

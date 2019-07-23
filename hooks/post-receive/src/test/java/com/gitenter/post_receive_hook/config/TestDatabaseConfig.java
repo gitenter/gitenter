@@ -1,5 +1,7 @@
 package com.gitenter.post_receive_hook.config;
 
+import static org.mockito.Mockito.mock;
+
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -15,11 +17,7 @@ public class TestDatabaseConfig {
 	
 	@Bean
 	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/gitenter");
-		dataSource.setUsername("gitenter_app");
-		dataSource.setPassword("zooo");
+		DriverManagerDataSource dataSource = mock(DriverManagerDataSource.class);
 		return dataSource;
 	}
 }

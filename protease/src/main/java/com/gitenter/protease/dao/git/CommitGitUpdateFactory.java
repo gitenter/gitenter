@@ -16,13 +16,13 @@ import com.gitenter.gitar.GitHistoricalFolder;
 import com.gitenter.gitar.GitHistoricalPath;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.GitUpdateFactory;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.FileBean;
 import com.gitenter.protease.domain.git.FolderBean;
 import com.gitenter.protease.domain.git.PathBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
-import com.gitenter.protease.source.GitSource;
 
 @Component
 public class CommitGitUpdateFactory implements GitUpdateFactory<CommitBean> {

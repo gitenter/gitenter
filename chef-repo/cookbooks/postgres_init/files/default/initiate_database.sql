@@ -1,1 +1,0 @@
-../../../../../database/initiate_database.sql

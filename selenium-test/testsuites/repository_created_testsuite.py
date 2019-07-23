@@ -1,4 +1,3 @@
-from random import randint
 from urllib.parse import urljoin, urlparse
 
 from testsuites.repository_to_be_created_testsuite import RepositoryToBeCreatedTestSuite
