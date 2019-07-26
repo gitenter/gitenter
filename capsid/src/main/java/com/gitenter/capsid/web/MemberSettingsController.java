@@ -28,12 +28,12 @@ public class MemberSettingsController {
 	private final MemberService memberService;
 	
 	@Autowired
-	public MemberSettingsController (MemberService memberService) {
+	public MemberSettingsController(MemberService memberService) {
 		this.memberService = memberService;
 	}
 
 	@RequestMapping(method=RequestMethod.GET)
-	public String showSettings (Model model) {
+	public String showSettings(Model model) {
 
 		/*
 		 * The return view name need to not be directly "settings", because then
@@ -54,7 +54,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/profile", method=RequestMethod.GET)
-	public String showUpdateProfileForm (Model model, Authentication authentication) throws Exception {
+	public String showUpdateProfileForm(Model model, Authentication authentication) throws Exception {
 		
 		model.addAttribute("memberProfileDTO", memberService.getMemberProfileDTO(authentication));
 		
@@ -62,7 +62,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
-	public String processUpdateProfile (
+	public String processUpdateProfile(
 			@ModelAttribute("memberProfileDTO") @Valid MemberProfileDTO profileAfterChange, 
 			Errors errors, 
 			RedirectAttributes model) throws Exception {
@@ -87,7 +87,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/account/password", method=RequestMethod.GET)
-	public String showChangePassword (Model model, Authentication authentication) throws Exception {
+	public String showChangePassword(Model model, Authentication authentication) throws Exception {
 		
 		/*
 		 * Right now the only thing to show is "username". So for the display 
@@ -105,7 +105,7 @@ public class MemberSettingsController {
 	}
 
 	@RequestMapping(value="/account/password", method=RequestMethod.POST)
-	public String processUpdatePassword (
+	public String processUpdatePassword(
 			/*
 			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
 			 * attributes, otherwise Spring will directly give 400 error with
@@ -142,7 +142,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/account/delete", method=RequestMethod.GET)
-	public String showDeleteAccount (
+	public String showDeleteAccount(
 			Model model, 
 			Authentication authentication) throws Exception {
 		
@@ -153,7 +153,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/account/delete", method=RequestMethod.POST)
-	public String processDeleteAccount (
+	public String processDeleteAccount(
 			Authentication authentication,
 			@RequestParam(value="password") String password,
 			RedirectAttributes model,
@@ -175,7 +175,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)
-	public String showSshKeyForm (Model model, Authentication authentication) throws Exception {
+	public String showSshKeyForm(Model model, Authentication authentication) throws Exception {
 		
 		MemberBean member = memberService.getMemberByUsername(authentication.getName());
 		model.addAttribute("member", member);
@@ -185,7 +185,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/ssh", method=RequestMethod.POST)
-	public String processAddASshKey (
+	public String processAddASshKey(
 			@Valid SshKeyFieldDTO sshKeyFieldDTO, 
 			Errors errors, 
 			Model model, 

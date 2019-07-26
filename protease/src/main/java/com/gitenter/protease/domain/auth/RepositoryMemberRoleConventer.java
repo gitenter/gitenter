@@ -7,12 +7,12 @@ import javax.persistence.Converter;
 public class RepositoryMemberRoleConventer implements AttributeConverter<RepositoryMemberRole,Character> {
 
 	@Override
-	public Character convertToDatabaseColumn (RepositoryMemberRole role) {
+	public Character convertToDatabaseColumn(RepositoryMemberRole role) {
 		return role.getShortName();
 	}
 	
 	@Override
-	public RepositoryMemberRole convertToEntityAttribute (Character dbData) {
+	public RepositoryMemberRole convertToEntityAttribute(Character dbData) {
 		return RepositoryMemberRole.fromShortName(dbData);
 	}
 }

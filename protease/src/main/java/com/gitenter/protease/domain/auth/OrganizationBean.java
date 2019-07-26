@@ -143,6 +143,6 @@ public class OrganizationBean implements ModelBean {
 			}
 		}
 		
-		throw new IOException ("Repository "+repositoryName+" doesn't exist for this organization!");
+		throw new IOException("Repository "+repositoryName+" doesn't exist for this organization!");
 	}
 }

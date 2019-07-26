@@ -38,7 +38,7 @@ public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<Reposit
 	}
 	
 	@Override
-	public void updateBean (RepositoryBean repositoryBean) {
+	public void updateBean(RepositoryBean repositoryBean) {
 		
 		assert repositoryBean.getName().equals(name);
 		

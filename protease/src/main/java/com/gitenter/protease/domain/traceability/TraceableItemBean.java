@@ -20,7 +20,8 @@ import javax.validation.constraints.NotNull;
 import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -65,11 +66,11 @@ public class TraceableItemBean implements ModelBean {
 	@ManyToMany(mappedBy="downstreamItems")
 	private List<TraceableItemBean> upstreamItems = new ArrayList<TraceableItemBean>();
 
-	public boolean addDownstreamItem (TraceableItemBean item) {
+	public boolean addDownstreamItem(TraceableItemBean item) {
 		return downstreamItems.add(item);
 	}
 
-	public boolean addUpstreamItem (TraceableItemBean item) {
+	public boolean addUpstreamItem(TraceableItemBean item) {
 		return upstreamItems.add(item);
 	}
 }

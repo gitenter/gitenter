@@ -21,7 +21,7 @@ public class PostReceiveApplication {
 
 	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGitService;
 
-	public static void main (String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
 		HookInputSet input = new HookInputSet(System.getProperty("user.dir"), args);
 
@@ -76,7 +76,7 @@ public class PostReceiveApplication {
 		p.run(input);
 	}
 
-	private void run (HookInputSet input) throws IOException, GitAPIException {
+	private void run(HookInputSet input) throws IOException, GitAPIException {
 		updateDatabaseFromGitService.update(input);
 	}
 }

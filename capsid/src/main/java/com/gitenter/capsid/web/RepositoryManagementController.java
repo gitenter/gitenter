@@ -45,7 +45,7 @@ public class RepositoryManagementController {
 	}
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
-	public String showCreateRepositoryForm (
+	public String showCreateRepositoryForm(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 
@@ -58,7 +58,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.POST)
-	public String processCreationOfRepository (
+	public String processCreationOfRepository(
 			@PathVariable Integer organizationId,
 			/*
 			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
@@ -98,7 +98,7 @@ public class RepositoryManagementController {
 	}
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.GET)
-	public String showRepositorySettings (
+	public String showRepositorySettings(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws Exception {
@@ -113,7 +113,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.GET)
-	public String showRepositoryProfileSettingsForm (
+	public String showRepositoryProfileSettingsForm(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws Exception {
@@ -132,7 +132,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.POST)
-	public String updateRepositoryProfile (
+	public String updateRepositoryProfile(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@Valid RepositoryDTO repositoryDTOAfterChange, 
@@ -159,7 +159,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators", method=RequestMethod.GET)
-	public String showRepositoryCollaboratorsManagementPage (
+	public String showRepositoryCollaboratorsManagementPage(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model,
@@ -178,7 +178,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/add", method=RequestMethod.POST)
-	public String addARepositoryCollaborator (
+	public String addARepositoryCollaborator(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="to_be_add_username") String username,
@@ -198,7 +198,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/remove", method=RequestMethod.POST)
-	public String removeARepositoryCollaborator (
+	public String removeARepositoryCollaborator(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="to_be_remove_username") String toBeRemovedUsername,
@@ -220,7 +220,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/delete", method=RequestMethod.GET)
-	public String showDeleteRepositoryPage (
+	public String showDeleteRepositoryPage(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws Exception {
@@ -235,7 +235,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/delete", method=RequestMethod.POST)
-	public String processDeleteRepository (
+	public String processDeleteRepository(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="copy_repository_name") String copyRepositoryName,

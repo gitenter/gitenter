@@ -16,7 +16,7 @@ public class TraceableDocument {
 	@Getter
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	
-	public TraceableDocument (String relativePath) throws ItemTagNotUniqueException {
+	public TraceableDocument(String relativePath) throws ItemTagNotUniqueException {
 		this.relativePath = relativePath;
 	}
 	

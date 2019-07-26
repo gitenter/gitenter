@@ -24,12 +24,12 @@ public class DefaultHtmlGenerator implements HtmlGenerator {
 
 	private String markdownContent;
 	
-	public DefaultHtmlGenerator (File markdown) throws IOException {
+	public DefaultHtmlGenerator(File markdown) throws IOException {
 		byte[] encoded = Files.readAllBytes(markdown.toPath());
 		this.markdownContent = new String(encoded, StandardCharsets.UTF_8);
 	}
 	
-	public String getHtml () {
+	public String getHtml() {
 		
 		List<Extension> extensions = new ArrayList<Extension>();
 		extensions.add(TablesExtension.create());

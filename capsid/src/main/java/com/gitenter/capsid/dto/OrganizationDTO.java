@@ -31,7 +31,7 @@ public class OrganizationDTO implements CreateDTO<OrganizationBean>, ReadDTO<Org
 	}
 	
 	@Override
-	public void updateBean (OrganizationBean organizationBean) {
+	public void updateBean(OrganizationBean organizationBean) {
 		
 		assert organizationBean.getName().equals(name);
 		

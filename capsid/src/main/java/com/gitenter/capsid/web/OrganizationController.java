@@ -16,7 +16,7 @@ public class OrganizationController {
 	@Autowired OrganizationService organizationService;
 	
 	@RequestMapping(value="/organizations/{organizationId}", method=RequestMethod.GET)
-	public String showOrganizationPage (
+	public String showOrganizationPage(
 			@PathVariable Integer organizationId,
 			Authentication authentication,
 			Model model) throws Exception {

@@ -36,7 +36,7 @@ public class UpdateDatabaseFromGitServiceImpl implements UpdateDatabaseFromGitSe
 	 * Move the relevant functions to some other classes, such as some controllers. 
 	 */
 	@Transactional
-	public void update (HookInputSet input) throws IOException, GitAPIException {
+	public void update(HookInputSet input) throws IOException, GitAPIException {
 		
 		RepositoryBean repository = repositoryRepository.findByOrganizationNameAndRepositoryName(
 				input.getOrganizationName(), input.getRepositoryName()).get(0);
