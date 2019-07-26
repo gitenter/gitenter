@@ -239,6 +239,8 @@ jobs:
       # TODO:
       # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
       # a seperated step so `staging` and `prod` can both have corresponding changes.
+      - run: "s/		System.setProperty(\"spring.profiles.active\", \"sts\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
+      - run: cat hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
       - run: sed -i "s/spring.profiles.active=sts/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
       - run: cat capsid/src/main/resources/application.properties
 
