@@ -5,7 +5,14 @@
 
 A Git based version control tool for requirement engineering, design control, verification and validation processes.
 
-## Development/Testing/Demo
+## Development
+
+### Linting
+
++ Java: [Spring Java Format](https://github.com/spring-io/spring-javaformat)
++ Python: [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+
+## Testing/Demo
 
 GitEnter currently support multiple ways to build up the services from src for develop/test/demo proposes.
 
@@ -33,6 +40,9 @@ Optional:
 or
 
 + STS
++ Linter
+  + [Eclipse CheckStyle Plugin](https://checkstyle.org/eclipse-cs/)
+  + [Spring Java Format eclipse plugin](https://github.com/spring-io/spring-javaformat#eclipse).
 + Lombok
 
 #### Up-and-run
@@ -74,6 +84,10 @@ That seems also because STS cannot handle two classes which accidentally have th
 [main] WARN org.springframework.boot.SpringApplication - Error handling failed (Error creating bean with name 'delegatingApplicationListener' defined in class path resource [org/springframework/security/config/annotation/web/configuration/WebSecurityConfiguration.class]: BeanPostProcessor before instantiation of bean failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration': Initialization of bean failed; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'org.springframework.context.annotation.ConfigurationClassPostProcessor.importRegistry' available)
 [main] ERROR org.springframework.boot.SpringApplication - Application startup failed
 ```
+
+##### Linting
+
+- [ ] Use `spring-javaformat:apply` to change local files to follow spring linter. But is there a way to check (rather than directly apply change)?
 
 ##### Lombok
 
