@@ -160,7 +160,7 @@ public class RepositoryBean implements ModelBean {
 		return items;
 	}
 	
-	public void addCommit (CommitBean commit) {
+	public void addCommit(CommitBean commit) {
 		commits.add(commit);
 	}
 	

@@ -47,9 +47,9 @@ public class DesignDocumentHtmlGeneratorTest {
 		DocumentBean document = new DocumentBean();
 		
 		String content = "- This line is not a traceable text.\n";
-		String expectedOutput = "<ul>\n" + 
-				"<li>This line is not a traceable text.</li>\n" + 
-				"</ul>\n";
+		String expectedOutput = "<ul>\n"
+				+ "<li>This line is not a traceable text.</li>\n"
+				+ "</ul>\n";
 		DocumentBean spyDocument = Mockito.spy(document);
 		Mockito.doReturn(content).when(spyDocument).getContent();
 		
@@ -78,10 +78,10 @@ public class DesignDocumentHtmlGeneratorTest {
 		String content = 
 				  "- [tag-1] content-1.\n"
 				+ "- [tag-2]{tag-1} content-2.\n";
-		String expectedOutput = "<ul>\n" + 
-				"<li id=\"tag-1\" class=\"traceable-item\"><form method=\"GET\" action=\"#tag-1\"><input class=\"original\" type=\"submit\" value=\"tag-1\"></form>content-1.</li>\n" +
-				"<li id=\"tag-2\" class=\"traceable-item\"><form method=\"GET\" action=\"#tag-2\"><input class=\"original\" type=\"submit\" value=\"tag-2\"></form>content-2.</li>\n" + 
-				"</ul>\n";
+		String expectedOutput = "<ul>\n"
+				+ "<li id=\"tag-1\" class=\"traceable-item\"><form method=\"GET\" action=\"#tag-1\"><input class=\"original\" type=\"submit\" value=\"tag-1\"></form>content-1.</li>\n"
+				+ "<li id=\"tag-2\" class=\"traceable-item\"><form method=\"GET\" action=\"#tag-2\"><input class=\"original\" type=\"submit\" value=\"tag-2\"></form>content-2.</li>\n" 
+				+ "</ul>\n";
 		DocumentBean spyDocument = Mockito.spy(document);
 		Mockito.doReturn(content).when(spyDocument).getContent();
 		

@@ -39,14 +39,14 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
-	public String showCreateOrganizationForm (Model model) {
+	public String showCreateOrganizationForm(Model model) {
 
 		model.addAttribute("organizationDTO", new OrganizationDTO());
 		return "organization-management/create";
 	}
 	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.POST)
-	public String processCreationOfOrganization (
+	public String processCreationOfOrganization(
 			@Valid OrganizationDTO organizationDTO, 
 			Errors errors, 
 			Model model,
@@ -62,7 +62,7 @@ public class OrganizationManagementController {
 	}
 
 	@RequestMapping(value="/organizations/{organizationId}/settings", method=RequestMethod.GET)
-	public String showOrganizationSettings (
+	public String showOrganizationSettings(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 		
@@ -72,7 +72,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/profile", method=RequestMethod.GET)
-	public String showOrganizationProfileSettingsForm (
+	public String showOrganizationProfileSettingsForm(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 		
@@ -88,7 +88,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/profile", method=RequestMethod.POST)
-	public String updateOrganizationProfile (
+	public String updateOrganizationProfile(
 			@PathVariable Integer organizationId,
 			@Valid OrganizationDTO organizationDTOAfterChange, 
 			Errors errors, 
@@ -126,7 +126,7 @@ public class OrganizationManagementController {
 	 * the two all together?
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
-	public String showMemberManagementPage (
+	public String showMemberManagementPage(
 			@PathVariable Integer organizationId,
 			Model model,
 			Authentication authentication) throws Exception {
@@ -138,7 +138,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
-	public String addAMemberToOrganization (
+	public String addAMemberToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
@@ -155,7 +155,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/remove", method=RequestMethod.POST)
-	public String removeAMemberToOrganization (
+	public String removeAMemberToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_remove_username") String username,
 			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
@@ -167,7 +167,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers", method=RequestMethod.GET)
-	public String showManagerManagementPage (
+	public String showManagerManagementPage(
 			@PathVariable Integer organizationId,
 			Model model,
 			Authentication authentication) throws Exception {
@@ -181,7 +181,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers/add", method=RequestMethod.POST)
-	public String addAMamangerToOrganization (
+	public String addAMamangerToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_upgrade_username") String username,
 			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
@@ -193,7 +193,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers/remove", method=RequestMethod.POST)
-	public String removeAMamangerToOrganization (
+	public String removeAMamangerToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_downgrade_username") String username,
 			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId,
@@ -206,7 +206,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/delete", method=RequestMethod.GET)
-	public String showDeleteOrganizationPage (
+	public String showDeleteOrganizationPage(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 		
@@ -217,7 +217,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/delete", method=RequestMethod.POST)
-	public String processDeleteOrganization (
+	public String processDeleteOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="copy_organization_name") String copyOrganizationName,
 			RedirectAttributes model) throws Exception {

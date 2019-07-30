@@ -44,7 +44,7 @@ public class RepositoryController {
 	@Autowired RepositoryService repositoryService;
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
-	public String showRepository (
+	public String showRepository(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
@@ -78,7 +78,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
-	public String showBranchHead (
+	public String showBranchHead(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -97,7 +97,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}", method=RequestMethod.GET)
-	public String showCommit (
+	public String showCommit(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -110,7 +110,7 @@ public class RepositoryController {
 		return showCommitDetail(commit, request, model);
 	}
 	
-	private String showCommitDetail (
+	private String showCommitDetail(
 			CommitBean commit, 
 			HttpServletRequest request, 
 			Model model) throws Exception {
@@ -157,7 +157,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/commits", method=RequestMethod.GET)
-	public String showCommitList (
+	public String showCommitList(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -190,7 +190,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentDefault (
+	public String showDocumentContentDefault(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
@@ -219,7 +219,7 @@ public class RepositoryController {
 	 * (2) They need to be parsed and shown in a different way.
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentByCommit (
+	public String showDocumentContentByCommit(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -236,7 +236,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentByBranch (
+	public String showDocumentContentByBranch(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -252,7 +252,7 @@ public class RepositoryController {
 		return showDocumentContent(document, request, model);
 	}
 	
-	private String showDocumentContent (
+	private String showDocumentContent(
 			DocumentBean document, 
 			HttpServletRequest request,
 			Model model) throws Exception {
@@ -275,7 +275,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/blobs/directories/**", method=RequestMethod.GET)
-	public void showBlobContentByCommit (
+	public void showBlobContentByCommit(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -288,7 +288,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/blobs/directories/**", method=RequestMethod.GET)
-	public void showBlobContentByBranch (
+	public void showBlobContentByBranch(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -300,7 +300,7 @@ public class RepositoryController {
 		writeToOutputStream(file, response);
 	}
 	
-	private void writeToOutputStream (FileBean file, HttpServletResponse response) throws Exception {
+	private void writeToOutputStream(FileBean file, HttpServletResponse response) throws Exception {
 		
 		response.setContentType(file.getMimeType());
 		OutputStream outputStream = response.getOutputStream();
@@ -308,7 +308,7 @@ public class RepositoryController {
 		outputStream.close();
 	}
 	
-	private String getWildcardValue (HttpServletRequest request) {
+	private String getWildcardValue(HttpServletRequest request) {
 		
 		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);

@@ -124,7 +124,7 @@ public class PropertiesFileParser {
 		}
 	}
 	
-	private void parseData (Configuration config) throws PropertiesFileFormatException {
+	private void parseData(Configuration config) throws PropertiesFileFormatException {
 		
 		String propName;
 		String propValue;
@@ -169,11 +169,11 @@ public class PropertiesFileParser {
 		includePaths = config.getStringArray("include_paths");
 	}
 	
-	public boolean isEnabledSystemwide () {
+	public boolean isEnabledSystemwide() {
 		return enableSystemwide;
 	}
 	
-	public String[] getIncludePaths () {
+	public String[] getIncludePaths() {
 		return includePaths;
 	}
 	

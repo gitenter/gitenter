@@ -73,7 +73,7 @@ public class SshKeyBean implements ModelBean {
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		
 		String toString = keyType+" "+keyData;
 		

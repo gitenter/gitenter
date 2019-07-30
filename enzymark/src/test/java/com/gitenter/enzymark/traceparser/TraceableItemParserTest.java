@@ -1,10 +1,8 @@
 package com.gitenter.enzymark.traceparser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import com.gitenter.enzymark.traceparser.TraceableItemParser;
 
 public class TraceableItemParserTest {
 

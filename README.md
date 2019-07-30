@@ -5,7 +5,18 @@
 
 A Git based version control tool for requirement engineering, design control, verification and validation processes.
 
-## Development/Testing/Demo
+## Development
+
+### Linting
+
++ Java: [Spring Java Format](https://github.com/spring-io/spring-javaformat)
++ Python: [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+
+One other possible choice is [Google Java Style Guide](https://checkstyle.sourceforge.io/styleguides/google-java-style-20180523/javaguide.html) (as well as its [eclipse formatter](https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml)). We are not using it because it triggers so many changes (tab -> 2 space, `} else`, ...). We'll just wait for Spring style to be more mature.
+
+- [ ] Setup [CheckStyle](http://maven.apache.org/plugins/maven-checkstyle-plugin/index.html) in CI. Right now the easiest way is use the maven `<reporting>` block and `mvn site` to generate the test report in HTML form. Looks no easy way to generate JUnit XML report ([`<outputFile>` doesn't work](https://maven.apache.org/plugins/maven-checkstyle-plugin/checkstyle-mojo.html#outputFile)) and CircleCI doesn't support CheckStyle output.
+
+## Testing/Demo
 
 GitEnter currently support multiple ways to build up the services from src for develop/test/demo proposes.
 
@@ -33,6 +44,9 @@ Optional:
 or
 
 + STS
++ Linter
+  + [Eclipse CheckStyle Plugin](https://checkstyle.org/eclipse-cs/)
+  + [Spring Java Format eclipse plugin](https://github.com/spring-io/spring-javaformat#eclipse).
 + Lombok
 
 #### Up-and-run
@@ -74,6 +88,11 @@ That seems also because STS cannot handle two classes which accidentally have th
 [main] WARN org.springframework.boot.SpringApplication - Error handling failed (Error creating bean with name 'delegatingApplicationListener' defined in class path resource [org/springframework/security/config/annotation/web/configuration/WebSecurityConfiguration.class]: BeanPostProcessor before instantiation of bean failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration': Initialization of bean failed; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'org.springframework.context.annotation.ConfigurationClassPostProcessor.importRegistry' available)
 [main] ERROR org.springframework.boot.SpringApplication - Application startup failed
 ```
+
+##### Linting
+
+- [ ] Use `spring-javaformat:apply` to change local files to follow spring linter. Currently we didn't apply because it cause so many differences (especially blank line with a tab). But is there a way to check (rather than directly apply change)?
+- [ ] Current after installing the [Spring Java Format eclipse plugin](https://github.com/spring-io/spring-javaformat#eclipse), we can see it from `Preferences > Java > Code Style > Formatter` as well as `Preferences > Checkstyle`. However, choose it will cause a null pointer error (at least for my version of STS) so it cannot be used yet.
 
 ##### Lombok
 

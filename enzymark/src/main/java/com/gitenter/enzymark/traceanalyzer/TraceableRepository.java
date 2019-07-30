@@ -23,7 +23,7 @@ public class TraceableRepository {
 
 	}
 
-	public void addTraceableDocument (TraceableDocument document) throws ItemTagNotUniqueException {
+	public void addTraceableDocument(TraceableDocument document) throws ItemTagNotUniqueException {
 
 		traceableDocuments.add(document);
 		
@@ -32,7 +32,7 @@ public class TraceableRepository {
 		}
 	}
 	
-	private void putIntoTraceableItem (TraceableItem item) throws ItemTagNotUniqueException {
+	private void putIntoTraceableItem(TraceableItem item) throws ItemTagNotUniqueException {
 		
 		if (traceableItemMap.containsKey(item.getTag())) {
 			TraceableItem originalItem = traceableItemMap.get(item.getTag());
@@ -41,7 +41,7 @@ public class TraceableRepository {
 		traceableItemMap.put(item.getTag(), item);
 	}
 	
-	public void refreshUpstreamAndDownstreamItems () throws UpstreamTagNotExistException {
+	public void refreshUpstreamAndDownstreamItems() throws UpstreamTagNotExistException {
 		
 		for (Map.Entry<String,TraceableItem> entry : traceableItemMap.entrySet()) {
 			TraceableItem item = entry.getValue();

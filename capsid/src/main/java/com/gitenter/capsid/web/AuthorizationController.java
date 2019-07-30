@@ -21,12 +21,12 @@ public class AuthorizationController {
 	private final AnonymousService anonymousService;
 
 	@Autowired
-	public AuthorizationController (AnonymousService anonymousService) {
+	public AuthorizationController(AnonymousService anonymousService) {
 		this.anonymousService = anonymousService;
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.GET)
-	public String showRegisterForm (Model model) {
+	public String showRegisterForm(Model model) {
 		
 		/* 
 		 * The modelAttribute NEED to be the same as the class name,
@@ -37,7 +37,7 @@ public class AuthorizationController {
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
-	public String processRegistration (
+	public String processRegistration(
 			/* 
 			 * Use "ModelAttribute" rather than directly put the value into model,
 			 * otherwise the <sf:errors> will not render. 
@@ -59,7 +59,7 @@ public class AuthorizationController {
 	}
 	
 	@RequestMapping(value="/login", method=RequestMethod.GET)
-	public String showLoginForm (
+	public String showLoginForm(
 			Model model,
 			@RequestParam(value="error", required=false) String error) {
 		

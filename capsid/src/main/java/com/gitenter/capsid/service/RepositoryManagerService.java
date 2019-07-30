@@ -25,7 +25,7 @@ public interface RepositoryManagerService {
 			RepositoryBean repository, 
 			MemberBean collaborator, 
 			String roleName) throws IOException;
-	public void removeCollaborator( 
+	public void removeCollaborator(
 			RepositoryBean repository, 
 			Integer repositoryMemberMapId) throws IOException;
 	

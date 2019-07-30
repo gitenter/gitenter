@@ -14,11 +14,11 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan
 public class ProteaseApplication {
 
-	private void run () throws IOException {	
+	private void run() throws IOException {	
 
 	}
 	
-	public static void main (String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		
 		/*
 		 * Cannot use the general "GenericApplicationContext"

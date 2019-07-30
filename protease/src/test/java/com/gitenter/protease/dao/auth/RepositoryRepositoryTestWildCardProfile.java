@@ -49,7 +49,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaReviewDatabaseConnection"})
 public class RepositoryRepositoryTestWildCardProfile {
 	
-	@ClassRule public final static TemporaryFolder tempFolder = new TemporaryFolder();
+	@ClassRule public static final TemporaryFolder tempFolder = new TemporaryFolder();
 	
 	/*
 	 * Cannot define this bean in `TestGitSourceConfig`, because (starting from JUnit 4.11)

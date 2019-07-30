@@ -64,7 +64,7 @@ public class DocumentBean extends FileBean implements ModelBean {
 	 * with annotation @Transient.
 	 */
 	
-	public String getContent () throws IOException, GitAPIException {
+	public String getContent() throws IOException, GitAPIException {
 		return new String(getBlobContent());
 	}
 	

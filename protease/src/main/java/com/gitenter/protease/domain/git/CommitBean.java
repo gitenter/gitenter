@@ -36,7 +36,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "git", name = "git_commit")
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract public class CommitBean implements ModelBean {
+public abstract class CommitBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -73,7 +73,7 @@ abstract public class CommitBean implements ModelBean {
 		author = AuthorBean.getInstance(gitCommit.getAuthor());
 	}
 	
-	public static boolean inCommitList (String sha, List<CommitBean> commits) {
+	public static boolean inCommitList(String sha, List<CommitBean> commits) {
 		
 		for (CommitBean commit : commits) {
 			if (commit.sha.equals(sha)) {

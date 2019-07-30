@@ -20,11 +20,11 @@ public class GitSource {
 		return new File(rootFolderPath);
 	}
 
-	public File getOrganizationDirectory (String ownerName) {
+	public File getOrganizationDirectory(String ownerName) {
 		return new File(rootFolderPath, ownerName);
 	}
 	
-	public boolean mkdirOrganizationDirectory (String ownerName) throws IOException {
+	public boolean mkdirOrganizationDirectory(String ownerName) throws IOException {
 		
 		File directory = new File(rootFolderPath, ownerName);
 		boolean result = directory.mkdir();
@@ -35,7 +35,7 @@ public class GitSource {
 	/*
 	 * Bare git repository at "/rootFolderPath/ownerName/repositoryName.git" .
 	 */
-	public File getBareRepositoryDirectory (String ownerName, String repositoryName) {
+	public File getBareRepositoryDirectory(String ownerName, String repositoryName) {
 		return new File(new File(rootFolderPath, ownerName), repositoryName+".git");
 	}
 	
@@ -47,12 +47,12 @@ public class GitSource {
 //		return result;
 //	}
 	
-	public static String getBareRepositoryOrganizationName (File bareRepositoryDirectory) {
+	public static String getBareRepositoryOrganizationName(File bareRepositoryDirectory) {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");
 		return parts[parts.length-2];
 	}
 	
-	public static String getBareRepositoryName (File bareRepositoryDirectory) throws IOException {
+	public static String getBareRepositoryName(File bareRepositoryDirectory) throws IOException {
 		String[] parts = bareRepositoryDirectory.getPath().split("/");
 		String gitFolder = parts[parts.length-1];
 		

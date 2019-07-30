@@ -79,7 +79,7 @@ public class TraceableItemParser {
 		s.close();
 	}
 	
-	public boolean isTraceableItem () {
+	public boolean isTraceableItem() {
 		return isTraceableItem;
 	}
 }

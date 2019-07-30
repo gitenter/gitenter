@@ -56,8 +56,8 @@ public class CommitGitUpdateFactory implements GitUpdateFactory<CommitBean> {
 	
 	private static class ProxyRootPlaceholder extends GitProxyPlaceholder<FolderBean> implements ValidCommitBean.RootPlaceholder {
 
-		final private ValidCommitBean commit;
-		final private GitCommit gitCommit;
+		private final ValidCommitBean commit;
+		private final GitCommit gitCommit;
 		
 		protected ProxyRootPlaceholder(ValidCommitBean commit, GitCommit gitCommit) {
 			this.commit = commit;
@@ -73,8 +73,8 @@ public class CommitGitUpdateFactory implements GitUpdateFactory<CommitBean> {
 	
 	private static class FilePlaceholderImpl implements ValidCommitBean.FilePlaceholder {
 
-		final private ValidCommitBean commit;
-		final private GitCommit gitCommit;
+		private final ValidCommitBean commit;
+		private final GitCommit gitCommit;
 		
 		protected FilePlaceholderImpl(ValidCommitBean commit, GitCommit gitCommit) {
 			this.commit = commit;

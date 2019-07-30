@@ -48,7 +48,7 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 	@Override
 	public void render(Node node) {
 		
-		BulletList bulletList = (BulletList) node;
+		BulletList bulletList = (BulletList)node;
 		html.line();
 		html.tag("ul");
 		html.line();
@@ -150,7 +150,7 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 		html.line();
 	}
 	
-	private String getRelativeFilepath (TraceableItemBean referredItem) {
+	private String getRelativeFilepath(TraceableItemBean referredItem) {
 		
 		/*
 		 * "getParent()" is needed, because Java doesn't know the original
