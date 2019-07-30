@@ -1,4 +1,4 @@
-package com.gitenter.protease.config.bean;
+package com.gitenter.protease.config.source;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import lombok.Getter;
 
 @Getter
-public class GitSource {
+public class GitSourceBean {
 
 	/*
 	 * This class is similar to javax.sql.DataSource

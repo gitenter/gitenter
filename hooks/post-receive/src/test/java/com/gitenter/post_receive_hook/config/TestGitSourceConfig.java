@@ -7,15 +7,15 @@ import java.io.FileNotFoundException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 
 @Configuration
 public class TestGitSourceConfig {
 	
 	@Bean
-	public GitSource minimalGitSource() throws FileNotFoundException {
+	public GitSourceBean minimalGitSource() throws FileNotFoundException {
 		
-		GitSource gitSource = mock(GitSource.class);
+		GitSourceBean gitSource = mock(GitSourceBean.class);
 		return gitSource;
 	}
 }

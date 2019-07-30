@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 
 @Configuration
 public class GitSourceConfig {
@@ -22,37 +22,37 @@ public class GitSourceConfig {
 	 */
 	@Profile("sts")
 	@Bean
-	public GitSource stsGitSource() {
+	public GitSourceBean stsGitSourceBean() {
 		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
-		return gitSource;
+		GitSourceBean GitSourceBean = new GitSourceBean();
+		GitSourceBean.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
+		return GitSourceBean;
 	}
 	
 	@Profile("docker")
 	@Bean
-	public GitSource dockerGitSource() {
+	public GitSourceBean dockerGitSourceBean() {
 		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/git");
-		return gitSource;
+		GitSourceBean GitSourceBean = new GitSourceBean();
+		GitSourceBean.setRootFolderPath("/home/git");
+		return GitSourceBean;
 	}
 
 	@Profile("staging")
 	@Bean
-	public GitSource stagingGitSource() {
+	public GitSourceBean stagingGitSourceBean() {
 		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
-		return gitSource;
+		GitSourceBean GitSourceBean = new GitSourceBean();
+		GitSourceBean.setRootFolderPath("/data");
+		return GitSourceBean;
 	}
 	
 	@Profile("production")
 	@Bean
-	public GitSource productionGitSource() {
+	public GitSourceBean productionGitSourceBean() {
 		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
-		return gitSource;
+		GitSourceBean GitSourceBean = new GitSourceBean();
+		GitSourceBean.setRootFolderPath("/data");
+		return GitSourceBean;
 	}
 }

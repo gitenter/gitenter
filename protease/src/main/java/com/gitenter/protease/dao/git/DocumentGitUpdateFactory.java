@@ -11,14 +11,14 @@ import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.GitRepository;
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 import com.gitenter.protease.dao.GitUpdateFactory;
 import com.gitenter.protease.domain.git.DocumentBean;
 
 @Component
 public class DocumentGitUpdateFactory implements GitUpdateFactory<DocumentBean> {
 
-	@Autowired private GitSource gitSource;
+	@Autowired private GitSourceBean gitSource;
 	
 	public void update(DocumentBean document) throws IOException, GitAPIException {
 

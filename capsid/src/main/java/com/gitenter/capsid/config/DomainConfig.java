@@ -4,16 +4,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.gitenter.capsid.config.bean.DomainSource;
+import com.gitenter.capsid.config.source.DomainSourceBean;
 
 @Configuration
 public class DomainConfig {
 
 	@Profile("sts")
 	@Bean
-	public DomainSource stsdomainSource() {
+	public DomainSourceBean stsdomainSource() {
 		
-		DomainSource domainSource = new DomainSource();
+		DomainSourceBean domainSource = new DomainSourceBean();
 		domainSource.setDomainName("localhost");
 		domainSource.setWebPort(8080);
 		domainSource.setGitPort(22);
@@ -22,9 +22,9 @@ public class DomainConfig {
 	
 	@Profile("docker")
 	@Bean
-	public DomainSource localhostdomainSource() {
+	public DomainSourceBean localhostdomainSource() {
 		
-		DomainSource domainSource = new DomainSource();
+		DomainSourceBean domainSource = new DomainSourceBean();
 		domainSource.setDomainName("localhost");
 		domainSource.setWebPort(8886);
 		domainSource.setGitPort(8822);
@@ -33,18 +33,18 @@ public class DomainConfig {
 	
 	@Profile("staging")
 	@Bean
-	public DomainSource stagingdomainSource() {
+	public DomainSourceBean stagingdomainSource() {
 		
-		DomainSource domainSource = new DomainSource();
+		DomainSourceBean domainSource = new DomainSourceBean();
 		domainSource.setDomainName("staging.gitenter.com");
 		return domainSource;
 	}
 	
 	@Profile("production")
 	@Bean
-	public DomainSource productiondomainSource() {
+	public DomainSourceBean productiondomainSource() {
 		
-		DomainSource domainSource = new DomainSource();
+		DomainSourceBean domainSource = new DomainSourceBean();
 		domainSource.setDomainName("gitenter.com");
 		return domainSource;
 	}

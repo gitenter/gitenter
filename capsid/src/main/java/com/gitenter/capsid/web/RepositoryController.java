@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.gitenter.capsid.config.bean.DomainSource;
+import com.gitenter.capsid.config.source.DomainSourceBean;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
@@ -38,8 +38,8 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 @Controller
 public class RepositoryController {
 	
-	@Autowired GitSource gitSource;
-	@Autowired DomainSource domainSource;
+	@Autowired GitSourceBean gitSource;
+	@Autowired DomainSourceBean domainSource;
 	
 	@Autowired RepositoryService repositoryService;
 

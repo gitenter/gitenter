@@ -17,7 +17,7 @@ import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.GitTag;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 import com.gitenter.protease.dao.GitUpdateFactory;
 import com.gitenter.protease.dao.exception.BranchNotExistException;
 import com.gitenter.protease.dao.git.CommitDatabaseRepository;
@@ -30,7 +30,7 @@ import com.gitenter.protease.domain.git.TagBean;
 public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBean> {
 	
 	@Autowired private CommitDatabaseRepository commitDatabaseRepository;
-	@Autowired private GitSource gitSource;
+	@Autowired private GitSourceBean gitSource;
 
 	/*
 	 * TODO:

@@ -27,7 +27,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import com.gitenter.protease.ProteaseConfig;
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -61,9 +61,9 @@ public class RepositoryRepositoryTestWildCardProfile {
 		
 		@Profile("wildcard")
 		@Bean
-		public GitSource wildcardGitSource() throws IOException {
+		public GitSourceBean wildcardGitSource() throws IOException {
 			
-			GitSource gitSource = mock(GitSource.class);
+			GitSourceBean gitSource = mock(GitSourceBean.class);
 			when(gitSource.getBareRepositoryDirectory(any(String.class), any(String.class)))
 				.thenReturn(tempFolder.newFolder("wildcard.git"));
 			
@@ -74,7 +74,7 @@ public class RepositoryRepositoryTestWildCardProfile {
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired OrganizationRepository organizationRepository;
 	
-	@Autowired private GitSource gitSource;
+	@Autowired private GitSourceBean gitSource;
 	
 	/*
 	 * This particular test needs a different (wildcard) profile which is backed by

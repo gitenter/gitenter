@@ -25,6 +25,7 @@ SSH authorization (under python code of `/ssheep`) is completely trivialized, an
 + maven
 + Postgres (tested in 11.2)
 + Redis (tested in 4.0.9) (Mac OS with multiple users may face permission error, and can be correct by [manually `redis-server` auto-start](https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298))
++ Vault
 
 Optional:
 
@@ -82,6 +83,20 @@ To make Lombok work with the IDE, you need to not only add Lombok to `pom.xml`, 
 For Ubuntu, simply navigate to the Lombok `.jar` folder (`.m2/repository/org/projectlombok/lombok`) and `sudo java -jar lombok-1.16.18.jar`, then a GUI will be opened. Through the GUI, `specify Location...` and choose the STS execusion path (in my case `/opt/sts-bundle/sts-3.9.0.RELEASE/STS`), then `Install/Update`. Restart STS and the generated getters and setters works in eclipse `Outline`.
 
 For Mac OS, enable Lombok is kind of tricky, but it works by following [this link](https://nawaman.net/blog/2017-11-05).
+
+#### Vault
+
+```
+brew install vault
+vault -autocomplete-install
+```
+
+To start it `vault server -dev` and **in another window** `export VAULT_ADDR='http://127.0.0.1:8200'` and `vault status`.
+
+```
+vault kv put secret/postgres username=gitenter_app
+vault kv put secret/postgres password=zooo
+```
 
 ### Docker
 

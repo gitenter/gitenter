@@ -3,7 +3,7 @@ package com.gitenter.post_receive_hook.service;
 import java.io.File;
 import java.io.IOException;
 
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 
 public class HookInputSet {
 
@@ -69,10 +69,10 @@ public class HookInputSet {
 	}
 	
 	public String getOrganizationName() {
-		return GitSource.getBareRepositoryOrganizationName(repositoryDirectory);
+		return GitSourceBean.getBareRepositoryOrganizationName(repositoryDirectory);
 	}
 	
 	public String getRepositoryName() throws IOException {
-		return GitSource.getBareRepositoryName(repositoryDirectory);
+		return GitSourceBean.getBareRepositoryName(repositoryDirectory);
 	}
 }

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.ResourceUtils;
 
-import com.gitenter.protease.config.bean.GitSource;
+import com.gitenter.protease.config.source.GitSourceBean;
 
 @Configuration
 public class TestGitSourceConfig {
@@ -30,9 +30,9 @@ public class TestGitSourceConfig {
 	 */
 	@Profile("minimal")
 	@Bean
-	public GitSource minimalGitSource() throws FileNotFoundException {
+	public GitSourceBean minimalGitSource() throws FileNotFoundException {
 		
-		GitSource gitSource = mock(GitSource.class);
+		GitSourceBean gitSource = mock(GitSourceBean.class);
 		when(gitSource.getBareRepositoryDirectory(matches("organization"), matches("repository")))
 			.thenReturn(ResourceUtils.getFile("classpath:repo/minimal.git"));
 		
