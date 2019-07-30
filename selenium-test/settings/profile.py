@@ -34,7 +34,7 @@ class StagingProfile(Profile):
     # TODO:
     # A way to query these URLs from AWS (we know the cluster/load balancer name)
     # rather than hardcode them in here.
-    web_domain = "http://staging-web-alb-1363907616.us-east-1.elb.amazonaws.com/"
+    web_domain = "http://staging-web-alb-457632663.us-east-1.elb.amazonaws.com/"
     git_server_remote_location = Path.home() / "Workspace" / "gitenter-test" / "local-git-server"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
