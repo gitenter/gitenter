@@ -412,6 +412,7 @@ workflows:
       - java-build
       - python-unittest
       - python-linter
+      - e2e-test
 
       - staging-readiness:
           type: approval

@@ -5,6 +5,10 @@ from pathlib import Path, PosixPath
 
 class Profile(object):
 
+    web_domain = None
+    ecs_cluster_name = None
+    ecs_service_name = None
+
     def __init__(self):
         if self.web_domain:
             self.__web_domain = self.web_domain
@@ -13,7 +17,7 @@ class Profile(object):
         # Boto3 will automatically check `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` env variables
         # which match with the env variables setup in CircleCI.
         # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#environment-variables
-        if self.ecs_cluster_name and self.ecs_cluster_name:
+        if self.ecs_cluster_name and self.ecs_service_name:
             target_group_arn = boto3.client(
                 'ecs').describe_services(
                 cluster=self.ecs_cluster_name,
