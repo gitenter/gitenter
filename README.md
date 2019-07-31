@@ -32,7 +32,7 @@ SSH authorization (under python code of `/ssheep`) is completely trivialized, an
 
 #### Prerequisite
 
-+ Java (10+)
++ Java (10/11)
 + maven
 + Postgres (tested in 11.2)
 + Redis (tested in 4.0.9) (Mac OS with multiple users may face permission error, and can be correct by [manually `redis-server` auto-start](https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298))
