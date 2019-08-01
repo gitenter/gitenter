@@ -11,7 +11,7 @@ import org.springframework.session.data.redis.config.ConfigureRedisAction;
 @Configuration
 public class RedisConfig {
 
-	@Profile("sts")
+	@Profile("local")
 	@Bean
 	public RedisConnectionFactory stsConfiguration() {
 		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("localhost", 7200);

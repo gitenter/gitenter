@@ -9,7 +9,7 @@ import com.gitenter.capsid.config.bean.DomainSource;
 @Configuration
 public class DomainConfig {
 
-	@Profile("sts")
+	@Profile("local")
 	@Bean
 	public DomainSource stsdomainSource() {
 		

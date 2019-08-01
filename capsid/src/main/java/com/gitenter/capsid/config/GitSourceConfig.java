@@ -11,7 +11,7 @@ import com.gitenter.protease.config.bean.GitSource;
 @Configuration
 public class GitSourceConfig {
 
-	@Profile("sts")
+	@Profile("local")
 	@Bean
 	public GitSource stsGitSource() {
 		

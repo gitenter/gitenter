@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("sts")
+@ActiveProfiles("local")
 public class CapsidApplicationTest {
 
 	@Test

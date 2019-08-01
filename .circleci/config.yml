@@ -239,7 +239,7 @@ jobs:
       # TODO:
       # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
       # a seperated step so `staging` and `prod` can both have corresponding changes.
-      - run: sed -i "s/spring.profiles.active=sts/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
+      - run: sed -i "s/spring.profiles.active=local/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
       - run: cat capsid/src/main/resources/application.properties
 
       - run: mvn clean install

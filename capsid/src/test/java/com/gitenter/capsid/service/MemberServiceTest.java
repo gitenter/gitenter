@@ -34,7 +34,7 @@ import com.gitenter.protease.domain.auth.MemberBean;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("sts")
+@ActiveProfiles("local")
 public class MemberServiceTest {
 
 	@MockBean private MemberRepository memberRepository;

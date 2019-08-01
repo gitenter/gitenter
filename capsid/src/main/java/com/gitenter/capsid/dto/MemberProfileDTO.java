@@ -1,9 +1,8 @@
 package com.gitenter.capsid.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
 
 import com.gitenter.capsid.service.exception.MaliciousOperationException;
 import com.gitenter.protease.domain.auth.MemberBean;

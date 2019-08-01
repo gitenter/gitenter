@@ -10,7 +10,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @Configuration
 public class PostgresConfig {
 
-	@Profile("sts")
+	@Profile("local")
 	@Bean
 	public DataSource stsDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();

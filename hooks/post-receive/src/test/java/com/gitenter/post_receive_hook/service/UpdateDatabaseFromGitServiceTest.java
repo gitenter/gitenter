@@ -50,7 +50,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=PostReceiveConfig.class)
-@ActiveProfiles("sts")
+@ActiveProfiles("local")
 public class UpdateDatabaseFromGitServiceTest {
 	
 	@InjectMocks private UpdateDatabaseFromGitServiceImpl service;

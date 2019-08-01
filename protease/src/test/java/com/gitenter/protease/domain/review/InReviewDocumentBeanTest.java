@@ -80,7 +80,7 @@ public class InReviewDocumentBeanTest {
 				 */
 				assertEquals(discussionTopic.getDocument().getRelativePath(), item.getRelativePath());
 				assertEquals(discussionTopic.getDocument().getBlobContent(), item.getBlobContent());
-				assertEquals(discussionTopic.getLineNumber(), new Integer(1));
+				assertEquals(discussionTopic.getLineNumber(), Integer.valueOf(1));
 				
 				assertTrue(discussionTopic instanceof ReviewMeetingRecordBean);
 				ReviewMeetingRecordBean record = (ReviewMeetingRecordBean)discussionTopic;
@@ -88,7 +88,7 @@ public class InReviewDocumentBeanTest {
 				assertEquals(record.getContent(), "review meeting record content");
 			}
 			else if (discussionTopic.getId().equals(2)) {		
-				assertEquals(discussionTopic.getLineNumber(), new Integer(2));
+				assertEquals(discussionTopic.getLineNumber(), Integer.valueOf(2));
 				
 				assertTrue(discussionTopic instanceof OnlineDiscussionTopicBean);
 				OnlineDiscussionTopicBean onlineTopic = (OnlineDiscussionTopicBean)discussionTopic;

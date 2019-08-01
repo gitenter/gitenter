@@ -22,7 +22,7 @@ public class GitSourceConfig {
 	 * This is duplicated to the one in web application (capsid). Also setup
 	 * need to be done in both places. Error prone.
 	 */
-	@Profile("sts")
+	@Profile("local")
 	@Bean
 	public GitSource stsGitSource() {
 		
