@@ -15,7 +15,7 @@ class BaseTestSuite(unittest.TestCase):
         cls.driver = webdriver.Chrome(options=options)
 
         cls.profile = profile
-        cls.root_url = cls.profile.web_domain
+        cls.root_url = cls.profile.get_web_domain()
 
     @classmethod
     def tearDownClass(cls):

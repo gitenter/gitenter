@@ -1,7 +1,49 @@
+import boto3
+
 from pathlib import Path, PosixPath
 
 
 class Profile(object):
+
+    web_domain = None
+    ecs_cluster_name = None
+    ecs_service_name = None
+
+    def __init__(self):
+        if self.web_domain:
+            self.__web_domain = self.web_domain
+            return
+
+        # Boto3 will automatically check `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` env variables
+        # which match with the env variables setup in CircleCI.
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#environment-variables
+        if self.ecs_cluster_name and self.ecs_service_name:
+            target_group_arn = boto3.client(
+                'ecs').describe_services(
+                cluster=self.ecs_cluster_name,
+                services=[
+                    self.ecs_service_name,
+                ]
+            )['services'][0]['loadBalancers'][0]['targetGroupArn']
+
+            elbv2_client = boto3.client('elbv2')
+            elb_arn = elbv2_client.describe_target_groups(
+                TargetGroupArns=[
+                    target_group_arn,
+                ]
+            )['TargetGroups'][0]['LoadBalancerArns'][0]
+            elb_dns_name = elbv2_client.describe_load_balancers(
+                LoadBalancerArns=[
+                    elb_arn,
+                ]
+            )['LoadBalancers'][0]['DNSName']
+
+            self.__web_domain = "http://{}".format(elb_dns_name)
+            return
+
+    def get_web_domain(self):
+        return self.__web_domain
+
     def get_remote_git_url(self, org_name, repo_name):
         if type(self.git_server_remote_location) == PosixPath:
             remote_git_path = self.git_server_remote_location / org_name / "{}.git".format(repo_name)
@@ -31,12 +73,11 @@ class DockerProfile(Profile):
 
 
 class StagingProfile(Profile):
-    # TODO:
-    # A way to query these URLs from AWS (we know the cluster/load balancer name)
-    # rather than hardcode them in here.
-    web_domain = "http://staging-web-alb-457632663.us-east-1.elb.amazonaws.com/"
     git_server_remote_location = Path.home() / "Workspace" / "gitenter-test" / "local-git-server"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
+
+    ecs_cluster_name = "staging-cluster"
+    ecs_service_name = "staging-web-app-service"
 
 
 profile = LocalProfile()
