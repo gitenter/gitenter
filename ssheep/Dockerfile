@@ -28,10 +28,10 @@ RUN echo 'git:secretpassword' | chpasswd
 RUN usermod -g root git
 
 RUN apt-get update && apt-get -y install \
-	openssh-server \
+  openssh-server \
   git \
-	python3-pip \
-	libpq-dev
+  python3-pip \
+  libpq-dev
 
 RUN pip3 install pipenv
 

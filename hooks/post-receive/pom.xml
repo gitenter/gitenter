@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -7,35 +8,25 @@
         <artifactId>gitenter-hooks</artifactId>
         <version>0.0.2-prototype</version>
     </parent>
-    <groupId>com.gitenter</groupId>
     <artifactId>post-receive-hook</artifactId>
     <packaging>jar</packaging>
 
     <name>Post-receive hook</name>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <spring-boot-version>2.1.6.RELEASE</spring-boot-version>
+        <commonmark-version>0.12.1</commonmark-version>
     </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+            <!-- This doesn't work, as `spring-boot-maven-plugin` is using `maven-jar-plugin`
+            rather than this one, it will cause
+            > java.lang.IllegalArgumentException: No auto configuration classes found in META-INF/spring.factories.
+            -->
+            <!-- <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <!--
-                    Cannot use the last version (3.1.0). Otherwise `EntityManagerFactory`
-                    will have @autowired error. (Selenium) integration test for hooks will
-                    then fail.
-                    If not provided, the current default version is 2.2-beta-5.
-                -->
-                <version>2.2-beta-5</version>
                 <configuration>
-                    <!--
-                        Cannot specify release version (to 8). Otherwise same as the error
-                        to specify version 3.1.0.
-                    -->
                     <archive>
                         <manifest>
                             <mainClass>com.gitenter.post_receive_hook.PostReceiveApplication</mainClass>
@@ -44,21 +35,107 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!--
-                        TODO:
-                        When using parent pom, there's a race condition in here that capsid build may not use the
-                        most up-to-date git hooks.
-                        The current solution is a three step build.
-                        Consider explicitly specify the dependency (if there's a way in maven). Or alternatively,
-                        using an approach different to setting up `<outputDirectory>` tag on `hooks/post-receive/pom.xml`.
-                        For example, compile hooks and set them somewhere on docker. Capsid can then just
-                        setup a symlink or something else to call the hook when it initialize a repository.
-                    -->
+                    <outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
+                </configuration>
+            </plugin> -->
+            <!-- https://stackoverflow.com/questions/11758594/how-do-i-put-all-required-jar-files-in-a-library-folder-inside-the-final-jar-fil
+            TODO: Right now the .jars can be in the packaged jar, but seems there's some error
+            on the link how to find it and it raises error and it still can't find
+            `org/springframework/boot/CommandLineRunner`. Should need to find tune `MANIFEST.MF`.
+            https://docs.oracle.com/javase/tutorial/deployment/jar/manifestindex.html
+            TODO: The packaged jar has error
+            > read the archive file failed, could not find the central directory record
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.gitenter.post_receive_hook.PostReceiveApplication</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>lib/</Class-Path>
+                        </manifestEntries>
+                    </archive>
                     <outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
                 </configuration>
             </plugin>
+            <!-- Will copy all the .class files (rather than .jar) into package. Not ideal
+            but also okay if it works. However, unforturnately it will cause error:
+            > Error: A JNI error has occurred, please check your installation and try again
+            -->
+            <!-- <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-shade-plugin</artifactId>
+              <version>3.2.1</version>
+              <executions>
+                  <execution>
+                      <phase>package</phase>
+                      <goals>
+                          <goal>shade</goal>
+                      </goals>
+                </execution>
+              </executions>
+            </plugin> -->
+            <!-- TODO:
+            Seems from document only this plugin will package a jar with all dependencies.
+            Works in the `war` case but not this case actually.
+            https://www.baeldung.com/executable-jar-with-maven
+            https://stackoverflow.com/questions/20740703/java-lang-classnotfoundexception-org-springframework-boot-springapplication-mav
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Import -->
+            <!-- We cannot use `spring-boot-starter-parent` as parent, as we have our customized
+                parent. See the following reference:
+                https://www.baeldung.com/spring-boot-dependency-management-custom-parent
+            -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- local packages -->
@@ -66,21 +143,88 @@
             <groupId>com.gitenter</groupId>
             <artifactId>gitar</artifactId>
             <version>${gitar-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.gitenter</groupId>
             <artifactId>protease</artifactId>
             <version>${project.version}</version>
+            <!--
+                Exclude everything, because "protease" is a Spring application,
+                and "capsid" is a Spring Boot application. They only share the
+                domain model code, but not the Spring setups.
+            -->
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.gitenter</groupId>
             <artifactId>enzymark</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Compile -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>${commonmark-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>${commonmark-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-strikethrough</artifactId>
+            <version>${commonmark-version}</version>
+        </dependency>
+
+        <!-- Runtime -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

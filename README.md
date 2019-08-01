@@ -56,6 +56,7 @@ Dependencies between product cannot be fully management by parent POM (post-reci
 ```
 mvn clean install
 mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
+mvn package -f hooks/post-receive/pom.xml -DskipTests
 mvn package -f capsid/pom.xml -DskipTests
 ```
 
