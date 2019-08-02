@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,6 +50,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=PostReceiveConfig.class)
+@ActiveProfiles("local")
 public class UpdateDatabaseFromGitServiceTest {
 	
 	@InjectMocks private UpdateDatabaseFromGitServiceImpl service;

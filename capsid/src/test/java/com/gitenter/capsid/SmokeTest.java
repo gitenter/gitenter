@@ -13,7 +13,7 @@ import com.gitenter.capsid.web.HealthCheckController;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("sts")
+@ActiveProfiles("local")
 public class SmokeTest {
 	
 	@Autowired private HealthCheckController controller;

@@ -82,7 +82,7 @@ public class OrganizationMemberMapRepositoryTest {
 				member, organization);
 		
 		assertEquals(allMaps.size(), 1);
-		assertEquals(allMaps.get(0).getMember().getId(), new Integer(1));
+		assertEquals(allMaps.get(0).getMember().getId(), Integer.valueOf(1));
 	}
 	
 	@Test
@@ -97,7 +97,7 @@ public class OrganizationMemberMapRepositoryTest {
 				member, organization, OrganizationMemberRole.MANAGER);
 		
 		assertEquals(managerMaps.size(), 1);
-		assertEquals(managerMaps.get(0).getMember().getId(), new Integer(1));
+		assertEquals(managerMaps.get(0).getMember().getId(), Integer.valueOf(1));
 		
 		List<OrganizationMemberMapBean> memberMaps = repository.fineByMemberAndOrganizationAndRole(
 				member, organization, OrganizationMemberRole.MEMBER);

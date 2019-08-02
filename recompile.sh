@@ -15,7 +15,7 @@ sudo cp target/immunessh-0.0.2-prototype-jar-with-dependencies.jar /home/git
 cd $project_home
 cd capsid
 
-sed -i "s/spring.profiles.active=sts/#spring.profiles.active=sts/g" $project_home/capsid/src/main/resources/application.properties
+sed -i "s/spring.profiles.active=local/#spring.profiles.active=local/g" $project_home/capsid/src/main/resources/application.properties
 
 #sed -i "s/#spring.profiles.active=localhost/spring.profiles.active=localhost/g" $project_home/capsid/src/main/resources/application.properties
 sed -i "s/#spring.profiles.active=production/spring.profiles.active=production/g" $project_home/capsid/src/main/resources/application.properties
@@ -23,7 +23,7 @@ sed -i "s/#spring.profiles.active=production/spring.profiles.active=production/g
 mvn clean package
 cp target/capsid-0.0.2-prototype.war /var/lib/tomcat8/webapps
 
-sed -i "s/#spring.profiles.active=sts/spring.profiles.active=sts/g" $project_home/capsid/src/main/resources/application.properties
+sed -i "s/#spring.profiles.active=local/spring.profiles.active=local/g" $project_home/capsid/src/main/resources/application.properties
 
 #sed -i "s/spring.profiles.active=localhost/#spring.profiles.active=localhost/g" $project_home/capsid/src/main/resources/application.properties
 sed -i "s/spring.profiles.active=production/#spring.profiles.active=production/g" $project_home/capsid/src/main/resources/application.properties

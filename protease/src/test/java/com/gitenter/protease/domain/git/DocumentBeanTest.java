@@ -53,7 +53,7 @@ public class DocumentBeanTest {
 		assertEquals(item.getRelativePath(), "file");
 		assertEquals(item.getContent(), "content");
 		
-		assertEquals(item.getCommit().getId(), new Integer(1));
+		assertEquals(item.getCommit().getId(), Integer.valueOf(1));
 		assertEquals(item.getTraceableItems().size(), 1);
 		TraceableItemBean traceableItem = item.getTraceableItems().get(0);
 		assertEquals(traceableItem.getItemTag(), "tag");

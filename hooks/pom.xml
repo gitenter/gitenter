@@ -7,7 +7,6 @@
 		<artifactId>gitenter-parent</artifactId>
 		<version>0.0.2-prototype</version>
 	</parent>
-	<groupId>com.gitenter</groupId>
 	<artifactId>gitenter-hooks</artifactId>
 	<packaging>pom</packaging>
 

@@ -1,4 +1,4 @@
-package com.gitenter.capsid.config;
+package com.gitenter.post_receive_hook.config;
 
 import javax.sql.DataSource;
 
@@ -20,7 +20,7 @@ public class PostgresConfig {
 		dataSource.setPassword("zooo");
 		return dataSource;
 	}
-
+	
 	@Profile("docker")
 	@Bean
 	public DataSource dockerDataSource() {
