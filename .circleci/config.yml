@@ -239,8 +239,16 @@ jobs:
       # TODO:
       # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
       # a seperated step so `staging` and `prod` can both have corresponding changes.
+      #
+      # TODO:
+      # Should ask Spring to go to env variable to get what profile it is. Therefore,
+      # we can share the same docker image and use it for different environments.
+      # Pass env variable from host machine down to container is a standard approach.
       - run: sed -i "s/spring.profiles.active=local/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
       - run: cat capsid/src/main/resources/application.properties
+
+      - run: sed -i "s/		System.setProperty(\"spring.profiles.active\", \"local\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
+      - run: cat hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
 
       - run: mvn clean install
       - run: mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests

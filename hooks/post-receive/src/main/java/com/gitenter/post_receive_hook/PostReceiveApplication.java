@@ -42,7 +42,7 @@ public class PostReceiveApplication {
 		 * Should be optimized so at least no need to change in multiple
 		 * times.
 		 */
-		System.setProperty("spring.profiles.active", "sts");
+		System.setProperty("spring.profiles.active", "local");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.
