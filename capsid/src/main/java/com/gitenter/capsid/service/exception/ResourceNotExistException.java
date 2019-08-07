@@ -1,10 +1,10 @@
 package com.gitenter.capsid.service.exception;
 
-public class InvalidOperationException extends FrontendException {
+public class ResourceNotExistException extends BackendException {
 
 	private static final long serialVersionUID = 1L;
 	
-	public InvalidOperationException(String message) {
+	public ResourceNotExistException(String message) {
 		super(message);
 	}
 }

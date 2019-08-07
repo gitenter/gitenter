@@ -5,9 +5,11 @@ import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class LoginDTO {
 
 	/* 
@@ -22,5 +24,6 @@ public class LoginDTO {
 	
 	@NotNull
 	@Size(min=2, max=16)
+	@ToString.Exclude
 	private String password;
 }

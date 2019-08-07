@@ -1,5 +1,7 @@
 package com.gitenter.capsid.dto;
 
+import java.io.IOException;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,6 +11,7 @@ import com.gitenter.protease.domain.auth.MemberBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /*
  * TODO:
@@ -21,6 +24,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBean> {
 	
 	@NotNull
@@ -48,7 +52,7 @@ public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBe
 	}
 	
 	@Override
-	public void updateBean(MemberBean memberBean) {
+	public void updateBean(MemberBean memberBean) throws IOException {
 		
 		/*
 		 * Since this class doesn't cover all attributes of "MemberBean"
@@ -56,8 +60,7 @@ public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBe
 		 * "MemberBean" but can only modify one which already exist.
 		 */
 		if (!memberBean.getUsername().equals(username)) {
-			throw new MaliciousOperationException(
-					"Somebody is trying to update user profile of somebody else.");
+			throw new MaliciousOperationException("Somebody is trying to update user profile of somebody else.");
 		}
 		
 		memberBean.setDisplayName(displayName);

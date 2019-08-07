@@ -2,6 +2,8 @@ package com.gitenter.capsid.web;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,8 @@ import com.gitenter.capsid.service.AnonymousService;
 public class AuthorizationController {
 	
 	private final AnonymousService anonymousService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
 
 	@Autowired
 	public AuthorizationController(AnonymousService anonymousService) {
@@ -45,11 +49,14 @@ public class AuthorizationController {
 			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO memberRegisterDTO, 
 			Errors errors) {
 		
+		logger.debug("User registration attempt: "+memberRegisterDTO);
+		
 		if (errors.hasErrors()) {
 			return "authorization/register";
 		}
 		
 		anonymousService.signUp(memberRegisterDTO);
+		logger.info("User registered: "+memberRegisterDTO);
 		/*
 		 * TODO:
 		 * Should reply some kind of "register successful", rather than directly go back to

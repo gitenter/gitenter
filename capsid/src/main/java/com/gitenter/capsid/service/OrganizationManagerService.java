@@ -13,7 +13,7 @@ public interface OrganizationManagerService {
 	public void updateOrganization(
 			Authentication authentication, 
 			OrganizationBean organizationBean, 
-			OrganizationDTO organizationDTO);
+			OrganizationDTO organizationDTO) throws IOException;
 	
 	public void addOrganizationMember(OrganizationBean organization, MemberBean member);
 	public void removeOrganizationMember(

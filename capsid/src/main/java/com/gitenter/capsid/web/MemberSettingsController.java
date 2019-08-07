@@ -142,12 +142,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/account/delete", method=RequestMethod.GET)
-	public String showDeleteAccount(
-			Model model, 
-			Authentication authentication) throws Exception {
-		
-		System.out.println(authentication);
-		System.out.println(authentication.getAuthorities());
+	public String showDeleteAccount(Model model) throws Exception {
 		
 		return "settings/account/delete";
 	}

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
-import com.gitenter.capsid.service.exception.InputIsNotQualifiedException;
+import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.MemberRepository;
@@ -118,7 +118,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.fineByMemberAndOrganization(
 				collaborator, repository.getOrganization());
 		if (maps.size() == 0) {
-			throw new InputIsNotQualifiedException("User "+collaborator.getUsername()+" cannot be added "
+			throw new InvalidOperationException("User "+collaborator.getUsername()+" cannot be added "
 					+ "as a collaborator for repository "+repository.getName()+", since s/he is "
 					+ "not a member of organization "+repository.getOrganization().getName()+".");
 		}

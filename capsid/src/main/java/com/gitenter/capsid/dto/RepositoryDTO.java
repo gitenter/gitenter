@@ -8,9 +8,11 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<RepositoryBean>, UpdateDTO<RepositoryBean> {
 
 	@NotNull

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.capsid.service.exception.UnreachableOperationException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -32,7 +33,13 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	public void updateOrganization(
 			Authentication authentication, 
 			OrganizationBean organizationBean, 
-			OrganizationDTO organizationDTO) {
+			OrganizationDTO organizationDTO) throws IOException {
+		
+		if (!organizationBean.getName().equals(organizationDTO.getName())) {
+			throw new UnreachableOperationException("POST Request is generated from unexpected source. "
+					+ "OrganizationDTO should have organization name "+organizationBean.getName()
+					+ ", but it is actually "+organizationDTO.getName());
+		}
 		
 		organizationDTO.updateBean(organizationBean);
 		organizationRepository.saveAndFlush(organizationBean);
@@ -63,6 +70,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
+		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
+		
 		/*
 		 * Doesn't for the SQL operation part, since if the `organizationMemberMapId` does not
 		 * exist then `DELECT` simply does nothing. The problem is the `@PreAuthorize` is only
@@ -70,8 +79,11 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 * requirement if the `mapId` belongs to a completely different organization. That's
 		 * the reason this checking is important.
 		 */
-		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
-		assert map.getOrganization().getId().equals(organization.getId());
+		if (!map.getOrganization().getId().equals(organization.getId())) {
+			throw new UnreachableOperationException("Remove organization member input not consistency. "
+					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
+					+ "target organization "+organization);
+		}
 		
 		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
 	}
@@ -81,7 +93,16 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
-		assert map.getRole().equals(OrganizationMemberRole.MEMBER);
+		
+		if (!map.getOrganization().getId().equals(organization.getId())) {
+			throw new UnreachableOperationException("Add organization member input not consistency. "
+					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
+					+ "target organization "+organization);
+		}
+		
+		if (map.getRole().equals(OrganizationMemberRole.MANAGER)) {
+			throw new UnreachableOperationException("User is already a manager of the target organization.");
+		}
 		
 		map.setRole(OrganizationMemberRole.MANAGER);
 		organizationMemberMapRepository.saveAndFlush(map);
@@ -95,10 +116,19 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 			Integer organizationMemberMapId) throws IOException {
 		
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
-		assert map.getRole().equals(OrganizationMemberRole.MANAGER);
+		
+		if (!map.getOrganization().getId().equals(organization.getId())) {
+			throw new UnreachableOperationException("Remove organization member input not consistency. "
+					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the"
+					+ " target organization "+organization);
+		}
+		
+		if (!map.getRole().equals(OrganizationMemberRole.MANAGER)) {
+			throw new UnreachableOperationException("User is currently not a manager of the target organization. Current role "+map.getRole());
+		}
 		
 		if (authentication.getName().equals(map.getMember().getUsername())) {
-			throw new InvalidOperationException("Manager cannot remove him/herself as manager");
+			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as a manager of organization "+organization);
 		}
 		
 		map.setRole(OrganizationMemberRole.MEMBER);

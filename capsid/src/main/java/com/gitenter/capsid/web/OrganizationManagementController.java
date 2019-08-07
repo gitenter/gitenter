@@ -104,8 +104,7 @@ public class OrganizationManagementController {
 			
 			return "organization-management/profile";
 		}
-		
-		assert (organization.getName().equals(organizationDTOAfterChange.getName()));
+
 		organizationManagerService.updateOrganization(authentication, organization, organizationDTOAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");

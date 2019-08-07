@@ -1,8 +1,6 @@
 package com.gitenter.capsid.service.exception;
 
-import com.gitenter.protease.dao.exception.InputNotExistException;
-
-public class UserNotExistException extends InputNotExistException {
+public class UserNotExistException extends ResourceNotExistException {
 
 	private static final long serialVersionUID = 1L;
 	
