@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
-import com.gitenter.capsid.service.exception.UnreachableOperationException;
+import com.gitenter.capsid.service.exception.UnreachableException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -36,7 +36,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 			OrganizationDTO organizationDTO) throws IOException {
 		
 		if (!organizationBean.getName().equals(organizationDTO.getName())) {
-			throw new UnreachableOperationException("POST Request is generated from unexpected source. "
+			throw new UnreachableException("POST Request is generated from unexpected source. "
 					+ "OrganizationDTO should have organization name "+organizationBean.getName()
 					+ ", but it is actually "+organizationDTO.getName());
 		}
@@ -80,7 +80,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 * the reason this checking is important.
 		 */
 		if (!map.getOrganization().getId().equals(organization.getId())) {
-			throw new UnreachableOperationException("Remove organization member input not consistency. "
+			throw new UnreachableException("Remove organization member input not consistency. "
 					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
 					+ "target organization "+organization);
 		}
@@ -95,13 +95,13 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
 		
 		if (!map.getOrganization().getId().equals(organization.getId())) {
-			throw new UnreachableOperationException("Add organization member input not consistency. "
+			throw new UnreachableException("Add organization member input not consistency. "
 					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
 					+ "target organization "+organization);
 		}
 		
 		if (map.getRole().equals(OrganizationMemberRole.MANAGER)) {
-			throw new UnreachableOperationException("User is already a manager of the target organization.");
+			throw new UnreachableException("User is already a manager of the target organization.");
 		}
 		
 		map.setRole(OrganizationMemberRole.MANAGER);
@@ -118,13 +118,13 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
 		
 		if (!map.getOrganization().getId().equals(organization.getId())) {
-			throw new UnreachableOperationException("Remove organization member input not consistency. "
+			throw new UnreachableException("Remove organization member input not consistency. "
 					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the"
 					+ " target organization "+organization);
 		}
 		
 		if (!map.getRole().equals(OrganizationMemberRole.MANAGER)) {
-			throw new UnreachableOperationException("User is currently not a manager of the target organization. Current role "+map.getRole());
+			throw new UnreachableException("User is currently not a manager of the target organization. Current role "+map.getRole());
 		}
 		
 		if (authentication.getName().equals(map.getMember().getUsername())) {

@@ -20,9 +20,9 @@ import com.gitenter.capsid.service.AnonymousService;
 @Controller
 public class AuthorizationController {
 	
-	private final AnonymousService anonymousService;
-	
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
+	
+	private final AnonymousService anonymousService;
 
 	@Autowired
 	public AuthorizationController(AnonymousService anonymousService) {
