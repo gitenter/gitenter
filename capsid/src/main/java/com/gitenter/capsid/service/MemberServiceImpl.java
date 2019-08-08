@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -38,6 +40,8 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
  */
 @Service
 public class MemberServiceImpl implements MemberService {
+	
+	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
 	private final MemberRepository memberRepository;
 	private final OrganizationRepository organizationRepository;
@@ -217,10 +221,7 @@ public class MemberServiceImpl implements MemberService {
 			return false;
 		}
 		else {
-			/*
-			 * TODO:
-			 * Audit log.
-			 */
+			auditLogger.info("User account has been deleted: "+member);
 			memberRepository.delete(member);
 			return true;
 		}

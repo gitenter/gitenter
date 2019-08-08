@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,8 @@ import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 
 @Service
 public class RepositoryManagerServiceImpl implements RepositoryManagerService {
+	
+	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
@@ -158,10 +162,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
-		/*
-		 * TODO:
-		 * Audit log.
-		 */
+		auditLogger.info("Repository has been deleted: "+repository);
 		repositoryRepository.delete(repository);
 	}
 }

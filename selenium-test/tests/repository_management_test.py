@@ -118,7 +118,7 @@ class TestModifyRepositoryCollaborator(RepositoryCreatedTestSuite):
             # be able to add as collaborator.
             self.driver.get(collaborator_url)
             fill_add_collaborator_form(self.driver, self.username, "Document editor")
-            assert "status=500" in self.driver.page_source
+            assert "You are attempting an invalid operation." in self.driver.page_source
 
             self.driver.get(collaborator_url)
             fill_add_collaborator_form(self.driver, "non_existing_username", "Document editor")

@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -53,6 +54,12 @@ public class MemberBeanTest {
 	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
 		
 		MemberBean item = memberRepository.findById(1).get();
+		
+		/*
+		 * This is to test there's no circular dependency which makes 
+		 * toString() to stack overflow.
+		 */
+		assertNotNull(item.toString());
 		
 		assertEquals(item.getUsername(), "username");
 		assertEquals(item.getPassword(), "password");

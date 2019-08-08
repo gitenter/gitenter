@@ -164,14 +164,11 @@ public class MemberSettingsController {
 		if (memberService.deleteMember(authentication.getName(), password)) {
 			request.logout();
 			
-			logger.info("User account deleted. Username: "+authentication.getName());
+			logger.info("User account deleted. Username: "+authentication.getName()+". IP: "+request.getRemoteAddr());
 			
 			/*
 			 * TODO:
 			 * Message for successful delete account.
-			 * 
-			 * TODO:
-			 * Audit log.
 			 */
 			return "redirect:/";
 		}

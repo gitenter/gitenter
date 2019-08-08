@@ -10,16 +10,16 @@
 
     <logger name="com.gitenter" level="DEBUG" />
 
+    <logger name="audit" level="TRACE" />
+
     <root level="INFO">
       <appender-ref ref="STDOUT" />
     </root>
   </springProfile>
 
   <springProfile name="docker | staging | production">
-    <property name="HOME_LOG" value="logs/gitenter.log"/>
-
-    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      <file>${HOME_LOG}</file>
+    <appender name="BASIC-FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>logs/gitenter.log</file>
       <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
         <fileNamePattern>logs/archived/gitenter.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
         <!-- each archived file, size max 10MB -->
@@ -36,8 +36,26 @@
       </encoder>
     </appender>
 
+    <appender name="AUDIT-FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>logs/gitenter-audit.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>logs/audit/gitenter-audit.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <!-- each archived file, size max 10MB -->
+        <maxFileSize>10MB</maxFileSize>
+      </rollingPolicy>
+      <encoder>
+        <pattern>
+          %d{YYYY/MM/dd HH:mm:ss.SSS} %msg%n
+        </pattern>
+      </encoder>
+    </appender>
+
     <root level="INFO">
-      <appender-ref ref="FILE-ROLLING" />
+      <appender-ref ref="BASIC-FILE-ROLLING" />
     </root>
+
+    <logger name="audit" level="TRACE" additivity="false">
+      <appender-ref ref="AUDIT-FILE-ROLLING"/>
+    </logger>
   </springProfile>
 </configuration>

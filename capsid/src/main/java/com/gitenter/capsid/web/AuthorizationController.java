@@ -1,5 +1,6 @@
 package com.gitenter.capsid.web;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -47,7 +48,8 @@ public class AuthorizationController {
 			 * otherwise the <sf:errors> will not render. 
 			 */
 			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO memberRegisterDTO, 
-			Errors errors) {
+			Errors errors,
+			HttpServletRequest request) {
 		
 		logger.debug("User registration attempt: "+memberRegisterDTO);
 		
@@ -56,7 +58,7 @@ public class AuthorizationController {
 		}
 		
 		anonymousService.signUp(memberRegisterDTO);
-		logger.info("User registered: "+memberRegisterDTO);
+		logger.info("User registered: "+memberRegisterDTO+". IP: "+request.getRemoteAddr());
 		/*
 		 * TODO:
 		 * Should reply some kind of "register successful", rather than directly go back to

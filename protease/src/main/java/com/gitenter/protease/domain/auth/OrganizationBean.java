@@ -21,9 +21,11 @@ import com.gitenter.protease.domain.ModelBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(schema = "auth", name = "organization")
 public class OrganizationBean implements ModelBean {
@@ -43,9 +45,11 @@ public class OrganizationBean implements ModelBean {
 	@Column(name="display_name")
 	private String displayName;
 
+	@ToString.Exclude
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<RepositoryBean> repositories;
 
+	@ToString.Exclude
 	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
 	

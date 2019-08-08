@@ -67,7 +67,7 @@ class LocalProfile(Profile):
 
 
 class DockerProfile(Profile):
-    web_domain = "http://www.gitenter.local/"
+    web_domain = "http://localhost:8886/"
     git_server_remote_location = "gitenter.local"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 

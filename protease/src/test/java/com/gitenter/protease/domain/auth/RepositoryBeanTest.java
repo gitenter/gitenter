@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -63,6 +64,12 @@ public class RepositoryBeanTest {
 	public void testMinimalRepositoryInfomation() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
+		
+		/*
+		 * This is to test there's no circular dependency which makes 
+		 * toString() to stack overflow.
+		 */
+		assertNotNull(item.toString());
 		
 		assertEquals(item.getName(), "repository");
 		assertEquals(item.getDisplayName(), "Repository");

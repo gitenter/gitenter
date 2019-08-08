@@ -3,6 +3,8 @@ package com.gitenter.capsid.service;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,8 @@ import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 
 @Service
 public class OrganizationManagerServiceImpl implements OrganizationManagerService {
+	
+	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 	
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
@@ -139,10 +143,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void deleteOrganization(OrganizationBean organization) throws IOException {
 		
-		/*
-		 * TODO:
-		 * Audit log.
-		 */
+		auditLogger.info("Organization has been deleted: "+organization);
 		organizationRepository.delete(organization);
 	}
 }

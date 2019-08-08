@@ -120,7 +120,7 @@ docker-compose up
 
 Then one should expect to access this software:
 
-+ Web UI: http://localhost:8886 (direct to container) or http://localhost (nginx)
++ Web UI: http://localhost:8886 (direct to container) or http://localhost:8887 (nginx)
 + SSH/Git: `localhost:8822`
   + For case with customized port, `git clone ssh://git@localhost:8822/absolute/path/to/git/server.git`.
   + The shorter version `git clone git@gitenter.com:absolute/path/to/git/server.git` only work for case without customized port. Seems using nginx reverse proxy to setup an alien can't help, because we simply cannot redirect traffic to port 22 to nginx (or whatever docker container).

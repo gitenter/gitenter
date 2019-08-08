@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -53,6 +54,12 @@ public class OrganizationBeanTest {
 	public void testDbUnitMinimalQueryWorks() throws Exception {
 		
 		OrganizationBean item = organizationRepository.findById(1).get();
+		
+		/*
+		 * This is to test there's no circular dependency which makes 
+		 * toString() to stack overflow.
+		 */
+		assertNotNull(item.toString());
 		
 		assertEquals(item.getName(), "organization");
 		assertEquals(item.getDisplayName(), "Organization");
