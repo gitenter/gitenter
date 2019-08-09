@@ -1,6 +1,6 @@
 package com.gitenter.capsid.service.exception;
 
-public class UserNotExistException extends ResourceNotExistException {
+public class UserNotExistException extends ResourceNotFoundException {
 
 	private static final long serialVersionUID = 1L;
 	

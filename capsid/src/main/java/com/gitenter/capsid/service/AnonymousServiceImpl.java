@@ -1,5 +1,9 @@
 package com.gitenter.capsid.service;
 
+import java.io.IOException;
+
+import javax.persistence.PersistenceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.MemberRegisterDTO;
+import com.gitenter.capsid.service.exception.UsernameNotUniqueException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 
@@ -26,7 +31,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public void signUp(MemberRegisterDTO memberRegisterDTO) {
+	public void signUp(MemberRegisterDTO memberRegisterDTO) throws IOException {
 		
 		/*
 		 * TODO:
@@ -35,7 +40,22 @@ public class AnonymousServiceImpl implements AnonymousService {
 		 */
 		
 		MemberBean memberBean = memberRegisterDTO.toBean(passwordEncoder);
-		memberRepository.saveAndFlush(memberBean);
+		try {
+			memberRepository.saveAndFlush(memberBean);
+		}
+		catch(PersistenceException e) {
+			/*
+			 * TODO:
+			 * This logic just means one constrain is broken. It doesn't always mean the username
+			 * unique constrain is broken.
+			 */
+			if (e.getMessage().contains("ConstraintViolationException")) {
+				System.out.println("==aa");
+				throw new UsernameNotUniqueException(memberBean);
+			}
+			System.out.println("==bb");
+			throw e;
+		}
 		
 		/*
 		 * TODO:

@@ -1,10 +1,10 @@
 package com.gitenter.capsid.service.exception;
 
-public class ResourceNotExistException extends BackendException {
+public class ResourceNotFoundException extends BackendException {
 
 	private static final long serialVersionUID = 1L;
 	
-	public ResourceNotExistException(String message) {
+	public ResourceNotFoundException(String message) {
 		super(message);
 	}
 }

@@ -53,6 +53,12 @@ In virtual environment, `pygit2` is really hard to be installed. Luckily the har
 
 ```
 python3 -m unittest tests.authorization_test
+python3 -m unittest tests.member_settings_test
+python3 -m unittest tests.organization_creation_test
+python3 -m unittest tests.organization_management_test
+python3 -m unittest tests.repository_creation_test
+python3 -m unittest tests.repository_management_test
+python3 -m unittest tests.repository_navigation_test
 ```
 
 or

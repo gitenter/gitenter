@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.gitenter.capsid.dto.LoginDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
+import com.gitenter.capsid.service.exception.UsernameNotUniqueException;
 
 @Controller
 public class AuthorizationController {
@@ -49,7 +50,8 @@ public class AuthorizationController {
 			 */
 			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO memberRegisterDTO, 
 			Errors errors,
-			HttpServletRequest request) {
+			Model model,
+			HttpServletRequest request) throws Exception {
 		
 		logger.debug("User registration attempt: "+memberRegisterDTO);
 		
@@ -57,8 +59,17 @@ public class AuthorizationController {
 			return "authorization/register";
 		}
 		
-		anonymousService.signUp(memberRegisterDTO);
-		logger.info("User registered: "+memberRegisterDTO+". IP: "+request.getRemoteAddr());
+		try {
+			anonymousService.signUp(memberRegisterDTO);
+			System.out.println("==cc");
+			logger.info("User registered: "+memberRegisterDTO+". IP: "+request.getRemoteAddr());
+		}
+		catch(UsernameNotUniqueException e) {
+			System.out.println("==dd");
+			model.addAttribute("message", e.getShortMessage());
+			return "authorization/register";
+		}
+		
 		/*
 		 * TODO:
 		 * Should reply some kind of "register successful", rather than directly go back to

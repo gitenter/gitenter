@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.gitenter.capsid.service.exception.InvalidDataStateException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.capsid.service.exception.ResourceNotFoundException;
 import com.gitenter.capsid.service.exception.UnreachableException;
 
 @ControllerAdvice
@@ -51,5 +52,11 @@ public class ExceptionHandlingController {
 	public String invalidDataStateErrorPage(Exception e) {
 		errorLogging(e);
 		return "exception-handling/something-has-gone-wrong";
+	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public String resourceNotFoundErrorPage(Exception e) {
+		warningLogging(e);
+		return "exception-handling/not-found";
 	}
 }

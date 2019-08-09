@@ -87,7 +87,7 @@ class TestModifyRepositoryProfile(RepositoryCreatedTestSuite):
             display_name_form_fill = self.driver.find_element_by_id("displayName")
             display_name_form_fill.send_keys(" v2")
             display_name_form_fill.submit()
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source
 
 
 class TestModifyRepositoryCollaborator(RepositoryCreatedTestSuite):

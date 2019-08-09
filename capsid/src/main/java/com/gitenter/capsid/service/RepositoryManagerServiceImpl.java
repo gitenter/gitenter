@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.persistence.PersistenceException;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.capsid.service.exception.RepositoryNameNotUniqueException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.MemberRepository;
@@ -58,7 +61,22 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 * Need to refresh the ID of "repository", so will not
 		 * work if saving by "organizationRepository".
 		 */
-		repositoryRepository.saveAndFlush(repository);
+		try {
+			repositoryRepository.saveAndFlush(repository);
+		}
+		catch(PersistenceException e) {
+			/*
+			 * TODO:
+			 * Seems no easy way to catch, and/or read the inside exception 
+			 * `org.hibernate.exception.ConstraintViolationException`, and
+			 * then `org.postgresql.util.PSQLException`, and further distinguish
+			 * different exceptions?
+			 */
+			if (e.getMessage().contains("ConstraintViolationException")) {
+				throw new RepositoryNameNotUniqueException(repository);
+			}
+			throw e;
+		}
 		
 		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
 		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, member, RepositoryMemberRole.ORGANIZER);

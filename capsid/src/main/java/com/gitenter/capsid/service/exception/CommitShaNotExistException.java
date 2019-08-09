@@ -1,6 +1,6 @@
 package com.gitenter.capsid.service.exception;
 
-public class CommitShaNotExistException extends ResourceNotExistException {
+public class CommitShaNotExistException extends ResourceNotFoundException {
 
 	private static final long serialVersionUID = 1L;
 	

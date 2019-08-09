@@ -1,6 +1,6 @@
-package com.gitenter.protease.dao.exception;
+package com.gitenter.capsid.service.exception;
 
-public class NameNotUniqueException extends InputNotUniqueException {
+public class NameNotUniqueException extends ConstraintViolationException {
 
 	private static final long serialVersionUID = 1L;
 	

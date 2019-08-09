@@ -39,6 +39,12 @@
               <sf:errors class="error" path="email" />
             </td>
           </tr>
+          <c:if test="${message != null}">
+            <tr>
+              <td></td>
+              <td class="error"><c:out value="${message}" /></td>
+            </tr>
+          </c:if>
           <tr>
             <td></td>
             <td class="button"><input type="submit" value="Register" /></td>

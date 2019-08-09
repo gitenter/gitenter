@@ -1,6 +1,6 @@
 package com.gitenter.capsid.service.exception;
 
-public class DocumentNotExistException extends ResourceNotExistException {
+public class DocumentNotExistException extends ResourceNotFoundException {
 
 	private static final long serialVersionUID = 1L;
 	
