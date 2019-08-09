@@ -40,7 +40,7 @@ public class JpaConfig {
 		adapter.setDatabase(Database.POSTGRESQL);
 		adapter.setShowSql(false);
 		adapter.setGenerateDdl(true);
-		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL94Dialect");
+		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL95Dialect");
 		
 		return adapter;
 	}
@@ -57,9 +57,13 @@ public class JpaConfig {
 		 * TODO:
 		 * May have duplicated setups in here as while as "jpaVendorAdapter()".
 		 * Need to understand later what is needed and what is absolutely necessary.
+		 * 
+		 * TODO:
+		 * Looks like there's no newer version of Hibernate Postgres Dialect beyond 9.5!?
+		 * https://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/dialect/package-summary.html
 		 */
 		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL94Dialect");
+		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
 		entityManagerFactory.setJpaProperties(properties);
 		
 		entityManagerFactory.afterPropertiesSet();
