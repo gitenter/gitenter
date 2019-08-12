@@ -51,6 +51,15 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
             self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/members").format(org_id))
             self.assertIn(self.org_manager_display_name, map(lambda x: x.text, self.driver.find_elements_by_class_name("user")))
 
+            # Create another organization with the same name
+            self.driver.get(urljoin(self.root_url, "/organizations/create"))
+            name_crashing_org_display_name = "Another Organization with the Same Name"
+            fill_create_organization_form(self.driver, org_name, name_crashing_org_display_name)
+            self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/create")
+            assert org_name in self.driver.page_source
+            assert name_crashing_org_display_name in self.driver.page_source
+            assert "Organization name already exist!" in self.driver.page_source
+
             # Delete organization
             self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/delete").format(org_id))
             fill_delete_organization_form(self.driver, "wrong_org_name")
@@ -67,9 +76,6 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
             # Right now although they don't get a link of "settings" they can still get the settings
             # page by hard code the URL. They'll be 403ed when they try to submit the POST request
             # (as it is forbidden in functional level). Thinking about a better way of testing it.
-
-    def test_create_organization_name_already_exists(self):
-        pass
 
 
 if __name__ == '__main__':

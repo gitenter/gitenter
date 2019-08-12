@@ -48,13 +48,17 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
             # Cannot create another repository with the same `repo_name`
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
-            fill_create_repository_form(self.driver, self.repo_name, "Another Repo Display Name", "Another Repo Description")
+            name_crashing_repo_display_name = "Another Repository with the Same Name"
+            name_crashing_repo_description = "Another Repository Description"
+            fill_create_repository_form(
+                self.driver, self.repo_name,
+                name_crashing_repo_display_name, name_crashing_repo_description)
             self.assertEqual(
                 urlparse(self.driver.current_url).path,
                 "/organizations/{}/repositories/create".format(self.org_id, repo_id))
             assert self.repo_name in self.driver.page_source
-            assert "Another Repo Display Name" in self.driver.page_source
-            assert "Another Repo Description" in self.driver.page_source
+            assert name_crashing_repo_display_name in self.driver.page_source
+            assert name_crashing_repo_description in self.driver.page_source
             assert "Repository name already exist!" in self.driver.page_source
 
         # Organization member can access

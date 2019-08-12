@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +47,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	public void createRepository(
-			Authentication authentication, 
+			MemberBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException {
@@ -71,6 +70,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			 * `org.hibernate.exception.ConstraintViolationException`, and
 			 * then `org.postgresql.util.PSQLException`, and further distinguish
 			 * different exceptions?
+			 * There's a separate (log) error coming from `o.h.e.jdbc.spi.SqlExceptionHelper`
+			 * but it is not catchable.
 			 */
 			if (e.getMessage().contains("ConstraintViolationException")) {
 				throw new RepositoryNameNotUniqueException(repository);
@@ -78,8 +79,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			throw e;
 		}
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
-		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, member, RepositoryMemberRole.ORGANIZER);
+		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, me, RepositoryMemberRole.ORGANIZER);
 		repositoryMemberMapRepository.saveAndFlush(map);
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());

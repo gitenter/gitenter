@@ -3,7 +3,6 @@ package com.gitenter.capsid.service;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.springframework.security.core.Authentication;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.protease.domain.auth.MemberBean;
@@ -13,7 +12,7 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 public interface RepositoryManagerService {
 
 	public void createRepository(
-			Authentication authentication, 
+			MemberBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException;

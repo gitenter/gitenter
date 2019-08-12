@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 
 import com.gitenter.capsid.dto.MemberProfileDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
@@ -25,6 +24,7 @@ public interface MemberService {
 	 * in the method scope), there's not a lot of benefits doing that.
 	 */
 	public MemberBean getMemberByUsername(String username) throws IOException;
+	public MemberBean getMe(Authentication authentication) throws IOException;
 	
 	/*
 	 * Basically to have the input of "Authentication", it has similar the same
@@ -34,8 +34,6 @@ public interface MemberService {
 	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) throws IOException;
 	public void updateMember(MemberProfileDTO profile) throws IOException;
 	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException;
-	
-	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) throws IOException;
 	
 	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException;
 	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException;

@@ -83,7 +83,8 @@ public class RepositoryManagementController {
 		}
 		
 		try {
-			repositoryManagerService.createRepository(authentication, organization, repositoryDTO, includeSetupFiles);
+			MemberBean me = memberService.getMe(authentication);
+			repositoryManagerService.createRepository(me, organization, repositoryDTO, includeSetupFiles);
 		}
 		catch(RepositoryNameNotUniqueException e) {
 			model.addAttribute("repositoryDTO", repositoryDTO); 
