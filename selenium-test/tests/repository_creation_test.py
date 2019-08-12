@@ -59,7 +59,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
             assert self.repo_name in self.driver.page_source
             assert name_crashing_repo_display_name in self.driver.page_source
             assert name_crashing_repo_description in self.driver.page_source
-            assert "Repository name already exist!" in self.driver.page_source
+            assert "name already exist!" in self.driver.page_source
 
         # Organization member can access
         with login_as(self.driver, self.root_url, self.org_member_username, self.org_member_password):

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.PersistenceException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
-import com.gitenter.capsid.service.exception.RepositoryNameNotUniqueException;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.MemberRepository;
@@ -71,17 +72,9 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			repositoryRepository.saveAndFlush(repository);
 		}
 		catch(PersistenceException e) {
-			/*
-			 * TODO:
-			 * Seems no easy way to catch, and/or read the inside exception 
-			 * `org.hibernate.exception.ConstraintViolationException`, and
-			 * then `org.postgresql.util.PSQLException`, and further distinguish
-			 * different exceptions?
-			 * There's a separate (log) error coming from `o.h.e.jdbc.spi.SqlExceptionHelper`
-			 * but it is not catchable.
-			 */
-			if (e.getMessage().contains("ConstraintViolationException")) {
-				throw new RepositoryNameNotUniqueException(repository);
+			if (e.getCause() instanceof ConstraintViolationException) {
+				ConstraintViolationException constraintViolationException = (ConstraintViolationException)e.getCause();
+				throw new ItemNotUniqueException(constraintViolationException, repository);
 			}
 			throw e;
 		}

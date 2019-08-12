@@ -58,7 +58,7 @@ class TestOrganizationCreation(OrganizationToBeCreatedTestSuite):
             self.assertEqual(urlparse(self.driver.current_url).path, "/organizations/create")
             assert org_name in self.driver.page_source
             assert name_crashing_org_display_name in self.driver.page_source
-            assert "Organization name already exist!" in self.driver.page_source
+            assert "name already exist!" in self.driver.page_source
 
             # Delete organization
             self.driver.get(urljoin(self.root_url, "/organizations/{}/settings/delete").format(org_id))

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.gitenter.capsid.dto.LoginDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
-import com.gitenter.capsid.service.exception.UsernameNotUniqueException;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 
 @Controller
 public class AuthorizationController {
@@ -56,6 +56,7 @@ public class AuthorizationController {
 		logger.debug("User registration attempt: "+memberRegisterDTO);
 		
 		if (errors.hasErrors()) {
+			System.out.println(errors.getFieldErrors());
 			return "authorization/register";
 		}
 		
@@ -63,8 +64,8 @@ public class AuthorizationController {
 			anonymousService.signUp(memberRegisterDTO);
 			logger.info("User registered: "+memberRegisterDTO+". IP: "+request.getRemoteAddr());
 		}
-		catch(UsernameNotUniqueException e) {
-			model.addAttribute("message", e.getShortMessage());
+		catch(ItemNotUniqueException e) {
+			e.addToErrors(errors);
 			return "authorization/register";
 		}
 		

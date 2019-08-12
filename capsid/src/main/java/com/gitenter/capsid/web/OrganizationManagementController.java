@@ -17,7 +17,7 @@ import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.MemberService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
-import com.gitenter.capsid.service.exception.OrganizationNameNotUniqueException;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
@@ -62,9 +62,9 @@ public class OrganizationManagementController {
 			MemberBean me = memberService.getMe(authentication);
 			organizationManagerService.createOrganization(me, organizationDTO);
 		}
-		catch(OrganizationNameNotUniqueException e) {
+		catch(ItemNotUniqueException e) {
 			model.addAttribute("organizationDTO", organizationDTO);
-			model.addAttribute("message", e.getShortMessage());
+			e.addToErrors(errors);
 			return "organization-management/create";
 		}
 		return "redirect:/";

@@ -18,7 +18,7 @@ import com.gitenter.capsid.service.MemberService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
-import com.gitenter.capsid.service.exception.RepositoryNameNotUniqueException;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
@@ -86,10 +86,10 @@ public class RepositoryManagementController {
 			MemberBean me = memberService.getMe(authentication);
 			repositoryManagerService.createRepository(me, organization, repositoryDTO, includeSetupFiles);
 		}
-		catch(RepositoryNameNotUniqueException e) {
+		catch(ItemNotUniqueException e) {
 			model.addAttribute("repositoryDTO", repositoryDTO); 
 			model.addAttribute("organization", organization);
-			model.addAttribute("message", e.getShortMessage());
+			e.addToErrors(errors);
 			return "repository-management/create";
 		}
 

@@ -4,12 +4,13 @@ import java.io.IOException;
 
 import javax.persistence.PersistenceException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.capsid.service.exception.UsernameNotUniqueException;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 
@@ -40,13 +41,9 @@ public class AnonymousServiceImpl implements AnonymousService {
 			memberRepository.saveAndFlush(memberBean);
 		}
 		catch(PersistenceException e) {
-			/*
-			 * TODO:
-			 * This logic just means one constrain is broken. It doesn't always mean the username
-			 * unique constrain is broken.
-			 */
-			if (e.getMessage().contains("ConstraintViolationException")) {
-				throw new UsernameNotUniqueException(memberBean);
+			if (e.getCause() instanceof ConstraintViolationException) {
+				ConstraintViolationException constraintViolationException = (ConstraintViolationException)e.getCause();
+				throw new ItemNotUniqueException(constraintViolationException, memberBean);
 			}
 			throw e;
 		}
