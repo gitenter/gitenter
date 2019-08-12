@@ -44,6 +44,13 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	@Autowired GitSource gitSource;
 	
+	/*
+	 * TODO:
+	 * Transaction setup in case map.saveAndFlush raises an exception, or file creation raises an
+	 * exception. Notice that a simple `@Transactional` will cause the application unable
+	 * to catch `RepositoryNameNotUniqueException` to redirect to the creation page. 
+	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	public void createRepository(

@@ -71,9 +71,8 @@ class TestAuthorization(BaseTestSuite):
         # Create another user with the same username
         self.driver.get(urljoin(self.root_url, "/register"))
         fill_signup_form(self.driver, username, password, display_name, email)
-        # TODO:
-        # Based on code it should redirect to form "Username already exist!" should in source.
-        print(self.driver.page_source)
+        self.assertEqual(urlparse(self.driver.current_url).path,"/register")
+        assert "Username already exist!" in self.driver.page_source
 
         # Login again and delete user herself
         self.driver.get(urljoin(self.root_url, "/login"))

@@ -61,11 +61,9 @@ public class AuthorizationController {
 		
 		try {
 			anonymousService.signUp(memberRegisterDTO);
-			System.out.println("==cc");
 			logger.info("User registered: "+memberRegisterDTO+". IP: "+request.getRemoteAddr());
 		}
 		catch(UsernameNotUniqueException e) {
-			System.out.println("==dd");
 			model.addAttribute("message", e.getShortMessage());
 			return "authorization/register";
 		}

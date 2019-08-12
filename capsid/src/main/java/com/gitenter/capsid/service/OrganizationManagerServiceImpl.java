@@ -35,6 +35,13 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
+	/*
+	 * TODO:
+	 * Transaction setup in case map.saveAndFlush raises an exception.
+	 * Notice that a simple `@Transactional` will cause the application unable
+	 * to catch `OrganizationNameNotUniqueException` to redirect to the creation page. 
+	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
+	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
 	public void createOrganization(MemberBean me, OrganizationDTO organizationDTO) throws IOException {
