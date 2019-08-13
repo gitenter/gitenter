@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.PersistenceException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
-import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.MemberRepository;

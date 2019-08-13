@@ -30,7 +30,9 @@ public class ItemNotUniqueException extends BackendException {
 	
 	/*
 	 * TODO:
-	 * A better mapping between the bean field name to DTO field name. Sanity test that field do exist.
+	 * Currently rely on the fact that the DTO class and the domain bean class need to have the 
+	 * same field/attribute name. Should be more protective on this, or even test and raise error
+	 * if it doesn't work.
 	 */
 	public void addToErrors(Errors errors) {
 		errors.rejectValue(beanAttributeName, errorCode, message);

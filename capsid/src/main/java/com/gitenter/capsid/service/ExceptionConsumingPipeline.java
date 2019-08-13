@@ -3,7 +3,9 @@ package com.gitenter.capsid.service;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
+import javax.persistence.Column;
 import javax.persistence.PersistenceException;
+import javax.persistence.Table;
 
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -16,17 +18,12 @@ class ExceptionConsumingPipeline {
 		
 		if (e.getCause() instanceof ConstraintViolationException) {
 			ConstraintViolationException constraintViolationException = (ConstraintViolationException)e.getCause();
-			SQLException psqlException = constraintViolationException.getSQLException();
+			SQLException sqlException = constraintViolationException.getSQLException();
+			
+			String tableName = bean.getClass().getAnnotation(Table.class).name();
 			Field[] attributes =  bean.getClass().getDeclaredFields();
 			for (Field attribute : attributes) {
-				
-				/*
-				 * TODO:
-				 * Not use bean class field names, but on use the table column name from JPA annotation for matching.
-				 * However, do save attribute name as that's what links the DTO and the bean.
-				 */
-				String tableColumnName = attribute.getName();
-				
+
 				/*
 				 * TODO:
 				 * Right now just check the table attribute name is in unique key name and SQL exception message.
@@ -36,7 +33,17 @@ class ExceptionConsumingPipeline {
 				 * > Detail: Key (name)=(org) already exists.
 				 * > Key (organization_id, name)=(6, repo) already exists.
 				 */ 
-				if ((psqlException.getMessage().contains(tableColumnName)) && constraintViolationException.getConstraintName().contains(tableColumnName)) {
+				String tableColumnName;
+				Column column = attribute.getAnnotation(Column.class);
+				if (column != null) {
+					tableColumnName = attribute.getAnnotation(Column.class).name();
+				}
+				else {
+					tableColumnName = attribute.getName();
+				}
+				if ((sqlException.getMessage().contains(tableColumnName)) && 
+						constraintViolationException.getConstraintName().contains(tableName) &&
+						constraintViolationException.getConstraintName().contains(tableColumnName)) {
 					
 					/* TODO:
 					 * Need to handle the cases unique throughout the system, or for particular

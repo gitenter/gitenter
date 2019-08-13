@@ -28,12 +28,6 @@ public class AnonymousServiceImpl implements AnonymousService {
 	@Override
 	public void signUp(MemberRegisterDTO memberRegisterDTO) throws IOException {
 		
-		/*
-		 * TODO:
-		 * Check if the email address has already been used throughout 
-		 * the system.
-		 */
-		
 		MemberBean memberBean = memberRegisterDTO.toBean(passwordEncoder);
 		try {
 			memberRepository.saveAndFlush(memberBean);
