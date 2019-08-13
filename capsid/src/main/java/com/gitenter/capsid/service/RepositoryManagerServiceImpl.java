@@ -72,11 +72,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			repositoryRepository.saveAndFlush(repository);
 		}
 		catch(PersistenceException e) {
-			if (e.getCause() instanceof ConstraintViolationException) {
-				ConstraintViolationException constraintViolationException = (ConstraintViolationException)e.getCause();
-				throw new ItemNotUniqueException(constraintViolationException, repository);
-			}
-			throw e;
+			ExceptionConsumingPipeline.consumePersistenceException(e, repository);
 		}
 		
 		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, me, RepositoryMemberRole.ORGANIZER);

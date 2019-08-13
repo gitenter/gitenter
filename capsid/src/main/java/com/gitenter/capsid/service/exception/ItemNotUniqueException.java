@@ -1,12 +1,6 @@
 package com.gitenter.capsid.service.exception;
 
-import java.lang.reflect.Field;
-
-import org.hibernate.exception.ConstraintViolationException;
-import org.postgresql.util.PSQLException;
 import org.springframework.validation.Errors;
-
-import com.gitenter.protease.domain.ModelBean;
 
 public class ItemNotUniqueException extends BackendException {
 
@@ -20,37 +14,25 @@ public class ItemNotUniqueException extends BackendException {
 	 */
 	private String errorCode = "Size";
 	
-	private String field;
+	private String beanAttributeName;
 	private String message;
 	
-	public ItemNotUniqueException(String message) {
-		super(message);
+	public ItemNotUniqueException(String beanAttributeName) {
+		super(beanAttributeName+" value breaks SQL constrain.");
+		this.beanAttributeName = beanAttributeName;
+		
+		/*
+		 * TODO:
+		 * already exist within what scope, e.g. "repo name already exist inside of this organization".
+		 */
+		this.message = (beanAttributeName+" already exist!");
 	}
 	
-	public ItemNotUniqueException(ConstraintViolationException constraintViolationException, ModelBean bean) {
-		super("Saving "+bean+" breaks SQL constrain.");
-		PSQLException psqlException = (PSQLException)constraintViolationException.getCause();
-		Field[] attributes =  bean.getClass().getDeclaredFields();
-		for (Field attribute : attributes) {
-			/*
-			 * TODO:
-			 * Should parse `PSQLException` better so if two attributes contain the same string
-			 * this will not break.
-			 * > Detail: Key (name)=(org) already exists.
-			 * > Key (organization_id, name)=(6, repo) already exists.
-			 * 
-			 * TODO:
-			 * Need to handle the cases unique throughout the system, or for particular
-			 * organization/... and probably write it to message. E.g. "repo name already exist throughout the organization!"
-			 */
-			if (psqlException.getMessage().contains(attribute.getName())) {
-				field = attribute.getName();
-				message = attribute.getName()+" already exist!";
-			}
-		}
-	}
-	
+	/*
+	 * TODO:
+	 * A better mapping between the bean field name to DTO field name. Sanity test that field do exist.
+	 */
 	public void addToErrors(Errors errors) {
-		errors.rejectValue(field, errorCode, message);
+		errors.rejectValue(beanAttributeName, errorCode, message);
 	}
 }

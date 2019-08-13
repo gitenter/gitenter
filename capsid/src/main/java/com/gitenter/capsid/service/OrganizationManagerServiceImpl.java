@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import javax.persistence.PersistenceException;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
-import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.capsid.service.exception.UnreachableException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
@@ -56,11 +54,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 			organizationRepository.saveAndFlush(organization);
 		}
 		catch(PersistenceException e) {
-			if (e.getCause() instanceof ConstraintViolationException) {
-				ConstraintViolationException constraintViolationException = (ConstraintViolationException)e.getCause();
-				throw new ItemNotUniqueException(constraintViolationException, organization);
-			}
-			throw e;
+			ExceptionConsumingPipeline.consumePersistenceException(e, organization);
 		}
 		
 		/*
