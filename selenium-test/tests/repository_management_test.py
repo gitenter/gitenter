@@ -120,9 +120,12 @@ class TestModifyRepositoryCollaborator(RepositoryCreatedTestSuite):
             fill_add_collaborator_form(self.driver, self.username, "Document editor")
             assert "You are attempting an invalid operation." in self.driver.page_source
 
+            # TODO:
+            # Right now not existing SQL queries all goes to "Not Found", no matter whether it is
+            # a GET or a POST. For POST we should give more explicit error message in the form.
             self.driver.get(collaborator_url)
             fill_add_collaborator_form(self.driver, "non_existing_username", "Document editor")
-            assert "status=500" in self.driver.page_source
+            assert "Not Found" in self.driver.page_source
 
             self.driver.get(collaborator_url)
             form_start = self.driver.find_element_by_xpath(

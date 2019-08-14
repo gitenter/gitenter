@@ -187,8 +187,10 @@ public class RepositoryManagementController {
 		MemberBean collaborator = memberService.getMemberByUsername(username);
 		/*
 		 * TODO:
-		 * Catch the errors and redirect to the original page,
-		 * if the collaborator manager username is invalid.
+		 * Catch the errors and redirect to the original page, if the collaborator manager 
+		 * username is invalid.
+		 * Right not it raises `*NotExistException` and catched by "Not Found" page which is
+		 * not intuitive.
 		 */
 		
 		repositoryManagerService.addCollaborator(repository, collaborator, roleName);

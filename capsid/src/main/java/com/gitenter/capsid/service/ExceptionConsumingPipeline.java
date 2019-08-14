@@ -4,8 +4,13 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceException;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -32,7 +37,25 @@ class ExceptionConsumingPipeline {
 				 * this will not break.
 				 * > Detail: Key (name)=(org) already exists.
 				 * > Key (organization_id, name)=(6, repo) already exists.
+				 * 
+				 * Things get even worse in cases of compound key, e.g. `repository_organization_id_name_key`
+				 * and `Key (organization_id, name)=(6, repo) already exists.` both have `organization` and `id` in it.
+				 * A better way is probably parse `Key (organization_id, name)=(6, repo) already exists.` and get the
+				 * list of `organization_id` and `name` as a word in a WHOLE, and compare them with table names,
+				 * but that depend on the detail of PSQL driver error message form. 
 				 */ 
+				if (attribute.getAnnotation(Id.class) != null) {
+					continue;
+				}
+				if (attribute.getAnnotation(Transient.class) != null) {
+					continue;
+				}
+				if ((attribute.getAnnotation(OneToMany.class) != null)
+						|| (attribute.getAnnotation(ManyToOne.class) != null)
+						|| (attribute.getAnnotation(ManyToMany.class) != null)) {
+					continue;
+				}
+				
 				String tableColumnName;
 				Column column = attribute.getAnnotation(Column.class);
 				if (column != null) {
