@@ -73,7 +73,7 @@ class TestModifyOrganizationProfile(OrganizationCreatedTestSuite):
 
             display_name_form_fill.send_keys(display_name_append)
             display_name_form_fill.submit()
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source
 
 
 class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
@@ -109,14 +109,14 @@ class TestModifyOrganizationMembers(OrganizationCreatedTestSuite):
             self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
             fill_add_member_form(self.driver, self.username)
 
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source
 
     def test_non_member_cannot_add_members(self):
         with login_as(self.driver, self.root_url, self.username, self.password):
             self.driver.get(urljoin(self.root_url, "organizations/{}/settings/members".format(self.org_id)))
             fill_add_member_form(self.driver, self.username)
 
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source
 
     def test_organization_manager_remove_member(self):
         with login_as(self.driver, self.root_url, self.org_manager_username, self.org_manager_password):

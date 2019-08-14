@@ -18,6 +18,7 @@ import com.gitenter.capsid.service.MemberService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
@@ -81,18 +82,16 @@ public class RepositoryManagementController {
 			return "repository-management/create";
 		}
 		
-		/*
-		 * TODO:
-		 * "createRepository()" includes setup a folder structure under the local git folder.
-		 * However, Spring(?) turns to be too smart that it caches the OS folder operation so
-		 * the second time it will not trigger the real OS mkdir.
-		 * 
-		 * In my selenium tests, I empty the local git folder structure and run another test.
-		 * However, the above optimization makes me to need to restart my server to make the
-		 * mkdir actual happen in the second run. Wonder whether there's a better way to solve
-		 * this problem. 
-		 */
-		repositoryManagerService.createRepository(authentication, organization, repositoryDTO, includeSetupFiles);
+		try {
+			MemberBean me = memberService.getMe(authentication);
+			repositoryManagerService.createRepository(me, organization, repositoryDTO, includeSetupFiles);
+		}
+		catch(ItemNotUniqueException e) {
+			model.addAttribute("repositoryDTO", repositoryDTO); 
+			model.addAttribute("organization", organization);
+			e.addToErrors(errors);
+			return "repository-management/create";
+		}
 
 		return "redirect:/organizations/"+organizationId;
 	}
@@ -188,8 +187,10 @@ public class RepositoryManagementController {
 		MemberBean collaborator = memberService.getMemberByUsername(username);
 		/*
 		 * TODO:
-		 * Catch the errors and redirect to the original page,
-		 * if the collaborator manager username is invalid.
+		 * Catch the errors and redirect to the original page, if the collaborator manager 
+		 * username is invalid.
+		 * Right not it raises `*NotExistException` and catched by "Not Found" page which is
+		 * not intuitive.
 		 */
 		
 		repositoryManagerService.addCollaborator(repository, collaborator, roleName);

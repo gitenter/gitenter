@@ -3,6 +3,8 @@ package com.gitenter.capsid.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,8 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
 @Controller
 @RequestMapping("/settings")
 public class MemberSettingsController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MemberSettingsController.class);
 	
 	private final MemberService memberService;
 	
@@ -81,6 +85,7 @@ public class MemberSettingsController {
 		 * > assert authentication.getName().equals(profileAfterChange.getUsername());
 		 */
 		memberService.updateMember(profileAfterChange);
+		logger.debug("User changed profile. New profile: "+profileAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/settings/profile";
@@ -132,6 +137,8 @@ public class MemberSettingsController {
 		}
 		
 		if (memberService.updatePassword(registerAfterChange, oldPassword)) {
+			logger.info("User changed password: "+registerAfterChange.getUsername());
+			
 			model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 			return "redirect:/settings/account/password";
 		}
@@ -142,12 +149,7 @@ public class MemberSettingsController {
 	}
 	
 	@RequestMapping(value="/account/delete", method=RequestMethod.GET)
-	public String showDeleteAccount(
-			Model model, 
-			Authentication authentication) throws Exception {
-		
-		System.out.println(authentication);
-		System.out.println(authentication.getAuthorities());
+	public String showDeleteAccount(Model model) throws Exception {
 		
 		return "settings/account/delete";
 	}
@@ -161,6 +163,8 @@ public class MemberSettingsController {
 		
 		if (memberService.deleteMember(authentication.getName(), password)) {
 			request.logout();
+			
+			logger.info("User account deleted. Username: "+authentication.getName()+". IP: "+request.getRemoteAddr());
 			
 			/*
 			 * TODO:

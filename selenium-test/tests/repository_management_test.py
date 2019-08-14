@@ -87,7 +87,7 @@ class TestModifyRepositoryProfile(RepositoryCreatedTestSuite):
             display_name_form_fill = self.driver.find_element_by_id("displayName")
             display_name_form_fill.send_keys(" v2")
             display_name_form_fill.submit()
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source
 
 
 class TestModifyRepositoryCollaborator(RepositoryCreatedTestSuite):
@@ -118,11 +118,14 @@ class TestModifyRepositoryCollaborator(RepositoryCreatedTestSuite):
             # be able to add as collaborator.
             self.driver.get(collaborator_url)
             fill_add_collaborator_form(self.driver, self.username, "Document editor")
-            assert "status=500" in self.driver.page_source
+            assert "You are attempting an invalid operation." in self.driver.page_source
 
+            # TODO:
+            # Right now not existing SQL queries all goes to "Not Found", no matter whether it is
+            # a GET or a POST. For POST we should give more explicit error message in the form.
             self.driver.get(collaborator_url)
             fill_add_collaborator_form(self.driver, "non_existing_username", "Document editor")
-            assert "status=500" in self.driver.page_source
+            assert "Not Found" in self.driver.page_source
 
             self.driver.get(collaborator_url)
             form_start = self.driver.find_element_by_xpath(

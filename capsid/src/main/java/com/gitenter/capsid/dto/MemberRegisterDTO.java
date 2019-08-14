@@ -11,6 +11,7 @@ import com.gitenter.protease.domain.auth.MemberBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /*
  * TODO:
@@ -19,6 +20,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString(callSuper=true)
 public class MemberRegisterDTO extends MemberProfileDTO {
 	
 	/*
@@ -31,6 +33,7 @@ public class MemberRegisterDTO extends MemberProfileDTO {
 	 */
 	@NotNull
 	@Size(min=2, max=16)
+	@ToString.Exclude
 	private String password;
 	
 	public MemberBean toBean(PasswordEncoder passwordEncoder) {

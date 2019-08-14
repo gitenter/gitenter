@@ -10,10 +10,12 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 
 public interface OrganizationManagerService {
 	
+	public void createOrganization(MemberBean me, OrganizationDTO organizationDTO) throws IOException;
+	
 	public void updateOrganization(
 			Authentication authentication, 
 			OrganizationBean organizationBean, 
-			OrganizationDTO organizationDTO);
+			OrganizationDTO organizationDTO) throws IOException;
 	
 	public void addOrganizationMember(OrganizationBean organization, MemberBean member);
 	public void removeOrganizationMember(

@@ -4,15 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.persistence.PersistenceException;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
-import com.gitenter.capsid.service.exception.InputIsNotQualifiedException;
+import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.MemberRepository;
@@ -29,6 +32,8 @@ import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 
 @Service
 public class RepositoryManagerServiceImpl implements RepositoryManagerService {
+	
+	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
@@ -38,10 +43,17 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	@Autowired GitSource gitSource;
 	
+	/*
+	 * TODO:
+	 * Transaction setup in case map.saveAndFlush raises an exception, or file creation raises an
+	 * exception. Notice that a simple `@Transactional` will cause the application unable
+	 * to catch `RepositoryNameNotUniqueException` to redirect to the creation page. 
+	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
 	public void createRepository(
-			Authentication authentication, 
+			MemberBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException {
@@ -54,10 +66,14 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 * Need to refresh the ID of "repository", so will not
 		 * work if saving by "organizationRepository".
 		 */
-		repositoryRepository.saveAndFlush(repository);
+		try {
+			repositoryRepository.saveAndFlush(repository);
+		}
+		catch(PersistenceException e) {
+			ExceptionConsumingPipeline.consumePersistenceException(e, repository);
+		}
 		
-		MemberBean member = memberRepository.findByUsername(authentication.getName()).get(0);
-		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, member, RepositoryMemberRole.ORGANIZER);
+		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, me, RepositoryMemberRole.ORGANIZER);
 		repositoryMemberMapRepository.saveAndFlush(map);
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
@@ -118,7 +134,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.fineByMemberAndOrganization(
 				collaborator, repository.getOrganization());
 		if (maps.size() == 0) {
-			throw new InputIsNotQualifiedException("User "+collaborator.getUsername()+" cannot be added "
+			throw new InvalidOperationException("User "+collaborator.getUsername()+" cannot be added "
 					+ "as a collaborator for repository "+repository.getName()+", since s/he is "
 					+ "not a member of organization "+repository.getOrganization().getName()+".");
 		}
@@ -158,10 +174,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
 	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
-		/*
-		 * TODO:
-		 * Audit log.
-		 */
+		auditLogger.info("Repository has been deleted: "+repository);
 		repositoryRepository.delete(repository);
 	}
 }

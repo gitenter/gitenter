@@ -10,6 +10,7 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /*
  * This class is used for validation only. Persistent is
@@ -22,6 +23,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class SshKeyFieldDTO {
 
 	/*

@@ -17,6 +17,7 @@ import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.MemberService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
@@ -53,11 +54,19 @@ public class OrganizationManagementController {
 			Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
-			model.addAttribute("organizationDTO", organizationDTO); 
+			model.addAttribute("organizationDTO", organizationDTO);
 			return "organization-management/create";
 		}
 		
-		memberService.createOrganization(authentication, organizationDTO);
+		try {
+			MemberBean me = memberService.getMe(authentication);
+			organizationManagerService.createOrganization(me, organizationDTO);
+		}
+		catch(ItemNotUniqueException e) {
+			model.addAttribute("organizationDTO", organizationDTO);
+			e.addToErrors(errors);
+			return "organization-management/create";
+		}
 		return "redirect:/";
 	}
 
@@ -104,8 +113,7 @@ public class OrganizationManagementController {
 			
 			return "organization-management/profile";
 		}
-		
-		assert (organization.getName().equals(organizationDTOAfterChange.getName()));
+
 		organizationManagerService.updateOrganization(authentication, organization, organizationDTOAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");

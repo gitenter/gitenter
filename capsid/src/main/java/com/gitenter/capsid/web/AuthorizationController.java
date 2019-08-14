@@ -1,7 +1,10 @@
 package com.gitenter.capsid.web;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.gitenter.capsid.dto.LoginDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 
 @Controller
 public class AuthorizationController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
 	
 	private final AnonymousService anonymousService;
 
@@ -43,13 +49,26 @@ public class AuthorizationController {
 			 * otherwise the <sf:errors> will not render. 
 			 */
 			@ModelAttribute("memberRegisterDTO") @Valid MemberRegisterDTO memberRegisterDTO, 
-			Errors errors) {
+			Errors errors,
+			Model model,
+			HttpServletRequest request) throws Exception {
+		
+		logger.debug("User registration attempt: "+memberRegisterDTO);
 		
 		if (errors.hasErrors()) {
+			System.out.println(errors.getFieldErrors());
 			return "authorization/register";
 		}
 		
-		anonymousService.signUp(memberRegisterDTO);
+		try {
+			anonymousService.signUp(memberRegisterDTO);
+			logger.info("User registered: "+memberRegisterDTO+". IP: "+request.getRemoteAddr());
+		}
+		catch(ItemNotUniqueException e) {
+			e.addToErrors(errors);
+			return "authorization/register";
+		}
+		
 		/*
 		 * TODO:
 		 * Should reply some kind of "register successful", rather than directly go back to

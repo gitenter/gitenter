@@ -34,9 +34,11 @@ import com.gitenter.protease.domain.review.ReviewBean;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(schema = "auth", name = "repository")
 public class RepositoryBean implements ModelBean {
@@ -68,6 +70,7 @@ public class RepositoryBean implements ModelBean {
 	@Column(name="is_public")
 	private Boolean isPublic;
 	
+	@ToString.Exclude
 	@LazyCollection(LazyCollectionOption.EXTRA)
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	/*
@@ -84,11 +87,13 @@ public class RepositoryBean implements ModelBean {
 		return commits.size();
 	}
 
+	@ToString.Exclude
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
+	@ToString.Exclude
 	private BranchPlaceholder branchPlaceholder;
 	
 	/*
@@ -105,6 +110,7 @@ public class RepositoryBean implements ModelBean {
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
+	@ToString.Exclude
 	private BranchesPlaceholder branchesPlaceholder;
 	
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
@@ -125,6 +131,7 @@ public class RepositoryBean implements ModelBean {
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
+	@ToString.Exclude
 	private TagPlaceholder tagPlaceholder;
 	
 	public TagBean getTag(String tagName) {
@@ -137,6 +144,7 @@ public class RepositoryBean implements ModelBean {
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
+	@ToString.Exclude
 	private TagsPlaceholder tagsPlaceholder;
 	
 	public Collection<TagBean> getTags() throws IOException, GitAPIException {

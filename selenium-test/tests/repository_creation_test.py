@@ -48,9 +48,18 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
             # Cannot create another repository with the same `repo_name`
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
-            fill_create_repository_form(self.driver, self.repo_name, "Another Repo Display Name", "Another Repo Description")
-            assert "status=500" in self.driver.page_source
-            assert "Organizations can only have distinguishable repository names." in self.driver.page_source
+            name_crashing_repo_display_name = "Another Repository with the Same Name"
+            name_crashing_repo_description = "Another Repository Description"
+            fill_create_repository_form(
+                self.driver, self.repo_name,
+                name_crashing_repo_display_name, name_crashing_repo_description)
+            self.assertEqual(
+                urlparse(self.driver.current_url).path,
+                "/organizations/{}/repositories/create".format(self.org_id, repo_id))
+            assert self.repo_name in self.driver.page_source
+            assert name_crashing_repo_display_name in self.driver.page_source
+            assert name_crashing_repo_description in self.driver.page_source
+            assert "name already exist!" in self.driver.page_source
 
         # Organization member can access
         with login_as(self.driver, self.root_url, self.org_member_username, self.org_member_password):
@@ -135,7 +144,7 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
         with login_as(self.driver, self.root_url, self.username, self.password):
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/{}".format(self.org_id, repo_id)))
             assert self.repo_display_name not in self.driver.page_source
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source
 
         # Delete repository
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
@@ -154,4 +163,4 @@ class TestRepositoryCreation(RepositoryToBeCreatedTestSuite):
 
             self.driver.get(urljoin(self.root_url, "/organizations/{}/repositories/create".format(self.org_id)))
             fill_create_repository_form(self.driver, self.repo_name, self.repo_display_name, self.repo_description)
-            assert "status=403" in self.driver.page_source
+            assert "type=Forbidden, status=403" in self.driver.page_source

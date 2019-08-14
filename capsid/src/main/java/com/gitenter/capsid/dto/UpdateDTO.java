@@ -1,5 +1,7 @@
 package com.gitenter.capsid.dto;
 
+import java.io.IOException;
+
 import com.gitenter.protease.domain.ModelBean;
 
 public interface UpdateDTO<ConcreteModelBean extends ModelBean> {
@@ -9,5 +11,5 @@ public interface UpdateDTO<ConcreteModelBean extends ModelBean> {
 	 * Is it possible to change this to an abstract class,
 	 * and use reflection to define the following methods?
 	 */
-	public void updateBean(ConcreteModelBean bean);
+	public void updateBean(ConcreteModelBean bean) throws IOException;
 }

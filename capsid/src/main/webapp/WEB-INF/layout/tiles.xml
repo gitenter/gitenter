@@ -101,5 +101,15 @@
   <definition name="documentation/template" extends="unauth-base">
     <put-attribute name="body" value="/WEB-INF/views/documentation/template.jsp" />
   </definition>
+  
+  <definition name="exception-handling/something-has-gone-wrong" extends="unauth-base">
+    <put-attribute name="body" value="/WEB-INF/views/exception-handling/something-has-gone-wrong.jsp" />
+  </definition>
+  <definition name="exception-handling/invalid-operation" extends="unauth-base">
+    <put-attribute name="body" value="/WEB-INF/views/exception-handling/invalid-operation.jsp" />
+  </definition>
+  <definition name="exception-handling/not-found" extends="unauth-base">
+    <put-attribute name="body" value="/WEB-INF/views/exception-handling/not-found.jsp" />
+  </definition>
 
 </tiles-definitions>

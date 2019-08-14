@@ -68,6 +68,18 @@ class TestAuthorization(BaseTestSuite):
                     find_cookie = True
             self.assertTrue(find_cookie)
 
+        # Create another user with the same username
+        self.driver.get(urljoin(self.root_url, "/register"))
+        fill_signup_form(self.driver, username, "dummy", "dummy", "dummy@dummy.com")
+        self.assertEqual(urlparse(self.driver.current_url).path, "/register")
+        assert "username already exist!" in self.driver.page_source
+
+        # Create another user with the same email address
+        self.driver.get(urljoin(self.root_url, "/register"))
+        fill_signup_form(self.driver, "dummy", "dummy", "dummy", email)
+        self.assertEqual(urlparse(self.driver.current_url).path, "/register")
+        assert "email already exist!" in self.driver.page_source
+
         # Login again and delete user herself
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, username, password)
@@ -96,9 +108,6 @@ class TestAuthorization(BaseTestSuite):
 
         fill_login_form(self.driver, username, password)
         assert "Invalid username and password!" in self.driver.page_source
-
-    def test_register_username_already_exists(self):
-        pass
 
 
 if __name__ == '__main__':

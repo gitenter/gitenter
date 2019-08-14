@@ -2,6 +2,8 @@ package com.gitenter.protease.dao.auth;
 
 import java.io.IOException;
 
+import javax.persistence.PersistenceException;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +18,6 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -41,10 +42,10 @@ public class RepositoryRepositoryTest {
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired OrganizationRepository organizationRepository;
 	
-	@Test(expected = RepositoryNameNotUniqueException.class)
+	@Test(expected = PersistenceException.class)
 	@DbUnitMinimalDataSetup
 	@DatabaseTearDown
-	public void testCannotSaveTwoRepositoryWithTheSameName() throws IOException, GitAPIException, RepositoryNameNotUniqueException {
+	public void testCannotSaveTwoRepositoryWithTheSameName() throws IOException, GitAPIException {
 		
 		RepositoryBean existingRepository = repositoryRepository.findById(1).get();
 		
@@ -60,7 +61,7 @@ public class RepositoryRepositoryTest {
 	@Test
 	@DbUnitMinimalDataSetup
 	@DatabaseTearDown
-	public void testDifferentOrganizationsCanHaveRepoWithTheSameName() throws IOException, GitAPIException, RepositoryNameNotUniqueException {
+	public void testDifferentOrganizationsCanHaveRepoWithTheSameName() throws IOException, GitAPIException {
 		
 		OrganizationBean organization = new OrganizationBean();
 		organization.setName("new_organization");
