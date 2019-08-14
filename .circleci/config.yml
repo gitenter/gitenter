@@ -233,23 +233,6 @@ jobs:
 
       - inline-postgres/initialize
 
-      # Be careful on whether we have a space after `#` in here and `application.properties`.
-      # Their mismatch will cause failures.
-      #
-      # TODO:
-      # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
-      # a seperated step so `staging` and `prod` can both have corresponding changes.
-      #
-      # TODO:
-      # Should ask Spring to go to env variable to get what profile it is. Therefore,
-      # we can share the same docker image and use it for different environments.
-      # Pass env variable from host machine down to container is a standard approach.
-      - run: sed -i "s/spring.profiles.active=local/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
-      - run: cat capsid/src/main/resources/application.properties
-
-      - run: sed -i "s/		System.setProperty(\"spring.profiles.active\", \"local\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
-      - run: cat hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
-
       - run: mvn clean install
       - run: mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
@@ -331,16 +314,6 @@ jobs:
 
     steps:
       - checkout
-
-      # TODO:
-      # Probably should add a step to build python wheels, and in Dockerfile just
-      # use the pre-build Dockerfile (rather than setup the environment in docker),
-      # so we don't need to manipulate Dockerfile in here.
-      # Or we may go with an environmental variable process (values local/docker/staging/production)
-      # and applications ask environmental variable what database to connect. Not
-      # sure which is a better approach.
-      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = StagingProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
-      - run: cat ssheep/Dockerfile
 
       - inline-aws-operation/deploy:
           deploy_env: "staging"

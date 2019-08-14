@@ -111,10 +111,22 @@ For Mac OS, enable Lombok is kind of tricky, but it works by following [this lin
 
 #### Up-and-run
 
+If Java code is changes:
+
 ```
 sh docker_build_java.sh
 docker-compose build web
+```
 
+If python code is changes:
+
+```
+docker-compose build git
+```
+
+All cases then:
+
+```
 docker-compose up
 ```
 

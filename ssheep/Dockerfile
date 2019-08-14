@@ -52,7 +52,6 @@ RUN pip3 install -r /tmp/pip-requirements.txt
 # to `sed` this line in CircleCI.
 COPY . /ssheep
 WORKDIR /ssheep
-RUN sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /ssheep/settings/profile.py
 
 # Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
 RUN mkdir /var/run/sshd
