@@ -29,5 +29,9 @@ profile_map = {
 }
 
 
-profile_name = environ['PYTHON_PROFILES_ACTIVE'] or "local"
+try:
+    profile_name = environ['PYTHON_PROFILES_ACTIVE']
+except KeyError:
+    profile_name = "local"
+
 profile = profile_map[profile_name]
