@@ -79,7 +79,7 @@ Resources:
     "environment": [
       {
         "name": "SPRING_PROFILES_ACTIVE",
-        "value": "${environment}"
+        "value": "${var.environment}"
       }
     ],
     "mountPoints": [
@@ -244,8 +244,12 @@ resource "aws_ecs_task_definition" "git" {
     ],
     "environment": [
       {
-        "name": "APP_PROFILES_ACTIVE",
-        "value": "${environment}"
+        "name": "PYTHON_PROFILES_ACTIVE",
+        "value": "${var.environment}"
+      },
+      {
+        "name": "SPRING_PROFILES_ACTIVE",
+        "value": "${var.environment}"
       }
     ],
     "mountPoints": [

@@ -29,5 +29,5 @@ profile_map = {
 }
 
 
-profile_name = environ['APP_PROFILES_ACTIVE'] or "local"
+profile_name = environ['PYTHON_PROFILES_ACTIVE'] or "local"
 profile = profile_map[profile_name]
