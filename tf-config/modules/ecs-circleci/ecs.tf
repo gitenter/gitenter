@@ -244,7 +244,7 @@ resource "aws_ecs_task_definition" "git" {
     ],
     "environment": [
       {
-        "name": "PYTHON_PROFILES_ACTIVE",
+        "name": "SPRING_PROFILES_ACTIVE",
         "value": "${var.environment}"
       },
       {

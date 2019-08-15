@@ -30,7 +30,7 @@ profile_map = {
 
 
 try:
-    profile_name = environ['PYTHON_PROFILES_ACTIVE']
+    profile_name = environ['SPRING_PROFILES_ACTIVE']
 except KeyError:
     profile_name = "local"
 

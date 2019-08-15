@@ -157,6 +157,14 @@ RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody
 # Relevant post:
 # https://serverfault.com/questions/608445/manage-ssh-users-with-mysql-backend
 
+# sshd deamon overrides the environment variables. To make the ones in container still
+# available when we ssh into it (so when the authorized/hook applications execute), we
+# need to manually add them in through script.
+# https://docs.docker.com/engine/examples/running_ssh_service/#environment-variables
+# https://stackoverflow.com/questions/55182220/i-cant-get-env-var-in-the-docker-container
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 

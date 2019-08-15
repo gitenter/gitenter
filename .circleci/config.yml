@@ -319,15 +319,8 @@ jobs:
     # through web UI (so save in the database) the password is not needed. Should add test on that.
     #
     # TODO:
-    # After changed to global variable the above feature breaks (tested manually). `ssh` into
-    # container with correct password and `printenv` cannot find `PYTHON_PROFILES_ACTIVE` (and
-    # other customized setting) in list. Also `sh get_authorized_keys_content.sh` inside doesn't
-    # work.
-    # However, if I `ssh` into the box and `docker ps` and `docker exec` into the git container,
-    # I can see `PYTHON_PROFILES_ACTIVE` and execute `sh get_authorized_keys_content.sh` to get
-    # proper result.
-    # Looks like from different ways of login I see different environment (`printenv` there are
-    # also) other differences, and only the later one works. Don't understand why.
+    # environment variable passed in, locally execute `python3 get_authorized_keys_content.py` gives
+    # reasonable result. However, it seems when I `ssh` in I was still asked password.
     #
     # TODO:
     # Realized sometimes it works while sometimes not (it will say password is not
