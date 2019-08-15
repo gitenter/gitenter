@@ -120,11 +120,6 @@ orbs:
           - setup_remote_docker:
               docker_layer_caching: true
 
-          # TODO:
-          # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
-          # is fixed and it can only be used once -- although we can customize `tag` so we can
-          # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
-          # ourselves so we can have better control to deploy multiple images to different containers.
           - aws-ecr/build-and-push-image:
               checkout: false
               attach-workspace: true
@@ -147,7 +142,7 @@ orbs:
               # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
               # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
               # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
-              repo: "<<parameters.deploy_env>>-<<parameters.service_infix>>-repository"
+              repo: "<<parameters.service_infix>>-repository"
               tag: "${CIRCLE_SHA1}"
 
           # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
@@ -176,7 +171,7 @@ orbs:
           - aws-ecs/update-service:
               family: "<<parameters.deploy_env>>-<<parameters.service_infix>>-service"
               cluster-name: "<<parameters.deploy_env>>-cluster"
-              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-<<parameters.service_infix>>-repository:${CIRCLE_SHA1}"
+              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.service_infix>>-repository:${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
       confirm-web-deployment:
@@ -187,7 +182,7 @@ orbs:
             type: string
         steps:
           - run:
-              name: Test the deployment
+              name: Web deployment sanity check
               command: |
                 TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.deploy_env>>-cluster --services <<parameters.deploy_env>>-<<parameters.service_infix>>-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                 ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
@@ -322,6 +317,17 @@ jobs:
     # TODO:
     # Now we can `ssh git@<git_lb_hostname>` to that server. And if the SSH key is added
     # through web UI (so save in the database) the password is not needed. Should add test on that.
+    #
+    # TODO:
+    # After changed to global variable the above feature breaks (tested manually). `ssh` into
+    # container with correct password and `printenv` cannot find `PYTHON_PROFILES_ACTIVE` (and
+    # other customized setting) in list. Also `sh get_authorized_keys_content.sh` inside doesn't
+    # work.
+    # However, if I `ssh` into the box and `docker ps` and `docker exec` into the git container,
+    # I can see `PYTHON_PROFILES_ACTIVE` and execute `sh get_authorized_keys_content.sh` to get
+    # proper result.
+    # Looks like from different ways of login I see different environment (`printenv` there are
+    # also) other differences, and only the later one works. Don't understand why.
     #
     # TODO:
     # Realized sometimes it works while sometimes not (it will say password is not
