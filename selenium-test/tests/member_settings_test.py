@@ -7,6 +7,7 @@ from forms.authorization_form import (
     fill_login_form,
     login_as
 )
+from forms.member_settings_form import add_ssh_key
 
 
 class TestMemberSetting(RegisteredTestSuite):
@@ -132,17 +133,12 @@ class TestAddSshKey(RegisteredTestSuite):
     def tearDown(self):
         super(TestAddSshKey, self).tearDown()
 
-    def _add_ssh_key(self, ssh_key):
-        self.driver.get(urljoin(self.root_url, "/settings/ssh"))
-        form_start = self.driver.find_element_by_id("value")
-        form_start.send_keys(ssh_key)
-        form_start.submit()
-
     def test_add_valid_ssh_key(self):
         ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9 user@email.com"  # noqa: ignore=E501
 
         with login_as(self.driver, self.root_url, self.username, self.password):
-            self._add_ssh_key(ssh_key)
+            self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+            add_ssh_key(self.driver, ssh_key)
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
             assert "AAAAB3NzaC1yc2EAAAADAQABAAABAQCv" in self.driver.page_source
@@ -151,7 +147,8 @@ class TestAddSshKey(RegisteredTestSuite):
         ssh_key = "invalid_ssh_key"
 
         with login_as(self.driver, self.root_url, self.username, self.password):
-            self._add_ssh_key(ssh_key)
+            self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+            add_ssh_key(self.driver, ssh_key)
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
             assert "The SSH key does not have a valid format!" in self.driver.find_element_by_id("value.errors").text
@@ -160,7 +157,8 @@ class TestAddSshKey(RegisteredTestSuite):
         ssh_key = "ssh-rsa AAAAB3 user@email.com"
 
         with login_as(self.driver, self.root_url, self.username, self.password):
-            self._add_ssh_key(ssh_key)
+            self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+            add_ssh_key(self.driver, ssh_key)
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/ssh")
             assert "The SSH key does not have a valid format!" in self.driver.find_element_by_class_name("error").text

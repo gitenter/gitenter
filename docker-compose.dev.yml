@@ -14,8 +14,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/selenium-test/Dockerfile
-    # volumes:
-    #   - ./selenium-test:/selenium-test
+    volumes:
+      - ./selenium-test:/selenium-test-2
     depends_on:
       - git
       - web
