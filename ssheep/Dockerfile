@@ -103,6 +103,34 @@ RUN sed -i 's/#AuthorizedKeysCommand none/AuthorizedKeysCommand \/ssheep\/get_au
 # have a nobody user. So we just use the default `nobody` user.
 RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody/' /etc/ssh/sshd_config
 
+# sshd deamon overrides the environment variables. By default you'll not see any
+# environment varible in the container (the ones you can see by `docker-compose exec git
+# bash` then `env`).
+# https://docs.docker.com/engine/examples/running_ssh_service/#environment-variables
+#
+# There are two ways to change it.
+#
+# (1) Available for both `ssh <user>@<host> env` and `ssh <user>@<host>` then `env`:
+# edit `PermitUserEnvironment yes` in `/etc/ssh/sshd_config`
+# and define in `.ssh/environment`.
+#
+# (2) Available only in `ssh <user>@<host>` then `env`, but not in `ssh <user>@<host> env`:
+# edit `AcceptEnv` in `/etc/ssh/sshd_config`
+# edit `SendEnv` in `/etc/ssh/ssh_config`
+# and define in `.ssh/config`.
+# Or
+# define in `/etc/profile`.
+#
+# Very unfortunate, both cannot let the environment varible to be seen by `AuthorizedKeysCommand`.
+# It doesn't work because if we `ssh -v <user>@<host>` we'll see the environment is send AFTER
+# successfully login.
+RUN sed -i 's/#PermitUserEnvironment no/PermitUserEnvironment yes/' /etc/ssh/sshd_config
+RUN sed -i 's/AcceptEnv LANG LC_\*/AcceptEnv LANG  LC_\* SPRING_PROFILES_ACTIVE/' /etc/ssh/sshd_config
+RUN sed -i 's/    SendEnv LANG LC_\*/    SendEnv LANG LC_\* SPRING_PROFILES_ACTIVE/' /etc/ssh/ssh_config
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 # Other tools includes:
 # (1) There's a patch to access public keys through an LDAP server which may be helpful:
 # https://code.google.com/archive/p/openssh-lpk/
