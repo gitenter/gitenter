@@ -111,6 +111,8 @@ For Mac OS, enable Lombok is kind of tricky, but it works by following [this lin
 
 #### Up-and-run
 
+TODO: Use java image in `docker-compose.dev.yml` for build.
+
 ```
 sh docker_build_java.sh
 docker-compose build web

@@ -71,27 +71,20 @@ virtualenv venv
 (venv) deactivate
 ```
 
+TODO: Make docker work I changed `venvgit2` to `pygit2`. Not sure if it breaks above.
+
 When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uniphil/venvgit2/issues/23). But the test can be executed with no problem (not sure if that's because in my local computer I have been successfully setup `libgit2`).
 
 Can't use `pipenv` as it is not compatible with `venvgit2`.
 
 #### Docker
 
-Test image in docker (selenium running on local) is really painful.
-
-Setup:
-
 ```
-sed -i'.original' -e 's/profile = LocalProfile()/profile = DockerProfile()/' selenium-test/settings/profile.py
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml build selenium-test
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml run selenium-test bash
+curl web:8080
+pytest tests/authorization_test.py
 ```
-
-Teardown:
-
-```
-sed -i'.original' -e 's/profile = DockerProfile()/profile = LocalProfile()/' selenium-test/settings/profile.py
-```
-
-Right now we don't have a container for selenium environment yet (should be very similar to the one we use in CircleCI).
 
 ## TODO
 

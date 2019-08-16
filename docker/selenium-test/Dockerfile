@@ -1,32 +1,28 @@
-FROM ubuntu:18.04
+FROM circleci/python:3.6.2-stretch-browsers
 
-RUN apt-get update && apt-get -y install \
-    apt-utils \
-    wget \
-    zip \
-    gzip \
-    python3-pip
+RUN sudo apt-get update && sudo apt-get install -y curl libssh2-1 cmake
 
-RUN pip3 install selenium
-
-WORKDIR /download
-
-RUN wget -O ./geckodriver-v0.23.0-linux64.tar.gz "https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz"
-RUN tar xzvf geckodriver-v0.23.0-linux64.tar.gz
-RUN mv geckodriver /usr/local/bin
-
-RUN wget -O ./chromedriver_linux64.zip "https://chromedriver.storage.googleapis.com/2.45/chromedriver_linux64.zip"
-RUN unzip chromedriver_linux64.zip
-RUN mv chromedriver /usr/local/bin
-
-RUN apt-get update && apt-get -y install \
-    firefox
-
+# `chromedriver` has been installed in the parent image.
+# We'd like to also install geckodriver so `webdriver.Firefox()`
+# can also work.
+#
 # TODO:
-# We would like to use a "headless browser" to run the test, as we don't have a
-# GUI for our docker container so Firefox/Chrome are not our choices.
-# Possible resources:
-# `HtmlUnitDriver` - https://github.com/SeleniumHQ/selenium/wiki/HtmlUnitDriver
-#                  - https://stackoverflow.com/questions/4618373/how-do-i-use-the-htmlunit-driver-with-selenium-from-python/5518175#5518175
-# `xvfb` - https://stackoverflow.com/questions/10399557/is-it-possible-to-run-selenium-firefox-web-driver-without-a-gui
-# Ghost Driver - https://github.com/detro/ghostdriver
+# Currently still not work with error
+# > PermissionError: [Errno 13] Permission denied: 'geckodriver.log'
+RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz | sudo tar zx
+RUN sudo mv geckodriver /usr/local/bin
+RUN sudo chown circleci:circleci /usr/local/bin/geckodriver
+
+RUN curl -L https://github.com/libgit2/libgit2/archive/v0.27.4.tar.gz | sudo tar zx
+RUN cd libgit2-0.27.4 && sudo cmake . && sudo make && sudo make install
+RUN sudo rm -rf libgit2-0.27.4
+
+COPY selenium-test /selenium-test
+RUN sudo sudo pip3 install -r /selenium-test/pip-requirements.txt
+
+RUN sudo sed -i'.original' -e 's/profile = LocalProfile()/profile = DockerProfile()/' /selenium-test/settings/profile.py
+RUN sudo chown -R circleci:circleci selenium-test
+
+WORKDIR /selenium-test
+
+CMD ["/bin/bash"]
