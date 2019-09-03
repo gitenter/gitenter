@@ -1,4 +1,3 @@
-from os.path import expanduser, join
 from urllib.parse import urljoin
 
 from testsuites.organization_created_testsuite import OrganizationCreatedTestSuite
@@ -35,11 +34,8 @@ class RepositoryToBeCreatedTestSuite(OrganizationCreatedTestSuite):
             fill_add_member_form(self.driver, self.repo_organizer_username)
 
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            with open(join(expanduser("~"), ".ssh/id_rsa.pub")) as f:
-                ssh_key = f.read().strip()
-
             self.driver.get(urljoin(self.root_url, "/settings/ssh"))
-            add_ssh_key(self.driver, ssh_key)
+            add_ssh_key(self.driver, self.profile.get_ssh_key())
 
     def tearDown(self):
         self.driver.get(urljoin(self.root_url, "/login"))

@@ -1,4 +1,5 @@
 import boto3
+from os.path import expanduser, join
 
 from pathlib import Path, PosixPath
 
@@ -58,6 +59,15 @@ class Profile(object):
             # > _pygit2.GitError: invalid hex digit in length: 'SSH-'
             return "git://{}/home/git/{}/{}.git".format(
                 self.git_server_remote_location, org_name, repo_name)
+
+    # TODO:
+    # For local profile we don't need SSH key for git related test. However by doing
+    # so we need `~/.ssh/id_rsa.pub` to be existing. In that case, consider using a
+    # dummy one (it needs to be a valid key otherwise cannot be added) so we don't need
+    # the above pre-requisite.
+    def get_ssh_key(self):
+        with open(join(expanduser("~"), ".ssh/id_rsa.pub")) as f:
+            return f.read().strip()
 
 
 class LocalProfile(Profile):

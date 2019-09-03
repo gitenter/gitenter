@@ -25,6 +25,24 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         local_path = self.profile.local_git_sandbox_path / self.repo_name
         local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
 
+        # Currently the below line will raise an `_pygit2.GitError` error. Error can be
+        # reproduced by either
+        # > pygit2.clone_repository("git://git/home/git/asdf/asdfrepo.git", "/home/circleci/Workspace/test")
+	    # or
+        # > pygit2.clone_repository("git://git/asdf/asdfrepo.git", "/home/circleci/Workspace/test")
+        # (org `asdf` with `asdfrepo` is created by hand through web UI)
+        #
+        # > pygit2.clone_repository("git://github.com/ozooxo/notes.git", "/home/circleci/Workspace/test")
+        # works fine.
+        #
+        # Note that that's in case both
+        # > git clone git@git:/home/git/asdf/asdfrepo.git
+        # and
+        # > git clone git@github.com:ozooxo/notes.git
+        # works.
+        #
+        # Looks it is because `pygit2` is using a form of git URL which is not quite
+        # consistent with the official git command.
         pygit2.clone_repository(
             self.profile.get_remote_git_url(self.org_name, self.repo_name),
             str(local_path))
