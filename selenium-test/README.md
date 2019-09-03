@@ -82,7 +82,7 @@ Can't use `pipenv` as it is not compatible with `venvgit2`.
 ```
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml build selenium-test
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml run selenium-test bash
-curl web:8080
+curl web:8080/login
 pytest tests/authorization_test.py
 ```
 

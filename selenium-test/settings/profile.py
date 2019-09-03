@@ -80,4 +80,4 @@ class StagingProfile(Profile):
     ecs_service_name = "staging-web-app-service"
 
 
-profile = LocalProfile()
+profile = DockerProfile()

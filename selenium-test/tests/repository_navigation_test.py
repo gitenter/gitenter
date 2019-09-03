@@ -52,6 +52,9 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_ignored_commit(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
+            # self.driver.get(urljoin(self.root_url, "/settings/ssh"))
+            # print(self.driver.page_source)
+
             git_commit_datapack = GitCommitDatapack(
                 "add commit without setup file", self.org_member_username, self.org_member_email)
             git_commit_datapack.add_file(AddToGitConcreteFile("a_irrelevant_file.txt", "A irrelevant file"))
