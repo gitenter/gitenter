@@ -13,10 +13,6 @@ RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.24.0/gec
 RUN sudo mv geckodriver /usr/local/bin
 RUN sudo chown circleci:circleci /usr/local/bin/geckodriver
 
-RUN curl -L https://github.com/libgit2/libgit2/archive/v0.27.4.tar.gz | sudo tar zx
-RUN cd libgit2-0.27.4 && sudo cmake . && sudo make && sudo make install
-RUN sudo rm -rf libgit2-0.27.4
-
 COPY selenium-test /selenium-test
 RUN sudo sudo pip3 install -r /selenium-test/pip-requirements.txt
 
