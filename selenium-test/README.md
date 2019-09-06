@@ -4,16 +4,10 @@
 
 ### Mac OS
 
-Need to install standalone selenium server:
+Beside `selenium` pypi library, need to install standalone selenium server:
 
 ```
 $ brew install selenium-server-standalone
-```
-
-python library:
-
-```
-$ pip3 install selenium
 ```
 
 and browser driver:
@@ -28,26 +22,20 @@ $ mv chromedriver /usr/local/bin
 
 Add add-ons (a.k.a Selenium IDEs) to the existing browsers ([Chrome](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd?hl=en), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/selenium-ide/), ...) has nothing to do with the corresponding drivers (`ChromeDriver`, `GeckoDriver`, ...). That's for create simple scripts/assist in exploratory testing. Also, notice that add add-ons is a user-level action (no password needed).
 
-### `libgit2`
+### Git library
 
-```
-brew install libssh2
-```
+Popular choices include `pygit2` and `GitPython`. The difference is `pygit2` is backed by the `libssh2` library, while `GitPython` uses the git install in the local machine.
 
-```
-wget https://github.com/libgit2/libgit2/archive/v0.27.4.tar.gz
-tar xzf v0.27.4.tar.gz
-cd libgit2-0.27.4/
-cmake .
-make
-sudo make install
-```
++ `pygit2`
+  + Pro:
+    + Can specify git username and email, rather than inherit from host machine.
+  + Cons:
+    + Hard to install
+    + Does not support ssh protocol/port other than 22.
+    + Awkward URL pattern (`git://github.com/libgit2/pygit2.git` rather than `git@github.com:libgit2/pygit2.git` or `ssh://git@github.com:[port]/libgit2/pygit2.git`, and no idea how to generalize it to absolute path e.g. `git@github.com:/home/git/libgit2/pygit2.git`)
+    + Weird `_pygit2.GitError` error run in container, although command line works fine.
 
-```
-pip3 install pygit2
-```
-
-In virtual environment, `pygit2` is really hard to be installed. Luckily the hard part is done by [`venvgit2`](https://pypi.org/project/venvgit2/).
+Therefore, we choose `GitPython` ([tutorial](https://gitpython.readthedocs.io/en/stable/tutorial.html) and [API reference](https://gitpython.readthedocs.io/en/stable/reference.html)).
 
 ## Run Tests
 
@@ -71,11 +59,7 @@ virtualenv venv
 (venv) deactivate
 ```
 
-TODO: Make docker work I changed `venvgit2` to `pygit2`. Not sure if it breaks above.
-
-When `pip install -r pip-requirements.txt`, I [got error](https://github.com/uniphil/venvgit2/issues/23). But the test can be executed with no problem (not sure if that's because in my local computer I have been successfully setup `libgit2`).
-
-Can't use `pipenv` as it is not compatible with `venvgit2`.
+TODO: setup pipenv/Pipfile.
 
 #### Docker
 
@@ -88,5 +72,4 @@ pytest tests/authorization_test.py
 
 ## TODO
 
-- [ ] Move from local environment to virtual environment (`pipenv` for now). To make it work in CI we probably need to configure CircleCI python image to be capable with `cmake`/... for the annoying `pygit2` issue.
 - [ ] Only test happy path.

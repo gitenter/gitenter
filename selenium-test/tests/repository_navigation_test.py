@@ -1,6 +1,6 @@
+from git import Repo
 import unittest
 from urllib.parse import urlparse, urljoin
-import pygit2
 
 from testsuites.repository_created_testsuite import RepositoryCreatedTestSuite
 from forms.authorization_form import login_as
@@ -25,25 +25,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         local_path = self.profile.local_git_sandbox_path / self.repo_name
         local_path.mkdir(mode=0o777, parents=False, exist_ok=False)
 
-        # Currently the below line will raise an `_pygit2.GitError` error. Error can be
-        # reproduced by either
-        # > pygit2.clone_repository("git://git/home/git/asdf/asdfrepo.git", "/home/circleci/Workspace/test")
-	    # or
-        # > pygit2.clone_repository("git://git/asdf/asdfrepo.git", "/home/circleci/Workspace/test")
-        # (org `asdf` with `asdfrepo` is created by hand through web UI)
-        #
-        # > pygit2.clone_repository("git://github.com/ozooxo/notes.git", "/home/circleci/Workspace/test")
-        # works fine.
-        #
-        # Note that that's in case both
-        # > git clone git@git:/home/git/asdf/asdfrepo.git
-        # and
-        # > git clone git@github.com:ozooxo/notes.git
-        # works.
-        #
-        # Looks it is because `pygit2` is using a form of git URL which is not quite
-        # consistent with the official git command.
-        pygit2.clone_repository(
+        Repo.clone_from(
             self.profile.get_remote_git_url(self.org_name, self.repo_name),
             str(local_path))
 
@@ -72,9 +54,8 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             # self.driver.get(urljoin(self.root_url, "/settings/ssh"))
             # print(self.driver.page_source)
-
-            git_commit_datapack = GitCommitDatapack(
-                "add commit without setup file", self.org_member_username, self.org_member_email)
+            
+            git_commit_datapack = GitCommitDatapack("add commit without setup file")
             git_commit_datapack.add_file(AddToGitConcreteFile("a_irrelevant_file.txt", "A irrelevant file"))
 
             local_path = self._clone_repo_and_return_local_path()
@@ -93,7 +74,6 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
                 "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert self.repo_display_name in self.driver.page_source
             assert git_commit_datapack.commit_message in self.driver.page_source
-            assert git_commit_datapack.username in self.driver.page_source
 
             commit_web_elements = self.driver.find_elements_by_class_name("commit-in-list")
             self.assertEqual(len(commit_web_elements), 1)
@@ -104,8 +84,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_invalid_commit(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack(
-                "add commit setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
             git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "- [tag]{refer-not-exist} a traceable item."))
 
@@ -124,7 +103,6 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
                 "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert self.repo_display_name in self.driver.page_source
             assert git_commit_datapack.commit_message in self.driver.page_source
-            assert git_commit_datapack.username in self.driver.page_source
 
             commit_web_elements = self.driver.find_elements_by_class_name("commit-in-list")
             self.assertEqual(len(commit_web_elements), 1)
@@ -135,7 +113,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_one_file(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(
                 AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
             git_commit_datapack.add_file(
@@ -165,7 +143,6 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
                 "/organizations/{}/repositories/{}/branches/master/commits".format(self.org_id, self.repo_id)))
             assert self.repo_display_name in self.driver.page_source
             assert git_commit_datapack.commit_message in self.driver.page_source
-            assert git_commit_datapack.username in self.driver.page_source
 
             commit_link = self.driver.find_element_by_class_name("commit-in-list").get_attribute("action")
             self.driver.get(commit_link)
@@ -195,7 +172,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_two_files_in_root(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
             git_commit_datapack.add_file(AddToGitConcreteFile("file1.md", "- [tag1] a traceable item."))
             git_commit_datapack.add_file(AddToGitConcreteFile("file2.md", "- [tag2]{tag1} another traceable item."))
@@ -234,7 +211,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_two_files_in_nested_folder(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(
                 AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
             git_commit_datapack.add_file(
@@ -277,7 +254,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
 
     def test_valid_commit_display_image(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            git_commit_datapack = GitCommitDatapack("add commit setup file", self.org_member_username, self.org_member_email)
+            git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
             git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "![alt text](image.jpg \"image title\")"))
             git_commit_datapack.add_file(AddToGitSymlinkFile("image.jpg", "resources/sample_files/sample.jpg"))
