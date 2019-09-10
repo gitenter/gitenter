@@ -1,0 +1,27 @@
+FROM ubuntu:18.04
+
+RUN useradd -ms /bin/bash git
+RUN echo 'git:secretpassword' | chpasswd
+
+RUN apt-get update && apt-get -y install \
+  tomcat8
+
+# # Need to run tomcat using user `git`, otherwise `git` container will have access
+# # problem when modify the file.
+# # https://askubuntu.com/questions/371809/run-tomcat7-as-tomcat7-or-any-other-user
+# RUN sed -i "s/TOMCAT8_USER=tomcat8/TOMCAT8_USER=git/g" /etc/default/tomcat8
+# RUN sed -i "s/TOMCAT8_GROUP=tomcat8/TOMCAT8_GROUP=git/g" /etc/default/tomcat8
+# RUN chown -R git:adm /var/log/tomcat8 # originally tomcat8:adm
+# RUN chown -R git:git /var/lib/tomcat8/webapps # originally tomcat8:tomcat8
+# RUN chown -R git:git /var/lib/tomcat8/lib # originally tomcat8:tomcat8
+# #RUN chown newuser /etc/authbind/byport/80 # Maybe needed, check later. Not appliable locally.
+# #RUN chown newuser /etc/authbind/byport/443
+# RUN chown git:adm /var/cache/tomcat8 # originally tomcat:adm
+# #RUN chown -R git:git /var/cache/tomcat8/Catalina # originally tomcat8:tomcat8 # file no longer exist
+# RUN chown -R :git /var/lib/tomcat8/conf/*
+
+RUN rm -rf /var/lib/tomcat8/webapps/ROOT
+COPY ./target/capsid-0.0.2-prototype.war /var/lib/tomcat8/webapps/ROOT
+
+EXPOSE 8080
+CMD ["sh", "/usr/share/tomcat8/bin/catalina.sh", "run"]

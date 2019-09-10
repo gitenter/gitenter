@@ -20,3 +20,12 @@ services:
       - git
       - web
     tty: true
+
+  git-trivial:
+    build:
+      context: .
+      dockerfile: ./docker/git-trivial/Dockerfile
+    depends_on:
+      - git
+      - web
+    tty: true

@@ -21,6 +21,8 @@ RUN sudo chown -R circleci:circleci /selenium-test
 
 USER circleci
 RUN cd ~ && ssh-keygen -t rsa -b 4096 -f $HOME/.ssh/id_rsa -N "" -C "my@email.com"
+RUN git config --global user.name "My Name"
+RUN git config --global user.email "my@email.com"
 # Until now, if manually add this generated public key to database (through web UI),
 # the following command works without asking for a password.
 # git clone git@git:/home/git/server.git
