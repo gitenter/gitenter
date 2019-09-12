@@ -27,11 +27,13 @@ RUN echo 'git:secretpassword' | chpasswd
 # the two.
 RUN usermod -g root git
 
+# post-receive hook needs Java
 RUN apt-get update && apt-get -y install \
   openssh-server \
   git \
   python3-pip \
-  libpq-dev
+  libpq-dev \
+  openjdk-11-jre-headless
 
 RUN pip3 install pipenv
 

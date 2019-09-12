@@ -80,34 +80,7 @@ Are you sure you want to continue connecting (yes/no)?
 
 TODO:
 
-Currently cannot `git push origin master` to git container. There are two fold of problems:
-
-(1) From `git-trivial` (git version 2.17.0):
-
-```
-error: remote unpack failed: unable to create temporary object directory
-To `git clone git@git:/home/git/asdf/asdf.git` and edit and `git push origin master`
-> error: remote unpack failed: unable to create temporary object directory
-> To git:/home/git/asdf/asdf.git
->  ! [remote rejected] master -> master (unpacker error)
-> error: failed to push some refs to 'git@git:/home/git/asdf/asdf.git'
-```
-
-This problem is because git folders have permission
-
-```
-drwxr-x---  7 root root 4096 Sep 10 22:05 asdf.git
-```
-
-while this command is executed using user `git`.
-
-To resolve it, we can try:
-
-+ Run tomcat using user git.
-+ `chown` git folders after created by JGit. Confirmed if manually `chown -R git dddd.git` through command line it will resolve the problem.
-+ As a workaround, may `git clone root@git:/home/git/asdf/asdf.git` but need to allow root login first.
-
-(2) From selenium-test (git version 2.11.0):
+Currently cannot `git push origin master` to git container (git version 2.17.0) from selenium-test (git version 2.11.0), we'll get the following error.
 
 ```
 > fatal: git upload-pack: protocol error, expected to get sha, not '0000000000000000000000000000000000000000 2b2c5f062dd40bddc7553a8626de0e02565e000d refs/heads/master'
