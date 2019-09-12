@@ -71,22 +71,16 @@ pytest tests/authorization_test.py
 pytest tests/repository_navigation_test.py
 ```
 
-Currently need to manually yes
+TODO:
+
+Need to manually react
 
 ```
 ECDSA key fingerprint is SHA256:43SkBHMqnv29vH4PaZVdPZtrE+jmHDVqMRV1VEqCS88.
 Are you sure you want to continue connecting (yes/no)?
 ```
 
-TODO:
-
-Currently cannot `git push origin master` to git container (git version 2.17.0) from selenium-test (git version 2.11.0), we'll get the following error.
-
-```
-> fatal: git upload-pack: protocol error, expected to get sha, not '0000000000000000000000000000000000000000 2b2c5f062dd40bddc7553a8626de0e02565e000d refs/heads/master'
-```
-
-Not sure if version un-matching is another problem, and what's the reason to cause the `git upload-pack` error.
+in both command line `git clone` and in `selenium-test`.
 
 ## TODO
 

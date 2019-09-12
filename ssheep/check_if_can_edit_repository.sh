@@ -1,8 +1,5 @@
 #!/bin/bash
 
-git-upload-pack /home/git/rrr/raa.git
-exit 0
-
 # This is the SSH forced command file which finally stays at `/ssheep/check_if_can_edit_repository.sh`.
 
 # Exclude all commands which is not comes from a git protocol.
@@ -70,23 +67,12 @@ echo "SSH_ORIGINAL_COMMAND: $SSH_ORIGINAL_COMMAND" >> /tmp/stdout.txt
 
 tr_command=$(echo $SSH_ORIGINAL_COMMAND | tr -d "'")
 echo "tr_command: $tr_command" >> /tmp/stdout.txt
+repo_path=$(cut -d' ' -f2 <<< "$tr_command")
 
 # Need to use "bash" rather than "sh" when execute this script.
 # Otherwise it gives error
 # > Syntax error: redirection unexpected
 # Refer to https://stackoverflow.com/questions/2462317/bash-syntax-error-redirection-unexpected
-
-# TODO:
-# Right now only work for `git clone ssh://git@localhost:8822/home/git/org/repo.git`
-# Need to change to `-f1` and `-f2` if `git clone git@localhost:rrr/raa.git`
-# Should have a compatible way of doing it.
-original_arg=$(cut -d' ' -f2 <<< "$tr_command")
-org_name=$(cut -d'/' -f4 <<< "$original_arg")
-repo_full_name=$(cut -d'/' -f5 <<< "$original_arg")
-repo_name=$(cut -d'.' -f1 <<< "$repo_full_name")
-echo "org_name: $org_name" >> /tmp/stdout.txt
-echo "repo_full_name: $repo_full_name" >> /tmp/stdout.txt
-echo "repo_name: $repo_name" >> /tmp/stdout.txt
 
 # Execute `check_if_can_edit_repository.py` and get the result. Based on
 # the result, decide whether the $SSH_ORIGINAL_COMMAND should be executed
@@ -109,7 +95,7 @@ echo "repo_name: $repo_name" >> /tmp/stdout.txt
 # Which is also not clear to show the user what is happening.
 
 cd /ssheep
-output=$(python3 check_if_can_edit_repository.py $username $org_name $repo_name)
+output=$(python3 check_if_can_edit_repository.py $username $repo_path)
 echo "output: $output" >> /tmp/stdout.txt
 if [[ "$output" == "True" ]];
 then
@@ -118,3 +104,6 @@ then
 #else
 #	echo "User $username is not authorized to do git operations for repository $org_name/$repo_name."
 fi
+
+# TODO:
+# echo "user cannot login" or "repo_path not valid" as $output of python script.

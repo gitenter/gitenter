@@ -13,20 +13,6 @@ RUN echo 'root:secretpassword' | chpasswd
 RUN useradd -ms /bin/bash git
 RUN echo 'git:secretpassword' | chpasswd
 
-# By the setup of the `web` docker container, Tomcat is running under user `root`
-# and the git files are created under that user.
-# > drwxr-x--- 7 root root 4096 Jul 19 22:24 repo.git
-# Without this modification git will complain
-# > fatal: Could not read from remote repository.
-# >
-# > Please make sure you have the correct access rights
-# > and the repository exists.
-#
-# TODO:
-# Rather then simply add user `git` to the `root` group, consider consolidate
-# the two.
-RUN usermod -g root git
-
 # post-receive hook needs Java
 RUN apt-get update && apt-get -y install \
   openssh-server \
