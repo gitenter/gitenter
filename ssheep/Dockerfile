@@ -146,6 +146,14 @@ RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody
 # Relevant post:
 # https://serverfault.com/questions/608445/manage-ssh-users-with-mysql-backend
 
+# TODO:
+# This is right now needed because although capsid makes repo.git has owner git,
+# the org folder is still root:root. `git clone` works fine without SSH force command
+# but will fail if we go through SSH force command (when the key is in authorized_keys).
+#
+# Consider simplify the case, or `chown` when create the folder.
+RUN usermod -g root git
+
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 

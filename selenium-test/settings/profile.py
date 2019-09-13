@@ -51,10 +51,18 @@ class Profile(object):
             return "file://{}".format(str(remote_git_path))
         elif type(self.git_server_remote_location) == str:
             # May use the SSH protocol one if we need a customized port.
-            return "git@{}:{}/{}.git".format(
+            return "git@{}:/home/git/{}/{}.git".format(
                 self.git_server_remote_location, org_name, repo_name)
             # return "ssh://git@{}:22/{}/{}.git".format(
             #     self.git_server_remote_location, org_name, repo_name)
+            #
+            # TODO:
+            # For some reason right now `git@{}:{}/{}.git` doesn't work if we go through SSH
+            # forced command (therefore, `check_if_can_edit_repository.sh`). Error message:
+            # > fatal: 'org/repo.git' does not appear to be a git repository
+            # > fatal: Could not read from remote repository.
+            # >
+            # > Please make sure you have the correct access rights
 
     # TODO:
     # For local profile we don't need SSH key for git related test. However by doing
