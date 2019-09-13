@@ -2,9 +2,10 @@ version: "3"
 services:
 
   java-build:
-    image: openjdk:11-jdk
+    image: maven:3.6.2-jdk-11
     volumes:
       - ../gitenter:/gitenter
+    working_dir: /gitenter
     depends_on:
       - postgres
       - redis-session
@@ -15,7 +16,7 @@ services:
       context: .
       dockerfile: ./docker/selenium-test/Dockerfile
     volumes:
-      - ./selenium-test:/selenium-test-2
+      - ./selenium-test:/selenium-test-in-dev
     depends_on:
       - git
       - web

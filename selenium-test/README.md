@@ -66,10 +66,29 @@ TODO: setup pipenv/Pipfile.
 ```
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml build selenium-test
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml run selenium-test bash
-curl web:8080/login
-pytest tests/authorization_test.py
-pytest tests/repository_navigation_test.py
+circleci@c88fa4db458b:/selenium-test$ curl web:8080/login
+circleci@c88fa4db458b:/selenium-test$ pytest tests/authorization_test.py
+circleci@c88fa4db458b:/selenium-test$ pytest tests/repository_navigation_test.py
 ```
+
+If want to edit/debug while running the test, inside of the container
+
+```
+cd /selenium-test-in-dev
+```
+
+TODO:
+
+It seems there's a race condition between (1) when the SSH key is written into the database, (2) when the dynamically generated `authorized_keys` will include that key, and (3) whether `check_if_can_edit_repository.py` will return `True`.
+
+If SSH key is not in `authorized_keys` it will ask password. If it is in but `check_if_can_edit_repository.py` returns false, it will return
+
+> Authentication failed.
+> fatal: Could not read from remote repository.
+>
+> Please make sure you have the correct access rights
+
+It happens once I passed all tests without any problem.
 
 TODO:
 

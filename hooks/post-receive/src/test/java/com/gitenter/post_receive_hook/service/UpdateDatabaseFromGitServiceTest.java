@@ -48,6 +48,11 @@ import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
+/*
+ * TODO:
+ * Mock DataSource so we don't have dependency on `ActiveProfiles`.
+ * Also remove `sed` in `docker_build_java.sh`.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=PostReceiveConfig.class)
 @ActiveProfiles("local")
