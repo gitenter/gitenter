@@ -34,7 +34,7 @@ class RepositoryToBeCreatedTestSuite(OrganizationCreatedTestSuite):
             fill_add_member_form(self.driver, self.repo_organizer_username)
 
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
-            # It is very tricky that the local SSH need need to be setup as the person
+            # It is very tricky that the local SSH key need to be setup as the person
             # who is doing git command. As we only have one SSH key (in the selenium
             # machine) and the actual key is unique (and used to distinguish who the
             # user) is. If another user is having the same SSH key:

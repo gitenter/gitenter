@@ -2,7 +2,9 @@
 
 ## Setup
 
-### Mac OS
+### Local
+
+#### Selenium Driver (Mac OS)
 
 Beside `selenium` pypi library, need to install standalone selenium server:
 
@@ -22,7 +24,7 @@ $ mv chromedriver /usr/local/bin
 
 Add add-ons (a.k.a Selenium IDEs) to the existing browsers ([Chrome](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd?hl=en), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/selenium-ide/), ...) has nothing to do with the corresponding drivers (`ChromeDriver`, `GeckoDriver`, ...). That's for create simple scripts/assist in exploratory testing. Also, notice that add add-ons is a user-level action (no password needed).
 
-### Git library
+#### Git library
 
 Popular choices include `pygit2` and `GitPython`. The difference is `pygit2` is backed by the `libssh2` library, while `GitPython` uses the git install in the local machine.
 
@@ -37,7 +39,7 @@ Popular choices include `pygit2` and `GitPython`. The difference is `pygit2` is 
 
 Therefore, we choose `GitPython` ([tutorial](https://gitpython.readthedocs.io/en/stable/tutorial.html) and [API reference](https://gitpython.readthedocs.io/en/stable/reference.html)).
 
-## Run Tests
+#### Run Tests
 
 ```
 python3 -m unittest tests.authorization_test
@@ -61,7 +63,7 @@ virtualenv venv
 
 TODO: setup pipenv/Pipfile.
 
-#### Docker
+### Docker
 
 ```
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml build selenium-test
@@ -77,6 +79,8 @@ If want to edit/debug while running the test, inside of the container
 cd /selenium-test-in-dev
 ```
 
+but then need to manually `sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /selenium-test/settings/profile.py` which affects host file.
+
 TODO:
 
 It seems there's a race condition between (1) when the SSH key is written into the database, (2) when the dynamically generated `authorized_keys` will include that key, and (3) whether `check_if_can_edit_repository.py` will return `True`.
@@ -88,18 +92,7 @@ If SSH key is not in `authorized_keys` it will ask password. If it is in but `ch
 >
 > Please make sure you have the correct access rights
 
-It happens once I passed all tests without any problem.
-
-TODO:
-
-Need to manually react
-
-```
-ECDSA key fingerprint is SHA256:43SkBHMqnv29vH4PaZVdPZtrE+jmHDVqMRV1VEqCS88.
-Are you sure you want to continue connecting (yes/no)?
-```
-
-in both command line `git clone` and in `selenium-test`.
+Right now, I see it happens in Linux/Ubuntu but everything passes with no problem in Mac.
 
 ## TODO
 
