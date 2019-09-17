@@ -1,10 +1,7 @@
 from urllib.parse import urljoin, urlparse
 
 from testsuites.organization_to_be_created_testsuite import OrganizationToBeCreatedTestSuite
-from forms.authorization_form import (
-    login_as,
-    click_logout
-)
+from forms.authorization_form import login_as
 from forms.organization_management_form import (
     fill_create_organization_form,
     fill_add_member_form,

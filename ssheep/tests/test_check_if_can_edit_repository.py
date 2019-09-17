@@ -205,6 +205,6 @@ class TestParseRepoPath(TestCase):
         repo_path = "/invalid/repo/path.git"
         self.assertTrue(parse_repo_path(repo_path), None)
 
-    def test_parse_repo_path_with_invalid_absolute_path(self):
-        repo_path = "/invalid/repo/path.git"
+    def test_parse_repo_path_with_invalid_relative_path(self):
+        repo_path = "invalid/repo/path.git"
         self.assertTrue(parse_repo_path(repo_path), None)
