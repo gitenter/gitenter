@@ -1,4 +1,5 @@
 import boto3
+from Crypto.PublicKey import RSA
 from os.path import expanduser, join
 
 from pathlib import Path, PosixPath
@@ -64,14 +65,16 @@ class Profile(object):
             # >
             # > Please make sure you have the correct access rights
 
-    # TODO:
-    # For local profile we don't need SSH key for git related test. However by doing
-    # so we need `~/.ssh/id_rsa.pub` to be existing. In that case, consider using a
-    # dummy one (it needs to be a valid key otherwise cannot be added) so we don't need
-    # the above pre-requisite.
-    def get_ssh_key(self):
+    def _generate_dummy_ssh_key(self):
+        key = RSA.generate(2048)
+        return key.publickey().exportKey('OpenSSH').decode("utf-8")
+
+    def _get_ssh_key_from_local_file(self):
         with open(join(expanduser("~"), ".ssh/id_rsa.pub")) as f:
             return f.read().strip()
+
+    def get_ssh_key(self):
+        raise NotImplementedError
 
 
 class LocalProfile(Profile):
@@ -79,11 +82,19 @@ class LocalProfile(Profile):
     git_server_remote_location = Path.home() / "Workspace" / "gitenter-test" / "local-git-server"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
+    # Only need a dummy solution for this, as in local test we bypasses
+    # SSH authorization.
+    def get_ssh_key(self):
+        return self._generate_dummy_ssh_key()
+
 
 class DockerProfile(Profile):
     web_domain = "http://web:8080/"
     git_server_remote_location = "git"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
+
+    def get_ssh_key(self):
+        return self._get_ssh_key_from_local_file()
 
 
 class StagingProfile(Profile):
@@ -92,6 +103,17 @@ class StagingProfile(Profile):
 
     ecs_cluster_name = "staging-cluster"
     ecs_service_name = "staging-web-app-service"
+
+    # TODO:
+    # Ideally we want a real SSH key in the host machine (the machine which runs
+    # selenium test), so we can run git related tests on it. However, CircleCI
+    # image doesn't have an easy way to set it up. Error out by:
+    # > E       FileNotFoundError: [Errno 2] No such file or directory: '/home/circleci/.ssh/id_rsa.pub'
+    #
+    # Therefore, we temperarily use the dummy SSH key, so at least other tests can
+    # still be running on CircleCI.
+    def get_ssh_key(self):
+        return self.__generate_dummy_ssh_key()
 
 
 profile = LocalProfile()
