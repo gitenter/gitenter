@@ -111,6 +111,8 @@ For Mac OS, enable Lombok is kind of tricky, but it works by following [this lin
 
 #### Up-and-run
 
+`docker-compose.yml` include containers for the product to be up and run, while `docker-compose.dev.yml` are containers for compiling, testing, etc. Assuming images are properly compiled and build, to make the product up and run executes:
+
 ```
 docker-compose up
 ```
