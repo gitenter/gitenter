@@ -13,25 +13,13 @@ RUN echo 'root:secretpassword' | chpasswd
 RUN useradd -ms /bin/bash git
 RUN echo 'git:secretpassword' | chpasswd
 
-# By the setup of the `web` docker container, Tomcat is running under user `root`
-# and the git files are created under that user.
-# > drwxr-x--- 7 root root 4096 Jul 19 22:24 repo.git
-# Without this modification git will complain
-# > fatal: Could not read from remote repository.
-# >
-# > Please make sure you have the correct access rights
-# > and the repository exists.
-#
-# TODO:
-# Rather then simply add user `git` to the `root` group, consider consolidate
-# the two.
-RUN usermod -g root git
-
+# post-receive hook needs Java
 RUN apt-get update && apt-get -y install \
   openssh-server \
   git \
   python3-pip \
-  libpq-dev
+  libpq-dev \
+  openjdk-11-jre-headless
 
 RUN pip3 install pipenv
 
@@ -192,6 +180,14 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # https://stackoverflow.com/questions/55182220/i-cant-get-env-var-in-the-docker-container
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# TODO:
+# This is right now needed because although capsid makes repo.git has owner git,
+# the org folder is still root:root. `git clone` works fine without SSH force command
+# but will fail if we go through SSH force command (when the key is in authorized_keys).
+#
+# Consider simplify the case, or `chown` when create the folder.
+RUN usermod -g root git
 
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

@@ -1,4 +1,6 @@
 import boto3
+from Crypto.PublicKey import RSA
+from os.path import expanduser, join
 
 from pathlib import Path, PosixPath
 
@@ -49,15 +51,30 @@ class Profile(object):
             remote_git_path = self.git_server_remote_location / org_name / "{}.git".format(repo_name)
             return "file://{}".format(str(remote_git_path))
         elif type(self.git_server_remote_location) == str:
-            # Note that `pygit2.clone_repository` needs URL in a very special format.
-            # pygit2:    git://github.com/libgit2/pygit2.git
-            # git clone: git@github.com:libgit2/pygit2.git
-            #            ssh://git@github.com:[port]/libgit2/pygit2.git
-            # with a customized port, `git clone` only works for `ssh:` format,
-            # while `pygit2.clone_repository` doesn't support that, with error
-            # > _pygit2.GitError: invalid hex digit in length: 'SSH-'
-            return "git://{}/home/git/{}/{}.git".format(
+            # May use the SSH protocol one if we need a customized port.
+            return "git@{}:/home/git/{}/{}.git".format(
                 self.git_server_remote_location, org_name, repo_name)
+            # return "ssh://git@{}:22/{}/{}.git".format(
+            #     self.git_server_remote_location, org_name, repo_name)
+            #
+            # TODO:
+            # For some reason right now `git@{}:{}/{}.git` doesn't work if we go through SSH
+            # forced command (therefore, `check_if_can_edit_repository.sh`). Error message:
+            # > fatal: 'org/repo.git' does not appear to be a git repository
+            # > fatal: Could not read from remote repository.
+            # >
+            # > Please make sure you have the correct access rights
+
+    def _generate_dummy_ssh_key(self):
+        key = RSA.generate(2048)
+        return key.publickey().exportKey('OpenSSH').decode("utf-8")
+
+    def _get_ssh_key_from_local_file(self):
+        with open(join(expanduser("~"), ".ssh/id_rsa.pub")) as f:
+            return f.read().strip()
+
+    def get_ssh_key(self):
+        raise NotImplementedError
 
 
 class LocalProfile(Profile):
@@ -65,11 +82,19 @@ class LocalProfile(Profile):
     git_server_remote_location = Path.home() / "Workspace" / "gitenter-test" / "local-git-server"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
+    # Only need a dummy solution for this, as in local test we bypasses
+    # SSH authorization.
+    def get_ssh_key(self):
+        return self._generate_dummy_ssh_key()
+
 
 class DockerProfile(Profile):
-    web_domain = "http://localhost:8886/"
-    git_server_remote_location = "gitenter.local"
+    web_domain = "http://web:8080/"
+    git_server_remote_location = "git"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
+
+    def get_ssh_key(self):
+        return self._get_ssh_key_from_local_file()
 
 
 class StagingProfile(Profile):
@@ -78,6 +103,17 @@ class StagingProfile(Profile):
 
     ecs_cluster_name = "staging-cluster"
     ecs_service_name = "staging-web-app-service"
+
+    # TODO:
+    # Ideally we want a real SSH key in the host machine (the machine which runs
+    # selenium test), so we can run git related tests on it. However, CircleCI
+    # image doesn't have an easy way to set it up. Error out by:
+    # > E       FileNotFoundError: [Errno 2] No such file or directory: '/home/circleci/.ssh/id_rsa.pub'
+    #
+    # Therefore, we temperarily use the dummy SSH key, so at least other tests can
+    # still be running on CircleCI.
+    def get_ssh_key(self):
+        return self._generate_dummy_ssh_key()
 
 
 profile = LocalProfile()

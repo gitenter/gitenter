@@ -342,11 +342,6 @@ jobs:
     working_directory: ~/selenium
     steps:
       - checkout
-
-      # TODO:
-      # venvgit2 cannot be installed with the following error:
-      # https://github.com/uniphil/venvgit2/issues/24
-      - run: sed -i "/venvgit2==0.28.1/d" selenium-test/pip-requirements.txt
       - run: sed -i "s/profile = LocalProfile()/profile = StagingProfile()/g" selenium-test/settings/profile.py
 
       - run:
