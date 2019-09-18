@@ -69,8 +69,8 @@ class Profile(object):
         key = RSA.generate(2048)
         return key.publickey().exportKey('OpenSSH').decode("utf-8")
 
-    def _get_ssh_key_from_local_file(self):
-        with open(join(expanduser("~"), ".ssh/id_rsa.pub")) as f:
+    def _get_ssh_key_from_local_file(self, filepath):
+        with open(filepath) as f:
             return f.read().strip()
 
     def get_ssh_key(self):
@@ -94,7 +94,7 @@ class DockerProfile(Profile):
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
     def get_ssh_key(self):
-        return self._get_ssh_key_from_local_file()
+        return self._get_ssh_key_from_local_file(join(expanduser("~"), ".ssh/id_rsa.pub"))
 
 
 class StagingProfile(Profile):
@@ -105,15 +105,11 @@ class StagingProfile(Profile):
     ecs_service_name = "staging-web-app-service"
 
     # TODO:
-    # Ideally we want a real SSH key in the host machine (the machine which runs
-    # selenium test), so we can run git related tests on it. However, CircleCI
-    # image doesn't have an easy way to set it up. Error out by:
-    # > E       FileNotFoundError: [Errno 2] No such file or directory: '/home/circleci/.ssh/id_rsa.pub'
-    #
-    # Therefore, we temperarily use the dummy SSH key, so at least other tests can
-    # still be running on CircleCI.
+    # This is kind of a hack, depending on the CircleCI image implementation detail
+    # and the operation(s) we defined in `.circleci/config.yml`. We should fine a
+    # less fragile implementation.
     def get_ssh_key(self):
-        return self._generate_dummy_ssh_key()
+        return self._get_ssh_key_from_local_file("/home/circleci/.ssh/id_rsa.pub")
 
 
 profile = LocalProfile()

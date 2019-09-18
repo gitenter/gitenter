@@ -392,24 +392,16 @@ jobs:
       - run: pwd
       - run: cd /home/circleci/.ssh && ls
       - run: cat /home/circleci/.ssh/id_rsa
-      # - run: cat /home/circleci/.ssh/id_rsa.pub
-      - run: ssh-agent sh -c 'ssh-add; ssh-add -L'
+      # - run: ssh-agent sh -c 'ssh-add; ssh-add -L'
       - run: ssh-keygen -y -f /home/circleci/.ssh/id_rsa > /home/circleci/.ssh/id_rsa.pub
       - run: cd /home/circleci/.ssh && ls
       - run: cat /home/circleci/.ssh/id_rsa
       - run: cat /home/circleci/.ssh/id_rsa.pub
 
-      # https://circleci.com/docs/2.0/add-ssh-key/
-      # - add_ssh_keys:
-      #     fingerprints:
-      #       - "SO:ME:FIN:G:ER:PR:IN:T"
+      - run: cd selenium-test && pytest
 
-      # TODO:
-      # Run all tests, especially add tests which needs git.
-      # - run: cd selenium-test && pytest tests/authorization_test.py tests/member_settings_test.py tests/organization_creation_test.py tests/organization_management_test.py tests/repository_creation_test.py tests/repository_management_test.py
-      #
-      # - store_test_results:
-      #     path: selenium-test/test-results/
+      - store_test_results:
+          path: selenium-test/test-results/
 
   deploy:
     docker:
