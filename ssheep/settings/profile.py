@@ -1,6 +1,3 @@
-from os import environ
-
-
 class Profile(object):
     pass
 
@@ -21,17 +18,4 @@ class ProductionProfile(Profile):
     database_url = "localhost"
 
 
-profile_map = {
-    "local": LocalProfile(),
-    "docker": DockerProfile(),
-    "staging": StagingProfile(),
-    "production": ProductionProfile()
-}
-
-
-try:
-    profile_name = environ['PYTHON_PROFILES_ACTIVE']
-except KeyError:
-    profile_name = "local"
-
-profile = profile_map[profile_name]
+profile = LocalProfile()

@@ -155,10 +155,6 @@ Need to manually create AWS user w/ `access_key` and `secret_key`, save them to 
 
 Code deployment is currently setup through CircleCI.
 
-TODO:
-
-+ [ ] Code deployment in local through docker build.
-
 ## Unclassified TODOs and features
 
 + [x] A better CSS.
