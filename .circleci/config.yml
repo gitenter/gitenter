@@ -398,7 +398,8 @@ jobs:
       - run: cat /home/circleci/.ssh/id_rsa
       - run: cat /home/circleci/.ssh/id_rsa.pub
 
-      - run: cd selenium-test && pytest
+      - run: cd selenium-test && python3 settings/profile.py
+      # - run: cd selenium-test && pytest
 
       - store_test_results:
           path: selenium-test/test-results/
