@@ -113,7 +113,7 @@ class StagingProfile(Profile):
     # Therefore, we temperarily use the dummy SSH key, so at least other tests can
     # still be running on CircleCI.
     def get_ssh_key(self):
-        return self.__generate_dummy_ssh_key()
+        return self._generate_dummy_ssh_key()
 
 
 profile = LocalProfile()
