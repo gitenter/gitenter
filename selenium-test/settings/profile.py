@@ -126,6 +126,3 @@ class StagingProfile(Profile):
 
 
 profile = LocalProfile()
-
-print(profile.get_web_domain())
-print(profile.get_remote_git_url("org", "repo"))
