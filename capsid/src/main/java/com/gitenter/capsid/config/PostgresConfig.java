@@ -28,7 +28,7 @@ public class PostgresConfig {
 
 	@Profile("local")
 	@Bean
-	public DataSource stsDataSource() {
+	public DataSource localDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/gitenter");

@@ -11,7 +11,7 @@ import com.github.springtestdbunit.bean.DatabaseConfigBean;
 import com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean;
 
 @Configuration
-public class TestDatabaseConfig {
+public class TestPostgresConfig {
 	
 	@Bean
 	public DataSource dataSource() {
@@ -24,6 +24,26 @@ public class TestDatabaseConfig {
 	}
 	
 	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaAuthDatabaseConnection() {
+		return getDataConnectionFromSourceAndSchema(dataSource(), "auth");
+	}
+	
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaGitDatabaseConnection() {
+		return getDataConnectionFromSourceAndSchema(dataSource(), "git");
+	}
+	
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaTraceabilityDatabaseConnection() {
+		return getDataConnectionFromSourceAndSchema(dataSource(), "traceability");
+	}
+	
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean schemaReviewDatabaseConnection() {
+		return getDataConnectionFromSourceAndSchema(dataSource(), "review");
+	}
+	
+	@Bean
 	public DatabaseConfigBean dbUnitDatabaseConfig() {
 		DatabaseConfigBean config = new DatabaseConfigBean();
 		config.setDatatypeFactory(new PostgresqlDataTypeFactory());
@@ -31,39 +51,13 @@ public class TestDatabaseConfig {
 		return config;
 	}
 	
-	@Bean
-	public DatabaseDataSourceConnectionFactoryBean schemaAuthDatabaseConnection() {
+	private DatabaseDataSourceConnectionFactoryBean getDataConnectionFromSourceAndSchema(
+			DataSource dataSource, String schemaName) {
 		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
-		dataConnection.setDataSource(dataSource());
+		dataConnection.setDataSource(dataSource);
 		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
-		dataConnection.setSchema("auth");
+		dataConnection.setSchema(schemaName);
 		return dataConnection;
-	}
-	
-	@Bean
-	public DatabaseDataSourceConnectionFactoryBean schemaGitDatabaseConnection() {
-		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
-		dataConnection.setDataSource(dataSource());
-		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
-		dataConnection.setSchema("git");
-		return dataConnection;
-	}
-	
-	@Bean
-	public DatabaseDataSourceConnectionFactoryBean schemaTraceabilityDatabaseConnection() {
-		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
-		dataConnection.setDataSource(dataSource());
-		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
-		dataConnection.setSchema("traceability");
-		return dataConnection;
-	}
-	
-	@Bean
-	public DatabaseDataSourceConnectionFactoryBean schemaReviewDatabaseConnection() {
-		DatabaseDataSourceConnectionFactoryBean dataConnection = new DatabaseDataSourceConnectionFactoryBean();
-		dataConnection.setDataSource(dataSource());
-		dataConnection.setDatabaseConfig(dbUnitDatabaseConfig());
-		dataConnection.setSchema("review");
-		return dataConnection;
+		
 	}
 }

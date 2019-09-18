@@ -12,6 +12,7 @@ init_database () {
     export PGPASSWORD=zooo
     psql -U gitenter -d $dbname -w -f /database/initiate_database.sql
     psql -U gitenter -d $dbname -w -f /database/privilege_control.sql
+    psql -U gitenter -d $dbname -w -f /database/alter_sequence.sql
 }
 
 create_user

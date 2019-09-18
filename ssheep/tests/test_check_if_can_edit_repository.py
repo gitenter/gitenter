@@ -10,6 +10,7 @@ from models import (
     Repository,
     RepositoryMemberMap
 )
+from check_if_can_edit_repository import parse_repo_path
 
 
 class TestSshKeyManager(TestCase):
@@ -188,3 +189,22 @@ class TestSshKeyManager(TestCase):
 
         self.assertFalse(
             RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+
+
+class TestParseRepoPath(TestCase):
+
+    def test_parse_repo_path_with_absolute_path(self):
+        repo_path = "/home/git/org/repo.git"
+        self.assertTrue(parse_repo_path(repo_path), ("org", "repo"))
+
+    def test_parse_repo_path_with_relative_path(self):
+        repo_path = "org/repo.git"
+        self.assertTrue(parse_repo_path(repo_path), ("org", "repo"))
+
+    def test_parse_repo_path_with_invalid_absolute_path(self):
+        repo_path = "/invalid/repo/path.git"
+        self.assertTrue(parse_repo_path(repo_path), None)
+
+    def test_parse_repo_path_with_invalid_relative_path(self):
+        repo_path = "invalid/repo/path.git"
+        self.assertTrue(parse_repo_path(repo_path), None)
