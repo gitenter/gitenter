@@ -7,16 +7,8 @@ executors:
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-      # TODO:
-      # Currently follows
       # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
       # https://circleci.com/docs/2.0/postgres-config/
-      # Consider using a custom docker image.
       #
       # TODO:
       # The below line is in log:
@@ -257,6 +249,8 @@ jobs:
           # Must be relative path from root
           paths:
             - capsid/target/*.war
+      # TODO:
+      # Consider saving to final capsid.jar to an artifact.
 
   python-unittest:
     executor: python-with-postgres-executor
@@ -425,8 +419,6 @@ jobs:
 
       - run: ls /tmp/build/
       - run: echo "success"
-      # TODO:
-      # Consider saving to final capsid.jar to an artifact.
 
 workflows:
   version: 2
@@ -436,6 +428,9 @@ workflows:
       - python-unittest
       - python-linter
 
+      # TODO:
+      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do,
+      # especially in a non-master branch which the non-master branch is not triggered.
       - e2e-readiness:
           type: approval
           requires:
@@ -462,18 +457,6 @@ workflows:
       #
       # Probably not, as configuration management (with lower frequency to be updated,
       # and also for risk management) is typically not part of the CI workflow.
-      #
-      # TODO:
-      # Check if it is possible to combine multiple steps in the same executor. Should
-      # be just call the Orbs in executor definition rather than in workflows. Tried
-      # orbs as steps in jobs which doesn't work.
-      #
-      # TODO:
-      # Redefine `staging` prefix as a pipeline variable (pre-release feature).
-      # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
-      # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
-      # UI but nor in orbs.
-      # https://circleci.com/docs/2.0/env-vars/
       - web-app-build-image:
           requires:
             - e2e-readiness
@@ -499,9 +482,6 @@ workflows:
       # zero thing needs to be changed). However, run multiple builds at the same time will cause race
       # condition, as they are sharing the same remote server.
 
-      # TODO:
-      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
-      #
       # TODO:
       # Only show this step for master branch.
       - production-deploy:
