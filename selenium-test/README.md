@@ -77,6 +77,8 @@ If want to edit/debug while running the test, inside of the container
 
 ```
 cd /selenium-test-in-dev
+find . -name '*.pyc' -delete
+sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /selenium-test/settings/profile.py
 ```
 
 but then need to manually `sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /selenium-test/settings/profile.py` which affects host file.
