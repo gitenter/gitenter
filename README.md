@@ -111,10 +111,9 @@ For Mac OS, enable Lombok is kind of tricky, but it works by following [this lin
 
 #### Up-and-run
 
-```
-sh docker_build_java.sh
-docker-compose build web
+`docker-compose.yml` include containers for the product to be up and run, while `docker-compose.dev.yml` are containers for compiling, testing, etc. Assuming images are properly compiled and build, to make the product up and run executes:
 
+```
 docker-compose up
 ```
 
@@ -138,9 +137,8 @@ docker-compose down
 ```
 docker system prune --volumes --all
 
-sh docker_build_java.sh
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml run java-build sh docker_build_java.sh
 docker-compose build --no-cache
-
 docker-compose up
 ```
 

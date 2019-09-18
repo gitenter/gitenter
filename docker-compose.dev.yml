@@ -1,0 +1,32 @@
+version: "3"
+services:
+
+  java-build:
+    image: maven:3.6.2-jdk-11
+    volumes:
+      - ../gitenter:/gitenter
+    working_dir: /gitenter
+    depends_on:
+      - postgres
+      - redis-session
+    tty: true
+
+  selenium-test:
+    build:
+      context: .
+      dockerfile: ./docker/selenium-test/Dockerfile
+    volumes:
+      - ./selenium-test:/selenium-test-in-dev
+    depends_on:
+      - git
+      - web
+    tty: true
+
+  git-trivial:
+    build:
+      context: .
+      dockerfile: ./docker/git-trivial/Dockerfile
+    depends_on:
+      - git
+      - web
+    tty: true

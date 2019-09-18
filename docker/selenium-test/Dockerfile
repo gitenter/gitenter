@@ -1,32 +1,41 @@
-FROM ubuntu:18.04
+FROM circleci/python:3.6.2-stretch-browsers
 
-RUN apt-get update && apt-get -y install \
-    apt-utils \
-    wget \
-    zip \
-    gzip \
-    python3-pip
+RUN sudo apt-get update && sudo apt-get install -y curl libssh2-1 cmake
 
-RUN pip3 install selenium
+# `chromedriver` has been installed in the parent image.
+# We'd like to also install geckodriver so `webdriver.Firefox()`
+# can also work.
+#
+# TODO:
+# Currently still not work with error
+# > PermissionError: [Errno 13] Permission denied: 'geckodriver.log'
+RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz | sudo tar zx
+RUN sudo mv geckodriver /usr/local/bin
+RUN sudo chown circleci:circleci /usr/local/bin/geckodriver
 
-WORKDIR /download
+COPY selenium-test/pip-requirements.txt /tmp/pip-requirements.txt
+RUN sudo sudo pip3 install -r /tmp/pip-requirements.txt
 
-RUN wget -O ./geckodriver-v0.23.0-linux64.tar.gz "https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz"
-RUN tar xzvf geckodriver-v0.23.0-linux64.tar.gz
-RUN mv geckodriver /usr/local/bin
+COPY selenium-test /selenium-test
+RUN sudo sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /selenium-test/settings/profile.py
+RUN sudo chown -R circleci:circleci /selenium-test
 
-RUN wget -O ./chromedriver_linux64.zip "https://chromedriver.storage.googleapis.com/2.45/chromedriver_linux64.zip"
-RUN unzip chromedriver_linux64.zip
-RUN mv chromedriver /usr/local/bin
+RUN sudo sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/' /etc/ssh/ssh_config
+RUN sudo bash -c 'echo "    UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config'
 
-RUN apt-get update && apt-get -y install \
-    firefox
+USER circleci
+RUN cd ~ && ssh-keygen -t rsa -b 4096 -f $HOME/.ssh/id_rsa -N "" -C "my@email.com"
+RUN git config --global user.name "My Name"
+RUN git config --global user.email "my@email.com"
+# Until now, if manually add this generated public key to database (through web UI),
+# the following command works without asking for a password.
+# git clone git@git:/home/git/server.git
+
+WORKDIR /selenium-test
+
+CMD ["/bin/bash"]
 
 # TODO:
-# We would like to use a "headless browser" to run the test, as we don't have a
-# GUI for our docker container so Firefox/Chrome are not our choices.
-# Possible resources:
-# `HtmlUnitDriver` - https://github.com/SeleniumHQ/selenium/wiki/HtmlUnitDriver
-#                  - https://stackoverflow.com/questions/4618373/how-do-i-use-the-htmlunit-driver-with-selenium-from-python/5518175#5518175
-# `xvfb` - https://stackoverflow.com/questions/10399557/is-it-possible-to-run-selenium-firefox-web-driver-without-a-gui
-# Ghost Driver - https://github.com/detro/ghostdriver
+# The parent image `circleci/python:3.6.2-stretch-browsers` is 2G+
+# Definitely don't need this big. Rewrite the headless browser part and get ride
+# of this image + user `circleci`.
