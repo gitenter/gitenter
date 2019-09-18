@@ -97,10 +97,8 @@ orbs:
       aws-ecs: circleci/aws-ecs@0.0.8
 
     commands:
-      deploy:
+      build-image:
         parameters:
-          deploy_env:
-            type: string
           service_infix:
             type: string
           docker_image_folder:
@@ -145,6 +143,15 @@ orbs:
               repo: "<<parameters.service_infix>>-repository"
               tag: "${CIRCLE_SHA1}"
 
+      deploy:
+        parameters:
+          deploy_env:
+            type: string
+          service_infix:
+            type: string
+          docker_image_folder:
+            type: string
+        steps:
           # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
           # https://circleci.com/orbs/registry/orb/circleci/aws-cli
           - aws-cli/install
@@ -278,7 +285,7 @@ jobs:
       - run: cd selenium-test && pipenv install flake8
       - run: cd selenium-test && pipenv run flake8 --statistics
 
-  staging-web-app-deploy:
+  web-app-build-image:
     # TODO:
     # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
     # When using 2.7 "Log into Amazon ECR" can pass with no problem (other errors apply):
@@ -286,6 +293,30 @@ jobs:
     # But when using 3.7.1 the same step gives
     # > Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
     # https://circleci.com/gh/gitenter/gitenter/635
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - checkout
+      - inline-aws-operation/build-image:
+          service_infix: "web-app"
+          docker_image_folder: "capsid"
+
+  git-build-image:
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - checkout
+      - inline-aws-operation/build-image:
+          service_infix: "git"
+          docker_image_folder: "ssheep"
+
+  staging-web-app-deploy:
     docker:
       - image: 'circleci/python:2.7'
 
@@ -353,7 +384,7 @@ jobs:
 
   # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
   # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
-  e2e-test:
+  staging-e2e-test:
     docker:
       - image: circleci/python:3.6.2-stretch-browsers
     working_directory: ~/selenium
@@ -375,7 +406,7 @@ jobs:
       - store_test_results:
           path: selenium-test/test-results/
 
-  deploy:
+  production-deploy:
     docker:
       - image: circleci/openjdk:11.0-jdk
     # Cannot specify `working_directory` to be `.`. Otherwise you'll get error
@@ -405,12 +436,13 @@ workflows:
       - python-unittest
       - python-linter
 
-      - staging-readiness:
+      - e2e-readiness:
           type: approval
           requires:
            - java-build
            - python-unittest
            - python-linter
+
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
       # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-staging` first.
       # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
@@ -442,15 +474,21 @@ workflows:
       # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
       # UI but nor in orbs.
       # https://circleci.com/docs/2.0/env-vars/
+      - web-app-build-image:
+          requires:
+            - e2e-readiness
+      - git-build-image:
+          requires:
+            - e2e-readiness
+
       - staging-web-app-deploy:
           requires:
-            - staging-readiness
-
+            - web-app-build-image
       - staging-git-deploy:
           requires:
-            - staging-readiness
+            - git-build-image
 
-      - e2e-test:
+      - staging-e2e-test:
           requires:
             - staging-web-app-deploy
             - staging-git-deploy
@@ -465,12 +503,7 @@ workflows:
       # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
       #
       # TODO:
-      # Only show `prod-readiness` for master branch.
-      - prod-readiness:
-          type: approval
+      # Only show this step for master branch.
+      - production-deploy:
           requires:
-            - java-build
-            - python-linter
-      - deploy:
-          requires:
-            - prod-readiness
+            - staging-e2e-test
