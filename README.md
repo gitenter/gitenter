@@ -157,9 +157,6 @@ Code deployment is currently setup through CircleCI.
 
 ## Unclassified TODOs and features
 
-+ [x] A better CSS.
-	+ The words crown together.
-	+ Margin in between traced items.
 + If only one single upstream item is provided, and it is in the same document/paragraph, should the item be just `tab` of the upstream one, rather than list separately with "hard to understand" link?
 + [ ] No need for `enable_systemwide` value in `gitenter.properties`. An alternative way is to `git diff` (1) this properties file and (2) the specified included folders. If there is any change happens, then turn on the system; otherwise turn it off.
 + [ ] RNAtom id generator has a bug when the item is with empty upstream but in the form of `- [tag]` rather than `-[tag]{}`.
