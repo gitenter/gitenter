@@ -91,7 +91,7 @@ orbs:
     commands:
       build-image:
         parameters:
-          service_infix:
+          ecr_repo_name:
             type: string
           docker_image_folder:
             type: string
@@ -132,14 +132,16 @@ orbs:
               # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
               # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
               # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
-              repo: "<<parameters.service_infix>>-repository"
+              repo: "<<parameters.ecr_repo_name>>"
               tag: "${CIRCLE_SHA1}"
 
       deploy:
         parameters:
-          deploy_env:
+          ecr_repo_name:
             type: string
-          service_infix:
+          cluster_name:
+            type: string
+          service_name:
             type: string
           docker_image_folder:
             type: string
@@ -168,22 +170,22 @@ orbs:
           # controller" (rather than just replace the image inside) we need to update service.
           # https://docs.aws.amazon.com/cli/latest/reference/ecs/register-task-definition.html
           - aws-ecs/update-service:
-              family: "<<parameters.deploy_env>>-<<parameters.service_infix>>-service"
-              cluster-name: "<<parameters.deploy_env>>-cluster"
-              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.service_infix>>-repository:${CIRCLE_SHA1}"
+              family: "<<parameters.service_name>>"
+              cluster-name: "<<parameters.cluster_name>>"
+              container-image-name-updates: "container=<<parameters.service_name>>,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.ecr_repo_name>>:${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
       confirm-web-deployment:
         parameters:
-          deploy_env:
+          cluster_name:
             type: string
-          service_infix:
+          service_name:
             type: string
         steps:
           - run:
               name: Web deployment sanity check
               command: |
-                TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.deploy_env>>-cluster --services <<parameters.deploy_env>>-<<parameters.service_infix>>-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
+                TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.cluster_name>> --services <<parameters.service_name>> | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                 ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
                 ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
                 curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"
@@ -295,10 +297,10 @@ jobs:
     steps:
       - checkout
       - inline-aws-operation/build-image:
-          service_infix: "web-app"
+          ecr_repo_name: "web-app-repository"
           docker_image_folder: "capsid"
 
-  git-build-image:
+  staging-git-build-image:
     docker:
       - image: 'circleci/python:2.7'
 
@@ -306,8 +308,19 @@ jobs:
 
     steps:
       - checkout
+
+      # TODO:
+      # Ideally we should have an environmental variable `PYTHON_PROFILE` and which
+      # profile to load depend on this variable. That can also let different environments
+      # share the same docker image.
+      # Very unfortunate, this is hard to be down because SSH `AuthorizedKeysCommand`
+      # cannot see docker injected environmental variable. See comment in
+      # `ssheep/settings/profile.py` for detail.
+      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = StagingProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
+      - run: cat ssheep/Dockerfile
+
       - inline-aws-operation/build-image:
-          service_infix: "git"
+          ecr_repo_name: "staging-git-repository"
           docker_image_folder: "ssheep"
 
   staging-web-app-deploy:
@@ -319,12 +332,13 @@ jobs:
     steps:
       - checkout
       - inline-aws-operation/deploy:
-          deploy_env: "staging"
-          service_infix: "web-app"
+          ecr_repo_name: "web-app-repository"
+          cluster_name: "staging-cluster"
+          service_name: "staging-web-app-service"
           docker_image_folder: "capsid"
       - inline-aws-operation/confirm-web-deployment:
-          deploy_env: "staging"
-          service_infix: "web-app"
+          cluster_name: "staging-cluster"
+          service_name: "staging-web-app-service"
 
   staging-git-deploy:
     docker:
@@ -334,20 +348,10 @@ jobs:
 
     steps:
       - checkout
-
-      # TODO:
-      # Probably should add a step to build python wheels, and in Dockerfile just
-      # use the pre-build Dockerfile (rather than setup the environment in docker),
-      # so we don't need to manipulate Dockerfile in here.
-      # Or we may go with an environmental variable process (values local/docker/staging/production)
-      # and applications ask environmental variable what database to connect. Not
-      # sure which is a better approach.
-      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = StagingProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
-      - run: cat ssheep/Dockerfile
-
       - inline-aws-operation/deploy:
-          deploy_env: "staging"
-          service_infix: "git"
+          ecr_repo_name: "staging-git-repository"
+          cluster_name: "staging-cluster"
+          service_name: "staging-git-service"
           docker_image_folder: "ssheep"
     # TODO:
     # Now we can `ssh git@<git_lb_hostname>` to that server. And if the SSH key is added
@@ -460,7 +464,7 @@ workflows:
       - web-app-build-image:
           requires:
             - e2e-readiness
-      - git-build-image:
+      - staging-git-build-image:
           requires:
             - e2e-readiness
 
@@ -469,7 +473,7 @@ workflows:
             - web-app-build-image
       - staging-git-deploy:
           requires:
-            - git-build-image
+            - staging-git-build-image
 
       - staging-e2e-test:
           requires:

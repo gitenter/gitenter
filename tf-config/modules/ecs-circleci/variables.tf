@@ -90,7 +90,7 @@ locals {
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
   aws_web_app_ecr_name = "${local.aws_web_app_resource_infix}-repository"
   aws_ecs_web_app_service_name = "${local.aws_web_app_resource_prefix}-service"
-  aws_git_ecr_name = "${local.aws_git_resource_infix}-repository"
+  aws_git_ecr_name = "${local.aws_git_resource_prefix}-repository"
   aws_ecs_git_service_name = "${local.aws_git_resource_prefix}-service"
 
   # Internal reference only
