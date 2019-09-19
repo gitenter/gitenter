@@ -2,6 +2,21 @@ version: "3"
 services:
 
   java-build:
+    # TODO:
+    # Check if there's a way to customize an image and bake necessary `.m2` dependencies
+    # into it, so we don't need to install dependencies in runtime everytime we compile.
+    # It sounds a general problem that maven is against descriptive configuration, and
+    # even if you `apt-get install maven` in an customized image you are facing the same
+    # problem.
+    #
+    # Following reference may offer some ideas.
+    # https://stackoverflow.com/questions/42208442/maven-docker-cache-dependencies
+    # https://github.com/carlossg/docker-maven/blob/322d0dff5d0531ccaf47bf49338cb3e294fd66c8/jdk-8/Dockerfile#L14
+    #
+    # TODO:
+    # Is there a way to specify execution command in here, rather than pass in
+    # the shell from command line every time?
+    # > docker-compose -f docker-compose.yml -f docker-compose.dev.yml run java-build sh docker_build_java.sh
     image: maven:3.6.2-jdk-11
     volumes:
       - ../gitenter:/gitenter
