@@ -7,16 +7,8 @@ executors:
         environment:
           TEST_DATABASE_URL: postgresql://postgres@localhost/gitenter
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-      # TODO:
-      # Currently follows
       # https://circleci.com/docs/2.0/databases/#postgresql-database-testing-example
       # https://circleci.com/docs/2.0/postgres-config/
-      # Consider using a custom docker image.
       #
       # TODO:
       # The below line is in log:
@@ -97,10 +89,8 @@ orbs:
       aws-ecs: circleci/aws-ecs@0.0.8
 
     commands:
-      deploy:
+      build-image:
         parameters:
-          deploy_env:
-            type: string
           service_infix:
             type: string
           docker_image_folder:
@@ -120,11 +110,6 @@ orbs:
           - setup_remote_docker:
               docker_layer_caching: true
 
-          # TODO:
-          # Right now one deployment can build one image (the name `aws-ecr/build_and_push_image`
-          # is fixed and it can only be used once -- although we can customize `tag` so we can
-          # know more beside a SHA). We probably need to go back to write plan `aws-cli` commands
-          # ourselves so we can have better control to deploy multiple images to different containers.
           - aws-ecr/build-and-push-image:
               checkout: false
               attach-workspace: true
@@ -147,9 +132,18 @@ orbs:
               # There's a typo in the document, which said here should be "A URI to an Amazon ECR repository"
               # but actually it should be just "Name of an Amazon ECR repository". Somebody else reported the problem:
               # https://github.com/CircleCI-Public/aws-ecr-orb/pull/31
-              repo: "<<parameters.deploy_env>>-<<parameters.service_infix>>-repository"
+              repo: "<<parameters.service_infix>>-repository"
               tag: "${CIRCLE_SHA1}"
 
+      deploy:
+        parameters:
+          deploy_env:
+            type: string
+          service_infix:
+            type: string
+          docker_image_folder:
+            type: string
+        steps:
           # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
           # https://circleci.com/orbs/registry/orb/circleci/aws-cli
           - aws-cli/install
@@ -176,7 +170,7 @@ orbs:
           - aws-ecs/update-service:
               family: "<<parameters.deploy_env>>-<<parameters.service_infix>>-service"
               cluster-name: "<<parameters.deploy_env>>-cluster"
-              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.deploy_env>>-<<parameters.service_infix>>-repository:${CIRCLE_SHA1}"
+              container-image-name-updates: "container=<<parameters.deploy_env>>-<<parameters.service_infix>>-service,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/<<parameters.service_infix>>-repository:${CIRCLE_SHA1}"
               verify-revision-is-deployed: true
 
       confirm-web-deployment:
@@ -187,7 +181,7 @@ orbs:
             type: string
         steps:
           - run:
-              name: Test the deployment
+              name: Web deployment sanity check
               command: |
                 TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.deploy_env>>-cluster --services <<parameters.deploy_env>>-<<parameters.service_infix>>-service | jq -r '.services[0].loadBalancers[0].targetGroupArn')
                 ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
@@ -233,23 +227,6 @@ jobs:
 
       - inline-postgres/initialize
 
-      # Be careful on whether we have a space after `#` in here and `application.properties`.
-      # Their mismatch will cause failures.
-      #
-      # TODO:
-      # Consider move this part and `mvn package -f capsid/pom.xml -DskipTests` to
-      # a seperated step so `staging` and `prod` can both have corresponding changes.
-      #
-      # TODO:
-      # Should ask Spring to go to env variable to get what profile it is. Therefore,
-      # we can share the same docker image and use it for different environments.
-      # Pass env variable from host machine down to container is a standard approach.
-      - run: sed -i "s/spring.profiles.active=local/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
-      - run: cat capsid/src/main/resources/application.properties
-
-      - run: sed -i "s/		System.setProperty(\"spring.profiles.active\", \"local\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
-      - run: cat hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
-
       - run: mvn clean install
       - run: mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
@@ -272,6 +249,8 @@ jobs:
           # Must be relative path from root
           paths:
             - capsid/target/*.war
+      # TODO:
+      # Consider saving to final capsid.jar to an artifact.
 
   python-unittest:
     executor: python-with-postgres-executor
@@ -300,7 +279,7 @@ jobs:
       - run: cd selenium-test && pipenv install flake8
       - run: cd selenium-test && pipenv run flake8 --statistics
 
-  staging-web-app-deploy:
+  web-app-build-image:
     # TODO:
     # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
     # When using 2.7 "Log into Amazon ECR" can pass with no problem (other errors apply):
@@ -308,6 +287,30 @@ jobs:
     # But when using 3.7.1 the same step gives
     # > Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
     # https://circleci.com/gh/gitenter/gitenter/635
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - checkout
+      - inline-aws-operation/build-image:
+          service_infix: "web-app"
+          docker_image_folder: "capsid"
+
+  git-build-image:
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - checkout
+      - inline-aws-operation/build-image:
+          service_infix: "git"
+          docker_image_folder: "ssheep"
+
+  staging-web-app-deploy:
     docker:
       - image: 'circleci/python:2.7'
 
@@ -351,6 +354,17 @@ jobs:
     # through web UI (so save in the database) the password is not needed. Should add test on that.
     #
     # TODO:
+    # After changed to global variable the above feature breaks (tested manually). `ssh` into
+    # container with correct password and `printenv` cannot find `PYTHON_PROFILES_ACTIVE` (and
+    # other customized setting) in list. Also `sh get_authorized_keys_content.sh` inside doesn't
+    # work.
+    # However, if I `ssh` into the box and `docker ps` and `docker exec` into the git container,
+    # I can see `PYTHON_PROFILES_ACTIVE` and execute `sh get_authorized_keys_content.sh` to get
+    # proper result.
+    # Looks like from different ways of login I see different environment (`printenv` there are
+    # also) other differences, and only the later one works. Don't understand why.
+    #
+    # TODO:
     # Realized sometimes it works while sometimes not (it will say password is not
     # correct). Wonder why that happens?
     # 10.0.1.152 8080 us-east-1b initial
@@ -364,7 +378,7 @@ jobs:
 
   # https://circleci.com/docs/2.0/project-walkthrough/#installing-and-running-selenium-to-automate-browser-testing
   # https://github.com/CircleCI-Public/circleci-demo-python-flask/blob/master/tests/test_selenium.py
-  e2e-test:
+  staging-e2e-test:
     docker:
       - image: circleci/python:3.6.2-stretch-browsers
     working_directory: ~/selenium
@@ -386,7 +400,7 @@ jobs:
       - store_test_results:
           path: selenium-test/test-results/
 
-  deploy:
+  production-deploy:
     docker:
       - image: circleci/openjdk:11.0-jdk
     # Cannot specify `working_directory` to be `.`. Otherwise you'll get error
@@ -405,8 +419,6 @@ jobs:
 
       - run: ls /tmp/build/
       - run: echo "success"
-      # TODO:
-      # Consider saving to final capsid.jar to an artifact.
 
 workflows:
   version: 2
@@ -416,12 +428,16 @@ workflows:
       - python-unittest
       - python-linter
 
-      - staging-readiness:
+      # TODO:
+      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do,
+      # especially in a non-master branch which the non-master branch is not triggered.
+      - e2e-readiness:
           type: approval
           requires:
            - java-build
            - python-unittest
            - python-linter
+
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
       # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-staging` first.
       # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
@@ -441,27 +457,21 @@ workflows:
       #
       # Probably not, as configuration management (with lower frequency to be updated,
       # and also for risk management) is typically not part of the CI workflow.
-      #
-      # TODO:
-      # Check if it is possible to combine multiple steps in the same executor. Should
-      # be just call the Orbs in executor definition rather than in workflows. Tried
-      # orbs as steps in jobs which doesn't work.
-      #
-      # TODO:
-      # Redefine `staging` prefix as a pipeline variable (pre-release feature).
-      # https://github.com/CircleCI-Public/api-preview-docs/blob/master/docs/pipeline-parameters.md
-      # Notice that `parameters` can only be define in (1) jobs/... (2) through CircleCI
-      # UI but nor in orbs.
-      # https://circleci.com/docs/2.0/env-vars/
+      - web-app-build-image:
+          requires:
+            - e2e-readiness
+      - git-build-image:
+          requires:
+            - e2e-readiness
+
       - staging-web-app-deploy:
           requires:
-            - staging-readiness
-
+            - web-app-build-image
       - staging-git-deploy:
           requires:
-            - staging-readiness
+            - git-build-image
 
-      - e2e-test:
+      - staging-e2e-test:
           requires:
             - staging-web-app-deploy
             - staging-git-deploy
@@ -473,15 +483,7 @@ workflows:
       # condition, as they are sharing the same remote server.
 
       # TODO:
-      # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do.
-      #
-      # TODO:
-      # Only show `prod-readiness` for master branch.
-      - prod-readiness:
-          type: approval
+      # Only show this step for master branch.
+      - production-deploy:
           requires:
-            - java-build
-            - python-linter
-      - deploy:
-          requires:
-            - prod-readiness
+            - staging-e2e-test

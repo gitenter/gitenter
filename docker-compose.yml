@@ -20,6 +20,8 @@ services:
     build:
       context: ./ssheep
       dockerfile: ./Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     volumes:
 #      - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
       - git-repo:/home/git
@@ -34,6 +36,8 @@ services:
     build:
       context: ./capsid
       dockerfile: ./Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     volumes:
       #- ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
       - git-repo:/home/git # TODO: change it to something else together with GitSourceConfig.java

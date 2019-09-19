@@ -78,12 +78,8 @@ Resources:
     ],
     "environment": [
       {
-        "name": "VERSION_INFO",
-        "value": "v0"
-      },
-      {
-        "name": "BUILD_DATE",
-        "value": "-"
+        "name": "SPRING_PROFILES_ACTIVE",
+        "value": "${var.environment}"
       }
     ],
     "mountPoints": [
@@ -248,12 +244,8 @@ resource "aws_ecs_task_definition" "git" {
     ],
     "environment": [
       {
-        "name": "VERSION_INFO",
-        "value": "v0"
-      },
-      {
-        "name": "BUILD_DATE",
-        "value": "-"
+        "name": "SPRING_PROFILES_ACTIVE",
+        "value": "${var.environment}"
       }
     ],
     "mountPoints": [
