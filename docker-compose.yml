@@ -22,8 +22,21 @@ services:
       dockerfile: ./Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    # TODO:
+    # By sharing the `/home/git` folder as a volume, the system files in it are
+    # also shared to `web_app` container.
+    # > root@02a50eab24c4:/home/git# ls -la
+    # > -rw-------  1 git  root  788 Aug 16 19:58 .bash_history
+    # > -rw-r--r--  1 git  root 3771 Apr  4  2018 .bashrc
+    # > drwx------  4 git  root 4096 Jun 25 13:03 .cache
+    # > -rw-r--r--  1 git  root  807 Apr  4  2018 .profile
+    # > ...
+    #
+    # Possible solutions:
+    # Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
+    # to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
+    # becomes weird.
     volumes:
-#      - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
       - git-repo:/home/git
     ports:
       - "8822:22"
@@ -32,15 +45,14 @@ services:
     tty: true
     restart: always
 
-  web:
+  web_app:
     build:
       context: ./capsid
       dockerfile: ./Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     volumes:
-      #- ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
-      - git-repo:/home/git # TODO: change it to something else together with GitSourceConfig.java
+      - git-repo:/data
     ports:
       - "8886:8080"
     depends_on:
@@ -59,7 +71,7 @@ services:
     command: [nginx, '-g', 'daemon off;']
     depends_on:
       - git
-      - web
+      - web_app
 
 volumes:
   git-repo:

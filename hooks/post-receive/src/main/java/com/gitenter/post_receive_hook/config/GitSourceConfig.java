@@ -36,7 +36,7 @@ public class GitSourceConfig {
 	public GitSource dockerGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/git");
+		gitSource.setRootFolderPath("/data");
 		return gitSource;
 	}
 

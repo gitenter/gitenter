@@ -66,15 +66,15 @@ variable "efs_docker_volumn_name" {
   default = "efs-static-storage"
 }
 
-# This is the path need to be used in code (e.g. Java setup of `capsid` setup to
-# touch the file system).
-#
-# TODO:
-# Probably should set this as `/home/git` but in that case multiple git docker
-# containers will need to share the same `.*` setup files, which is not doable.
-# So probably needs `/home/git/data` or we do `/git` and `chown` it.
-variable "efs_web_container_path" {
+# This is the path need to be used in code (e.g. Java setup of `capsid` and
+# `post-receive-hook` setup to touch the file system).
+variable "efs_web_app_container_path" {
   default = "/data"
+}
+
+# This is the path needed for the `AuthorizedKeyCommand` script in `ssheep`.
+variable "efs_git_container_path" {
+  default = "/home/git"
 }
 
 locals {
