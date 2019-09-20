@@ -395,9 +395,6 @@ jobs:
       - checkout
       - run: sed -i "s/profile = LocalProfile()/profile = StagingProfile()/g" selenium-test/settings/profile.py
 
-      - run: ls -la
-      - run: cd /etc/ssh && ls -la
-
       - run:
           name: Download Selenium
           command: |
@@ -410,16 +407,7 @@ jobs:
 
       - run: git config --global user.name "My Name"
       - run: git config --global user.email "my@email.com"
-      - run: git config user.name
-      - run: git config user.email
-      - run: pwd
-      - run: cd /home/circleci/.ssh && ls
-      - run: cat /home/circleci/.ssh/id_rsa
-      # - run: ssh-agent sh -c 'ssh-add; ssh-add -L'
       - run: ssh-keygen -y -f /home/circleci/.ssh/id_rsa > /home/circleci/.ssh/id_rsa.pub
-      - run: cd /home/circleci/.ssh && ls
-      - run: cat /home/circleci/.ssh/id_rsa
-      - run: cat /home/circleci/.ssh/id_rsa.pub
 
       - run: cd selenium-test && pytest
 
