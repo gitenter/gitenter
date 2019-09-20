@@ -89,6 +89,11 @@ variable "efs_web_app_container_path" {
 # Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
 # to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
 # becomes weird.
+#
+# Note:
+# There's a behavior difference that in docker-compose it will cause `/data` in web
+# container to have those hidden files, while in ECS/EFS it will cause `/home/git`
+# in git container to not have those files.
 variable "efs_git_container_path" {
   default = "/home/git"
 }
@@ -104,7 +109,7 @@ locals {
 
   # These names are used by CircleCI orbs
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
-  aws_web_app_ecr_name = "${local.aws_web_app_resource_infix}-repository"
+  aws_web_app_ecr_name = "${local.aws_web_app_resource_prefix}-repository"
   aws_ecs_web_app_service_name = "${local.aws_web_app_resource_prefix}-service"
   aws_git_ecr_name = "${local.aws_git_resource_prefix}-repository"
   aws_ecs_git_service_name = "${local.aws_git_resource_prefix}-service"

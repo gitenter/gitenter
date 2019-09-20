@@ -68,7 +68,7 @@ TODO: setup pipenv/Pipfile.
 ```
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml build selenium-test
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml run selenium-test bash
-circleci@c88fa4db458b:/selenium-test$ curl web:8080/login
+circleci@c88fa4db458b:/selenium-test$ curl web-app:8080/login
 circleci@c88fa4db458b:/selenium-test$ pytest tests/authorization_test.py
 circleci@c88fa4db458b:/selenium-test$ pytest tests/repository_navigation_test.py
 ```
