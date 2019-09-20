@@ -73,6 +73,22 @@ variable "efs_web_app_container_path" {
 }
 
 # This is the path needed for the `AuthorizedKeyCommand` script in `ssheep`.
+#
+# TODO:
+# By sharing the `/home/git` folder as a volume, as mounting is AFTER docker
+# container starts, all the following files disappears. Not sure if that's a
+# (functional) problem through.
+# > root@02a50eab24c4:/home/git# ls -la
+# > -rw-------  1 git  root  788 Aug 16 19:58 .bash_history
+# > -rw-r--r--  1 git  root 3771 Apr  4  2018 .bashrc
+# > drwx------  4 git  root 4096 Jun 25 13:03 .cache
+# > -rw-r--r--  1 git  root  807 Apr  4  2018 .profile
+# > ...
+#
+# Possible solutions:
+# Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
+# to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
+# becomes weird.
 variable "efs_git_container_path" {
   default = "/home/git"
 }

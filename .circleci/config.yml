@@ -416,6 +416,32 @@ jobs:
       - run: cat /home/circleci/.ssh/id_rsa
       - run: cat /home/circleci/.ssh/id_rsa.pub
 
+      # TODO:
+      # Very unfortunate, post-receive hook in git container (triggered by SSH access) cannot
+      # see docker injected environment variables. Therefore, it will try to connect to local
+      # database, and hook operations fails.
+      #
+      # Possible solutions:
+      # (1) Setup SSH shell environment variable by following comments in `/settings/profile`.
+      # Things may massed up as our `~/` is a shared folder so probably we can't change
+      # `~/.ssh/config`.
+      # (2) Still modify code before Java build.
+      # > sed -i "s/		System.setProperty(\"spring.profiles.active\", \"local\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
+      # (Refer https://github.com/gitenter/gitenter/compare/20a66f2...68cfd6b)
+      # To avoid `web_app` image also need to be env sensitive, we may not bake the hook into
+      # `capsid.war`; rather we bake a symlink in, and keep the hook JAR file in git container.
+      #
+      # Currently, error raises when you `git push` against staging:
+      # > remote: Caused by: org.postgresql.util.PSQLException: Connection to localhost:5432 refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.
+      # > To staging-git-nlb-a045a3efb1ad1bf9.elb.us-east-1.amazonaws.com:/home/git/asdf/asdf.git
+      # >  * [new branch]      master -> master
+      #
+      # The current docker-compose selenium-test can psss (last test is before I shared `/home/git`
+      # as a docker-compose volume), is because I haven't drop old volume so the old
+      # `/home/git/.ssh/environment` still stays (and affect env variable git shell can see):
+      # > root@02a50eab24c4:/home/git/.ssh# cat environment
+      # > SPRING_PROFILES_ACTIVE=docker
+
       - run: cd selenium-test && pytest
 
       - store_test_results:
