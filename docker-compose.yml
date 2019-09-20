@@ -20,10 +20,21 @@ services:
     build:
       context: ./ssheep
       dockerfile: ./Dockerfile
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
+    # TODO:
+    # By sharing the `/home/git` folder as a volume, the system files in it are
+    # also shared to `web-app` container.
+    # > root@02a50eab24c4:/home/git# ls -la
+    # > -rw-------  1 git  root  788 Aug 16 19:58 .bash_history
+    # > -rw-r--r--  1 git  root 3771 Apr  4  2018 .bashrc
+    # > drwx------  4 git  root 4096 Jun 25 13:03 .cache
+    # > -rw-r--r--  1 git  root  807 Apr  4  2018 .profile
+    # > ...
+    #
+    # Possible solutions:
+    # Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
+    # to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
+    # becomes weird.
     volumes:
-#      - ../../.ssh/id_rsa.pub:/home/git/.ssh/authorized_keys # This is the pseudo-authorized key for testing purposes, which should be removed later.
       - git-repo:/home/git
     ports:
       - "8822:22"
@@ -32,15 +43,12 @@ services:
     tty: true
     restart: always
 
-  web:
+  web-app:
     build:
       context: ./capsid
       dockerfile: ./Dockerfile
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
     volumes:
-      #- ./deployment/docker/tomcat/hello-world.war:/usr/local/tomcat/webapps/ROOT.war
-      - git-repo:/home/git # TODO: change it to something else together with GitSourceConfig.java
+      - git-repo:/data
     ports:
       - "8886:8080"
     depends_on:
@@ -48,6 +56,41 @@ services:
       - redis-session
     tty: true
     restart: always
+
+  # It is right now really hard to inject configuration through environment variables.
+  # Notice that there are multiple ways we can get a list of `env` variables:
+  # (1) Container env injuected by docker `docker-compose exec git env`
+  # (2) SSH into the container and `env`
+  # (3) `env` in `AuthorizedKeysCommand`.
+  # All have different results.
+  #
+  # (2) is not the same as (1) becuase ssh deamon overrides the environment variables.
+  # https://docs.docker.com/engine/examples/running_ssh_service/#environment-variables
+  # The way to bypass it we can either
+  # (a) Edit `PermitUserEnvironment yes` in `/etc/ssh/sshd_config` and define in
+  # `.ssh/environment` (this file can be edit by `ENTRYPOINT` in docker). It is available
+  # for both `ssh <user>@<host> env` and `ssh <user>@<host>` then `env`.
+  # (b) Edit `AcceptEnv` in `/etc/ssh/sshd_config` and `SendEnv` in `/etc/ssh/ssh_config`
+  # and inject its value in `/etc/profile`(or define it `.ssh/config`). Available only in
+  # `ssh <user>@<host>` then `env`, but not in `ssh <user>@<host> env`.
+  # Detailed setup can refer:
+  # https://docs.docker.com/engine/examples/running_ssh_service/#environment-variables
+  # https://stackoverflow.com/questions/55182220/i-cant-get-env-var-in-the-docker-container
+  # or a non-merged branch:
+  # https://github.com/gitenter/gitenter/compare/master...env
+  #
+  # Above tricks will not affect `AuthorizedKeysCommand` env and right now I don't know a way
+  # to change it.
+  #
+  # `capsid` is using (1), so it is very ideal and env can be injected through docker.
+  #
+  # post-receive hook is using (2), but only in the way of `ssh <user>@<host> env`.
+  # It technically can be done through the previous (a) method, but right now `/home/git`
+  # is a shared folder in both docker-compose and ECS/EFS, it looks in both cases that will
+  # block `.ssh/environment` to be writting in.
+  #
+  # `get_authorized_keys_content.sh` is through SSH `AuthorizedKeysCommand`. There's no way
+  # to make it see customized environment variable.
 
   nginx:
     build:
@@ -59,7 +102,7 @@ services:
     command: [nginx, '-g', 'daemon off;']
     depends_on:
       - git
-      - web
+      - web-app
 
 volumes:
   git-repo:

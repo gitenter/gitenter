@@ -8,54 +8,67 @@ from pathlib import Path, PosixPath
 class Profile(object):
 
     web_domain = None
+    git_server_remote_location = None
     ecs_cluster_name = None
-    ecs_service_name = None
+    ecs_web_service_name = None
+
+    # Boto3 will automatically check `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` env variables
+    # which match with the env variables setup in CircleCI.
+    # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#environment-variables
+    def _get_elb_dns_name_from_ecs_config(self, ecs_cluster_name, ecs_service_name):
+        target_group_arn = boto3.client(
+            'ecs').describe_services(
+            cluster=ecs_cluster_name,
+            services=[ecs_service_name]
+        )['services'][0]['loadBalancers'][0]['targetGroupArn']
+
+        elbv2_client = boto3.client('elbv2')
+        elb_arn = elbv2_client.describe_target_groups(
+            TargetGroupArns=[
+                target_group_arn,
+            ]
+        )['TargetGroups'][0]['LoadBalancerArns'][0]
+        elb_dns_name = elbv2_client.describe_load_balancers(
+            LoadBalancerArns=[
+                elb_arn,
+            ]
+        )['LoadBalancers'][0]['DNSName']
+
+        return elb_dns_name
 
     def __init__(self):
         if self.web_domain:
-            self.__web_domain = self.web_domain
-            return
+            self._web_domain = self.web_domain
+        else:
+            if self.ecs_cluster_name and self.ecs_web_service_name:
+                alb_dns_name = self._get_elb_dns_name_from_ecs_config(
+                    self.ecs_cluster_name,
+                    self.ecs_web_service_name
+                )
+                self._web_domain = "http://{}".format(alb_dns_name)
 
-        # Boto3 will automatically check `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` env variables
-        # which match with the env variables setup in CircleCI.
-        # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#environment-variables
-        if self.ecs_cluster_name and self.ecs_service_name:
-            target_group_arn = boto3.client(
-                'ecs').describe_services(
-                cluster=self.ecs_cluster_name,
-                services=[
-                    self.ecs_service_name,
-                ]
-            )['services'][0]['loadBalancers'][0]['targetGroupArn']
-
-            elbv2_client = boto3.client('elbv2')
-            elb_arn = elbv2_client.describe_target_groups(
-                TargetGroupArns=[
-                    target_group_arn,
-                ]
-            )['TargetGroups'][0]['LoadBalancerArns'][0]
-            elb_dns_name = elbv2_client.describe_load_balancers(
-                LoadBalancerArns=[
-                    elb_arn,
-                ]
-            )['LoadBalancers'][0]['DNSName']
-
-            self.__web_domain = "http://{}".format(elb_dns_name)
-            return
+        if self.git_server_remote_location:
+            self._git_server_remote_location = self.git_server_remote_location
+        else:
+            if self.ecs_cluster_name and self.ecs_git_service_name:
+                self._git_server_remote_location = self._get_elb_dns_name_from_ecs_config(
+                    self.ecs_cluster_name,
+                    self.ecs_git_service_name
+                )
 
     def get_web_domain(self):
-        return self.__web_domain
+        return self._web_domain
 
     def get_remote_git_url(self, org_name, repo_name):
-        if type(self.git_server_remote_location) == PosixPath:
-            remote_git_path = self.git_server_remote_location / org_name / "{}.git".format(repo_name)
+        if type(self._git_server_remote_location) == PosixPath:
+            remote_git_path = self._git_server_remote_location / org_name / "{}.git".format(repo_name)
             return "file://{}".format(str(remote_git_path))
-        elif type(self.git_server_remote_location) == str:
+        elif type(self._git_server_remote_location) == str:
             # May use the SSH protocol one if we need a customized port.
             return "git@{}:/home/git/{}/{}.git".format(
-                self.git_server_remote_location, org_name, repo_name)
+                self._git_server_remote_location, org_name, repo_name)
             # return "ssh://git@{}:22/{}/{}.git".format(
-            #     self.git_server_remote_location, org_name, repo_name)
+            #     self._git_server_remote_location, org_name, repo_name)
             #
             # TODO:
             # For some reason right now `git@{}:{}/{}.git` doesn't work if we go through SSH
@@ -69,8 +82,8 @@ class Profile(object):
         key = RSA.generate(2048)
         return key.publickey().exportKey('OpenSSH').decode("utf-8")
 
-    def _get_ssh_key_from_local_file(self):
-        with open(join(expanduser("~"), ".ssh/id_rsa.pub")) as f:
+    def _get_ssh_key_from_local_file(self, filepath):
+        with open(filepath) as f:
             return f.read().strip()
 
     def get_ssh_key(self):
@@ -89,31 +102,27 @@ class LocalProfile(Profile):
 
 
 class DockerProfile(Profile):
-    web_domain = "http://web:8080/"
+    web_domain = "http://web-app:8080/"
     git_server_remote_location = "git"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
     def get_ssh_key(self):
-        return self._get_ssh_key_from_local_file()
+        return self._get_ssh_key_from_local_file(join(expanduser("~"), ".ssh/id_rsa.pub"))
 
 
 class StagingProfile(Profile):
-    git_server_remote_location = Path.home() / "Workspace" / "gitenter-test" / "local-git-server"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
     ecs_cluster_name = "staging-cluster"
-    ecs_service_name = "staging-web-app-service"
+    ecs_web_service_name = "staging-web-app-service"
+    ecs_git_service_name = "staging-git-service"
 
     # TODO:
-    # Ideally we want a real SSH key in the host machine (the machine which runs
-    # selenium test), so we can run git related tests on it. However, CircleCI
-    # image doesn't have an easy way to set it up. Error out by:
-    # > E       FileNotFoundError: [Errno 2] No such file or directory: '/home/circleci/.ssh/id_rsa.pub'
-    #
-    # Therefore, we temperarily use the dummy SSH key, so at least other tests can
-    # still be running on CircleCI.
+    # This is kind of a hack, depending on the CircleCI image implementation detail
+    # and the operation(s) we defined in `.circleci/config.yml`. We should fine a
+    # less fragile implementation.
     def get_ssh_key(self):
-        return self._generate_dummy_ssh_key()
+        return self._get_ssh_key_from_local_file("/home/circleci/.ssh/id_rsa.pub")
 
 
 profile = LocalProfile()

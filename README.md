@@ -135,6 +135,7 @@ docker-compose down
 #### Nuke it and start over
 
 ```
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 docker system prune --volumes --all
 
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml run java-build sh docker_build_java.sh

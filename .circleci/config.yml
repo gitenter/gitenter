@@ -229,6 +229,11 @@ jobs:
 
       - inline-postgres/initialize
 
+      # There's no easy way to let different profile to share the same docker image
+      # and inject environment variable for config. See comment in `docker-compose.yml`.
+      - run: sed -i "s/spring.profiles.active=local/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
+      - run: sed -i "s/		System.setProperty(\"spring.profiles.active\", \"local\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
+
       - run: mvn clean install
       - run: mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
@@ -281,7 +286,7 @@ jobs:
       - run: cd selenium-test && pipenv install flake8
       - run: cd selenium-test && pipenv run flake8 --statistics
 
-  web-app-build-image:
+  staging-web-app-build-image:
     # TODO:
     # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
     # When using 2.7 "Log into Amazon ECR" can pass with no problem (other errors apply):
@@ -297,7 +302,7 @@ jobs:
     steps:
       - checkout
       - inline-aws-operation/build-image:
-          ecr_repo_name: "web-app-repository"
+          ecr_repo_name: "staging-web-app-repository"
           docker_image_folder: "capsid"
 
   staging-git-build-image:
@@ -332,7 +337,7 @@ jobs:
     steps:
       - checkout
       - inline-aws-operation/deploy:
-          ecr_repo_name: "web-app-repository"
+          ecr_repo_name: "staging-web-app-repository"
           cluster_name: "staging-cluster"
           service_name: "staging-web-app-service"
           docker_image_folder: "capsid"
@@ -397,9 +402,14 @@ jobs:
 
       - run: cd selenium-test && sudo pip3 install -r pip-requirements.txt
 
-      # TODO:
-      # Run all tests, especially add tests which needs `pygit2`.
-      - run: cd selenium-test && pytest tests/authorization_test.py tests/member_settings_test.py tests/organization_creation_test.py tests/organization_management_test.py tests/repository_creation_test.py tests/repository_management_test.py
+      - run: sudo sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/' /etc/ssh/ssh_config
+      - run: sudo bash -c 'echo "    UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config'
+
+      - run: git config --global user.name "My Name"
+      - run: git config --global user.email "my@email.com"
+      - run: ssh-keygen -y -f /home/circleci/.ssh/id_rsa > /home/circleci/.ssh/id_rsa.pub
+
+      - run: cd selenium-test && pytest
 
       - store_test_results:
           path: selenium-test/test-results/
@@ -461,7 +471,7 @@ workflows:
       #
       # Probably not, as configuration management (with lower frequency to be updated,
       # and also for risk management) is typically not part of the CI workflow.
-      - web-app-build-image:
+      - staging-web-app-build-image:
           requires:
             - e2e-readiness
       - staging-git-build-image:
@@ -470,7 +480,7 @@ workflows:
 
       - staging-web-app-deploy:
           requires:
-            - web-app-build-image
+            - staging-web-app-build-image
       - staging-git-deploy:
           requires:
             - staging-git-build-image

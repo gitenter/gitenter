@@ -78,14 +78,18 @@ Resources:
     ],
     "environment": [
       {
-        "name": "SPRING_PROFILES_ACTIVE",
-        "value": "${var.environment}"
+        "name": "VERSION_INFO",
+        "value": "v0"
+      },
+      {
+        "name": "BUILD_DATE",
+        "value": "-"
       }
     ],
     "mountPoints": [
       {
         "sourceVolume": "${var.efs_docker_volumn_name}",
-        "containerPath": "${var.efs_web_container_path}",
+        "containerPath": "${var.efs_web_app_container_path}",
         "readOnly": false
       }
     ]
@@ -102,7 +106,7 @@ DEFINITION
   #
   # After we set up as this, if we `docker ps` and then
   # > docker exec -it <container-id> /bin/bash
-  # `cd` to `var.efs_web_container_path` and add something, that will be saved in EFS.
+  # `cd` to `var.efs_*_container_path` and add something, that will be saved in EFS.
   volume {
     # After this setup, if we `docker volume ls` we'll see the volume name (currently
     # driver is `local`).
@@ -244,14 +248,18 @@ resource "aws_ecs_task_definition" "git" {
     ],
     "environment": [
       {
-        "name": "SPRING_PROFILES_ACTIVE",
-        "value": "${var.environment}"
+        "name": "VERSION_INFO",
+        "value": "v0"
+      },
+      {
+        "name": "BUILD_DATE",
+        "value": "-"
       }
     ],
     "mountPoints": [
       {
         "sourceVolume": "${var.efs_docker_volumn_name}",
-        "containerPath": "${var.efs_web_container_path}",
+        "containerPath": "${var.efs_git_container_path}",
         "readOnly": false
       }
     ]

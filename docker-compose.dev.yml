@@ -34,7 +34,7 @@ services:
       - ./selenium-test:/selenium-test-in-dev
     depends_on:
       - git
-      - web
+      - web-app
     tty: true
 
   git-trivial:
@@ -43,5 +43,5 @@ services:
       dockerfile: ./docker/git-trivial/Dockerfile
     depends_on:
       - git
-      - web
+      - web-app
     tty: true
