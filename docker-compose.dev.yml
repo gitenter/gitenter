@@ -36,12 +36,3 @@ services:
       - git
       - web-app
     tty: true
-
-  git-trivial:
-    build:
-      context: .
-      dockerfile: ./docker/git-trivial/Dockerfile
-    depends_on:
-      - git
-      - web-app
-    tty: true

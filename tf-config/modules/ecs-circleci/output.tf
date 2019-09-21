@@ -7,9 +7,6 @@ output "web_lb_hostname" {
   value = "http://${aws_lb.web.dns_name}"
 }
 
-# Currently `ssh root@staging-git-nlb-4b7aeb681d273849.elb.us-east-1.amazonaws.com` can
-# pass the `ECDSA key fingerprint` step. But it will fail the password assigned in
-# `docker/ssh-trivial/Dockerfile`. Need to debug login.
 output "git_lb_hostname" {
   value = "http://${aws_lb.git.dns_name}"
 }
