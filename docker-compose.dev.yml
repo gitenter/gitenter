@@ -28,8 +28,8 @@ services:
 
   selenium-test:
     build:
-      context: .
-      dockerfile: ./docker/selenium-test/Dockerfile
+      context: ./selenium-test
+      dockerfile: ./Dockerfile
     volumes:
       - ./selenium-test:/selenium-test-in-dev
     depends_on:
