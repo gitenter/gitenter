@@ -85,16 +85,7 @@ but then need to manually `sed -i 's/profile = LocalProfile()/profile = DockerPr
 
 TODO:
 
-It seems there's a race condition between (1) when the SSH key is written into the database, (2) when the dynamically generated `authorized_keys` will include that key, and (3) whether `check_if_can_edit_repository.py` will return `True`.
-
-If SSH key is not in `authorized_keys` it will ask password. If it is in but `check_if_can_edit_repository.py` returns false, it will return
-
-> Authentication failed.
-> fatal: Could not read from remote repository.
->
-> Please make sure you have the correct access rights
-
-Right now, I see it happens in Linux/Ubuntu but everything passes with no problem in Mac.
+It is working in Mac host and ECS (with docker running on it), but for linux host it is asking passwords (with the correct one as input tests can pass) so looks like `AuthorizedKeysCommand` is not triggered (checked `get_authorized_keys_content.sh` can return the desired key).
 
 ## TODO
 
