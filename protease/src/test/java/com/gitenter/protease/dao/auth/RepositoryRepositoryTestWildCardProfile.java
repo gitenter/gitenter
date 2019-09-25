@@ -101,7 +101,7 @@ public class RepositoryRepositoryTestWildCardProfile {
 				organization.getName(),
 				repository.getName());
 		
-		repositoryRepository.saveAndFlush(repository);
+		repositoryRepository.init(repository);
 		assertTrue(repositoryDirectory.exists());
 		
 		repositoryRepository.delete(repository);

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class OrganizationBeanTest {
 	@Transactional
 	@DbUnitMinimalDataSetup
 	@DatabaseTearDown
-	public void testAddNewRepository() throws IOException {
+	public void testAddNewRepository() throws IOException, GitAPIException {
 		
 		RepositoryBean repository = new RepositoryBean();
 		repository.setName("new_repository");
@@ -93,7 +94,7 @@ public class OrganizationBeanTest {
 		 * Need to refresh the ID of "repository", so will not
 		 * work if saving by "organizationRepository".
 		 */
-		repositoryRepository.saveAndFlush(repository);
+		repositoryRepository.init(repository);
 		
 		MemberBean member = memberRepository.findById(1).get();
 		assertEquals(member.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 1);
@@ -118,5 +119,11 @@ public class OrganizationBeanTest {
 		RepositoryBean updatedNewRepository = repositoryRepository.findByOrganizationNameAndRepositoryName(organization.getName(), "new_repository").get(0);
 		assertEquals(updatedNewRepository.getMembers(RepositoryMemberRole.ORGANIZER).size(), 1);
 		assertEquals(updatedNewRepository.getMembers(RepositoryMemberRole.ORGANIZER).get(0).getUsername(), member.getUsername());
+		
+		/*
+		 * Delete is important, because git/folder change cannot be automatic roll back
+		 * after test.
+		 */
+		repositoryRepository.delete(repository);
 	}
 }

@@ -330,6 +330,16 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 		return gitBranch;
 	}
 	
+	void create(RepositoryBean repository) throws IOException, GitAPIException {
+		/*
+		 * TODO:
+		 * It is counterintuitive that `GitBareRepository.getInstance` will create one
+		 * if it doesn't exist. Change the `gitar` logic to an explicit `create` and 
+		 * raise an error if `get` but it doesn't exist yet.  
+		 */
+		getGitRepository(repository);
+	}
+	
 	void delete(RepositoryBean repository) throws IOException, GitAPIException {
 		GitRepository gitRepository = getGitRepository(repository);
 		GitRepository.delete(gitRepository);

@@ -47,15 +47,20 @@ public class RepositoryRepositoryTest {
 	@DatabaseTearDown
 	public void testCannotSaveTwoRepositoryWithTheSameName() throws IOException, GitAPIException {
 		
+		/*
+		 * Note that `exitingRepository` doesn't have corresponding git folder setup,
+		 * by the limit of we only use dbunit.
+		 */
 		RepositoryBean existingRepository = repositoryRepository.findById(1).get();
 		
-		RepositoryBean toBeSavedOrganization = new RepositoryBean();
-		toBeSavedOrganization.setOrganization(existingRepository.getOrganization());
-		toBeSavedOrganization.setName(existingRepository.getName());
-		toBeSavedOrganization.setDisplayName(existingRepository.getDisplayName());
-		toBeSavedOrganization.setIsPublic(true);
+		RepositoryBean toBeSavedRepository = new RepositoryBean();
+		toBeSavedRepository.setOrganization(existingRepository.getOrganization());
+		toBeSavedRepository.setName(existingRepository.getName());
+		toBeSavedRepository.setDisplayName(existingRepository.getDisplayName());
+		toBeSavedRepository.setIsPublic(true);
 		
-		repositoryRepository.saveAndFlush(toBeSavedOrganization);
+		repositoryRepository.init(toBeSavedRepository);
+		repositoryRepository.delete(toBeSavedRepository);
 	}
 	
 	@Test
@@ -77,6 +82,7 @@ public class RepositoryRepositoryTest {
 		toBeSavedRepository.setDisplayName(existingRepository.getDisplayName());
 		toBeSavedRepository.setIsPublic(true);
 		
-		repositoryRepository.saveAndFlush(toBeSavedRepository);
+		repositoryRepository.init(toBeSavedRepository);
+		repositoryRepository.delete(toBeSavedRepository);
 	}
 }

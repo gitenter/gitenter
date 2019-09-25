@@ -34,6 +34,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 	@Autowired private RepositoryDatabaseRepository repositoryDatabaseRepository;
 	@Autowired private RepositoryGitUpdateFactory repositoryGitUpdateFactory;
 	
+	@Override
 	public Optional<RepositoryBean> findById(Integer id) {
 		
 		Optional<RepositoryBean> items = repositoryDatabaseRepository.findById(id); 
@@ -46,6 +47,7 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		return items;
 	}
 	
+	@Override
 	public List<RepositoryBean> findByOrganizationNameAndRepositoryName(String organizationName, String repositoryName) {
 		
 		List<RepositoryBean> items = repositoryDatabaseRepository.findByOrganizationNameAndRepositoryName(organizationName, repositoryName);
@@ -57,7 +59,15 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		return items;
 	}
 	
-	public RepositoryBean saveAndFlush(RepositoryBean repository) {
+	@Override
+	public RepositoryBean init(RepositoryBean repository) throws IOException, GitAPIException {
+		RepositoryBean savedRepository = repositoryDatabaseRepository.saveAndFlush(repository);
+		repositoryGitUpdateFactory.create(repository);
+		return savedRepository;
+	}
+	
+	@Override
+	public RepositoryBean update(RepositoryBean repository) {
 		return repositoryDatabaseRepository.saveAndFlush(repository);
 	}
 

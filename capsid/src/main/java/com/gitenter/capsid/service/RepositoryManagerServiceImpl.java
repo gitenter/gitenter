@@ -74,7 +74,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 * work if saving by "organizationRepository".
 		 */
 		try {
-			repositoryRepository.saveAndFlush(repository);
+			repositoryRepository.init(repository);
 		}
 		catch(PersistenceException e) {
 			ExceptionConsumingPipeline.consumePersistenceException(e, repository);
@@ -86,11 +86,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		
 		/*
-		 * TODO:
-		 * Consider move the git related part to a DAO method.
-		 * 
-		 * TODO:
-		 * Consider using task queue to implement git related operations.
+		 * Repository has been created in the repository layer, but we still need to get the instance 
+		 * so we can setup the hooks.
 		 */
 		GitBareRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		
@@ -186,7 +183,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			RepositoryDTO repositoryDTO) throws IOException {
 		
 		repositoryDTO.updateBean(repository);
-		repositoryRepository.saveAndFlush(repository);
+		repositoryRepository.update(repository);
 	}
 	
 	@Override

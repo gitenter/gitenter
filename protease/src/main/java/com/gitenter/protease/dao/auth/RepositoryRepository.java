@@ -13,7 +13,8 @@ public interface RepositoryRepository {
 	public Optional<RepositoryBean> findById(Integer id);
 	public List<RepositoryBean> findByOrganizationNameAndRepositoryName(String organizationName, String repositoryName);
 	
-	public RepositoryBean saveAndFlush(RepositoryBean repository);
+	public RepositoryBean init(RepositoryBean repository) throws IOException, GitAPIException;
+	public RepositoryBean update(RepositoryBean repository);
 	
 	public void delete(RepositoryBean repository) throws IOException, GitAPIException;
 }
