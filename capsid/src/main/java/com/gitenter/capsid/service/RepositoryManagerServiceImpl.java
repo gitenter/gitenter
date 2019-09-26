@@ -95,9 +95,14 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		GitBareRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
 		
 		/*
-		 * TODO:
-		 * Consider just setup a symlink in here. And the actual `.jar` file goes to a
-		 * different place (in the Chef setup).
+		 * No easy way to replace `.jar` with a symlink and put the `.jar` in git container.
+		 * Docker works fine but ECS raises error on the `File sampleHooksDirectory =` line.
+		 * May come back and debug more carefully.
+		 * 
+		 * Also should remember to change the `java -jar` path in post-receive executable.
+		 * The other possibility is to keep the `post-receive` shellscript in capsid, but move
+		 * the `.jar` to `/ssheep` (in case the error is because getFile() cannot get symlink),
+		 * but it is less integrated.
 		 */
 		ClassLoader classLoader = getClass().getClassLoader();
 		File sampleHooksDirectory = new File(classLoader.getResource("git-server-side-hooks").getFile());
