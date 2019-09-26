@@ -21,7 +21,7 @@ variable username {
 }
 
 module "iam_group" {
-  source = "../../modules/iam-group-terraform-deploy"
+  source = "../../modules/iam-terraform-deploy-group"
   group_name = "${var.group_name}"
 }
 

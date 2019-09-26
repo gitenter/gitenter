@@ -6,6 +6,8 @@ AWS console sign in page: https://gitenter.signin.aws.amazon.com/console
 
 Manually created a user `Administrator` with permissions `AdministratorAccess`. The `access_key` and `secret_key` of this user is used to setup users in `/iam`.
 
+Put in `tf-config/live/*/secret.auto.tfvars`.
+
 `iam-terraform-config` user is used for most terraform setup.
 
 `iam-terraform-deploy` user is used for CircleCI deployment of `aws ecs update-service`.
@@ -14,7 +16,7 @@ Manually created a user `Administrator` with permissions `AdministratorAccess`. 
 
 + `test`: In orchestration framework, but uses non-persistent storage (as docker containers) and mocked APIs.
 + `staging`: Everything is the same as prod. Uses different set of persistent storage/3rd party APIs. Deployed through `tf-config/live/ecs-circleci-staging` module.
-+ `prod`
++ `production`
 
 # Initialization/Destroy
 

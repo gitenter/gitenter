@@ -13,14 +13,18 @@ import com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean;
 @Configuration
 public class TestPostgresConfig {
 	
-	@Bean
-	public DataSource dataSource() {
+	private DataSource getDataSource(String postgresUrl) {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/gitenter");
+		dataSource.setUrl("jdbc:postgresql://"+postgresUrl+":5432/gitenter");
 		dataSource.setUsername("gitenter_app");
 		dataSource.setPassword("zooo");
 		return dataSource;
+	}
+
+	@Bean
+	public DataSource dataSource() {
+		return getDataSource("localhost");
 	}
 	
 	@Bean

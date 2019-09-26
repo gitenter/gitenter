@@ -45,14 +45,13 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <!--
-                        TODO:
                         When using parent pom, there's a race condition in here that capsid build may not use the
                         most up-to-date git hooks.
                         The current solution is a three step build.
-                        Consider explicitly specify the dependency (if there's a way in maven). Or alternatively,
-                        using an approach different to setting up `<outputDirectory>` tag on `hooks/post-receive/pom.xml`.
-                        For example, compile hooks and set them somewhere on docker. Capsid can then just
-                        setup a symlink or something else to call the hook when it initialize a repository.
+
+                        TODO:
+                        Consider put this one to `ssheep` and replace the hook with a symlink. However, there's
+                        some techinical problem for that in ECS (see comment in `RepositoryManagerServiceImpl`).
                     -->
                     <outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
                 </configuration>
