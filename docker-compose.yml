@@ -112,6 +112,7 @@ services:
     depends_on:
       - git
       - web-app
+      - web-static
 
 volumes:
   git-repo:
