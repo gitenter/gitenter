@@ -92,6 +92,15 @@ services:
   # `get_authorized_keys_content.sh` is through SSH `AuthorizedKeysCommand`. There's no way
   # to make it see customized environment variable.
 
+  web-static:
+    build:
+      context: ./stolon
+      dockerfile: ./Dockerfile
+    ports:
+      - "8885:80"
+    tty: true
+    restart: always
+
   nginx:
     build:
       context: ./docker/nginx

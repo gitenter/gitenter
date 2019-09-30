@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
 	<meta charset="utf-8">
-    <title>{{.Title}}</title>
+    <title>{{.Title}} - GitEnter</title>
     <link rel="stylesheet" type="text/css" href="/resources/css/style.css" >
 	<link rel="icon" type="image/x-icon" href="/resources/image/favicon.ico" />
   </head>
@@ -12,11 +12,10 @@
     <header>
       <a href="/"><img class="logo" src="/resources/image/logo.png" alt="enterovirus" height="48" width="192"></a>
 
-      <form action="/help" method="GET">
+      <form action="/help/" method="GET">
         <input type="submit" value="Help" />
       </form>
-
-      <form action="/pricing" method="GET">
+      <form action="/pricing/" method="GET">
         <input type="submit" value="Pricing" />
       </form>
     </header>
@@ -25,13 +24,13 @@
       {{ .Content }}
       <ul>
       {{ range .Paginator.Pages }}
-          <li><a href="{{ .Permalink }}">{{.Title}}</a></li>
+          <li><a href="{{ .URL }}">{{.Title}}</a></li>
       {{ end }}
       </ul>
     </article>
 
     <footer>
-      <a href="/about">About</a> | <a href="/contact">Contact</a><br>
+      <a href="/about/">About</a> | <a href="/contact/">Contact</a><br>
       Copyright &copy; 2017-2019 GitEnter
     </footer>
 
