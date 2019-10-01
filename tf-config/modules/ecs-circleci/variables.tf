@@ -100,17 +100,21 @@ variable "efs_git_container_path" {
 
 locals {
   aws_web_app_resource_infix = "web-app"
+  aws_web_static_resource_infix = "web-static"
   aws_git_resource_infix = "git"
 
   # Prefix to be used in the naming of some of the created AWS resources
   aws_resource_prefix = "${var.environment}"
   aws_web_app_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_app_resource_infix}"
+  aws_web_static_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_static_resource_infix}"
   aws_git_resource_prefix = "${local.aws_resource_prefix}-${local.aws_git_resource_infix}"
 
   # These names are used by CircleCI orbs
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
   aws_web_app_ecr_name = "${local.aws_web_app_resource_prefix}-repository"
   aws_ecs_web_app_service_name = "${local.aws_web_app_resource_prefix}-service"
+  aws_web_static_ecr_name = "${local.aws_web_static_resource_prefix}-repository"
+  aws_ecs_web_static_service_name = "${local.aws_web_static_resource_prefix}-service"
   aws_git_ecr_name = "${local.aws_git_resource_prefix}-repository"
   aws_ecs_git_service_name = "${local.aws_git_resource_prefix}-service"
 

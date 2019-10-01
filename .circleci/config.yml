@@ -97,6 +97,10 @@ orbs:
             type: string
           docker_image_folder:
             type: string
+          checkout:
+            type: boolean
+          attach-workspace:
+            type: boolean
         steps:
           # Otherwise will get the below error in "Build docker image" step:
           # > $ !/bin/bash -eo pipefail
@@ -113,8 +117,8 @@ orbs:
               docker_layer_caching: true
 
           - aws-ecr/build-and-push-image:
-              checkout: false
-              attach-workspace: true
+              checkout: <<parameters.checkout>>
+              attach-workspace: <<parameters.attach-workspace>>
               # Looks like there's a bug in `aws-ecr/build_and_push_image`. Notice that there's nowhere
               # to specify `working_directory` (in its source code https://github.com/CircleCI-Public/aws-ecr-orb)
               # and it is actually it is using `.`. That's the reason it actually doesn't support any
@@ -302,12 +306,11 @@ jobs:
     working_directory: ~/python
 
     steps:
-      # TODO:
-      # Why it is working. Looks like we should `attach_workspace` rather than `checkout`!?
-      - checkout
       - inline-aws-operation/build-image:
           ecr_repo_name: "staging-web-app-repository"
           docker_image_folder: "capsid"
+          checkout: true # for `Dockerfile`
+          attach-workspace: true # for `.war` file
 
   staging-git-build-image:
     docker:
@@ -331,18 +334,33 @@ jobs:
       - inline-aws-operation/build-image:
           ecr_repo_name: "staging-git-repository"
           docker_image_folder: "ssheep"
+          checkout: false
+          attach-workspace: false
 
-  web-static-build-image:
+  # TODO:
+  # Right now web-static content is environment ignorant. Consider moving this one to a
+  # `web-static-build-image` which is shared to be used for multiple environments and
+  # only need to be built once (Terraform change should also be involved).
+  #
+  # Also, wonder if it is actually better for us to have different static contents for
+  # different environment (like a different background color) so when people are checking
+  # it is very clear which environment they are in.
+  staging-web-static-build-image:
     docker:
       - image: 'circleci/python:2.7'
 
     working_directory: ~/python
 
     steps:
-      - attach_workspace:
-          at: .
-      - run: ls stolon
-      - run: ls stolon/public
+      # - checkout
+      # - attach_workspace:
+      #     at: .
+      # - run: ls stolon/public
+      - inline-aws-operation/build-image:
+          ecr_repo_name: "staging-web-static-repository"
+          docker_image_folder: "stolon"
+          checkout: true
+          attach-workspace: true
 
   staging-web-app-deploy:
     docker:
@@ -502,7 +520,7 @@ workflows:
       - staging-git-build-image:
           requires:
             - e2e-readiness
-      - web-static-build-image:
+      - staging-web-static-build-image:
           requires:
             - e2e-readiness
 
