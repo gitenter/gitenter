@@ -49,6 +49,8 @@ executors:
     working_directory: ~/python
 
 orbs:
+  hugo: circleci/hugo@0.3.1
+
   # Inline orbs:
   # https://circleci.com/docs/2.0/creating-orbs/#creating-inline-orbs
   inline-postgres:
@@ -300,6 +302,8 @@ jobs:
     working_directory: ~/python
 
     steps:
+      # TODO:
+      # Why it is working. Looks like we should `attach_workspace` rather than `checkout`!?
       - checkout
       - inline-aws-operation/build-image:
           ecr_repo_name: "staging-web-app-repository"
@@ -327,6 +331,18 @@ jobs:
       - inline-aws-operation/build-image:
           ecr_repo_name: "staging-git-repository"
           docker_image_folder: "ssheep"
+
+  web-static-build-image:
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - attach_workspace:
+          at: .
+      - run: ls stolon
+      - run: ls stolon/public
 
   staging-web-app-deploy:
     docker:
@@ -442,6 +458,14 @@ workflows:
       - python-unittest
       - python-linter
 
+      # https://circleci.com/orbs/registry/orb/circleci/hugo
+      - hugo/build:
+          version: '0.58.3'
+          source: stolon/
+          destination: stolon/public/
+          html-proofer: true
+          persist-to-workspace: true
+
       # TODO:
       # Check if there's a way to mark a build succeed even if we some deployment steps doesn't do,
       # especially in a non-master branch which the non-master branch is not triggered.
@@ -451,6 +475,7 @@ workflows:
            - java-build
            - python-unittest
            - python-linter
+           - hugo/build
 
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
       # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-staging` first.
@@ -477,6 +502,9 @@ workflows:
       - staging-git-build-image:
           requires:
             - e2e-readiness
+      - web-static-build-image:
+          requires:
+            - e2e-readiness
 
       - staging-web-app-deploy:
           requires:
@@ -501,3 +529,6 @@ workflows:
       - production-deploy:
           requires:
             - staging-e2e-test
+          filters:
+            branches:
+              only: master
