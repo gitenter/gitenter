@@ -23,7 +23,7 @@ resource "aws_lb" "web" {
 # TODO:
 # Not sure why it is then necessary, as the priority=1 `aws_lb_listener_rule`
 # consume all path patterns.
-resource "aws_lb_target_group" "web_app_dummy" {
+resource "aws_lb_target_group" "web_dummy" {
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -99,6 +99,24 @@ resource "aws_lb_target_group" "web_app" {
   }
 }
 
+resource "aws_lb_target_group" "web_static" {
+  name        = "${local.aws_ecs_web_static_service_name}"
+  port        = "${var.http_port}"
+  protocol    = "HTTP"
+  vpc_id      = "${aws_vpc.main.id}"
+  target_type = "ip"
+  deregistration_delay = 20
+
+  health_check {
+    interval = 60
+    path = "/about/"
+    protocol = "HTTP"
+    timeout = 59
+    healthy_threshold = "${var.web_app_count}"
+    unhealthy_threshold = 2
+  }
+}
+
 # Redirect all traffic from the ALB to the target group
 resource "aws_lb_listener" "web_front_end" {
   load_balancer_arn = "${aws_lb.web.id}"
@@ -110,7 +128,7 @@ resource "aws_lb_listener" "web_front_end" {
   # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#listener-rules
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.web_app_dummy.id}"
+    target_group_arn = "${aws_lb_target_group.web_dummy.id}"
   }
 }
 
@@ -125,7 +143,7 @@ resource "aws_lb_listener" "web_front_end" {
 # frameworks).
 # If that is the case, we'll need multiple rules with different priority and
 # non-trivial path pattern.
-resource "aws_lb_listener_rule" "web_all" {
+resource "aws_lb_listener_rule" "web_app" {
   listener_arn = "${aws_lb_listener.web_front_end.arn}"
   priority     = 1
 
@@ -137,5 +155,25 @@ resource "aws_lb_listener_rule" "web_all" {
   condition {
     field  = "path-pattern"
     values = ["*"]
+  }
+}
+
+variable "path_patterns" {
+  default = ["/about/*", "/contact/*", "/pricing/*", "/help/*"]
+}
+
+resource "aws_lb_listener_rule" "web_static" {
+  count        = "${length(var.path_patterns)}"
+  listener_arn = "${aws_lb_listener.web_front_end.arn}"
+  priority     = "${count.index + 100}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.web_static.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["${element(var.path_patterns, count.index)}"]
   }
 }

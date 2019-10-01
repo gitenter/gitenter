@@ -157,7 +157,7 @@ resource "aws_autoscaling_group" "main" {
   # In AWS console "Load Balancing > Target Groups" we can check `Targets`
   # of each single target group to see if the targets are successfully registered.
   # target_group_arns           = [
-  #   "${aws_lb_target_group.web_app_dummy.arn}",
+  #   "${aws_lb_target_group.web_dummy.arn}",
   #   "${aws_lb_target_group.web_app.arn}",
   #   "${aws_lb_target_group.git.arn}"
   # ]

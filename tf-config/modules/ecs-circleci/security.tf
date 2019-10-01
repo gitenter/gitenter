@@ -33,7 +33,7 @@ resource "aws_security_group" "web_app" {
   vpc_id      = "${aws_vpc.main.id}"
 }
 
-resource "aws_security_group_rule" "ecs_tasks_egress" {
+resource "aws_security_group_rule" "web_app_ecs_tasks_egress" {
   type            = "egress"
 
   protocol        = "-1"
@@ -44,12 +44,12 @@ resource "aws_security_group_rule" "ecs_tasks_egress" {
   security_group_id = "${aws_security_group.web_app.id}"
 }
 
-resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
+resource "aws_security_group_rule" "web_app_ecs_tasks_lb_ingress" {
   type            = "ingress"
 
   protocol        = "tcp"
-  from_port       = "${var.tomcat_container_port}"
-  to_port         = "${var.tomcat_container_port}"
+  from_port       = "${var.web_app_export_port}"
+  to_port         = "${var.web_app_export_port}"
 
   # No need to setup `cidr_blocks`, as only load balancer
   # is public facing.
@@ -57,7 +57,7 @@ resource "aws_security_group_rule" "ecs_tasks_lb_ingress" {
   source_security_group_id = "${aws_security_group.web_alb.id}"
 }
 
-resource "aws_security_group_rule" "ecs_tasks_self_ingress" {
+resource "aws_security_group_rule" "web_app_ecs_tasks_self_ingress" {
   type            = "ingress"
 
   protocol        = "-1"
@@ -68,19 +68,44 @@ resource "aws_security_group_rule" "ecs_tasks_self_ingress" {
   self = true
 }
 
-# TODO:
-# May be able to be removed after debugging
-resource "aws_security_group_rule" "ecs_tasks_ssh_ingress" {
+resource "aws_security_group" "web_static" {
+  name = "${local.aws_web_static_security_group}"
+  vpc_id      = "${aws_vpc.main.id}"
+}
+
+resource "aws_security_group_rule" "web_static_ecs_tasks_egress" {
+  type            = "egress"
+
+  protocol        = "-1"
+  from_port       = 0
+  to_port         = 0
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.web_static.id}"
+}
+
+resource "aws_security_group_rule" "web_static_ecs_tasks_lb_ingress" {
   type            = "ingress"
 
   protocol        = "tcp"
-  from_port       = 22
-  to_port         = 22
+  from_port       = "${var.web_static_export_port}"
+  to_port         = "${var.web_static_export_port}"
 
-  # TODO: `Custom IP` rather than `Anywhere`
-  cidr_blocks = ["0.0.0.0/0"]
+  # No need to setup `cidr_blocks`, as only load balancer
+  # is public facing.
+  security_group_id = "${aws_security_group.web_static.id}"
+  source_security_group_id = "${aws_security_group.web_alb.id}"
+}
 
-  security_group_id = "${aws_security_group.web_app.id}"
+resource "aws_security_group_rule" "web_static_ecs_tasks_self_ingress" {
+  type            = "ingress"
+
+  protocol        = "-1"
+  from_port       = 0
+  to_port         = 0
+
+  security_group_id = "${aws_security_group.web_static.id}"
+  self = true
 }
 
 resource "aws_security_group" "git" {
@@ -128,6 +153,9 @@ resource "aws_security_group_rule" "efs_ecs_tasks_ingress" {
   to_port         = 2049
 
   security_group_id = "${aws_security_group.efs.id}"
+
+  # TODO:
+  # Why `aws_security_group.git` doesn't need it?
   source_security_group_id = "${aws_security_group.web_app.id}"
 }
 
@@ -148,7 +176,7 @@ resource "aws_security_group_rule" "postgres_egress" {
 }
 
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.Scenarios.html#USER_VPC.Scenario1
-resource "aws_security_group_rule" "postgres_ecs_tasks_ingress" {
+resource "aws_security_group_rule" "postgres_web_app_ecs_tasks_ingress" {
   type            = "ingress"
 
   protocol        = "tcp"
@@ -157,6 +185,17 @@ resource "aws_security_group_rule" "postgres_ecs_tasks_ingress" {
 
   security_group_id = "${aws_security_group.postgres.id}"
   source_security_group_id = "${aws_security_group.web_app.id}"
+}
+
+resource "aws_security_group_rule" "postgres_git_ecs_tasks_ingress" {
+  type            = "ingress"
+
+  protocol        = "tcp"
+  from_port       = 5432
+  to_port         = 5432
+
+  security_group_id = "${aws_security_group.postgres.id}"
+  source_security_group_id = "${aws_security_group.git.id}"
 }
 
 # TODO:
@@ -197,6 +236,7 @@ resource "aws_security_group_rule" "redis_ecs_tasks_ingress" {
   from_port       = 6379
   to_port         = 6379
 
+  # Redis is for session management. Git doesn't need to access it.
   security_group_id = "${aws_security_group.redis.id}"
   source_security_group_id = "${aws_security_group.web_app.id}"
 }
