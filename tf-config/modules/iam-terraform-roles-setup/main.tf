@@ -58,3 +58,67 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
   role       = "${aws_iam_role.ecs_task_execution.name}"
   policy_arn = "${data.aws_iam_policy.ecs_task_execution.arn}"
 }
+
+# https://learn.hashicorp.com/terraform/aws/eks-intro
+resource "aws_iam_role" "eks" {
+  name = "AmazonEksRole"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "eks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cluster_policy_attach" {
+  role       = "${aws_iam_role.eks.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "els_service_policy_attach" {
+  role       = "${aws_iam_role.eks.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
+}
+
+resource "aws_iam_role" "eks_instance" {
+  name = "AmazonEKSforEC2Role"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "eks_instance_AmazonEKSWorkerNodePolicy_attach" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = "${aws_iam_role.eks_instance.name}"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_instance_AmazonEKS_CNI_Policy_attach" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = "${aws_iam_role.eks_instance.name}"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_instance_AmazonEC2ContainerRegistryReadOnly_attach" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = "${aws_iam_role.eks_instance.name}"
+}

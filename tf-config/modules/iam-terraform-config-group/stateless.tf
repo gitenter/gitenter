@@ -74,6 +74,33 @@ resource "aws_iam_group_policy_attachment" "ecs_instance_attach" {
   policy_arn = "${data.aws_iam_policy.ecs_instance.arn}"
 }
 
+resource "aws_iam_policy" "eks" {
+  name        = "AmazonEKS_FullAccess"
+  path        = "/"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "eks:CreateCluster",
+                "eks:DeleteCluster",
+                "eks:DescribeCluster"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_group_policy_attachment" "eks" {
+  group = "${aws_iam_group.stateless.id}"
+  policy_arn = "${aws_iam_policy.eks.arn}"
+}
+
 # This is used to get and pass service roles to AWS resources (EC2, ECS, ...)
 # basically all roles defined in `modules/iam-terraform-roles.setup`.
 resource "aws_iam_policy" "role_linked" {
