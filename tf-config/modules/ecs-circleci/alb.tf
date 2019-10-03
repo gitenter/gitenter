@@ -16,13 +16,9 @@ resource "aws_lb" "web" {
   ]
 }
 
-# A dummy target group is used to setup the ALB to just drop traffic
-# initially, before any real service target groups have been added.
-# No actual instance (target) is registered in this target group.
-#
-# TODO:
-# Not sure why it is then necessary, as the priority=1 `aws_lb_listener_rule`
-# consume all path patterns.
+# This is the black hole target group that all the traffic which
+# are not ruled (not the case as `web-app-service` takes `*` so
+# everything). Just put it in here for complicity.
 resource "aws_lb_target_group" "web_dummy" {
   port        = "${var.http_port}"
   protocol    = "HTTP"
@@ -109,6 +105,11 @@ resource "aws_lb_target_group" "web_static" {
 
   health_check {
     interval = 60
+    # TODO:
+    # Not healthy before the first deployment (as from `nginx:latest` image)
+    # they don't have this path at all.
+    # Probably can do `/` because it is behind the listening rule, so
+    # it can touch `/` without being redirect to the web-app service.
     path = "/about/"
     protocol = "HTTP"
     timeout = 59
@@ -145,7 +146,7 @@ resource "aws_lb_listener" "web_front_end" {
 # non-trivial path pattern.
 resource "aws_lb_listener_rule" "web_app" {
   listener_arn = "${aws_lb_listener.web_front_end.arn}"
-  priority     = 1
+  priority     = 100
 
   action {
     type             = "forward"
@@ -165,7 +166,7 @@ variable "path_patterns" {
 resource "aws_lb_listener_rule" "web_static" {
   count        = "${length(var.path_patterns)}"
   listener_arn = "${aws_lb_listener.web_front_end.arn}"
-  priority     = "${count.index + 100}"
+  priority     = "${count.index + 10}"
 
   action {
     type             = "forward"

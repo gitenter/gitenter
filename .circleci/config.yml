@@ -149,8 +149,6 @@ orbs:
             type: string
           service_name:
             type: string
-          docker_image_folder:
-            type: string
         steps:
           # May be no need for this part, because it is technically inside of `aws-ecr/build-and-push-image`.
           # https://circleci.com/orbs/registry/orb/circleci/aws-cli
@@ -369,15 +367,25 @@ jobs:
     working_directory: ~/python
 
     steps:
-      - checkout
       - inline-aws-operation/deploy:
           ecr_repo_name: "staging-web-app-repository"
           cluster_name: "staging-cluster"
           service_name: "staging-web-app-service"
-          docker_image_folder: "capsid"
       - inline-aws-operation/confirm-web-deployment:
           cluster_name: "staging-cluster"
           service_name: "staging-web-app-service"
+
+  staging-web-static-deploy:
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - inline-aws-operation/deploy:
+          ecr_repo_name: "staging-web-static-repository"
+          cluster_name: "staging-cluster"
+          service_name: "staging-web-static-service"
 
   staging-git-deploy:
     docker:
@@ -386,12 +394,10 @@ jobs:
     working_directory: ~/python
 
     steps:
-      - checkout
       - inline-aws-operation/deploy:
           ecr_repo_name: "staging-git-repository"
           cluster_name: "staging-cluster"
           service_name: "staging-git-service"
-          docker_image_folder: "ssheep"
     # TODO:
     # Now we can `ssh git@<git_lb_hostname>` to that server. And if the SSH key is added
     # through web UI (so save in the database) the password is not needed. Should add test on that.
@@ -517,16 +523,19 @@ workflows:
       - staging-web-app-build-image:
           requires:
             - e2e-readiness
-      - staging-git-build-image:
+      - staging-web-static-build-image:
           requires:
             - e2e-readiness
-      - staging-web-static-build-image:
+      - staging-git-build-image:
           requires:
             - e2e-readiness
 
       - staging-web-app-deploy:
           requires:
             - staging-web-app-build-image
+      - staging-web-static-deploy:
+          requires:
+            - staging-web-static-build-image
       - staging-git-deploy:
           requires:
             - staging-git-build-image
@@ -534,6 +543,7 @@ workflows:
       - staging-e2e-test:
           requires:
             - staging-web-app-deploy
+            - staging-web-static-deploy
             - staging-git-deploy
       # TODO:
       # Consider adding a step to call `terraform destroy` through CircleCI. Should be an `approval`

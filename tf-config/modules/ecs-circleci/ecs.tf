@@ -279,7 +279,7 @@ resource "aws_ecs_service" "web_static" {
   deployment_minimum_healthy_percent = 75
 
   network_configuration {
-    security_groups = ["${aws_security_group.web_app.id}"]
+    security_groups = ["${aws_security_group.web_static.id}"]
     subnets         = ["${aws_subnet.public.*.id}"]
   }
 
