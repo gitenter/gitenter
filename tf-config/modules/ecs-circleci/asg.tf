@@ -40,7 +40,11 @@ data "aws_ami" "ecs_optimized_amis" {
 resource "aws_launch_configuration" "main" {
   name                        = "${local.aws_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
-  security_groups             = ["${aws_security_group.web_app.id}", "${aws_security_group.git.id}"]
+  security_groups             = [
+    "${aws_security_group.web_app.id}",
+    "${aws_security_group.web_static.id}",
+    "${aws_security_group.git.id}"
+  ]
 
   image_id                    = "${data.aws_ami.ecs_optimized_amis.id}"
   # `instance_type` needs to match CPU/memory defined in `aws_ecs_task_definition`
