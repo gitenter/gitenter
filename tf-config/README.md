@@ -15,7 +15,7 @@ Put in `tf-config/live/*/secret.auto.tfvars`.
 # Environments
 
 + `test`: In orchestration framework, but uses non-persistent storage (as docker containers) and mocked APIs.
-+ `staging`: Everything is the same as prod. Uses different set of persistent storage/3rd party APIs. Deployed through `tf-config/live/ecs-circleci-staging` module.
++ `staging`: Everything is the same as prod. Uses different set of persistent storage/3rd party APIs. Deployed through `tf-config/live/ecs-staging` module.
 + `production`
 
 # Initialization/Destroy
@@ -25,7 +25,7 @@ Put in `tf-config/live/*/secret.auto.tfvars`.
 Needs to initialize the remote AWS state manually before `staging-readiness` CircleCI step.
 
 ```bash
-cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-staging
+cd ~/Workspace/gitenter/tf-config/live/ecs-staging
 terraform apply
 ```
 
@@ -54,7 +54,7 @@ Notes:
 ### Destroy
 
 ```bash
-cd ~/Workspace/gitenter/tf-config/live/ecs-circleci-staging
+cd ~/Workspace/gitenter/tf-config/live/ecs-staging
 terraform destroy
 ```
 
@@ -125,7 +125,7 @@ staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> GET a
 aws configure
 aws ecr get-login --region us-east-1 --no-include-email
 docker login -u AWS -p ... https://662490392829.dkr.ecr.us-east-1.amazonaws.com
-docker run -p 8885:8080 662490392829.dkr.ecr.us-east-1.amazonaws.com/ecs-circleci-qa-repository:c1f58a2c852d24b22bc9b12f137fb1fbd2d16a5f
+docker run -p 8885:8080 662490392829.dkr.ecr.us-east-1.amazonaws.com/ecs-qa-repository:c1f58a2c852d24b22bc9b12f137fb1fbd2d16a5f
 ```
 
 # Terraform Notes

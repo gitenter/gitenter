@@ -502,7 +502,7 @@ workflows:
            - hugo/build
 
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`
-      # needs to apply `terraform apply` under `tf-config/live/ecs-circleci-staging` first.
+      # needs to apply `terraform apply` under `tf-config/live/ecs-staging` first.
       # https://circleci.com/orbs/registry/orb/circleci/aws-ecr
       # https://github.com/CircleCI-Public/aws-ecr-orb
       #

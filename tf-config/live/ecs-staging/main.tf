@@ -10,6 +10,6 @@ provider "aws" {
 }
 
 module "ecs_circleci" {
-  source = "../../modules/ecs-circleci"
+  source = "../../modules/ecs"
   environment = "staging"
 }

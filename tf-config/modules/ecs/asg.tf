@@ -50,7 +50,7 @@ resource "aws_launch_configuration" "main" {
   # `instance_type` needs to match CPU/memory defined in `aws_ecs_task_definition`
   # to make sure there are surficient.
   # If too low, may face error when trying to `aws ecs update-service`:
-  # > (service ecs-circleci-qa-service) was unable to place a task because no container
+  # > (service ecs-qa-service) was unable to place a task because no container
   # > instance met all of its requirements. The closest matching (container-instance
   # > ...) has insufficient memory available. For more information, see the
   # > Troubleshooting section of the Amazon ECS Developer Guide.

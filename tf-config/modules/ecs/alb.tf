@@ -81,13 +81,13 @@ resource "aws_lb_target_group" "web_app" {
     # `timeout` cannot be too small, otherwise when deploying the real service
     # system will error out. Then the newly created task will be killed and start
     # over (forever).
-    # > service ecs-circleci-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
-    # > target-group ecs-circleci-qa-service due to (reason Request timed out)
+    # > service ecs-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
+    # > target-group ecs-qa-service due to (reason Request timed out)
     # > Task failed ELB health checks in (target-group ...)
     #
     # After increasing timeout period (and check `/`) I am getting
-    # > service ecs-circleci-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
-    # > target-group ecs-circleci-qa-service due to (reason Health checks failed with these codes: [404])
+    # > service ecs-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
+    # > target-group ecs-qa-service due to (reason Health checks failed with these codes: [404])
     # Therefore, I added and use the `/health_check` endpoint.
     timeout = 59
     healthy_threshold = "${var.web_app_count}"
