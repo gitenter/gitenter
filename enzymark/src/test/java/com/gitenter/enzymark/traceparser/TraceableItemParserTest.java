@@ -1,10 +1,9 @@
 package com.gitenter.enzymark.traceparser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import com.gitenter.enzymark.traceparser.TraceableItemParser;
 
 public class TraceableItemParserTest {
 
@@ -14,7 +13,7 @@ public class TraceableItemParserTest {
 		assertEquals(parsingResult.isTraceableItem(), true);
 		assertEquals(parsingResult.getTag(), "tagWith-_123");
 		assertEquals(parsingResult.getContent(), "Content with !@#$%^&*()[], space and \t in it.");
-		assertEquals(parsingResult.getUpstreamItemTags(), new String[] {});
+		assertArrayEquals(parsingResult.getUpstreamItemTags(), new String[] {});
 	}
 	
 	@Test
@@ -23,7 +22,7 @@ public class TraceableItemParserTest {
 		assertEquals(parsingResult.isTraceableItem(), true);
 		assertEquals(parsingResult.getTag(), "tagWith-_123");
 		assertEquals(parsingResult.getContent(), "Content with !@#$%^&*()[], space and \t in it.");
-		assertEquals(parsingResult.getUpstreamItemTags(), new String[] {"referWith-_123", "referWith-_456"});
+		assertArrayEquals(parsingResult.getUpstreamItemTags(), new String[] {"referWith-_123", "referWith-_456"});
 	}
 	
 	@Test
@@ -32,7 +31,7 @@ public class TraceableItemParserTest {
 		assertEquals(parsingResult.isTraceableItem(), true);
 		assertEquals(parsingResult.getTag(), "tagWith-_123");
 		assertEquals(parsingResult.getContent(), "Content with !@#$%^&*()[], space and \t in it.");
-		assertEquals(parsingResult.getUpstreamItemTags(), new String[] {});
+		assertArrayEquals(parsingResult.getUpstreamItemTags(), new String[] {});
 	}
 	
 	@Test

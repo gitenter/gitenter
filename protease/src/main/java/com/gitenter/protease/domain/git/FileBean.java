@@ -59,7 +59,7 @@ public class FileBean extends PathBean {
 	
 	private static class ProxyBlobContentPlaceholder extends GitProxyPlaceholder<byte[]> implements FileBean.BlobContentPlaceholder {
 
-		final private GitHistoricalFile gitFile;
+		private final GitHistoricalFile gitFile;
 		
 		private ProxyBlobContentPlaceholder(GitHistoricalFile gitFile) {
 			this.gitFile = gitFile;
@@ -73,7 +73,7 @@ public class FileBean extends PathBean {
 	
 	private static class ProxyMimeTypePlaceholder extends GitProxyPlaceholder<String> implements FileBean.MimeTypePlaceholder {
 
-		final private GitHistoricalFile gitFile;
+		private final GitHistoricalFile gitFile;
 		
 		private ProxyMimeTypePlaceholder(GitHistoricalFile gitFile) {
 			this.gitFile = gitFile;

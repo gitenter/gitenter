@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -47,8 +48,14 @@ import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
+/*
+ * TODO:
+ * Mock DataSource so we don't have dependency on `ActiveProfiles`.
+ * Also remove `sed` in `docker_build_java.sh`.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=PostReceiveConfig.class)
+@ActiveProfiles("local")
 public class UpdateDatabaseFromGitServiceTest {
 	
 	@InjectMocks private UpdateDatabaseFromGitServiceImpl service;

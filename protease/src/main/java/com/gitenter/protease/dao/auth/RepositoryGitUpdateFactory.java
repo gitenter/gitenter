@@ -17,6 +17,7 @@ import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.gitar.GitTag;
 import com.gitenter.gitar.util.GitProxyPlaceholder;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.GitUpdateFactory;
 import com.gitenter.protease.dao.exception.BranchNotExistException;
 import com.gitenter.protease.dao.git.CommitDatabaseRepository;
@@ -24,7 +25,6 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.TagBean;
-import com.gitenter.protease.source.GitSource;
 
 @Component
 public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBean> {
@@ -73,7 +73,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	 */
 	private class BranchPlaceholderImpl implements RepositoryBean.BranchPlaceholder {
 
-		final private RepositoryBean repository;
+		private final RepositoryBean repository;
 		
 		private BranchPlaceholderImpl(RepositoryBean repository) {
 			this.repository = repository;
@@ -87,7 +87,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	
 	private class ProxyBranchesPlaceholder extends GitProxyPlaceholder<Collection<BranchBean>> implements RepositoryBean.BranchesPlaceholder {
 		
-		final private RepositoryBean repository;
+		private final RepositoryBean repository;
 		
 		private ProxyBranchesPlaceholder(RepositoryBean repository) {
 			this.repository = repository;
@@ -110,7 +110,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	
 	private class ProxyHeadPlaceholder extends GitProxyPlaceholder<CommitBean> implements BranchBean.HeadPlaceholder {
 
-		final private BranchBean branch;
+		private final BranchBean branch;
 		
 		private ProxyHeadPlaceholder(BranchBean branch) {
 			this.branch = branch;
@@ -141,7 +141,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	 */
 	private class LogPlaceholderImpl implements BranchBean.LogPlaceholder {
 
-		final private BranchBean branch;
+		private final BranchBean branch;
 		
 		private LogPlaceholderImpl(BranchBean branch) {
 			this.branch = branch;
@@ -245,7 +245,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	
 	private class TagPlaceholderImpl implements RepositoryBean.TagPlaceholder {
 
-		final private RepositoryBean repository;
+		private final RepositoryBean repository;
 		
 		private TagPlaceholderImpl(RepositoryBean repository) {
 			this.repository = repository;
@@ -259,7 +259,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	
 	private class ProxyTagsPlaceholder extends GitProxyPlaceholder<Collection<TagBean>> implements RepositoryBean.TagsPlaceholder {
 		
-		final private RepositoryBean repository;
+		private final RepositoryBean repository;
 		
 		private ProxyTagsPlaceholder(RepositoryBean repository) {
 			this.repository = repository;
@@ -282,7 +282,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	
 	private class ProxyCommitPlaceholder extends GitProxyPlaceholder<CommitBean> implements TagBean.CommitPlaceholder {
 
-		final private TagBean tag;
+		private final TagBean tag;
 		
 		private ProxyCommitPlaceholder(TagBean tag) {
 			this.tag = tag;
@@ -311,7 +311,7 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 	 * operations all in the scope of this outer class (with the
 	 * usage of this helper method).
 	 */
-	private GitRepository getGitRepository (RepositoryBean repository) throws IOException, GitAPIException {
+	private GitRepository getGitRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
 				repository.getOrganization().getName(), 
@@ -328,5 +328,10 @@ public class RepositoryGitUpdateFactory implements GitUpdateFactory<RepositoryBe
 		}
 		
 		return gitBranch;
+	}
+	
+	void delete(RepositoryBean repository) throws IOException, GitAPIException {
+		GitRepository gitRepository = getGitRepository(repository);
+		GitRepository.delete(gitRepository);
 	}
 }

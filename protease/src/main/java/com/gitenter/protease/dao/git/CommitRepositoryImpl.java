@@ -14,8 +14,8 @@ import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
-import com.gitenter.protease.domain.git.TraceableItemBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 @Repository
 public class CommitRepositoryImpl implements CommitRepository {

@@ -34,7 +34,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <gitar-version>0.0.2-prototype</gitar-version>
+        <gitar-version>0.0.3-prototype</gitar-version>
+        <lombok-version>1.18.4</lombok-version>
+        <logback-version>1.2.3</logback-version>
     </properties>
 
     <build>
@@ -56,6 +58,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0-M3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>io.spring.javaformat</groupId>
+                    <artifactId>spring-javaformat-maven-plugin</artifactId>
+                    <version>0.0.15</version>
                 </plugin>
             </plugins>
         </pluginManagement>

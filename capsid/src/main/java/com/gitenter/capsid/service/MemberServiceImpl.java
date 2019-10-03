@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,15 +14,11 @@ import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.dto.MemberProfileDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
 import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
-import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.SshKeyRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
@@ -38,14 +36,24 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
  */
 @Service
 public class MemberServiceImpl implements MemberService {
+	
+	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
-	@Autowired MemberRepository memberRepository;
-	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
-	@Autowired SshKeyRepository sshKeyRepository;
+	private final MemberRepository memberRepository;
+	private final SshKeyRepository sshKeyRepository;
 	
-	@Autowired private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	public MemberServiceImpl(
+			MemberRepository memberRepository, 
+			SshKeyRepository sshKeyRepository,
+			PasswordEncoder passwordEncoder) {
+		this.memberRepository = memberRepository;
+		this.sshKeyRepository = sshKeyRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	@Override
 	public MemberBean getMemberByUsername(String username) throws IOException {
 		List<MemberBean> members = memberRepository.findByUsername(username);
@@ -55,6 +63,12 @@ public class MemberServiceImpl implements MemberService {
 		else {
 			throw new UserNotExistException(username);
 		}
+	}
+	
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public MemberBean getMe(Authentication authentication) throws IOException {
+		return getMemberByUsername(authentication.getName());
 	}
 	
 	@Override
@@ -84,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#profile.getUsername(), null)")
+	@PreAuthorize("hasPermission(#profile, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
 	public void updateMember(MemberProfileDTO profile) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(profile.getUsername());
@@ -99,7 +113,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#register.getUsername(), null)")
+	@PreAuthorize("hasPermission(#register, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
 	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException {
 		
 		MemberBean memberBean = getMemberByUsername(register.getUsername());
@@ -113,30 +127,6 @@ public class MemberServiceImpl implements MemberService {
 			
 			return true;
 		}
-	}
-	
-	@Override
-	@PreAuthorize("isAuthenticated()")
-	public void createOrganization(Authentication authentication, OrganizationDTO organizationDTO) throws IOException {
-		
-		MemberBean member = getMemberByUsername(authentication.getName());
-		OrganizationBean organization = organizationDTO.toBean();
-		
-		/*
-		 * Need to save first. Otherwise when saving 
-		 * "OrganizationMemberMapBean", non-null error will
-		 * be raised for "organization_id" column.
-		 */
-		organizationRepository.saveAndFlush(organization);
-		
-		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MANAGER);
-		
-		/*
-		 * Cannot using "memberRepository" or "organizationRepository"
-		 * to save. It will double-insert the target row and cause primary
-		 * key error.
-		 */
-		organizationMemberMapRepository.saveAndFlush(map);
 	}
 	
 	/*
@@ -184,12 +174,28 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#member.getUsername(), null)")
+	@PreAuthorize("hasPermission(#member, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
 	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException {
 		
 		sshKey.setMember(member);
 		member.addSshKey(sshKey);
 		
 		sshKeyRepository.saveAndFlush(sshKey);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#username, T(com.gitenter.capsid.security.MemberSecurityRole).SELF)")
+	public boolean deleteMember(String username, String password) throws IOException {
+		
+		MemberBean member = getMemberByUsername(username);
+		
+		if (!passwordEncoder.matches(password, member.getPassword())) {
+			return false;
+		}
+		else {
+			auditLogger.info("User account has been deleted: "+member);
+			memberRepository.delete(member);
+			return true;
+		}
 	}
 }

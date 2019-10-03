@@ -4,7 +4,7 @@ setting up in `sshd_config`.
 """
 from sqlalchemy.orm import sessionmaker
 
-from settings import postgres_engine
+from settings.postgres import postgres_engine
 from managers import SshKeyManager
 
 
@@ -21,8 +21,8 @@ if __name__ == "__main__":
     # TODO:
     # After finished debugging SSH connection/git docker container, we should add force
     # command to the file.
-    print(SshKeyManager.get_plain_authorized_keys_file_content(session))
-    # print(SshKeyManager.get_force_command_authorized_keys_file_content(session))
+    # print(SshKeyManager.get_plain_authorized_keys_file_content(session))
+    print(SshKeyManager.get_force_command_authorized_keys_file_content(session))
 
     session.close()
     connection.close()

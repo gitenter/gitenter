@@ -20,11 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * To make "capsid" works, this configuration need to stay in the
  * @ComponentScan path of "capsid". So it should be in here rather
  * than in test.
- * 
+ *
  * TODO:
  * To understand why it is the case. Since "capsid" is a Spring Boot
- * application (for which this configuration is not needed, only 
- * "DatabaseConfig" and "GitConfig" is needed), I don't under why.
+ * application (for which this configuration is not needed, only
+ * "DatabaseConfig" and "GitSourceConfig" is needed), I don't under why.
  */
 @Configuration
 @EnableJpaRepositories(basePackages="com.gitenter.protease.dao")
@@ -38,9 +38,9 @@ public class JpaConfig {
 		
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setDatabase(Database.POSTGRESQL);
-		adapter.setShowSql(true);
+		adapter.setShowSql(false);
 		adapter.setGenerateDdl(true);
-		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL94Dialect");
+		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL95Dialect");
 		
 		return adapter;
 	}
@@ -57,9 +57,13 @@ public class JpaConfig {
 		 * TODO:
 		 * May have duplicated setups in here as while as "jpaVendorAdapter()".
 		 * Need to understand later what is needed and what is absolutely necessary.
+		 * 
+		 * TODO:
+		 * Looks like there's no newer version of Hibernate Postgres Dialect beyond 9.5!?
+		 * https://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/dialect/package-summary.html
 		 */
 		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL94Dialect");
+		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
 		entityManagerFactory.setJpaProperties(properties);
 		
 		entityManagerFactory.afterPropertiesSet();

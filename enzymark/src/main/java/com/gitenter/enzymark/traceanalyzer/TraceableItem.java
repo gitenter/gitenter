@@ -42,14 +42,14 @@ public class TraceableItem {
 	/*
 	 * Used by TraceableRepository.refreshUpstreamAndDownstreamItems()
 	 */
-	boolean addUpstreamItem (TraceableItem item) {
+	boolean addUpstreamItem(TraceableItem item) {
 		return upstreamItems.add(item);
 	}
 	
 	/*
 	 * Used by TraceableRepository.refreshUpstreamAndDownstreamItems()
 	 */
-	boolean addDownstreamItem (TraceableItem item) {
+	boolean addDownstreamItem(TraceableItem item) {
 		return downstreamItems.add(item);
 	}
 }

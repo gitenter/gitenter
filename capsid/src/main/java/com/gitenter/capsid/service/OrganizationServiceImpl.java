@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.service.exception.IdNotExistException;
-import com.gitenter.capsid.service.exception.InvalidDataException;
+import com.gitenter.capsid.service.exception.InvalidDataStateException;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
@@ -75,7 +75,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			return false;
 		}
 		
-		throw new InvalidDataException("user should have a unique relationship to an organization.");
+		throw new InvalidDataStateException("user should have a unique relationship to an organization.");
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			return false;
 		}
 		
-		throw new InvalidDataException("user should have a unique relationship to an organization.");
+		throw new InvalidDataStateException("user should have a unique relationship to an organization.");
 	}
 
 	/*

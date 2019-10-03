@@ -1,5 +1,5 @@
 variable "environment" {
-  description = "Prefix to distinguish different environments. E.g., `qa`, `staging`, `prod`."
+  description = "Prefix to distinguish different environments. E.g., `dev`, `test`, `staging`, `prod`."
 }
 
 variable "az_count" {
@@ -66,15 +66,36 @@ variable "efs_docker_volumn_name" {
   default = "efs-static-storage"
 }
 
-# This is the path need to be used in code (e.g. Java setup of `capsid` setup to
-# touch the file system).
+# This is the path need to be used in code (e.g. Java setup of `capsid` and
+# `post-receive-hook` setup to touch the file system).
+variable "efs_web_app_container_path" {
+  default = "/data"
+}
+
+# This is the path needed for the `AuthorizedKeyCommand` script in `ssheep`.
 #
 # TODO:
-# Probably should set this as `/home/git` but in that case multiple git docker
-# containers will need to share the same `.*` setup files, which is not doable.
-# So probably needs `/home/git/data` or we do `/git` and `chown` it.
-variable "efs_web_container_path" {
-  default = "/data"
+# By sharing the `/home/git` folder as a volume, as mounting is AFTER docker
+# container starts, all the following files disappears. Not sure if that's a
+# (functional) problem through.
+# > root@02a50eab24c4:/home/git# ls -la
+# > -rw-------  1 git  root  788 Aug 16 19:58 .bash_history
+# > -rw-r--r--  1 git  root 3771 Apr  4  2018 .bashrc
+# > drwx------  4 git  root 4096 Jun 25 13:03 .cache
+# > -rw-r--r--  1 git  root  807 Apr  4  2018 .profile
+# > ...
+#
+# Possible solutions:
+# Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
+# to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
+# becomes weird.
+#
+# Note:
+# There's a behavior difference that in docker-compose it will cause `/data` in web
+# container to have those hidden files, while in ECS/EFS it will cause `/home/git`
+# in git container to not have those files.
+variable "efs_git_container_path" {
+  default = "/home/git"
 }
 
 locals {
@@ -96,7 +117,7 @@ locals {
   # Internal reference only
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"
   aws_postgres_name = "${local.aws_resource_prefix}-postgres"
-  aws_redis_session_name = "${local.aws_resource_prefix}-redis-session" # Need to <=20 characters
+  aws_redis_session_name = "${local.aws_resource_prefix}-redis-sess" # Need to <=20 characters
   aws_git_efs_name = "${local.aws_resource_prefix}-git-efs"
 
   aws_web_lb_name = "${local.aws_resource_prefix}-web-alb"

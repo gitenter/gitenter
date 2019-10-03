@@ -8,7 +8,7 @@
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />">${repository.displayName}</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}/settings" />">Settings</a> &rarr; 
-      <span class="nav-current">Collaborators</span>
+      <span class="nav-current">Manage collaborators</span>
     </nav>
     <article>
       <div class="left-narrow">

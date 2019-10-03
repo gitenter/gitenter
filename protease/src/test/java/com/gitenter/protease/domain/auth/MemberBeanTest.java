@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -35,7 +36,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection", 
+		"schemaGitDatabaseConnection",
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public class MemberBeanTest {
 
 	@Autowired MemberRepository memberRepository;
@@ -49,6 +54,12 @@ public class MemberBeanTest {
 	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
 		
 		MemberBean item = memberRepository.findById(1).get();
+		
+		/*
+		 * This is to test there's no circular dependency which makes 
+		 * toString() to stack overflow.
+		 */
+		assertNotNull(item.toString());
 		
 		assertEquals(item.getUsername(), "username");
 		assertEquals(item.getPassword(), "password");

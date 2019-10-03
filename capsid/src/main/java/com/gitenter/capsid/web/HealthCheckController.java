@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthCheckController {
+	
 	@RequestMapping("/health_check")
 	public String showHealthCheckPage() throws Exception {
 		return "GitEnter";

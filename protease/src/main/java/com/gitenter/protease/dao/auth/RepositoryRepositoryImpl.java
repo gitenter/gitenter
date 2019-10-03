@@ -1,14 +1,13 @@
 package com.gitenter.protease.dao.auth;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.PersistenceException;
-
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gitenter.protease.dao.exception.RepositoryNameNotUniqueException;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 @Repository
@@ -58,22 +57,13 @@ class RepositoryRepositoryImpl implements RepositoryRepository {
 		return items;
 	}
 	
-	public RepositoryBean saveAndFlush(RepositoryBean repository) throws RepositoryNameNotUniqueException {
-		try {
-			return repositoryDatabaseRepository.saveAndFlush(repository);
-		}
-		catch (PersistenceException e) {
-			/*
-			 * TODO:
-			 * Seems no easy way to catch, and/or read the inside exception 
-			 * `org.hibernate.exception.ConstraintViolationException`, and
-			 * then `org.postgresql.util.PSQLException`, and further distinguish
-			 * different exceptions?
-			 */
-			if (e.getMessage().contains("ConstraintViolationException")) {
-				throw new RepositoryNameNotUniqueException(repository);
-			}
-			throw e;
-		}
+	public RepositoryBean saveAndFlush(RepositoryBean repository) {
+		return repositoryDatabaseRepository.saveAndFlush(repository);
+	}
+
+	@Override
+	public void delete(RepositoryBean repository) throws IOException, GitAPIException {
+		repositoryDatabaseRepository.delete(repository);
+		repositoryGitUpdateFactory.delete(repository);
 	}
 }

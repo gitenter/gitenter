@@ -11,9 +11,9 @@ import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.GitRepository;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.GitUpdateFactory;
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.source.GitSource;
 
 @Component
 public class DocumentGitUpdateFactory implements GitUpdateFactory<DocumentBean> {

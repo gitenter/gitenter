@@ -46,6 +46,12 @@
               <input type="radio" name="include_setup_files" id="include_setup_files_no" value="false" checked /><label for="include_setup_files_no">No</label>
             </td>
           </tr>
+          <c:if test="${message != null}">
+            <tr>
+              <td></td>
+              <td class="error"><c:out value="${message}" /></td>
+            </tr>
+          </c:if>
           <tr>
             <td></td>
             <td class="button"><input type="submit" value="Create Repository" /></td>

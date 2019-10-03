@@ -16,7 +16,7 @@ class TraceableItemVisitor extends AbstractVisitor {
 	
 	private final HtmlRenderer defaultRenderer;
 	
-	TraceableItemVisitor (TraceableDocument document) {
+	TraceableItemVisitor(TraceableDocument document) {
 		
 		defaultRenderer = HtmlRenderer.builder().build();
 		this.document = document;
@@ -26,7 +26,7 @@ class TraceableItemVisitor extends AbstractVisitor {
 	 * This is a call for all BulletList nodes.
 	 */
 	@Override
-	public void visit (BulletList bulletList) {
+	public void visit(BulletList bulletList) {
 		
 		/* 
 		 * As all the BulletList's children should always be ListItem 

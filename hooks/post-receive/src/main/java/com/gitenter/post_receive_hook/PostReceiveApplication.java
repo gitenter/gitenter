@@ -21,7 +21,7 @@ public class PostReceiveApplication {
 
 	@Autowired private UpdateDatabaseFromGitService updateDatabaseFromGitService;
 
-	public static void main (String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
 		HookInputSet input = new HookInputSet(System.getProperty("user.dir"), args);
 
@@ -38,11 +38,11 @@ public class PostReceiveApplication {
 		 *
 		 * TODO:
 		 * This need to be changed based on what profile of the
-		 * web application (capsid) is using. It is quite troublesome. 
+		 * web application (capsid) is using. It is quite troublesome.
 		 * Should be optimized so at least no need to change in multiple
 		 * times.
 		 */
-		System.setProperty("spring.profiles.active", "sts");
+		System.setProperty("spring.profiles.active", "local");
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PostReceiveApplication.class);
 		/*
 		 * It is not good because it hard code system property.
@@ -68,7 +68,7 @@ public class PostReceiveApplication {
 		 * https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html
 		 */
 //		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-//		context.register(DatabaseConfig.class, GitConfig.class);
+//		context.register(DatabaseConfig.class, GitSourceConfig.class);
 //		context.getEnvironment().setActiveProfiles("production");
 //		context.refresh();
 
@@ -76,7 +76,7 @@ public class PostReceiveApplication {
 		p.run(input);
 	}
 
-	private void run (HookInputSet input) throws IOException, GitAPIException {
+	private void run(HookInputSet input) throws IOException, GitAPIException {
 		updateDatabaseFromGitService.update(input);
 	}
 }

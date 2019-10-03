@@ -15,18 +15,23 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
 
 import com.gitenter.protease.domain.ModelBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+/*
+ * No need to add `@ToString` to all beans, as we need to `@ToString.Exclude`
+ * all double link which will cause stack overflow error.
+ */
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(schema = "auth", name = "member")
 public class MemberBean implements ModelBean {
@@ -59,6 +64,7 @@ public class MemberBean implements ModelBean {
 	 * Since this is the encoded one, there's no length constrain.
 	 * Also, there is no need to use character array to make it safer.
 	 */
+	@ToString.Exclude
 	@NotNull
 	@Column(name="password")
 	private String password;
@@ -78,12 +84,15 @@ public class MemberBean implements ModelBean {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registerAt;
 
+	@ToString.Exclude
 	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<OrganizationMemberMapBean> organizationMemberMaps;
 	
+	@ToString.Exclude
 	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
 	
+	@ToString.Exclude
 	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
 	private List<SshKeyBean> sshKeys;
 	

@@ -10,6 +10,12 @@ GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA git TO gitenter_app
 
 --------------------------------------------------------------------------------
 
+GRANT USAGE ON SCHEMA traceability TO gitenter_app;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA traceability TO gitenter_app;
+GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA traceability TO gitenter_app;
+
+--------------------------------------------------------------------------------
+
 GRANT USAGE ON SCHEMA review TO gitenter_app;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA review TO gitenter_app;
 GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA review TO gitenter_app;

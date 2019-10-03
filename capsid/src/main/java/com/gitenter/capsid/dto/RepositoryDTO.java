@@ -8,9 +8,11 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<RepositoryBean>, UpdateDTO<RepositoryBean> {
 
 	@NotNull
@@ -25,6 +27,7 @@ public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<Reposit
 	
 	private String description;
 	
+	@NotNull
 	private Boolean isPublic;
 	
 	@Override
@@ -37,7 +40,7 @@ public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<Reposit
 	}
 	
 	@Override
-	public void updateBean (RepositoryBean repositoryBean) {
+	public void updateBean(RepositoryBean repositoryBean) {
 		
 		assert repositoryBean.getName().equals(name);
 		

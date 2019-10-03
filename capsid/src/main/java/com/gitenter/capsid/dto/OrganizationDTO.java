@@ -8,9 +8,11 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class OrganizationDTO implements CreateDTO<OrganizationBean>, ReadDTO<OrganizationBean>, UpdateDTO<OrganizationBean> {
 
 	@NotNull
@@ -31,7 +33,7 @@ public class OrganizationDTO implements CreateDTO<OrganizationBean>, ReadDTO<Org
 	}
 	
 	@Override
-	public void updateBean (OrganizationBean organizationBean) {
+	public void updateBean(OrganizationBean organizationBean) {
 		
 		assert organizationBean.getName().equals(name);
 		

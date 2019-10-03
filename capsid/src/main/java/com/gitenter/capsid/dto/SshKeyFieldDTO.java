@@ -10,6 +10,7 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /*
  * This class is used for validation only. Persistent is
@@ -22,6 +23,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class SshKeyFieldDTO {
 
 	/*
@@ -34,7 +36,7 @@ public class SshKeyFieldDTO {
 	@NotNull
 	@Pattern(
 		regexp="^(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519) .*\\s*$",
-		message="Wrong format")
+		message="The SSH key does not have a valid format!")
 	private String value;
 	
 	/*

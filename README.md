@@ -7,21 +7,71 @@ A Git based version control tool for requirement engineering, design control, ve
 
 ## Development
 
-### Local compile
+### Linting
+
++ Java: [Spring Java Format](https://github.com/spring-io/spring-javaformat)
++ Python: [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+
+One other possible choice is [Google Java Style Guide](https://checkstyle.sourceforge.io/styleguides/google-java-style-20180523/javaguide.html) (as well as its [eclipse formatter](https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml)). We are not using it because it triggers so many changes (tab -> 2 space, `} else`, ...). We'll just wait for Spring style to be more mature.
+
+- [ ] Setup [CheckStyle](http://maven.apache.org/plugins/maven-checkstyle-plugin/index.html) in CI. Right now the easiest way is use the maven `<reporting>` block and `mvn site` to generate the test report in HTML form. Looks no easy way to generate JUnit XML report ([`<outputFile>` doesn't work](https://maven.apache.org/plugins/maven-checkstyle-plugin/checkstyle-mojo.html#outputFile)) and CircleCI doesn't support CheckStyle output.
+
+## Testing/Demo
+
+GitEnter currently support multiple ways to build up the services from src for develop/test/demo proposes.
+
++ [Local](#local)
++ [Docker](#docker)
++ [AWS](#aws)
+
+Automatic testing against the buildup services is discussed separately in [`selenium-test/README.md`](selenium-test/README.md).
+
+### Local
+
+SSH authorization (under python code of `/ssheep`) is completely trivialized, and cannot be E2E tested through this approach.
+
+#### Prerequisite
+
++ Java (10/11)
++ maven
++ Postgres (tested in 11.2)
++ Redis (tested in 4.0.9) (Mac OS with multiple users may face permission error, and can be correct by [manually `redis-server` auto-start](https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298))
+
+Optional:
+
++ Tomcat
+
+or
+
++ STS
++ Linter
+  + [Eclipse CheckStyle Plugin](https://checkstyle.org/eclipse-cs/)
+  + [Spring Java Format eclipse plugin](https://github.com/spring-io/spring-javaformat#eclipse).
++ Lombok
+
+#### Up-and-run
+
+Dependencies between product cannot be fully management by parent POM (post-recieve hook JAR file should be compiled first and add into capsid WAR as a normal file). Therefore, we need multiple-step build.
 
 ```
 mvn clean install
-mvn package -f hooks/post-receive/pom.xml -DskipTests
+mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
 mvn package -f capsid/pom.xml -DskipTests
 ```
 
-### STS
+The resulting `capsid.war` can be run directly under Tomcat as a web service.
+
+To use STS, import the project and run `capsid` package as a Spring Boot application. Further complicities are listed below.
+
+##### STS
+
+(May be out-of-date with parent POM, but at least still apply to `gitar`).
 
 It is very tricky to setup STS. For the dependencies of all maven packages, you don't want to add anything on the project's `Properties > Java Build Path > Projects`. What should be done is to `mvn install` all packages (so they are properly setup in `.m2`) and let Eclipse to load them from `.m2` just like external packages.
 
 Reasons:
 
-(1) Although in the final product, the testing class are completely irrelavent, STS mixed up the `src/test/java` parts of different packages. For example, it may then say errors like this:
+(1) Although in the final product, the testing class are completely irrelevant, STS mixed up the `src/test/java` parts of different packages. For example, it may then say errors like this:
 
 ```
 Caused by: org.springframework.context.annotation.ConflictingBeanDefinitionException: Annotation-specified bean name 'testDatabaseConfig' for bean class [enterovirus.gihook.postreceive.config.TestDatabaseConfig] conflicts with existing, non-compatible bean definition of same name and class [enterovirus.protease.config.TestDatabaseConfig]
@@ -39,131 +89,75 @@ That seems also because STS cannot handle two classes which accidentally have th
 [main] ERROR org.springframework.boot.SpringApplication - Application startup failed
 ```
 
-### Lombok
+##### Linting
+
+- [ ] Use `spring-javaformat:apply` to change local files to follow spring linter. Currently we didn't apply because it cause so many differences (especially blank line with a tab). But is there a way to check (rather than directly apply change)?
+- [ ] Current after installing the [Spring Java Format eclipse plugin](https://github.com/spring-io/spring-javaformat#eclipse), we can see it from `Preferences > Java > Code Style > Formatter` as well as `Preferences > Checkstyle`. However, choose it will cause a null pointer error (at least for my version of STS) so it cannot be used yet.
+
+##### Lombok
 
 To make Lombok work with the IDE, you need to not only add Lombok to `pom.xml`, but also setup the IDE dependency path.
 
-Navigate to the Lombok `.jar` folder (`.m2/repository/org/projectlombok/lombok`) and `sudo java -jar lombok-1.16.18.jar`, then a GUI will be opened. Through the GUI, `specify Location...` and choose the STS execusion path (in my case `/opt/sts-bundle/sts-3.9.0.RELEASE/STS`), then `Install/Update`. Restart STS and the generated getters and setters works in eclipse `Outline`.
+For Ubuntu, simply navigate to the Lombok `.jar` folder (`.m2/repository/org/projectlombok/lombok`) and `sudo java -jar lombok-1.16.18.jar`, then a GUI will be opened. Through the GUI, `specify Location...` and choose the STS execusion path (in my case `/opt/sts-bundle/sts-3.9.0.RELEASE/STS`), then `Install/Update`. Restart STS and the generated getters and setters works in eclipse `Outline`.
 
-#### Mac OS
-
-Enable Lombok on Mac OS is kind of tricky, but it works by following [this link](https://nawaman.net/blog/2017-11-05).
-
-### Log4j multiple binding
-
-Analyze the dependency tree using `mvn dependency:tree`. Then remove the dependencies by e.g.
-
-```
-<exclusions>
-    <exclusion>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-    </exclusion>
-    <exclusion>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-    </exclusion>
-</exclusions>
-```
-
-I try to remove all logging dependencies from packages, and define a independent one in every package.
-
-At this moment, I try to do the modules under `org.slf4j:slf4j-log4j12` (working), and maybe use `ch.qos.logback:logback-classic` for `capsid` (has problem inside of STS).
-
-### Redis
-
-To use Redis locally in Mac, one may need to manually `redis-server`. [Auto-start](https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298) may have permission error when there are more than one OS users.
+For Mac OS, enable Lombok is kind of tricky, but it works by following [this link](https://nawaman.net/blog/2017-11-05).
 
 ### Docker
 
-Docker is installed by following [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04). Currently there's no need to `sudo` run docker commands.
+#### Prerequisite
 
-Start over:
++ docker ([Ubuntu installation guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04))
++ docker-compose
+
+#### Up-and-run
+
+`docker-compose.yml` include containers for the product to be up and run, while `docker-compose.dev.yml` are containers for compiling, testing, etc. Assuming images are properly compiled and build, to make the product up and run executes:
 
 ```
-docker rm -f -v gitenter_database_1
+docker-compose up
+```
+
+Then one should expect to access this software:
+
++ Web UI: http://localhost:8886 (direct to container) or http://localhost:8887 (nginx)
++ SSH/Git: `localhost:8822`
+  + For case with customized port, `git clone ssh://git@localhost:8822/absolute/path/to/git/server.git`.
+  + The shorter version `git clone git@gitenter.com:absolute/path/to/git/server.git` only work for case without customized port. Seems using nginx reverse proxy to setup an alien can't help, because we simply cannot redirect traffic to port 22 to nginx (or whatever docker container).
+
++ [ ] TODO: setup alien `www.gitenter.local`. Seems not working for nginx `server_name` if I don't want to modify `/etc/host`.
+
+Clean up at the end:
+
+```
+docker-compose down
+```
+
+#### Nuke it and start over
+
+```
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+docker system prune --volumes --all
+
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml run java-build sh docker_build_java.sh
 docker-compose build --no-cache
 docker-compose up
 ```
 
-(Re-)build image
+### AWS
 
-```
-docker stop panda
-#docker rm panda
-docker rm $(docker ps -a -q -f status=exited)
-docker rmi ozooxo/enterovirus
-docker build -t ozooxo/enterovirus .
-docker run -d -p 52022:22 -p 52418:9418 -p 58080:8080 --name panda ozooxo/enterovirus
-#docker port panda
-```
+#### Prerequisite
 
-```
-docker build --no-cache -t ozooxo/enterovirus .
-```
++ Terraform (testing in `v0.11.13`)
++ Docker
 
-Access shell (need to stop containers first by `docker stop panda`):
+#### Up-and-run
 
-```
-docker run -it ozooxo/enterovirus sh
-```
+Need to manually create AWS user w/ `access_key` and `secret_key`, save them to `secret.auto.tfvars` of the corresponding folder(s), and then `terraform apply`. See [`tf-config/README.md`](tf-config/README.md) for details.
 
-Log in by SSH
-
-```
-ssh git@0.0.0.0 -p 52022
-```
-
-Clone git repository (not working)
-
-```
-git clone ssh://git@0.0.0.0:52418/home/git/server.git
-git clone git@0.0.0.0:52418/home/git/server.git
-```
-
-Connect to Tomcat server (should have "Hello enterovirus capsid!" return in the browser)
-
-```
-http://0.0.0.0:58080/capsid-0.0.1-alpha
-```
-
-### Terraform
-
-```
-$ brew install terraform
-$ terraform --version
-Terraform v0.11.13
-```
-
-When global initialization, needs manually create:
-
-- AMI user w/ `access_key` and `secret_key`
-- S3 bucket `gitenter-config` if it is not existing yet, versioning enabled. It is used for save and share remote state.
-
-Should have `secret.auto.tfvars` to hold `access_key` and `secret_key`.
-
-```
-cd tf-config
-terraform init
-terraform plan
-terraform apply
-terraform destroy
-```
-
-### CircleCI
-
-Install [CircleCI local CLI](https://circleci.com/docs/2.0/local-cli/) so the setup can be tested locally.
-
-```
-$ circleci config validate
-$ circleci local execute --job build
-```
+Code deployment is currently setup through CircleCI.
 
 ## Unclassified TODOs and features
 
-+ [x] A better CSS.
-	+ The words crown together.
-	+ Margin in between traced items.
 + If only one single upstream item is provided, and it is in the same document/paragraph, should the item be just `tab` of the upstream one, rather than list separately with "hard to understand" link?
 + [ ] No need for `enable_systemwide` value in `gitenter.properties`. An alternative way is to `git diff` (1) this properties file and (2) the specified included folders. If there is any change happens, then turn on the system; otherwise turn it off.
 + [ ] RNAtom id generator has a bug when the item is with empty upstream but in the form of `- [tag]` rather than `-[tag]{}`.

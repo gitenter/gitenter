@@ -35,7 +35,7 @@ public class InReviewDocumentBean extends DocumentBean implements ModelBean {
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="previous_version_id")
-	private InReviewDocumentBean previous_version;
+	private InReviewDocumentBean previousVersion;
 	
 	@NotNull
 	@Column(name="status_shortname")

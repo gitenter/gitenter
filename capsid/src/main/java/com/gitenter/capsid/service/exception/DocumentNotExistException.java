@@ -1,8 +1,6 @@
 package com.gitenter.capsid.service.exception;
 
-import com.gitenter.protease.dao.exception.InputNotExistException;
-
-public class DocumentNotExistException extends InputNotExistException {
+public class DocumentNotExistException extends ResourceNotFoundException {
 
 	private static final long serialVersionUID = 1L;
 	

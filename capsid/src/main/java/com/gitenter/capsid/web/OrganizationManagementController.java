@@ -17,42 +17,61 @@ import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.MemberService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
 public class OrganizationManagementController {
 	
-	@Autowired OrganizationService organizationService;
-	
-	@Autowired MemberService memberService;
-	@Autowired OrganizationManagerService organizationManagerService;
+	private MemberService memberService;
+	private OrganizationService organizationService;
+	private OrganizationManagerService organizationManagerService;
 
+	@Autowired
+	public OrganizationManagementController(
+			MemberService memberService, 
+			OrganizationService organizationService,
+			OrganizationManagerService organizationManagerService) {
+
+		this.memberService = memberService;
+		this.organizationService = organizationService;
+		this.organizationManagerService = organizationManagerService;
+	}
+	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.GET)
-	public String showCreateOrganizationForm (Model model) {
+	public String showCreateOrganizationForm(Model model) {
 
 		model.addAttribute("organizationDTO", new OrganizationDTO());
 		return "organization-management/create";
 	}
 	
 	@RequestMapping(value="/organizations/create", method=RequestMethod.POST)
-	public String processCreationOfOrganization (
+	public String processCreationOfOrganization(
 			@Valid OrganizationDTO organizationDTO, 
 			Errors errors, 
 			Model model,
 			Authentication authentication) throws Exception {
 		
 		if (errors.hasErrors()) {
-			model.addAttribute("organizationDTO", organizationDTO); 
+			model.addAttribute("organizationDTO", organizationDTO);
 			return "organization-management/create";
 		}
 		
-		memberService.createOrganization(authentication, organizationDTO);
+		try {
+			MemberBean me = memberService.getMe(authentication);
+			organizationManagerService.createOrganization(me, organizationDTO);
+		}
+		catch(ItemNotUniqueException e) {
+			model.addAttribute("organizationDTO", organizationDTO);
+			e.addToErrors(errors);
+			return "organization-management/create";
+		}
 		return "redirect:/";
 	}
 
 	@RequestMapping(value="/organizations/{organizationId}/settings", method=RequestMethod.GET)
-	public String showOrganizationSettings (
+	public String showOrganizationSettings(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 		
@@ -62,7 +81,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/profile", method=RequestMethod.GET)
-	public String showOrganizationProfileSettingsForm (
+	public String showOrganizationProfileSettingsForm(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 		
@@ -78,7 +97,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/profile", method=RequestMethod.POST)
-	public String updateOrganizationProfile (
+	public String updateOrganizationProfile(
 			@PathVariable Integer organizationId,
 			@Valid OrganizationDTO organizationDTOAfterChange, 
 			Errors errors, 
@@ -94,8 +113,7 @@ public class OrganizationManagementController {
 			
 			return "organization-management/profile";
 		}
-		
-		assert (organization.getName().equals(organizationDTOAfterChange.getName()));
+
 		organizationManagerService.updateOrganization(authentication, organization, organizationDTOAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
@@ -116,7 +134,7 @@ public class OrganizationManagementController {
 	 * the two all together?
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
-	public String showMemberManagementPage (
+	public String showMemberManagementPage(
 			@PathVariable Integer organizationId,
 			Model model,
 			Authentication authentication) throws Exception {
@@ -128,7 +146,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
-	public String addAMemberToOrganization (
+	public String addAMemberToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
@@ -145,7 +163,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/remove", method=RequestMethod.POST)
-	public String removeAMemberToOrganization (
+	public String removeAMemberToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_remove_username") String username,
 			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
@@ -157,7 +175,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers", method=RequestMethod.GET)
-	public String showManagerManagementPage (
+	public String showManagerManagementPage(
 			@PathVariable Integer organizationId,
 			Model model,
 			Authentication authentication) throws Exception {
@@ -171,7 +189,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers/add", method=RequestMethod.POST)
-	public String addAMamangerToOrganization (
+	public String addAMamangerToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_upgrade_username") String username,
 			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
@@ -183,7 +201,7 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers/remove", method=RequestMethod.POST)
-	public String removeAMamangerToOrganization (
+	public String removeAMamangerToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_downgrade_username") String username,
 			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId,
@@ -193,5 +211,39 @@ public class OrganizationManagementController {
 		organizationManagerService.removeOrganizationManager(authentication, organization, organizationMemberMapId);	
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/delete", method=RequestMethod.GET)
+	public String showDeleteOrganizationPage(
+			@PathVariable Integer organizationId,
+			Model model) throws Exception {
+		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		model.addAttribute("organization", organization);
+		
+		return "organization-management/delete";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/settings/delete", method=RequestMethod.POST)
+	public String processDeleteOrganization(
+			@PathVariable Integer organizationId,
+			@RequestParam(value="copy_organization_name") String copyOrganizationName,
+			RedirectAttributes model) throws Exception {
+		
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		if (organization.getName().equals(copyOrganizationName)) {
+			organizationManagerService.deleteOrganization(organization);
+			
+			/*
+			 * TODO:
+			 * Message for successful delete organization.
+			 */
+			return "redirect:/";
+		}
+		else {
+			model.addFlashAttribute("errorMessage", "Organization name doesn't match!");
+			return "redirect:/organizations/"+organizationId+"/settings/delete";
+		}
 	}
 }

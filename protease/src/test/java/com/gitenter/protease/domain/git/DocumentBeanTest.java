@@ -22,7 +22,7 @@ import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.git.DocumentRepository;
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.git.TraceableItemBean;
+import com.gitenter.protease.domain.traceability.TraceableItemBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -34,7 +34,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection", 
+		"schemaGitDatabaseConnection",
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public class DocumentBeanTest {
 	
 	@Autowired DocumentRepository repository;
@@ -49,7 +53,7 @@ public class DocumentBeanTest {
 		assertEquals(item.getRelativePath(), "file");
 		assertEquals(item.getContent(), "content");
 		
-		assertEquals(item.getCommit().getId(), new Integer(1));
+		assertEquals(item.getCommit().getId(), Integer.valueOf(1));
 		assertEquals(item.getTraceableItems().size(), 1);
 		TraceableItemBean traceableItem = item.getTraceableItems().get(0);
 		assertEquals(traceableItem.getItemTag(), "tag");

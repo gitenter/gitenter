@@ -1,3 +1,6 @@
+# sed
+*.original
+
 # Mac OS
 .DS_Store
 
@@ -6,6 +9,10 @@ id_rsa.pub
 
 # Redis dump file
 dump.rdb
+
+# Test reports
+selenium-test/test-results/
+ssheep/test-results/
 
 ### Java ###
 
@@ -22,6 +29,7 @@ bin/
 .settings
 .springBeans
 .sts4-cache
+.checkstyle
 
 # IntelliJ IDEA
 .idea

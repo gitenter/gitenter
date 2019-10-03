@@ -3,6 +3,10 @@ package com.gitenter.capsid.service;
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.persistence.PersistenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.capsid.service.exception.UnreachableException;
 import com.gitenter.protease.dao.auth.MemberRepository;
 import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -23,23 +28,63 @@ import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 @Service
 public class OrganizationManagerServiceImpl implements OrganizationManagerService {
 	
+	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
+	
 	@Autowired MemberRepository memberRepository;
 	@Autowired OrganizationRepository organizationRepository;
 	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
 	
-	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	/*
+	 * TODO:
+	 * Transaction setup in case map.saveAndFlush raises an exception.
+	 * Notice that a simple `@Transactional` will cause the application unable
+	 * to catch `OrganizationNameNotUniqueException` to redirect to the creation page. 
+	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
+	 */
 	@Override
+	@PreAuthorize("isAuthenticated()")
+	public void createOrganization(MemberBean me, OrganizationDTO organizationDTO) throws IOException {
+		OrganizationBean organization = organizationDTO.toBean();
+		try {
+			/*
+			 * Need to save first. Otherwise when saving 
+			 * "OrganizationMemberMapBean", non-null error will
+			 * be raised for "organization_id" column.
+			 */
+			organizationRepository.saveAndFlush(organization);
+		}
+		catch(PersistenceException e) {
+			ExceptionConsumingPipeline.consumePersistenceException(e, organization);
+		}
+		
+		/*
+		 * Cannot using "memberRepository" or "organizationRepository"
+		 * to save. It will double-insert the target row and cause primary
+		 * key error.
+		 */
+		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, me, OrganizationMemberRole.MANAGER);
+		organizationMemberMapRepository.saveAndFlush(map);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void updateOrganization(
 			Authentication authentication, 
 			OrganizationBean organizationBean, 
-			OrganizationDTO organizationDTO) {
+			OrganizationDTO organizationDTO) throws IOException {
+		
+		if (!organizationBean.getName().equals(organizationDTO.getName())) {
+			throw new UnreachableException("POST Request is generated from unexpected source. "
+					+ "OrganizationDTO should have organization name "+organizationBean.getName()
+					+ ", but it is actually "+organizationDTO.getName());
+		}
 		
 		organizationDTO.updateBean(organizationBean);
 		organizationRepository.saveAndFlush(organizationBean);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void addOrganizationMember(OrganizationBean organization, MemberBean member) {
 
 		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MEMBER);
@@ -58,10 +103,12 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		}
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
-	@Transactional
 	@Override
+	@Transactional
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void removeOrganizationMember(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
+		
+		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
 		
 		/*
 		 * Doesn't for the SQL operation part, since if the `organizationMemberMapId` does not
@@ -70,38 +117,67 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 * requirement if the `mapId` belongs to a completely different organization. That's
 		 * the reason this checking is important.
 		 */
-		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
-		assert map.getOrganization().getId().equals(organization.getId());
+		if (!map.getOrganization().getId().equals(organization.getId())) {
+			throw new UnreachableException("Remove organization member input not consistency. "
+					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
+					+ "target organization "+organization);
+		}
 		
 		organizationMemberMapRepository.throughSqlDeleteById(organizationMemberMapId);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
-		assert map.getRole().equals(OrganizationMemberRole.MEMBER);
+		
+		if (!map.getOrganization().getId().equals(organization.getId())) {
+			throw new UnreachableException("Add organization member input not consistency. "
+					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
+					+ "target organization "+organization);
+		}
+		
+		if (map.getRole().equals(OrganizationMemberRole.MANAGER)) {
+			throw new UnreachableException("User is already a manager of the target organization.");
+		}
 		
 		map.setRole(OrganizationMemberRole.MANAGER);
 		organizationMemberMapRepository.saveAndFlush(map);
 	}
 	
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
 	public void removeOrganizationManager(
 			Authentication authentication,
 			OrganizationBean organization, 
 			Integer organizationMemberMapId) throws IOException {
 		
 		OrganizationMemberMapBean map = getOrganizationMemberMapBean(organizationMemberMapId);
-		assert map.getRole().equals(OrganizationMemberRole.MANAGER);
+		
+		if (!map.getOrganization().getId().equals(organization.getId())) {
+			throw new UnreachableException("Remove organization member input not consistency. "
+					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the"
+					+ " target organization "+organization);
+		}
+		
+		if (!map.getRole().equals(OrganizationMemberRole.MANAGER)) {
+			throw new UnreachableException("User is currently not a manager of the target organization. Current role "+map.getRole());
+		}
 		
 		if (authentication.getName().equals(map.getMember().getUsername())) {
-			throw new InvalidOperationException("Manager cannot remove him/herself as manager");
+			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as a manager of organization "+organization);
 		}
 		
 		map.setRole(OrganizationMemberRole.MEMBER);
 		organizationMemberMapRepository.saveAndFlush(map);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+	public void deleteOrganization(OrganizationBean organization) throws IOException {
+		
+		auditLogger.info("Organization has been deleted: "+organization);
+		organizationRepository.delete(organization);
 	}
 }

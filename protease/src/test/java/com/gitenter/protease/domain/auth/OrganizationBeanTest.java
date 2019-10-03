@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -34,7 +35,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection", 
+		"schemaGitDatabaseConnection",
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public class OrganizationBeanTest {
 
 	@Autowired private OrganizationRepository organizationRepository;
@@ -49,6 +54,12 @@ public class OrganizationBeanTest {
 	public void testDbUnitMinimalQueryWorks() throws Exception {
 		
 		OrganizationBean item = organizationRepository.findById(1).get();
+		
+		/*
+		 * This is to test there's no circular dependency which makes 
+		 * toString() to stack overflow.
+		 */
+		assertNotNull(item.toString());
 		
 		assertEquals(item.getName(), "organization");
 		assertEquals(item.getDisplayName(), "Organization");

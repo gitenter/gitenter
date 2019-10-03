@@ -27,8 +27,8 @@ import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.git.TraceableItemBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableItemBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -42,7 +42,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection", 
+		"schemaGitDatabaseConnection",
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public class CommitRepositoryTest {
 	
 	@Autowired CommitRepository commitRepository;

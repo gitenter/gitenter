@@ -34,7 +34,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 	DirtiesContextTestExecutionListener.class,
 	TransactionalTestExecutionListener.class,
 	DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection={"schemaAuthDatabaseConnection", "schemaGitDatabaseConnection", "schemaReviewDatabaseConnection"})
+@DbUnitConfiguration(databaseConnection={
+		"schemaAuthDatabaseConnection", 
+		"schemaGitDatabaseConnection",
+		"schemaTraceabilityDatabaseConnection",
+		"schemaReviewDatabaseConnection"})
 public class CommitBeanTest {
 
 	@Autowired CommitRepository repository;
@@ -56,7 +60,7 @@ public class CommitBeanTest {
 		assertEquals(item.getAuthor().getName(), "Cong-Xin Qiu");
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 		
-		assertEquals(item.getRepository().getId(), new Integer(1));
+		assertEquals(item.getRepository().getId(), Integer.valueOf(1));
 		
 		/*
 		 * Currently if we `getRepository` from a commit object,
@@ -77,7 +81,7 @@ public class CommitBeanTest {
 		assertEquals(item.getAuthor().getName(), "Cong-Xin Qiu");
 		assertEquals(item.getAuthor().getEmailAddress(), "ozoox.o@gmail.com");
 		
-		assertEquals(item.getRepository().getId(), new Integer(1));
+		assertEquals(item.getRepository().getId(), Integer.valueOf(1));
 	}
 	
 	@Test
@@ -133,7 +137,7 @@ public class CommitBeanTest {
 		assertEquals(file.getName(), "file");
 		assertEquals(new String(file.getBlobContent()), "content");
 		
-		assertEquals(file.getCommit().getId(), new Integer(1));
+		assertEquals(file.getCommit().getId(), Integer.valueOf(1));
 		assertEquals(file.getTraceableItems().size(), 1);
 	}
 	

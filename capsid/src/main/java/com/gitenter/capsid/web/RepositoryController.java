@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.gitenter.capsid.config.bean.DomainSource;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
+import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryMemberRole;
@@ -32,17 +34,17 @@ import com.gitenter.protease.domain.git.FileBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
-import com.gitenter.protease.source.WebSource;
 
 @Controller
 public class RepositoryController {
 	
-	@Autowired WebSource webSource;
+	@Autowired GitSource gitSource;
+	@Autowired DomainSource domainSource;
 	
 	@Autowired RepositoryService repositoryService;
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}", method=RequestMethod.GET)
-	public String showRepository (
+	public String showRepository(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
@@ -55,13 +57,13 @@ public class RepositoryController {
 		 * The corresponding folder is empty.
 		 */
 		if (repository.getCommitCount() == 0) {
-		
-			model.addAttribute("rootUrl", webSource.getDomainName());
-			
 			model.addAttribute("organization", repository.getOrganization());
 			model.addAttribute("repository", repository);
 			
 			model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
+			
+			model.addAttribute("gitSshProtocolUrl", domainSource.getGitSshProtocolUrl(
+					gitSource, repository.getOrganization().getName(), repository.getName()));
 			
 			return "repository/setup-a-new-repository";
 		}
@@ -76,7 +78,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}", method=RequestMethod.GET)
-	public String showBranchHead (
+	public String showBranchHead(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -95,7 +97,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}", method=RequestMethod.GET)
-	public String showCommit (
+	public String showCommit(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -108,12 +110,10 @@ public class RepositoryController {
 		return showCommitDetail(commit, request, model);
 	}
 	
-	private String showCommitDetail (
+	private String showCommitDetail(
 			CommitBean commit, 
 			HttpServletRequest request, 
 			Model model) throws Exception {
-
-		model.addAttribute("rootUrl", webSource.getDomainName());
 		
 		String currentUrl = request.getRequestURL().toString();
 		model.addAttribute("currentUrl", currentUrl);
@@ -128,6 +128,9 @@ public class RepositoryController {
 		
 		model.addAttribute("branchNames", repository.getBranchNames());
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
+		
+		model.addAttribute("gitSshProtocolUrl", domainSource.getGitSshProtocolUrl(
+				gitSource, repository.getOrganization().getName(), repository.getName()));
 		
 		if (commit instanceof ValidCommitBean) {
 			model.addAttribute("root", ((ValidCommitBean)commit).getRoot());			
@@ -154,7 +157,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/commits", method=RequestMethod.GET)
-	public String showCommitList (
+	public String showCommitList(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -187,7 +190,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentDefault (
+	public String showDocumentContentDefault(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@ModelAttribute("branch") String branch,
@@ -216,7 +219,7 @@ public class RepositoryController {
 	 * (2) They need to be parsed and shown in a different way.
 	 */
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentByCommit (
+	public String showDocumentContentByCommit(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -233,7 +236,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/documents/directories/**", method=RequestMethod.GET)
-	public String showDocumentContentByBranch (
+	public String showDocumentContentByBranch(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -249,7 +252,7 @@ public class RepositoryController {
 		return showDocumentContent(document, request, model);
 	}
 	
-	private String showDocumentContent (
+	private String showDocumentContent(
 			DocumentBean document, 
 			HttpServletRequest request,
 			Model model) throws Exception {
@@ -272,7 +275,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/commits/{commitSha}/blobs/directories/**", method=RequestMethod.GET)
-	public void showBlobContentByCommit (
+	public void showBlobContentByCommit(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String commitSha,
@@ -285,7 +288,7 @@ public class RepositoryController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/blobs/directories/**", method=RequestMethod.GET)
-	public void showBlobContentByBranch (
+	public void showBlobContentByBranch(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@PathVariable String branchName,
@@ -297,7 +300,7 @@ public class RepositoryController {
 		writeToOutputStream(file, response);
 	}
 	
-	private void writeToOutputStream (FileBean file, HttpServletResponse response) throws Exception {
+	private void writeToOutputStream(FileBean file, HttpServletResponse response) throws Exception {
 		
 		response.setContentType(file.getMimeType());
 		OutputStream outputStream = response.getOutputStream();
@@ -305,7 +308,7 @@ public class RepositoryController {
 		outputStream.close();
 	}
 	
-	private String getWildcardValue (HttpServletRequest request) {
+	private String getWildcardValue(HttpServletRequest request) {
 		
 		String wholePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);

@@ -1,10 +1,10 @@
 package com.gitenter.protease.dao.auth;
 
-import java.io.IOException;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.gitenter.protease.domain.auth.SshKeyBean;
 
-public interface SshKeyRepository {
-
-	public SshKeyBean saveAndFlush(SshKeyBean sshKey) throws IOException;
+public interface SshKeyRepository extends PagingAndSortingRepository<SshKeyBean, Integer> {
+	
+	public SshKeyBean saveAndFlush(SshKeyBean sshKey);
 }

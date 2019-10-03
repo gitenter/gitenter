@@ -9,8 +9,10 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 
 public interface OrganizationRepository extends PagingAndSortingRepository<OrganizationBean, Integer> {
 
-	Optional<OrganizationBean> findById(Integer id);
-	List<OrganizationBean> findByName(String name);
+	public Optional<OrganizationBean> findById(Integer id);
+	public List<OrganizationBean> findByName(String name);
 	
-	OrganizationBean saveAndFlush(OrganizationBean organization);
+	public OrganizationBean saveAndFlush(OrganizationBean organization);
+	
+	public void delete(OrganizationBean organization);
 }

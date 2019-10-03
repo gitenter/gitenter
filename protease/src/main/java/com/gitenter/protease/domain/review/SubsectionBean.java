@@ -29,7 +29,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "review", name = "subsection")
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract public class SubsectionBean extends ValidCommitBean implements ModelBean {
+public abstract class SubsectionBean extends ValidCommitBean implements ModelBean {
 
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)

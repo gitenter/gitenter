@@ -15,10 +15,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.MemberService;
-import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
+import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
@@ -27,14 +27,26 @@ import com.gitenter.protease.domain.auth.RepositoryMemberRole;
 @Controller
 public class RepositoryManagementController {
 	
-	@Autowired MemberService memberService;
-	@Autowired OrganizationService organizationService;
-	@Autowired OrganizationManagerService organizationManagerService;
-	@Autowired RepositoryService repositoryService;
-	@Autowired RepositoryManagerService repositoryManagerService;
+	private MemberService memberService;
+	private OrganizationService organizationService;
+	private RepositoryService repositoryService;
+	private RepositoryManagerService repositoryManagerService;
+
+	@Autowired
+	public RepositoryManagementController(
+			MemberService memberService, 
+			OrganizationService organizationService,
+			RepositoryService repositoryService,
+			RepositoryManagerService repositoryManagerService) {
+		
+		this.memberService = memberService;
+		this.organizationService = organizationService;
+		this.repositoryService = repositoryService;
+		this.repositoryManagerService = repositoryManagerService;
+	}
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.GET)
-	public String showCreateRepositoryForm (
+	public String showCreateRepositoryForm(
 			@PathVariable Integer organizationId,
 			Model model) throws Exception {
 
@@ -47,7 +59,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/create", method=RequestMethod.POST)
-	public String processCreationOfRepository (
+	public String processCreationOfRepository(
 			@PathVariable Integer organizationId,
 			/*
 			 * "Error" need to go AFTER "@Valid" but BEFORE "@RequestParam" 
@@ -70,24 +82,22 @@ public class RepositoryManagementController {
 			return "repository-management/create";
 		}
 		
-		/*
-		 * TODO:
-		 * "createRepository()" includes setup a folder structure under the local git folder.
-		 * However, Spring(?) turns to be too smart that it caches the OS folder operation so
-		 * the second time it will not trigger the real OS mkdir.
-		 * 
-		 * In my selenium tests, I empty the local git folder structure and run another test.
-		 * However, the above optimization makes me to need to restart my server to make the
-		 * mkdir actual happen in the second run. Wonder whether there's a better way to solve
-		 * this problem. 
-		 */
-		repositoryManagerService.createRepository(authentication, organization, repositoryDTO, includeSetupFiles);
+		try {
+			MemberBean me = memberService.getMe(authentication);
+			repositoryManagerService.createRepository(me, organization, repositoryDTO, includeSetupFiles);
+		}
+		catch(ItemNotUniqueException e) {
+			model.addAttribute("repositoryDTO", repositoryDTO); 
+			model.addAttribute("organization", organization);
+			e.addToErrors(errors);
+			return "repository-management/create";
+		}
 
 		return "redirect:/organizations/"+organizationId;
 	}
 
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings", method=RequestMethod.GET)
-	public String showRepositorySettings (
+	public String showRepositorySettings(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws Exception {
@@ -102,7 +112,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.GET)
-	public String showRepositoryProfileSettingsForm (
+	public String showRepositoryProfileSettingsForm(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model) throws Exception {
@@ -121,7 +131,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/profile", method=RequestMethod.POST)
-	public String updateRepositoryProfile (
+	public String updateRepositoryProfile(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@Valid RepositoryDTO repositoryDTOAfterChange, 
@@ -148,7 +158,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators", method=RequestMethod.GET)
-	public String showRepositoryCollaboratorsManagementPage (
+	public String showRepositoryCollaboratorsManagementPage(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			Model model,
@@ -167,7 +177,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/add", method=RequestMethod.POST)
-	public String addARepositoryCollaborator (
+	public String addARepositoryCollaborator(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="to_be_add_username") String username,
@@ -177,8 +187,10 @@ public class RepositoryManagementController {
 		MemberBean collaborator = memberService.getMemberByUsername(username);
 		/*
 		 * TODO:
-		 * Catch the errors and redirect to the original page,
-		 * if the collaborator manager username is invalid.
+		 * Catch the errors and redirect to the original page, if the collaborator manager 
+		 * username is invalid.
+		 * Right not it raises `*NotExistException` and catched by "Not Found" page which is
+		 * not intuitive.
 		 */
 		
 		repositoryManagerService.addCollaborator(repository, collaborator, roleName);
@@ -187,7 +199,7 @@ public class RepositoryManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/collaborators/remove", method=RequestMethod.POST)
-	public String removeARepositoryCollaborator (
+	public String removeARepositoryCollaborator(
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="to_be_remove_username") String toBeRemovedUsername,
@@ -206,5 +218,44 @@ public class RepositoryManagementController {
 		repositoryManagerService.removeCollaborator(repository, repositoryMemberMapId);
 
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/delete", method=RequestMethod.GET)
+	public String showDeleteRepositoryPage(
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			Model model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		OrganizationBean organization = repository.getOrganization();
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("repository", repository);
+		
+		return "repository-management/delete";
+	}
+	
+	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/settings/delete", method=RequestMethod.POST)
+	public String processDeleteRepository(
+			@PathVariable Integer organizationId,
+			@PathVariable Integer repositoryId,
+			@RequestParam(value="copy_repository_name") String copyRepositoryName,
+			RedirectAttributes model) throws Exception {
+		
+		RepositoryBean repository = repositoryService.getRepository(repositoryId);
+		
+		if (repository.getName().equals(copyRepositoryName)) {
+			repositoryManagerService.deleteRepository(repository);
+			
+			/*
+			 * TODO:
+			 * Message for successful delete organization.
+			 */
+			return "redirect:/organizations/"+organizationId;
+		}
+		else {
+			model.addFlashAttribute("errorMessage", "Repository name doesn't match!");
+			return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/delete";
+		}
 	}
 }

@@ -13,20 +13,15 @@ RUN echo 'root:secretpassword' | chpasswd
 RUN useradd -ms /bin/bash git
 RUN echo 'git:secretpassword' | chpasswd
 
+# post-receive hook needs Java
 RUN apt-get update && apt-get -y install \
-	openssh-server \
+  openssh-server \
   git \
-	python3-pip \
-	libpq-dev
+  python3-pip \
+  libpq-dev \
+  openjdk-11-jre-headless
 
 RUN pip3 install pipenv
-
-# TODO:
-# Consider using environmental variable to do so. Otherwise it is really weird
-# to `sed` this line in CircleCI.
-COPY . /ssheep
-WORKDIR /ssheep
-RUN sed -i 's/database = LocalDatabase()/database = DockerDatabase()/' /ssheep/settings.py
 
 # TODO:
 # Looks like need to `apt-get install libpq-dev`, otherwise will run into error
@@ -35,8 +30,17 @@ RUN sed -i 's/database = LocalDatabase()/database = DockerDatabase()/' /ssheep/s
 # TODO:
 # Consider not install packages on the host machine. Rather, we should use python wheels.
 # https://medium.com/@greut/building-a-python-package-a-docker-image-using-pipenv-233d8793b6cc
-RUN pipenv lock -r > requirements.txt
-RUN pip3 install -r requirements.txt
+
+COPY pip-requirements.txt /tmp/pip-requirements.txt
+# RUN pipenv lock -r > pip-requirements.txt
+RUN pip3 install -r /tmp/pip-requirements.txt
+
+# TODO:
+# Consider using environmental variable to do so. Otherwise it is really weird
+# to `sed` this line in CircleCI.
+COPY . /ssheep
+WORKDIR /ssheep
+RUN sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /ssheep/settings/profile.py
 
 # Below refers: https://docs.docker.com/engine/examples/running_ssh_service/
 RUN mkdir /var/run/sshd
@@ -141,6 +145,14 @@ RUN sed -i 's/#AuthorizedKeysCommandUser nobody/AuthorizedKeysCommandUser nobody
 #
 # Relevant post:
 # https://serverfault.com/questions/608445/manage-ssh-users-with-mysql-backend
+
+# TODO:
+# This is right now needed because although capsid makes repo.git has owner git,
+# the org folder is still root:root. `git clone` works fine without SSH force command
+# but will fail if we go through SSH force command (when the key is in authorized_keys).
+#
+# Consider simplify the case, or `chown` when create the folder.
+RUN usermod -g root git
 
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

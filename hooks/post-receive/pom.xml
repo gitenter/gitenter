@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -7,7 +8,6 @@
         <artifactId>gitenter-hooks</artifactId>
         <version>0.0.2-prototype</version>
     </parent>
-    <groupId>com.gitenter</groupId>
     <artifactId>post-receive-hook</artifactId>
     <packaging>jar</packaging>
 
@@ -20,10 +20,6 @@
     </properties>
 
     <build>
-        <!-- TODO:
-            So right now still need to log into `hooks/post-receive` to `mvn clean compile assembly:single`,
-            as the other modules doesn't support this command.
-        -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -49,15 +45,15 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <!--
-                        TODO:
                         When using parent pom, there's a race condition in here that capsid build may not use the
                         most up-to-date git hooks.
-                        Consider explicitly specify the dependency (if there's a way in maven). Or alternatively,
-                        using an approach different to setting up `<outputDirectory>` tag on `hooks/post-receive/pom.xml`.
-                        For example, compile hooks and set them somewhere on docker. Capsid can then just
-                        setup a symlink or something else to call the hook when it initialize a repository.
+                        The current solution is a three step build.
+
+                        TODO:
+                        Consider put this one to `ssheep` and replace the hook with a symlink. However, there's
+                        some techinical problem for that in ECS (see comment in `RepositoryManagerServiceImpl`).
                     -->
-                    <outputDirectory>capsid/src/main/resources/git-server-side-hooks</outputDirectory>
+                    <outputDirectory>../../capsid/src/main/resources/git-server-side-hooks</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
@@ -69,6 +65,12 @@
             <groupId>com.gitenter</groupId>
             <artifactId>gitar</artifactId>
             <version>${gitar-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.gitenter</groupId>
