@@ -19,12 +19,6 @@ class TestAuthorization(BaseTestSuite):
     def tearDown(self):
         super(TestAuthorization, self).tearDown()
 
-    def test_redirect_to_login_for_authorized_pate_and_login_page_content(self):
-        self.driver.get(urljoin(self.root_url, "/"))
-        self.assertEqual(urlparse(self.driver.current_url).path, "/login")
-        assert "Log in" in self.driver.page_source
-        assert "Sign up" in self.driver.page_source
-
     def test_register_and_login_and_delete_user(self):
         username = "username"
         password = "password"

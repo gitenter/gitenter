@@ -40,13 +40,17 @@ data "aws_ami" "ecs_optimized_amis" {
 resource "aws_launch_configuration" "main" {
   name                        = "${local.aws_launch_configuration}"
   iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
-  security_groups             = ["${aws_security_group.web_app.id}", "${aws_security_group.git.id}"]
+  security_groups             = [
+    "${aws_security_group.web_app.id}",
+    "${aws_security_group.web_static.id}",
+    "${aws_security_group.git.id}"
+  ]
 
   image_id                    = "${data.aws_ami.ecs_optimized_amis.id}"
   # `instance_type` needs to match CPU/memory defined in `aws_ecs_task_definition`
   # to make sure there are surficient.
   # If too low, may face error when trying to `aws ecs update-service`:
-  # > (service ecs-circleci-qa-service) was unable to place a task because no container
+  # > (service ecs-qa-service) was unable to place a task because no container
   # > instance met all of its requirements. The closest matching (container-instance
   # > ...) has insufficient memory available. For more information, see the
   # > Troubleshooting section of the Amazon ECS Developer Guide.
@@ -157,7 +161,7 @@ resource "aws_autoscaling_group" "main" {
   # In AWS console "Load Balancing > Target Groups" we can check `Targets`
   # of each single target group to see if the targets are successfully registered.
   # target_group_arns           = [
-  #   "${aws_lb_target_group.web_app_dummy.arn}",
+  #   "${aws_lb_target_group.web_dummy.arn}",
   #   "${aws_lb_target_group.web_app.arn}",
   #   "${aws_lb_target_group.git.arn}"
   # ]

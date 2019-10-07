@@ -16,6 +16,29 @@ services:
     image: redis:5.0.5
     restart: always
 
+  web-app:
+    build:
+      context: ./capsid
+      dockerfile: ./Dockerfile
+    volumes:
+      - git-repo:/data
+    ports:
+      - "8886:8080"
+    depends_on:
+      - postgres
+      - redis-session
+    tty: true
+    restart: always
+
+  web-static:
+    build:
+      context: ./stolon
+      dockerfile: ./Dockerfile
+    ports:
+      - "8885:80"
+    tty: true
+    restart: always
+
   git:
     build:
       context: ./ssheep
@@ -40,20 +63,6 @@ services:
       - "8822:22"
     depends_on:
       - postgres
-    tty: true
-    restart: always
-
-  web-app:
-    build:
-      context: ./capsid
-      dockerfile: ./Dockerfile
-    volumes:
-      - git-repo:/data
-    ports:
-      - "8886:8080"
-    depends_on:
-      - postgres
-      - redis-session
     tty: true
     restart: always
 
@@ -101,8 +110,9 @@ services:
       - "443:443"
     command: [nginx, '-g', 'daemon off;']
     depends_on:
-      - git
       - web-app
-
+      - web-static
+      - git
+      
 volumes:
   git-repo:

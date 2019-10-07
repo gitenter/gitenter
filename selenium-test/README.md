@@ -68,9 +68,9 @@ TODO: setup pipenv/Pipfile.
 ```
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml build selenium-test
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml run selenium-test bash
-circleci@c88fa4db458b:/selenium-test$ curl web-app:8080/login
+circleci@c88fa4db458b:/selenium-test$ curl -L nginx:80
 circleci@c88fa4db458b:/selenium-test$ pytest tests/authorization_test.py
-circleci@c88fa4db458b:/selenium-test$ pytest tests/repository_navigation_test.py  -k "test_valid_commit_one_file"
+circleci@c88fa4db458b:/selenium-test$ pytest tests/repository_navigation_test.py -k "test_valid_commit_one_file"
 ```
 
 If want to edit/debug while running the test, inside of the container

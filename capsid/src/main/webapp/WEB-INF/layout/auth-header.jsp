@@ -28,4 +28,9 @@
         TODO:
         Otherwise show login and signup links?
        --%>
+       
+      <s:url var="help_url" value="/help/" />
+      <sf:form method="GET" action="${help_url}">
+        <input type="submit" value="Help" />
+      </sf:form>
     </header>
