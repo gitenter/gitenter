@@ -40,9 +40,13 @@ resource "aws_vpc" "main" {
   # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html
   instance_tenancy = "default"
 
-  tags = {
-    Name = "${local.aws_vpc_name}"
-  }
+  # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-tagging
+  tags = "${
+    map(
+     "Name", "${local.aws_vpc_name}",
+     "kubernetes.io/cluster/${local.aws_eks_cluster_name}", "shared",
+    )
+  }"
 }
 
 resource "aws_subnet" "public" {
@@ -57,6 +61,14 @@ resource "aws_subnet" "public" {
   cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)}"
   # Therefore, subnets will be each in a separate availability zone.
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
+
+  # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-subnet-tagging
+  tags = "${
+    map(
+     "Name", "${local.aws_subnet_name}",
+     "kubernetes.io/cluster/${local.aws_eks_cluster_name}", "shared",
+    )
+  }"
 }
 
 # IGW for the public subnet

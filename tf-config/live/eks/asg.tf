@@ -27,6 +27,11 @@ EOF
   }
 
   associate_public_ip_address = true
+  key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
+
+  depends_on = [
+    "aws_eks_cluster.main"
+  ]
 }
 
 resource "aws_autoscaling_group" "main" {

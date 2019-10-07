@@ -12,6 +12,7 @@ variable "az_count" {
 locals {
   aws_resource_prefix = "eks"
   aws_vpc_name = "${local.aws_resource_prefix}-vpc"
+  aws_subnet_name = "${local.aws_resource_prefix}-subnet"
   aws_eks_cluster_security_group = "${local.aws_resource_prefix}-eks-sg"
   aws_eks_node_security_group = "${local.aws_resource_prefix}-eks-node-sg"
 
