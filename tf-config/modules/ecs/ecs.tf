@@ -2,6 +2,10 @@ variable "web_app_image" {
   default     = "tomcat:latest"
 }
 
+variable "web_static_image" {
+  default     = "nginx:latest"
+}
+
 variable "git_image" {
   # The below image is basically ubuntu with sshd installed.
   # https://hub.docker.com/r/rastasheep/ubuntu-sshd
@@ -73,7 +77,7 @@ Resources:
     "essential": true,
     "portMappings": [
       {
-        "containerPort": ${var.tomcat_container_port}
+        "containerPort": ${var.web_app_export_port}
       }
     ],
     "environment": [
@@ -194,7 +198,7 @@ resource "aws_ecs_service" "web_app" {
     # name (or at least names the local variables better) for
     # service/task_definition/container names.
     container_name   = "${local.aws_ecs_web_app_service_name}"
-    container_port   = "${var.tomcat_container_port}"
+    container_port   = "${var.web_app_export_port}"
     target_group_arn = "${aws_lb_target_group.web_app.id}"
   }
 
@@ -221,7 +225,82 @@ resource "aws_ecs_service" "web_app" {
 
   depends_on = [
     "aws_ecr_repository.web_app",
-    "aws_lb_listener_rule.web_all"
+    "aws_lb_listener_rule.web_app"
+  ]
+}
+
+resource "aws_ecs_task_definition" "web_static" {
+  family                   = "${local.aws_ecs_web_static_service_name}"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["EC2"]
+  cpu                      = "${local.task_cpu}"
+  memory                   = "${local.task_memory}"
+
+  execution_role_arn       = "${data.aws_iam_role.ecs_task_execution.arn}"
+
+  container_definitions = <<DEFINITION
+[
+  {
+    "name": "${local.aws_ecs_web_static_service_name}",
+    "cpu": ${local.task_cpu},
+    "memory": ${local.task_memory},
+    "image": "${var.web_static_image}",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": ${var.web_static_export_port}
+      }
+    ],
+    "environment": [
+      {
+        "name": "VERSION_INFO",
+        "value": "v0"
+      },
+      {
+        "name": "BUILD_DATE",
+        "value": "-"
+      }
+    ]
+  }
+]
+DEFINITION
+
+}
+
+resource "aws_ecs_service" "web_static" {
+  name            = "${local.aws_ecs_web_static_service_name}"
+
+  cluster         = "${aws_ecs_cluster.main.id}"
+  task_definition = "${aws_ecs_task_definition.web_static.arn}"
+  desired_count   = "${var.web_static_count}"
+  launch_type     = "EC2"
+
+  deployment_maximum_percent = 200
+  deployment_minimum_healthy_percent = 75
+
+  network_configuration {
+    security_groups = ["${aws_security_group.web_static.id}"]
+    subnets         = ["${aws_subnet.public.*.id}"]
+  }
+
+  load_balancer {
+    container_name   = "${local.aws_ecs_web_static_service_name}"
+    container_port   = "${var.web_static_export_port}"
+    target_group_arn = "${aws_lb_target_group.web_static.id}"
+  }
+
+  ordered_placement_strategy {
+    type = "spread"
+    field = "instanceId"
+  }
+
+  deployment_controller {
+    type = "ECS"
+  }
+
+  depends_on = [
+    "aws_ecr_repository.web_static",
+    "aws_lb_listener_rule.web_static"
   ]
 }
 

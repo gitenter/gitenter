@@ -13,8 +13,12 @@ variable "http_port" {
   default = 80
 }
 
-variable "tomcat_container_port" {
+variable "web_app_export_port" {
   default = 8080
+}
+
+variable "web_static_export_port" {
+  default = 80
 }
 
 # Ideally what we want is a small number of instances, and each of them has multiple
@@ -41,12 +45,16 @@ variable "tomcat_container_port" {
 # number from 4 to 2. ECS will re-organize the running images so they can stay in these
 # smaller number of EC2 instances.
 variable "ec2_instance_count" {
-  default = 4
+  default = 6
 }
 
 variable "web_app_count" {
   # Needs to be >=2, as in `aws_lb_target_group.health_check` the minimal has to
   # be >=2 and the max (this value) has to be > min.
+  default = 2
+}
+
+variable "web_static_count" {
   default = 2
 }
 
@@ -100,17 +108,21 @@ variable "efs_git_container_path" {
 
 locals {
   aws_web_app_resource_infix = "web-app"
+  aws_web_static_resource_infix = "web-static"
   aws_git_resource_infix = "git"
 
   # Prefix to be used in the naming of some of the created AWS resources
   aws_resource_prefix = "${var.environment}"
   aws_web_app_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_app_resource_infix}"
+  aws_web_static_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_static_resource_infix}"
   aws_git_resource_prefix = "${local.aws_resource_prefix}-${local.aws_git_resource_infix}"
 
   # These names are used by CircleCI orbs
   aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
   aws_web_app_ecr_name = "${local.aws_web_app_resource_prefix}-repository"
   aws_ecs_web_app_service_name = "${local.aws_web_app_resource_prefix}-service"
+  aws_web_static_ecr_name = "${local.aws_web_static_resource_prefix}-repository"
+  aws_ecs_web_static_service_name = "${local.aws_web_static_resource_prefix}-service"
   aws_git_ecr_name = "${local.aws_git_resource_prefix}-repository"
   aws_ecs_git_service_name = "${local.aws_git_resource_prefix}-service"
 
@@ -124,8 +136,9 @@ locals {
   aws_git_lb_name = "${local.aws_resource_prefix}-git-nlb"
 
   aws_web_alb_security_group = "${local.aws_resource_prefix}-web-alb-sg"
-  aws_web_app_security_group = "${local.aws_resource_prefix}-web-app-sg"
-  aws_git_security_group = "${local.aws_resource_prefix}-git-sg"
+  aws_web_app_security_group = "${local.aws_web_app_resource_prefix}-sg"
+  aws_web_static_security_group = "${local.aws_web_static_resource_prefix}-sg"
+  aws_git_security_group = "${local.aws_git_resource_prefix}-sg"
   aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
   aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
   aws_redis_security_group = "${local.aws_resource_prefix}-redis-sg"

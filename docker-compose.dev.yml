@@ -26,6 +26,9 @@ services:
       - redis-session
     tty: true
 
+  # TODO:
+  # hugo-build
+
   selenium-test:
     build:
       context: ./selenium-test
@@ -33,6 +36,5 @@ services:
     volumes:
       - ./selenium-test:/selenium-test-in-dev
     depends_on:
-      - git
-      - web-app
+      - nginx
     tty: true

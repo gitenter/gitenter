@@ -16,14 +16,10 @@ resource "aws_lb" "web" {
   ]
 }
 
-# A dummy target group is used to setup the ALB to just drop traffic
-# initially, before any real service target groups have been added.
-# No actual instance (target) is registered in this target group.
-#
-# TODO:
-# Not sure why it is then necessary, as the priority=1 `aws_lb_listener_rule`
-# consume all path patterns.
-resource "aws_lb_target_group" "web_app_dummy" {
+# This is the black hole target group that all the traffic which
+# are not ruled (not the case as `web-app-service` takes `*` so
+# everything). Just put it in here for complicity.
+resource "aws_lb_target_group" "web_dummy" {
   port        = "${var.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
@@ -85,14 +81,37 @@ resource "aws_lb_target_group" "web_app" {
     # `timeout` cannot be too small, otherwise when deploying the real service
     # system will error out. Then the newly created task will be killed and start
     # over (forever).
-    # > service ecs-circleci-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
-    # > target-group ecs-circleci-qa-service due to (reason Request timed out)
+    # > service ecs-qa-service (instance 10.0.0.29) (port 8080) is unhealthy in
+    # > target-group ecs-qa-service due to (reason Request timed out)
     # > Task failed ELB health checks in (target-group ...)
     #
     # After increasing timeout period (and check `/`) I am getting
-    # > service ecs-circleci-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
-    # > target-group ecs-circleci-qa-service due to (reason Health checks failed with these codes: [404])
+    # > service ecs-qa-service (instance 10.0.1.241) (port 8080) is unhealthy in
+    # > target-group ecs-qa-service due to (reason Health checks failed with these codes: [404])
     # Therefore, I added and use the `/health_check` endpoint.
+    timeout = 59
+    healthy_threshold = "${var.web_app_count}"
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_target_group" "web_static" {
+  name        = "${local.aws_ecs_web_static_service_name}"
+  port        = "${var.http_port}"
+  protocol    = "HTTP"
+  vpc_id      = "${aws_vpc.main.id}"
+  target_type = "ip"
+  deregistration_delay = 20
+
+  health_check {
+    interval = 60
+    # TODO:
+    # Not healthy before the first deployment (as from `nginx:latest` image)
+    # they don't have this path at all.
+    # Probably can do `/` because it is behind the listening rule, so
+    # it can touch `/` without being redirect to the web-app service.
+    path = "/about/"
+    protocol = "HTTP"
     timeout = 59
     healthy_threshold = "${var.web_app_count}"
     unhealthy_threshold = 2
@@ -110,7 +129,7 @@ resource "aws_lb_listener" "web_front_end" {
   # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#listener-rules
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.web_app_dummy.id}"
+    target_group_arn = "${aws_lb_target_group.web_dummy.id}"
   }
 }
 
@@ -125,9 +144,9 @@ resource "aws_lb_listener" "web_front_end" {
 # frameworks).
 # If that is the case, we'll need multiple rules with different priority and
 # non-trivial path pattern.
-resource "aws_lb_listener_rule" "web_all" {
+resource "aws_lb_listener_rule" "web_app" {
   listener_arn = "${aws_lb_listener.web_front_end.arn}"
-  priority     = 1
+  priority     = 100
 
   action {
     type             = "forward"
@@ -137,5 +156,25 @@ resource "aws_lb_listener_rule" "web_all" {
   condition {
     field  = "path-pattern"
     values = ["*"]
+  }
+}
+
+variable "path_patterns" {
+  default = ["/about/*", "/contact/*", "/pricing/*", "/help/*"]
+}
+
+resource "aws_lb_listener_rule" "web_static" {
+  count        = "${length(var.path_patterns)}"
+  listener_arn = "${aws_lb_listener.web_front_end.arn}"
+  priority     = "${count.index + 10}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.web_static.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["${element(var.path_patterns, count.index)}"]
   }
 }
