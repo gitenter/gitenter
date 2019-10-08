@@ -1,11 +1,12 @@
+# Below ECR names are used in CircleCI orbs
 resource "aws_ecr_repository" "web_app" {
-  name = "${local.aws_web_app_ecr_name}"
+  name = "${local.web_app_resource_name}"
 }
 
 resource "aws_ecr_repository" "web_static" {
-  name = "${local.aws_web_static_ecr_name}"
+  name = "${local.web_static_resource_name}"
 }
 
 resource "aws_ecr_repository" "git" {
-  name = "${local.aws_git_ecr_name}"
+  name = "${local.git_resource_name}"
 }

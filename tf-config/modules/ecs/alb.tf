@@ -1,5 +1,5 @@
 resource "aws_lb" "web" {
-  name               = "${local.aws_web_lb_name}"
+  name               = "${local.web_entrace_resource_name}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.web_alb.id}"]
@@ -20,7 +20,7 @@ resource "aws_lb" "web" {
 # are not ruled (not the case as `web-app-service` takes `*` so
 # everything). Just put it in here for complicity.
 resource "aws_lb_target_group" "web_dummy" {
-  port        = "${var.http_port}"
+  port        = "${local.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
@@ -37,8 +37,8 @@ resource "aws_lb_target_group" "web_dummy" {
 
 # Register all the web app instance/container into this target group.
 resource "aws_lb_target_group" "web_app" {
-  name        = "${local.aws_ecs_web_app_service_name}"
-  port        = "${var.http_port}"
+  name        = "${local.web_app_resource_name}"
+  port        = "${local.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
@@ -96,8 +96,8 @@ resource "aws_lb_target_group" "web_app" {
 }
 
 resource "aws_lb_target_group" "web_static" {
-  name        = "${local.aws_ecs_web_static_service_name}"
-  port        = "${var.http_port}"
+  name        = "${local.web_static_resource_name}"
+  port        = "${local.http_port}"
   protocol    = "HTTP"
   vpc_id      = "${aws_vpc.main.id}"
   target_type = "ip"
@@ -121,7 +121,7 @@ resource "aws_lb_target_group" "web_static" {
 # Redirect all traffic from the ALB to the target group
 resource "aws_lb_listener" "web_front_end" {
   load_balancer_arn = "${aws_lb.web.id}"
-  port              = "${var.http_port}"
+  port              = "${local.http_port}"
   protocol          = "HTTP"
 
   # Here defines the default rule. Default rules can't have conditions.

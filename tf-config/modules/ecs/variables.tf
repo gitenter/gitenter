@@ -6,19 +6,7 @@ variable "az_count" {
   # For both a private and a public subnets, this number needs
   # to be <=128 (65536/(256*2)=128), otherwise the subnet
   # `cidr_block` will be out of range.
-  default = "2"
-}
-
-variable "http_port" {
-  default = 80
-}
-
-variable "web_app_export_port" {
-  default = 8080
-}
-
-variable "web_static_export_port" {
-  default = 80
+  default = 2
 }
 
 # Ideally what we want is a small number of instances, and each of them has multiple
@@ -62,88 +50,26 @@ variable "git_count" {
   default = 2
 }
 
-# Seems not useful outside of Terraform.
-variable "efs_mount_point" {
-  # Cannot use a relative localtion from `~`, as it is created in `aws_launch_configuration`
-  # for which `root` (rather than `ec2-user`) created it and `chown` it to `ec2-user`.
-  default = "/mnt/efs"
-}
+locals {
+  name_prefix = "${var.environment}-ecs"
 
-# Seems not useful outside of Terraform.
-variable "efs_docker_volumn_name" {
-  default = "efs-static-storage"
-}
+  main_resource_name = "${local.name_prefix}"
+  web_entrace_resource_name = "${local.name_prefix}-web-all"
+  web_app_resource_name = "${local.name_prefix}-web-app"
+  web_static_resource_name = "${local.name_prefix}-web-static"
+  git_resource_name = "${local.name_prefix}-git"
 
-# This is the path need to be used in code (e.g. Java setup of `capsid` and
-# `post-receive-hook` setup to touch the file system).
-variable "efs_web_app_container_path" {
-  default = "/data"
-}
-
-# This is the path needed for the `AuthorizedKeyCommand` script in `ssheep`.
-#
-# TODO:
-# By sharing the `/home/git` folder as a volume, as mounting is AFTER docker
-# container starts, all the following files disappears. Not sure if that's a
-# (functional) problem through.
-# > root@02a50eab24c4:/home/git# ls -la
-# > -rw-------  1 git  root  788 Aug 16 19:58 .bash_history
-# > -rw-r--r--  1 git  root 3771 Apr  4  2018 .bashrc
-# > drwx------  4 git  root 4096 Jun 25 13:03 .cache
-# > -rw-r--r--  1 git  root  807 Apr  4  2018 .profile
-# > ...
-#
-# Possible solutions:
-# Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
-# to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
-# becomes weird.
-#
-# Note:
-# There's a behavior difference that in docker-compose it will cause `/data` in web
-# container to have those hidden files, while in ECS/EFS it will cause `/home/git`
-# in git container to not have those files.
-variable "efs_git_container_path" {
-  default = "/home/git"
+  # Below variables are cross-used in different Terraform modules.
+  ecs_cluster_name = "${local.main_resource_name}"
 }
 
 locals {
-  aws_web_app_resource_infix = "web-app"
-  aws_web_static_resource_infix = "web-static"
-  aws_git_resource_infix = "git"
+  # Seems not useful outside of Terraform.
+  # Cannot use a relative localtion from `~`, as it is created in `aws_launch_configuration`
+  # for which `root` (rather than `ec2-user`) created it and `chown` it to `ec2-user`.
+  efs_mount_point = "/mnt/efs"
 
-  # Prefix to be used in the naming of some of the created AWS resources
-  aws_resource_prefix = "${var.environment}"
-  aws_web_app_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_app_resource_infix}"
-  aws_web_static_resource_prefix = "${local.aws_resource_prefix}-${local.aws_web_static_resource_infix}"
-  aws_git_resource_prefix = "${local.aws_resource_prefix}-${local.aws_git_resource_infix}"
-
-  # These names are used by CircleCI orbs
-  aws_ecs_cluster_name = "${local.aws_resource_prefix}-cluster"
-  aws_web_app_ecr_name = "${local.aws_web_app_resource_prefix}-repository"
-  aws_ecs_web_app_service_name = "${local.aws_web_app_resource_prefix}-service"
-  aws_web_static_ecr_name = "${local.aws_web_static_resource_prefix}-repository"
-  aws_ecs_web_static_service_name = "${local.aws_web_static_resource_prefix}-service"
-  aws_git_ecr_name = "${local.aws_git_resource_prefix}-repository"
-  aws_ecs_git_service_name = "${local.aws_git_resource_prefix}-service"
-
-  # Internal reference only
-  aws_vpc_name = "${local.aws_resource_prefix}-vpc"
-  aws_postgres_name = "${local.aws_resource_prefix}-postgres"
-  aws_redis_session_name = "${local.aws_resource_prefix}-redis-sess" # Need to <=20 characters
-  aws_git_efs_name = "${local.aws_resource_prefix}-git-efs"
-
-  aws_web_lb_name = "${local.aws_resource_prefix}-web-alb"
-  aws_git_lb_name = "${local.aws_resource_prefix}-git-nlb"
-
-  aws_web_alb_security_group = "${local.aws_resource_prefix}-web-alb-sg"
-  aws_web_app_security_group = "${local.aws_web_app_resource_prefix}-sg"
-  aws_web_static_security_group = "${local.aws_web_static_resource_prefix}-sg"
-  aws_git_security_group = "${local.aws_git_resource_prefix}-sg"
-  aws_efs_security_group = "${local.aws_resource_prefix}-efs-sg"
-  aws_postgres_security_group = "${local.aws_resource_prefix}-postgres-sg"
-  aws_redis_security_group = "${local.aws_resource_prefix}-redis-sg"
-
-  aws_ecs_instance_profile = "${local.aws_resource_prefix}-ecs-instance-profile"
-  aws_launch_configuration = "${local.aws_resource_prefix}-launch-configuration"
-  aws_autoscaling_group = "${local.aws_resource_prefix}-asg"
+  http_port = 80
+  web_app_export_port = 8080
+  web_static_export_port = 80
 }

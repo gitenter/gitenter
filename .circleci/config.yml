@@ -107,7 +107,7 @@ orbs:
           # > docker build \
           # >   \
           # >  -f ./docker/web/Dockerfile \
-          # >  -t $AWS_ECR_ACCOUNT_URL/staging-repository:${CIRCLE_SHA1} \
+          # >  -t $AWS_ECR_ACCOUNT_URL/staging:${CIRCLE_SHA1} \
           # >  ./docker/web
           # > ERRO[0000] failed to dial gRPC: cannot connect to the Docker daemon. Is 'docker daemon' running on this host?: dial unix /var/run/docker.sock: connect: no such file or directory
           # > context canceled
@@ -158,7 +158,7 @@ orbs:
               aws-secret-access-key: AWS_SECRET_ACCESS_KEY
               aws-region: AWS_DEFAULT_REGION
 
-          # # This orb is mostly doing `aws ecs update-service --cluster staging-cluster --service staging-web-app-service --force-new-deployment`
+          # # This orb is mostly doing `aws ecs update-service --cluster staging --service staging-web-app --force-new-deployment`
           # (https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
           # That's the reason it doesn't need to hold any knowledge of the
           # Terraform config even if it is doing blue/green deployment.
@@ -305,35 +305,10 @@ jobs:
 
     steps:
       - inline-aws-operation/build-image:
-          ecr_repo_name: "staging-web-app-repository"
+          ecr_repo_name: "staging-web-app"
           docker_image_folder: "capsid"
           checkout: true # for `Dockerfile`
           attach-workspace: true # for `.war` file
-
-  staging-git-build-image:
-    docker:
-      - image: 'circleci/python:2.7'
-
-    working_directory: ~/python
-
-    steps:
-      - checkout
-
-      # TODO:
-      # Ideally we should have an environmental variable `PYTHON_PROFILE` and which
-      # profile to load depend on this variable. That can also let different environments
-      # share the same docker image.
-      # Very unfortunate, this is hard to be down because SSH `AuthorizedKeysCommand`
-      # cannot see docker injected environmental variable. See comment in
-      # `ssheep/settings/profile.py` for detail.
-      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = StagingProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
-      - run: cat ssheep/Dockerfile
-
-      - inline-aws-operation/build-image:
-          ecr_repo_name: "staging-git-repository"
-          docker_image_folder: "ssheep"
-          checkout: false
-          attach-workspace: false
 
   # TODO:
   # Right now web-static content is environment ignorant. Consider moving this one to a
@@ -355,10 +330,35 @@ jobs:
       #     at: .
       # - run: ls stolon/public
       - inline-aws-operation/build-image:
-          ecr_repo_name: "staging-web-static-repository"
+          ecr_repo_name: "staging-web-static"
           docker_image_folder: "stolon"
           checkout: true
           attach-workspace: true
+
+  staging-git-build-image:
+    docker:
+      - image: 'circleci/python:2.7'
+
+    working_directory: ~/python
+
+    steps:
+      - checkout
+
+      # TODO:
+      # Ideally we should have an environmental variable `PYTHON_PROFILE` and which
+      # profile to load depend on this variable. That can also let different environments
+      # share the same docker image.
+      # Very unfortunate, this is hard to be down because SSH `AuthorizedKeysCommand`
+      # cannot see docker injected environmental variable. See comment in
+      # `ssheep/settings/profile.py` for detail.
+      - run: sed -i "s/RUN sed -i 's\/profile = LocalProfile()\/profile = DockerProfile()\/' \/ssheep\/settings\/profile.py/RUN sed -i 's\/profile = LocalProfile()\/profile = StagingProfile()\/' \/ssheep\/settings\/profile.py/g" ssheep/Dockerfile
+      - run: cat ssheep/Dockerfile
+
+      - inline-aws-operation/build-image:
+          ecr_repo_name: "staging-git"
+          docker_image_folder: "ssheep"
+          checkout: false
+          attach-workspace: false
 
   staging-web-app-deploy:
     docker:
@@ -368,12 +368,12 @@ jobs:
 
     steps:
       - inline-aws-operation/deploy:
-          ecr_repo_name: "staging-web-app-repository"
-          cluster_name: "staging-cluster"
-          service_name: "staging-web-app-service"
+          ecr_repo_name: "staging-web-app"
+          cluster_name: "staging"
+          service_name: "staging-web-app"
       - inline-aws-operation/confirm-web-deployment:
-          cluster_name: "staging-cluster"
-          service_name: "staging-web-app-service"
+          cluster_name: "staging"
+          service_name: "staging-web-app"
 
   staging-web-static-deploy:
     docker:
@@ -383,9 +383,9 @@ jobs:
 
     steps:
       - inline-aws-operation/deploy:
-          ecr_repo_name: "staging-web-static-repository"
-          cluster_name: "staging-cluster"
-          service_name: "staging-web-static-service"
+          ecr_repo_name: "staging-web-static"
+          cluster_name: "staging"
+          service_name: "staging-web-static"
 
   staging-git-deploy:
     docker:
@@ -395,9 +395,9 @@ jobs:
 
     steps:
       - inline-aws-operation/deploy:
-          ecr_repo_name: "staging-git-repository"
-          cluster_name: "staging-cluster"
-          service_name: "staging-git-service"
+          ecr_repo_name: "staging-git"
+          cluster_name: "staging"
+          service_name: "staging-git"
     # TODO:
     # Now we can `ssh git@<git_lb_hostname>` to that server. And if the SSH key is added
     # through web UI (so save in the database) the password is not needed. Should add test on that.

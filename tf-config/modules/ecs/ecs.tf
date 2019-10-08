@@ -1,21 +1,39 @@
-variable "web_app_image" {
-  default     = "tomcat:latest"
-}
-
-variable "web_static_image" {
-  default     = "nginx:latest"
-}
-
-variable "git_image" {
-  # The below image is basically ubuntu with sshd installed.
-  # https://hub.docker.com/r/rastasheep/ubuntu-sshd
-  #
-  # In here we need an image with port 22 open. Otherwise image will fail
-  # the NLB health check in `aws_lb_target_group.git`.
-  default     = "rastasheep/ubuntu-sshd:18.04"
-}
-
 locals {
+  web_app_ecs_service_name = "${local.web_app_resource_name}"
+  web_static_ecs_service_name = "${local.web_static_resource_name}"
+  git_ecs_service_name = "${local.git_resource_name}"
+
+  # Seems not useful outside of Terraform.
+  efs_docker_volumn_name = "${local.main_resource_name}"
+
+  # This is the path need to be used in code (e.g. Java setup of `capsid` and
+  # `post-receive-hook` setup to touch the file system).
+  efs_web_app_container_path = "/data"
+
+  # This is the path needed for the `AuthorizedKeyCommand` script in `ssheep`.
+  #
+  # TODO:
+  # By sharing the `/home/git` folder as a volume, as mounting is AFTER docker
+  # container starts, all the following files disappears. Not sure if that's a
+  # (functional) problem through.
+  # > root@02a50eab24c4:/home/git# ls -la
+  # > -rw-------  1 git  root  788 Aug 16 19:58 .bash_history
+  # > -rw-r--r--  1 git  root 3771 Apr  4  2018 .bashrc
+  # > drwx------  4 git  root 4096 Jun 25 13:03 .cache
+  # > -rw-r--r--  1 git  root  807 Apr  4  2018 .profile
+  # > ...
+  #
+  # Possible solutions:
+  # Put git folder to a different path, e.g. `/data` or `/home/git/data`. Need
+  # to change the shellscript for `AuthorizedKeyCommand`. Also the git UI interface
+  # becomes weird.
+  #
+  # Note:
+  # There's a behavior difference that in docker-compose it will cause `/data` in web
+  # container to have those hidden files, while in ECS/EFS it will cause `/home/git`
+  # in git container to not have those files.
+  efs_git_container_path = "/home/git"
+
   # Needs to be downsized then than EC2 `instance_type`. Otherwise a EC2 instance
   # cannot hold one single container.
   #
@@ -35,7 +53,7 @@ locals {
 # The task definition. This is a simple metadata description of what
 # container to run, and what resource requirements it has.
 resource "aws_ecs_task_definition" "web_app" {
-  family                   = "${local.aws_ecs_web_app_service_name}"
+  family                   = "${local.web_app_ecs_service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu                      = "${local.task_cpu}"
@@ -70,14 +88,14 @@ Resources:
   container_definitions = <<DEFINITION
 [
   {
-    "name": "${local.aws_ecs_web_app_service_name}",
+    "name": "${local.web_app_ecs_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
-    "image": "${var.web_app_image}",
+    "image": "tomcat:latest",
     "essential": true,
     "portMappings": [
       {
-        "containerPort": ${var.web_app_export_port}
+        "containerPort": ${local.web_app_export_port}
       }
     ],
     "environment": [
@@ -92,8 +110,8 @@ Resources:
     ],
     "mountPoints": [
       {
-        "sourceVolume": "${var.efs_docker_volumn_name}",
-        "containerPath": "${var.efs_web_app_container_path}",
+        "sourceVolume": "${local.efs_docker_volumn_name}",
+        "containerPath": "${local.efs_web_app_container_path}",
         "readOnly": false
       }
     ]
@@ -105,7 +123,7 @@ DEFINITION
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-volumes.html
   #
   # Without any setup in here, if we
-  # > docker run -v ${var.efs_mount_point}:/data/efs -it tomcat /bin/bash
+  # > docker run -v ${local.efs_mount_point}:/data/efs -it tomcat /bin/bash
   # we can see/edit the content of EFS by `cd /data/efs`.
   #
   # After we set up as this, if we `docker ps` and then
@@ -114,7 +132,7 @@ DEFINITION
   volume {
     # After this setup, if we `docker volume ls` we'll see the volume name (currently
     # driver is `local`).
-    name      = "${var.efs_docker_volumn_name}"
+    name      = "${local.efs_docker_volumn_name}"
 
     # `host_path` is for defining "bind mount":
     # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bind-mounts.html
@@ -134,7 +152,7 @@ DEFINITION
     # If not specify `driver`, the default is `local` driver from `docker volume ls`.
     # Check the possibility to use another driver.
     # > ... through the use of Docker volume drivers and volume plugins such as Rex-Ray and Portworx.
-    host_path = "${var.efs_mount_point}"
+    host_path = "${local.efs_mount_point}"
 
     # docker_volume_configuration {
     #   scope = "shared"
@@ -163,7 +181,7 @@ DEFINITION
 # http://blog.shippable.com/setup-a-container-cluster-on-aws-with-terraform-part-2-provision-a-cluster
 # https://github.com/Capgemini/terraform-amazon-ecs
 resource "aws_ecs_service" "web_app" {
-  name            = "${local.aws_ecs_web_app_service_name}"
+  name            = "${local.web_app_ecs_service_name}"
 
   # No need to specify `iam_role` as we are using `awsvpc` network mode.
   # A service-linked role `AWSServiceRoleForECS` will be created automatically.
@@ -197,8 +215,8 @@ resource "aws_ecs_service" "web_app" {
     # and it is using the service name as its name. We may choose a different
     # name (or at least names the local variables better) for
     # service/task_definition/container names.
-    container_name   = "${local.aws_ecs_web_app_service_name}"
-    container_port   = "${var.web_app_export_port}"
+    container_name   = "${local.web_app_ecs_service_name}"
+    container_port   = "${local.web_app_export_port}"
     target_group_arn = "${aws_lb_target_group.web_app.id}"
   }
 
@@ -230,7 +248,7 @@ resource "aws_ecs_service" "web_app" {
 }
 
 resource "aws_ecs_task_definition" "web_static" {
-  family                   = "${local.aws_ecs_web_static_service_name}"
+  family                   = "${local.web_static_ecs_service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu                      = "${local.task_cpu}"
@@ -241,14 +259,14 @@ resource "aws_ecs_task_definition" "web_static" {
   container_definitions = <<DEFINITION
 [
   {
-    "name": "${local.aws_ecs_web_static_service_name}",
+    "name": "${local.web_static_ecs_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
-    "image": "${var.web_static_image}",
+    "image": "nginx:latest",
     "essential": true,
     "portMappings": [
       {
-        "containerPort": ${var.web_static_export_port}
+        "containerPort": ${local.web_static_export_port}
       }
     ],
     "environment": [
@@ -268,7 +286,7 @@ DEFINITION
 }
 
 resource "aws_ecs_service" "web_static" {
-  name            = "${local.aws_ecs_web_static_service_name}"
+  name            = "${local.web_static_ecs_service_name}"
 
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.web_static.arn}"
@@ -284,8 +302,8 @@ resource "aws_ecs_service" "web_static" {
   }
 
   load_balancer {
-    container_name   = "${local.aws_ecs_web_static_service_name}"
-    container_port   = "${var.web_static_export_port}"
+    container_name   = "${local.web_static_ecs_service_name}"
+    container_port   = "${local.web_static_export_port}"
     target_group_arn = "${aws_lb_target_group.web_static.id}"
   }
 
@@ -305,20 +323,26 @@ resource "aws_ecs_service" "web_static" {
 }
 
 resource "aws_ecs_task_definition" "git" {
-  family                   = "${local.aws_ecs_git_service_name}"
+  family                   = "${local.git_ecs_service_name}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu                      = "${local.task_cpu}"
   memory                   = "${local.task_memory}"
 
   execution_role_arn       = "${data.aws_iam_role.ecs_task_execution.arn}"
+
+  # The below image is basically ubuntu with sshd installed.
+  # https://hub.docker.com/r/rastasheep/ubuntu-sshd
+  #
+  # In here we need an image with port 22 open. Otherwise image will fail
+  # the NLB health check in `aws_lb_target_group.git`.
   container_definitions = <<DEFINITION
 [
   {
-    "name": "${local.aws_ecs_git_service_name}",
+    "name": "${local.git_ecs_service_name}",
     "cpu": ${local.task_cpu},
     "memory": ${local.task_memory},
-    "image": "${var.git_image}",
+    "image": "rastasheep/ubuntu-sshd:18.04",
     "essential": true,
     "portMappings": [
       {
@@ -337,8 +361,8 @@ resource "aws_ecs_task_definition" "git" {
     ],
     "mountPoints": [
       {
-        "sourceVolume": "${var.efs_docker_volumn_name}",
-        "containerPath": "${var.efs_git_container_path}",
+        "sourceVolume": "${local.efs_docker_volumn_name}",
+        "containerPath": "${local.efs_git_container_path}",
         "readOnly": false
       }
     ]
@@ -347,8 +371,8 @@ resource "aws_ecs_task_definition" "git" {
 DEFINITION
 
   volume {
-    name      = "${var.efs_docker_volumn_name}"
-    host_path = "${var.efs_mount_point}"
+    name      = "${local.efs_docker_volumn_name}"
+    host_path = "${local.efs_mount_point}"
   }
 }
 
@@ -357,7 +381,7 @@ DEFINITION
 # process). May relate to the detail between ALB and NLB but I don't fully understand
 # the reason.
 resource "aws_ecs_service" "git" {
-  name            = "${local.aws_ecs_git_service_name}"
+  name            = "${local.git_ecs_service_name}"
 
   cluster         = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.git.arn}"
@@ -373,7 +397,7 @@ resource "aws_ecs_service" "git" {
   }
 
   load_balancer {
-    container_name   = "${local.aws_ecs_git_service_name}"
+    container_name   = "${local.git_ecs_service_name}"
     container_port   = 22
     target_group_arn = "${aws_lb_target_group.git.id}"
   }
@@ -394,5 +418,5 @@ resource "aws_ecs_service" "git" {
 }
 
 resource "aws_ecs_cluster" "main" {
-  name = "${local.aws_ecs_cluster_name}"
+  name = "${local.ecs_cluster_name}"
 }
