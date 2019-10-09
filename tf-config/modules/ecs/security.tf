@@ -1,6 +1,6 @@
 # ALB Security Group: Edit this to restrict access to the application
 resource "aws_security_group" "web_alb" {
-  name = "${local.aws_web_alb_security_group}"
+  name = "${local.web_entrace_resource_name}"
   vpc_id      = "${aws_vpc.main.id}"
 
   egress {
@@ -12,8 +12,8 @@ resource "aws_security_group" "web_alb" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = "${var.http_port}"
-    to_port     = "${var.http_port}"
+    from_port   = "${local.http_port}"
+    to_port     = "${local.http_port}"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -29,7 +29,7 @@ resource "aws_security_group" "web_alb" {
 #
 # Traffic to the ECS cluster should only come from the ALB
 resource "aws_security_group" "web_app" {
-  name = "${local.aws_web_app_security_group}"
+  name = "${local.web_app_resource_name}"
   vpc_id      = "${aws_vpc.main.id}"
 }
 
@@ -48,8 +48,8 @@ resource "aws_security_group_rule" "web_app_ecs_tasks_lb_ingress" {
   type            = "ingress"
 
   protocol        = "tcp"
-  from_port       = "${var.web_app_export_port}"
-  to_port         = "${var.web_app_export_port}"
+  from_port       = "${local.web_app_export_port}"
+  to_port         = "${local.web_app_export_port}"
 
   # No need to setup `cidr_blocks`, as only load balancer
   # is public facing.
@@ -69,7 +69,7 @@ resource "aws_security_group_rule" "web_app_ecs_tasks_self_ingress" {
 }
 
 resource "aws_security_group" "web_static" {
-  name = "${local.aws_web_static_security_group}"
+  name = "${local.web_static_resource_name}"
   vpc_id      = "${aws_vpc.main.id}"
 }
 
@@ -88,8 +88,8 @@ resource "aws_security_group_rule" "web_static_ecs_tasks_lb_ingress" {
   type            = "ingress"
 
   protocol        = "tcp"
-  from_port       = "${var.web_static_export_port}"
-  to_port         = "${var.web_static_export_port}"
+  from_port       = "${local.web_static_export_port}"
+  to_port         = "${local.web_static_export_port}"
 
   # No need to setup `cidr_blocks`, as only load balancer
   # is public facing.
@@ -109,7 +109,7 @@ resource "aws_security_group_rule" "web_static_ecs_tasks_self_ingress" {
 }
 
 resource "aws_security_group" "git" {
-  name = "${local.aws_git_security_group}"
+  name = "${local.git_resource_name}"
   vpc_id      = "${aws_vpc.main.id}"
 
   egress {
@@ -128,7 +128,7 @@ resource "aws_security_group" "git" {
 }
 
 resource "aws_security_group" "efs" {
-  name = "${local.aws_efs_security_group}"
+  name = "${local.name_prefix}-efs"
   vpc_id = "${aws_vpc.main.id}"
 }
 
@@ -160,7 +160,7 @@ resource "aws_security_group_rule" "efs_ecs_tasks_ingress" {
 }
 
 resource "aws_security_group" "postgres" {
-  name = "${local.aws_postgres_security_group}"
+  name = "${local.name_prefix}-postgres"
   vpc_id = "${aws_vpc.main.id}"
 }
 
@@ -213,7 +213,7 @@ resource "aws_security_group_rule" "postgres_psql_ingress" {
 }
 
 resource "aws_security_group" "redis" {
-  name = "${local.aws_redis_security_group}"
+  name = "${local.name_prefix}-redis"
   vpc_id = "${aws_vpc.main.id}"
 }
 

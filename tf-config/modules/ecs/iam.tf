@@ -17,8 +17,8 @@ data "aws_iam_role" "ecs_task_execution" {
 # As instance profile has nothing to do per environment, we should
 # move this resource to `iam-terraform-roles-setup` and try to get
 # `data.aws_iam_instance_profile` in here.
-resource "aws_iam_instance_profile" "ecs_instance" {
-    name = "${local.aws_ecs_instance_profile}"
+resource "aws_iam_instance_profile" "main" {
+    name = "${local.main_resource_name}"
     path = "/"
     role = "${data.aws_iam_role.ecs_instance.id}"
     provisioner "local-exec" {

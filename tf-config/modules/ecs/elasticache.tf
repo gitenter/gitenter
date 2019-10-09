@@ -1,10 +1,15 @@
+locals {
+  # Here needs a distinguishment because we'll have database cache later.
+  redis_session_name = "${local.name_prefix}-session" # Need to <=20 characters
+}
+
 resource "aws_elasticache_subnet_group" "redis_session" {
-  name       = "${local.aws_redis_session_name}"
+  name       = "${local.redis_session_name}"
   subnet_ids = ["${aws_subnet.public.*.id}"]
 }
 
 resource "aws_elasticache_replication_group" "redis_session" {
-  replication_group_id          = "${local.aws_redis_session_name}"
+  replication_group_id          = "${local.redis_session_name}"
   replication_group_description = "Redis for Spring Session"
 
   subnet_group_name             = "${aws_elasticache_subnet_group.redis_session.name}"

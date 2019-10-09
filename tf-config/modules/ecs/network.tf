@@ -41,7 +41,8 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
 
   tags = {
-    Name = "${local.aws_vpc_name}"
+    Name = "${local.main_resource_name}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -57,6 +58,11 @@ resource "aws_subnet" "public" {
   cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)}"
   # Therefore, subnets will be each in a separate availability zone.
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
+
+  tags = {
+    Name = "${local.main_resource_name}"
+    Environment = "${var.environment}"
+  }
 }
 
 # IGW for the public subnet
@@ -64,8 +70,13 @@ resource "aws_subnet" "public" {
 # Setup networking resources for the public subnets. Containers
 # in the public subnets have public IP addresses and the routing table
 # sends network traffic via the internet gateway.
-resource "aws_internet_gateway" "gw" {
+resource "aws_internet_gateway" "main" {
   vpc_id = "${aws_vpc.main.id}"
+
+  tags = {
+    Name = "${local.main_resource_name}"
+    Environment = "${var.environment}"
+  }
 }
 
 resource "aws_route_table" "public" {
@@ -79,7 +90,7 @@ resource "aws_route" "internet_access" {
   # `aws_main_route_table_association`.
   # https://www.terraform.io/docs/providers/aws/r/vpc.html#main_route_table_id
   route_table_id         = "${aws_route_table.public.id}"
-  gateway_id             = "${aws_internet_gateway.gw.id}"
+  gateway_id             = "${aws_internet_gateway.main.id}"
 
   destination_cidr_block = "0.0.0.0/0"
 }
