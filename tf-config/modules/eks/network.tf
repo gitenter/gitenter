@@ -43,8 +43,9 @@ resource "aws_vpc" "main" {
   # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-tagging
   tags = "${
     map(
-     "Name", "${local.aws_vpc_name}",
-     "kubernetes.io/cluster/${local.aws_eks_cluster_name}", "shared",
+     "Name", "${local.main_resource_name}",
+     "Environment", "${var.environment}",
+     "kubernetes.io/cluster/${local.eks_cluster_name}", "shared",
     )
   }"
 }
@@ -65,8 +66,9 @@ resource "aws_subnet" "public" {
   # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-subnet-tagging
   tags = "${
     map(
-     "Name", "${local.aws_subnet_name}",
-     "kubernetes.io/cluster/${local.aws_eks_cluster_name}", "shared",
+     "Name", "${local.main_resource_name}-public",
+     "Environment", "${var.environment}",
+     "kubernetes.io/cluster/${local.eks_cluster_name}", "shared",
     )
   }"
 }
@@ -76,7 +78,7 @@ resource "aws_subnet" "public" {
 # Setup networking resources for the public subnets. Containers
 # in the public subnets have public IP addresses and the routing table
 # sends network traffic via the internet gateway.
-resource "aws_internet_gateway" "gw" {
+resource "aws_internet_gateway" "main" {
   vpc_id = "${aws_vpc.main.id}"
 }
 
@@ -91,7 +93,7 @@ resource "aws_route" "internet_access" {
   # `aws_main_route_table_association`.
   # https://www.terraform.io/docs/providers/aws/r/vpc.html#main_route_table_id
   route_table_id         = "${aws_route_table.public.id}"
-  gateway_id             = "${aws_internet_gateway.gw.id}"
+  gateway_id             = "${aws_internet_gateway.main.id}"
 
   destination_cidr_block = "0.0.0.0/0"
 }

@@ -60,8 +60,9 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_attach" {
 }
 
 # https://learn.hashicorp.com/terraform/aws/eks-intro
-resource "aws_iam_role" "eks" {
-  name = "AmazonEksRole"
+# https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html#role-create
+resource "aws_iam_role" "eks_service" {
+  name = "serviceRoleForEKS"
 
   assume_role_policy = <<POLICY
 {
@@ -80,17 +81,19 @@ POLICY
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy_attach" {
-  role       = "${aws_iam_role.eks.name}"
+  role       = "${aws_iam_role.eks_service.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "els_service_policy_attach" {
-  role       = "${aws_iam_role.eks.name}"
+  role       = "${aws_iam_role.eks_service.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
 }
 
-resource "aws_iam_role" "eks_instance" {
-  name = "AmazonEKSforEC2Role"
+# https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html#eks-launch-workers
+# https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-10-08/amazon-eks-nodegroup.yaml
+resource "aws_iam_role" "eks_node_instance" {
+  name = "serviceRoleForEKSNodeInstanceForEC2"
 
   assume_role_policy = <<POLICY
 {
@@ -110,15 +113,15 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "eks_instance_AmazonEKSWorkerNodePolicy_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = "${aws_iam_role.eks_instance.name}"
+  role       = "${aws_iam_role.eks_node_instance.name}"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_instance_AmazonEKS_CNI_Policy_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = "${aws_iam_role.eks_instance.name}"
+  role       = "${aws_iam_role.eks_node_instance.name}"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_instance_AmazonEC2ContainerRegistryReadOnly_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = "${aws_iam_role.eks_instance.name}"
+  role       = "${aws_iam_role.eks_node_instance.name}"
 }

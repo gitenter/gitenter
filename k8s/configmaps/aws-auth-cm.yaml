@@ -1,0 +1,15 @@
+# https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html#eks-launch-workers
+# https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+# https://docs.aws.amazon.com/eks/latest/userguide/launch-workers.html
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::662490392829:role/serviceRoleForEKSNodeInstanceForEC2
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes

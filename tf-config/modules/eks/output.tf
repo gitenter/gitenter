@@ -25,7 +25,7 @@ users:
       args:
         - "token"
         - "-i"
-        - "${local.aws_eks_cluster_name}"
+        - "${local.eks_cluster_name}"
 KUBECONFIG
 }
 

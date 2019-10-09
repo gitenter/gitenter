@@ -8,3 +8,9 @@ provider "aws" {
   region     = "${var.aws_region}"
   version = "~> 1.35"
 }
+
+module "eks" {
+  source = "../../modules/eks"
+  environment = "staging"
+  aws_region = "${var.aws_region}"
+}
