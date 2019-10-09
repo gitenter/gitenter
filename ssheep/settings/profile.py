@@ -11,7 +11,7 @@ class DockerProfile(Profile):
 
 
 class StagingProfile(Profile):
-    database_url = "staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
+    database_url = "staging-ecs.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
 
 
 class ProductionProfile(Profile):

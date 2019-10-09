@@ -10,6 +10,7 @@ resource "aws_efs_file_system" "main" {
 
   tags = {
     Name = "${local.main_resource_name}"
+    Environment = "${var.environment}"
   }
 }
 

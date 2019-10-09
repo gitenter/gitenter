@@ -17,8 +17,12 @@ resource "aws_lb" "git" {
   enable_deletion_protection = false
 
   depends_on = [
-    "aws_internet_gateway.gw"
+    "aws_internet_gateway.main"
   ]
+
+  tags = {
+    Environment = "${var.environment}"
+  }
 }
 
 resource "aws_lb_target_group" "git" {

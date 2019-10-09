@@ -38,7 +38,7 @@ data "aws_ami" "ecs_optimized_amis" {
 }
 
 resource "aws_launch_configuration" "main" {
-  name                        = "${local.main_resource_name}"
+  name_prefix                 = "${local.main_resource_name}"
   iam_instance_profile        = "${aws_iam_instance_profile.main.id}"
   security_groups             = [
     "${aws_security_group.web_app.id}",

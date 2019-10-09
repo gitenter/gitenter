@@ -42,7 +42,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  */
 @Configuration
 @EnableRedisHttpSession(
-		maxInactiveIntervalInSeconds=86400, 
+		maxInactiveIntervalInSeconds=86400,
 		redisFlushMode=RedisFlushMode.ON_SAVE,
 		redisNamespace="spring:session")
 public class SessionConfig {
@@ -64,7 +64,7 @@ public class SessionConfig {
 	@Profile("staging")
 	@Bean
 	public RedisConnectionFactory stagingConfiguration() {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com", 6379);
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration("staging-ecs-session.vf1dmm.ng.0001.use1.cache.amazonaws.com", 6379);
 		return new JedisConnectionFactory(configuration);
 	}
 
@@ -80,7 +80,7 @@ public class SessionConfig {
 	}
 
 	/*
-	 * The below setup is to fix the secured Redis error which appears in AWS but not locally. It will 
+	 * The below setup is to fix the secured Redis error which appears in AWS but not locally. It will
 	 * cause ELB to keep restart and cannot pass the health_check endpoint (returns 503/404).
 	 * https://github.com/spring-projects/spring-session/issues/124
 	 * https://github.com/spring-projects/spring-session/issues/113

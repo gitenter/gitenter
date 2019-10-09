@@ -12,8 +12,12 @@ resource "aws_lb" "web" {
   enable_deletion_protection = false
 
   depends_on = [
-    "aws_internet_gateway.gw"
+    "aws_internet_gateway.main"
   ]
+
+  tags = {
+    Environment = "${var.environment}"
+  }
 }
 
 # This is the black hole target group that all the traffic which

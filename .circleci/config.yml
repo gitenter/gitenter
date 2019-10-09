@@ -305,7 +305,7 @@ jobs:
 
     steps:
       - inline-aws-operation/build-image:
-          ecr_repo_name: "staging-web-app"
+          ecr_repo_name: "staging-ecs-web-app"
           docker_image_folder: "capsid"
           checkout: true # for `Dockerfile`
           attach-workspace: true # for `.war` file
@@ -330,7 +330,7 @@ jobs:
       #     at: .
       # - run: ls stolon/public
       - inline-aws-operation/build-image:
-          ecr_repo_name: "staging-web-static"
+          ecr_repo_name: "staging-ecs-web-static"
           docker_image_folder: "stolon"
           checkout: true
           attach-workspace: true
@@ -355,7 +355,7 @@ jobs:
       - run: cat ssheep/Dockerfile
 
       - inline-aws-operation/build-image:
-          ecr_repo_name: "staging-git"
+          ecr_repo_name: "staging-ecs-git"
           docker_image_folder: "ssheep"
           checkout: false
           attach-workspace: false
@@ -368,12 +368,12 @@ jobs:
 
     steps:
       - inline-aws-operation/deploy:
-          ecr_repo_name: "staging-web-app"
-          cluster_name: "staging"
-          service_name: "staging-web-app"
+          ecr_repo_name: "staging-ecs-web-app"
+          cluster_name: "staging-ecs"
+          service_name: "staging-ecs-web-app"
       - inline-aws-operation/confirm-web-deployment:
-          cluster_name: "staging"
-          service_name: "staging-web-app"
+          cluster_name: "staging-ecs"
+          service_name: "staging-ecs-web-app"
 
   staging-web-static-deploy:
     docker:
@@ -383,9 +383,9 @@ jobs:
 
     steps:
       - inline-aws-operation/deploy:
-          ecr_repo_name: "staging-web-static"
-          cluster_name: "staging"
-          service_name: "staging-web-static"
+          ecr_repo_name: "staging-ecs-web-static"
+          cluster_name: "staging-ecs"
+          service_name: "staging-ecs-web-static"
 
   staging-git-deploy:
     docker:
@@ -395,9 +395,9 @@ jobs:
 
     steps:
       - inline-aws-operation/deploy:
-          ecr_repo_name: "staging-git"
-          cluster_name: "staging"
-          service_name: "staging-git"
+          ecr_repo_name: "staging-ecs-git"
+          cluster_name: "staging-ecs"
+          service_name: "staging-ecs-git"
     # TODO:
     # Now we can `ssh git@<git_lb_hostname>` to that server. And if the SSH key is added
     # through web UI (so save in the database) the password is not needed. Should add test on that.
