@@ -1,7 +1,7 @@
 # ALB only support HTTP and HTTPS protocol. To use git/SSH (TCP port 22)
 # we need to use network load balancer.
 resource "aws_lb" "git" {
-  name               = "${local.aws_git_lb_name}"
+  name               = "${local.git_resource_name}"
   internal           = false
   load_balancer_type = "network"
   subnets            = ["${aws_subnet.public.*.id}"]
@@ -17,12 +17,16 @@ resource "aws_lb" "git" {
   enable_deletion_protection = false
 
   depends_on = [
-    "aws_internet_gateway.gw"
+    "aws_internet_gateway.main"
   ]
+
+  tags = {
+    Environment = "${var.environment}"
+  }
 }
 
 resource "aws_lb_target_group" "git" {
-  name        = "${local.aws_ecs_git_service_name}"
+  name        = "${local.git_resource_name}"
   port        = 22
   protocol    = "TCP"
   vpc_id      = "${aws_vpc.main.id}"

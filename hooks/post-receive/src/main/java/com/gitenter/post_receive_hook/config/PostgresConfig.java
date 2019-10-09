@@ -18,7 +18,7 @@ public class PostgresConfig {
 		{
 			put("local", "localhost");
 			put("docker", "postgres");
-			put("staging", "staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com");
+			put("staging", "staging-ecs.cqx7dy9nh94t.us-east-1.rds.amazonaws.com");
 			put("production", "localhost");
 		}
 	};

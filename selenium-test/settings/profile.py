@@ -113,9 +113,9 @@ class DockerProfile(Profile):
 class StagingProfile(Profile):
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 
-    ecs_cluster_name = "staging-cluster"
-    ecs_web_service_name = "staging-web-app-service"
-    ecs_git_service_name = "staging-git-service"
+    ecs_cluster_name = "staging-ecs"
+    ecs_web_service_name = "staging-ecs-web-app"
+    ecs_git_service_name = "staging-ecs-git"
 
     # TODO:
     # This is kind of a hack, depending on the CircleCI image implementation detail

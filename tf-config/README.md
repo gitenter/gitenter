@@ -30,7 +30,7 @@ terraform apply
 ```
 
 ```bash
-POSTGRES_ENDPOINT="staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
+POSTGRES_ENDPOINT="staging-ecs.cqx7dy9nh94t.us-east-1.rds.amazonaws.com"
 
 cd ~/Workspace/gitenter/
 PGPASSWORD=postgres psql -U postgres -h $POSTGRES_ENDPOINT -p 5432 -w -f database/create_users.sql
@@ -96,7 +96,7 @@ sudo amazon-linux-extras install -y postgresql10
 Connect to Postgres (both local and inside of the container):
 
 ```
-psql --host=staging-postgres.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
+psql --host=staging-ecs.cqx7dy9nh94t.us-east-1.rds.amazonaws.com --port=5432 --username=postgres --password --dbname=gitenter
 ```
 
 Install `redis-cli`:
@@ -110,12 +110,12 @@ wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.g
 Connect to Redis (inside of the container):
 
 ```
-redis-cli -h staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com
-staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> KEYS *
+redis-cli -h staging-ecs-session.vf1dmm.ng.0001.use1.cache.amazonaws.com
+staging-ecs-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> KEYS *
 (empty list or set)
-staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> SET a 1
+staging-ecs-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> SET a 1
 OK
-staging-redis-sess.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> GET a
+staging-ecs-session.vf1dmm.ng.0001.use1.cache.amazonaws.com:6379> GET a
 "1"
 ```
 

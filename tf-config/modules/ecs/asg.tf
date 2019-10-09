@@ -38,8 +38,8 @@ data "aws_ami" "ecs_optimized_amis" {
 }
 
 resource "aws_launch_configuration" "main" {
-  name                        = "${local.aws_launch_configuration}"
-  iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.id}"
+  name_prefix                 = "${local.main_resource_name}"
+  iam_instance_profile        = "${aws_iam_instance_profile.main.id}"
   security_groups             = [
     "${aws_security_group.web_app.id}",
     "${aws_security_group.web_static.id}",
@@ -88,11 +88,11 @@ resource "aws_launch_configuration" "main" {
 #!/bin/bash
 yum update -y
 yum install -y amazon-efs-utils
-mkdir -p ${var.efs_mount_point}
-mount -t efs ${aws_efs_file_system.git.id}:/ ${var.efs_mount_point}
-chown ec2-user:ec2-user ${var.efs_mount_point}
+mkdir -p ${local.efs_mount_point}
+mount -t efs ${aws_efs_file_system.main.id}:/ ${local.efs_mount_point}
+chown ec2-user:ec2-user ${local.efs_mount_point}
 
-echo ECS_CLUSTER=${local.aws_ecs_cluster_name} >> /etc/ecs/ecs.config
+echo ECS_CLUSTER=${local.ecs_cluster_name} >> /etc/ecs/ecs.config
 EOF
 
   root_block_device {
@@ -124,20 +124,20 @@ EOF
   associate_public_ip_address = true
   key_name                    = "${aws_key_pair.terraform-seashore.key_name}"
 
-  # Depends on `aws_efs_mount_target.git` because the current resource only depends on
-  # `aws_efs_file_system.git`. By the time `user_data` is executed, `aws_efs_mount_target`
+  # Depends on `aws_efs_mount_target.main` because the current resource only depends on
+  # `aws_efs_file_system.main`. By the time `user_data` is executed, `aws_efs_mount_target`
   # may not be available yet.
   #
   # May actually needs to be executed after `aws_ecs_service` (one successful `apply`
   # is of that order).
   depends_on = [
     "aws_ecs_cluster.main",
-    "aws_efs_mount_target.git"
+    "aws_efs_mount_target.main"
   ]
 }
 
 resource "aws_autoscaling_group" "main" {
-  name                        = "${local.aws_autoscaling_group}"
+  name                        = "${local.main_resource_name}"
   launch_configuration        = "${aws_launch_configuration.main.name}"
   vpc_zone_identifier         = ["${aws_subnet.public.*.id}"]
 
@@ -177,7 +177,7 @@ resource "aws_autoscaling_group" "main" {
     # TODO:
     # Refer to a unique name. May be the URL prefix to log into that instance.
     key                 = "Name"
-    value               = "${local.aws_resource_prefix}-instance"
+    value               = "${local.main_resource_name}"
     propagate_at_launch = true
   }
 
