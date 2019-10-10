@@ -59,7 +59,7 @@ locals {
   web_static_resource_name = "${local.name_prefix}-web-static"
   git_resource_name = "${local.name_prefix}-git"
 
-  # Below variables are cross-used in different Terraform modules.
+  # Below variables are cross-used in different Terraform files.
   ecs_cluster_name = "${local.main_resource_name}"
 }
 

@@ -9,7 +9,7 @@ provider "aws" {
   version = "~> 1.35"
 }
 
-module "ecs_circleci" {
+module "ecs" {
   source = "../../modules/ecs"
   environment = "staging"
 }
