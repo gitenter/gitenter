@@ -1,5 +1,5 @@
 variable "environment" {
-  description = "Prefix to distinguish different environments. E.g., `dev`, `test`, `staging`, `prod`."
+  description = "Prefix to distinguish different environments. E.g., `dev`, `test`, `staging`, `production`."
 }
 
 variable "az_count" {
