@@ -181,18 +181,13 @@ orbs:
 
       confirm-web-deployment:
         parameters:
-          cluster_name:
-            type: string
-          service_name:
+          hostname:
             type: string
         steps:
           - run:
               name: Web deployment sanity check
               command: |
-                TARGET_GROUP_ARN=$(aws ecs describe-services --cluster <<parameters.cluster_name>> --services <<parameters.service_name>> | jq -r '.services[0].loadBalancers[0].targetGroupArn')
-                ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
-                ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
-                curl -s --retry 10 http://$ELB_DNS_NAME/health_check | grep "GitEnter"
+                curl -s --retry 10 http://<<parameters.hostname>>/health_check | grep "GitEnter"
 
 jobs:
   java-build:
@@ -372,8 +367,7 @@ jobs:
           cluster_name: "staging-ecs"
           service_name: "staging-ecs-web-app"
       - inline-aws-operation/confirm-web-deployment:
-          cluster_name: "staging-ecs"
-          service_name: "staging-ecs-web-app"
+          hostname: "staging.gitenter.com"
 
   staging-web-static-deploy:
     docker:
