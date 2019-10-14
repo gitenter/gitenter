@@ -113,8 +113,12 @@ orbs:
           # > context canceled
           # > Exited with code 1
           # https://circleci.com/docs/2.0/building-docker-images/
+          #
+          # TODO:
+          # May consider `docker_layer_caching: true` for a paid plan. Free plan gets error
+          # > Blocked due to free-plan-docker-layer-caching-unavailable
           - setup_remote_docker:
-              docker_layer_caching: true
+              docker_layer_caching: false
 
           - aws-ecr/build-and-push-image:
               checkout: <<parameters.checkout>>
