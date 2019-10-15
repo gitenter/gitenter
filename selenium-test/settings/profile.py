@@ -63,7 +63,7 @@ class DockerProfile(Profile):
 class StagingProfile(Profile):
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
     web_domain = "http://staging.gitenter.com/"
-    git_server_remote_location = "staging.git.gitenter.com"
+    git_server_remote_location = "git.staging.gitenter.com"
 
     # TODO:
     # This is kind of a hack, depending on the CircleCI image implementation detail
