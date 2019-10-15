@@ -33,3 +33,12 @@ resource "aws_iam_group_policy_attachment" "ecr" {
   group = "${aws_iam_group.accessary.id}"
   policy_arn = "${aws_iam_policy.ecr.arn}"
 }
+
+data "aws_iam_policy" "route53" {
+  arn = "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
+}
+
+resource "aws_iam_group_policy_attachment" "route53" {
+  group = "${aws_iam_group.accessary.id}"
+  policy_arn = "${data.aws_iam_policy.route53.arn}"
+}

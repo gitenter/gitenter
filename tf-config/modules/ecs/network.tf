@@ -15,7 +15,8 @@ data "aws_availability_zones" "available" {}
 # For chosen (2) it will use private subnet we needs to use NAT gateway
 # (`aws_nat_gateway` Terraform resource), with the charging rate
 # $400/year plus data.
-
+# Refer to https://github.com/gitenter/gitenter/commit/4ba4b251be58658f2f98ae07288c3db72272c49a#diff-be81afd4f6c8cd6bb120a59eb269a64e
+# for the setup which includes private route table.
 
 # VPC in which containers will be networked. It has two public subnets.
 # We distribute the subnets across the first two available subnets
@@ -60,7 +61,7 @@ resource "aws_subnet" "public" {
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
 
   tags = {
-    Name = "${local.main_resource_name}"
+    Name = "${local.main_resource_name}-public"
     Environment = "${var.environment}"
   }
 }
@@ -84,7 +85,7 @@ resource "aws_route_table" "public" {
 }
 
 # Route the public subnet trafic through the IGW
-resource "aws_route" "internet_access" {
+resource "aws_route" "public" {
   # This is using the main route table associated with this VPC.
   # This is the default one since it has not been changed by
   # `aws_main_route_table_association`.
@@ -95,7 +96,7 @@ resource "aws_route" "internet_access" {
   destination_cidr_block = "0.0.0.0/0"
 }
 
-resource "aws_route_table_association" "private" {
+resource "aws_route_table_association" "public" {
   count          = "${var.az_count}"
   subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
   route_table_id = "${aws_route_table.public.id}"

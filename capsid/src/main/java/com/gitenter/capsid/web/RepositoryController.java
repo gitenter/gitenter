@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.gitenter.capsid.config.bean.DomainSource;
+import com.gitenter.capsid.config.bean.GitDomainSource;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
@@ -39,7 +39,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 public class RepositoryController {
 	
 	@Autowired GitSource gitSource;
-	@Autowired DomainSource domainSource;
+	@Autowired GitDomainSource domainSource;
 	
 	@Autowired RepositoryService repositoryService;
 
