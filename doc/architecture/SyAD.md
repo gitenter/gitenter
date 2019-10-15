@@ -117,15 +117,58 @@ For a comparison with other markup languages, we listed the cons of the alternat
 
 ### Configuration
 
-- [SyAD-0013]{} There shall be configuration file(s).
-- [SyAD-0014]{SyAD-0013,SyAD-0002,StRS-0049} The configuration file indicates the scanned path(s) for which the documents may stay. All the `markdown` files under the included file path(s) are treated as targeting document.
-    - *(Should we go the opposite direction to list the ignore files, like `.gitignore`)*
-- [SyAD-0054]{SyAD-0013} The configuration file shall indicate whether the traceability relationship are marked in implemented code/test cases.
-- [SyAD-0015]{SyAD-0054,SyRS-0044} The configuration file shall indicate the scanned path(s) for the implemented code (if applicable).
-- [SyAD-0016]{SyAD-0054,SyRS-0045} The configuration file shall indicate the scanned path(s) for test cases (if appliable).
-    - *(What about if the code and tests are mixed together?)*
-- [SyAD-0023]{SyAD-0013,StRS-0050} The configuration file shall setup the order/structure/relation between each document.
-    - *(Notice that the relationship can be build inside of (1) the "references" section of every document, (2) traceability markers, it shouldn't be need to mark manually in this configuration file.)*
+We can either have configuration file to record what is included, or what is excluded.
+
+Typically if we go with what is excluded, at the same time we (just like `.gitignore`)
+
++ Don't need structure of the configuration file. Just need it to have a plain array of excluded items.
++ Decide which file for which feature completely by pattern matching (e.g. file extension).
++ Can have multiple configuration files, one in each nested folder. The final file to be excluded is the *union* of all the parent folders.
+
+If we go with what is included, at the same time we
+
++ Have structured configuration file. May have different session for different features.
++ Should have only one configuration file, staying in the root.
+
+We'll go with the inclusion approach, because it
+
++ Exclude everything by default, so will not trigger a lot of unnecessary (traceability) analysis for a project not fit into the system yet.
+    + *(Like GitHub hooks, we can technically skip it for a commit not in HEAD of a push through. So then it is not that horrible.)*
++ Can explicitly mark the "documents" so can support dual view. Then we can exclude e.g. `README.md` in code, to be a document.
+
+- [SyAD-0013]{} There shall be one configuration file used for this system.
+- [SyAD-0060]{} The configuration file is in YAML format.
+- [SyAD-0059]{SyAD-0013,SyAD-0060} The configuration file stays at the root of the repository and may be named `gitenter.yml`, `gitenter.yaml`, `gitenter-config.yml`, or `gitenter-config.yaml`.
+
+Reviewing is generally for documents (regardless of whether they contain traceable items), while traceability is for anything contains traceable items (may include not only document, but also Gherkin/unittest/...). While there's no need for (and we can't make) the two to be the same set, we should make the document view (in dual view) to support most needs, include
+
++ A quick view of the testing/traceable code piece.
++ Integrate/show the testing result one step up.
+
+*(TODO: that means we need to split `git.document` and `traceability.traceable_files` in database table.)*
+
+- [SyAD-0054]{SyAD-0060} Example `gitenter.yml`
+    - Path can be either subfolder or matching pattern. 
+    - `traceability.documents` should be a subset of `documents`. If not, the intersection is applied.
+    - We may add the list of supported traceability formats in the future.
+
+```yml
+version: 1
+
+documents:
+    - requirements/*.md
+    - design_doc
+    - meeting_notes
+
+traceability:
+    documents:
+        - requirements/*.md
+        - design_doc
+    gherkin:
+        - integration_test/
+    java:
+        - src/tests/java
+```
 
 ### Tag and traceability
 

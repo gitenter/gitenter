@@ -14,34 +14,50 @@ Revision control is needed for serious documentation system which includes multi
 
 However, while there are various different tools for source code revision control and collaboration, similar tool does not exist for documents. Alternative solutions includes:
 
-+ Google Drive or similar services:
++ Google Drive or similar services
     + Pros:
         + On-line word processor.
-        + Support collaborations, includes:
-            + Multiple users can collaborate and edit one single document *simultaneously*.
-            + Comments.
-            + Bookmarks.
-        + Version control.
+        + Multiple users can collaborate and edit one single document *simultaneously*.
+        + Support reviewing and comments.
+        + Minimal version control.
     + Cons:
         + Content is not separated from presentation.
+        + Can't edit documents offline.
+        + Blur boundary between editing and reading mode.
         + Major functions only support activities of *one single* document.
         + Can't support larger projects with multiple document files involved.
-        + Collaboration is not specific for serious SDLC.
-+ Atlassian Confluence or similar services:
+        + Can only setup links between documents through raw URL. Does not support traceability.
+        + Can't integrate with project management.
++ Atlassian Confluence or similar services
     + Pros:
         + On-line word processor.
-        + Support a project with multiple documents.
-        + Support collaboration for SDLC.
+        + Support reviewing and comments.
+        + Support a project with multiple documents. Can easily cross-link between documents with a better interface than raw URL.
+        + Integrate with project management (through JIRA). Can link JIRA ticket in documents and update status.
+        + Minimal version control.
     + Cons:
         + Content is not separated from presentation.
+        + Can't edit documents offline.
+        + Can't track cross-documents versioning and changes.
+        + Does not support traceability.
+        + Versioning get confused when multiple users edit one single document before publishing. No explicit mechanism resolving conflict.
 + Read the Docs
     + Pros:
         + Support a project with multiple documents.
         + Content is separated from presentation.
-        + Version control of the project as a whole.
     + Cons:
-        + No way to setup traceable links between document items.
-        + Collaboration is not specific for serious SDLC.
+        + Does not support reviewing and comments.
+        + Can't integrate with project management.
+        + Actual version control visualization can only be done through other sites (GitHub, Gitlab, ...).
+        + No way to setup links between documents. Does not support traceability.
++ GitHub/Gitlab
+    + Pros:
+        + Version control of the project as a whole.
+        + Support reviewing and comments.
+    + Cons:
+        + Only have minimal presentation mode.
+        + Reviewing and comments can only be done through diff/tiny reviewing cycle (and overfit to code review). It is not the way people read documents.
+        + Can only setup links between documents through raw URL. Does not support traceability.
 + Wiki:
     + Pros:
         + Support a project with multiple documents by CamelCase names and "link pattern".
@@ -50,13 +66,16 @@ However, while there are various different tools for source code revision contro
     + Cons:
         + Links between documents are in a less official and anarchical way.
         + Version control only based on one single document.
-        + Collaboration is not specific for serious SDLC.
+        + Does not support reviewing and comments.
+        + Can't integrate with project management.
 + Greenlight Guru:
-	+ Cons:
-		+ No version control.
-		+ Workflow is too specific for particular purposes.
-		+ Not scaleable to large projects.
-+ Naive and simple version numbers.
+    + Pros:
+        + Specified for medical device document and quality management. Support traceability, risk management, ...
+    + *(Not sure if reviewing can be down online or offline?)*
+    + Cons:
+        + No version control. Use naive and simple version numbers.
+        + Workflow is too specific for particular purposes.
+        + Not scaleable to large projects.
 
 We are going to make a tool which provide the flexibility and complicity of a source code revision control system, but fits better to document collaboration.
 
@@ -80,7 +99,7 @@ On the other hand, even for companies which don't mandatorily need a documentati
 + Requirement engineering
 + Design control
 + Reviewing
-+ SDLC management
++ Project management
 
 *(Describing the scope of the system being developed or changed.)*
 
@@ -100,8 +119,6 @@ Currently, we only aim on serving enterprise requirement/design documents.
 
 ### Acronyms and abbreviations
 
-+ **SLDC**: Systems development life cycle
-
 ## Stakeholders
 
 *(List the stakeholders or the classes of stakeholders and describe how they will influence the organization and business, or will be related to the development and operation of the system.)*
@@ -112,7 +129,7 @@ Customer:
 
 - R&D engineers (users).
 - Companies which obey quality control procedure.
-- Regulatory departments.
+- Regulatory/auditing departments.
 
 Technical:
 
@@ -140,7 +157,7 @@ Features:
 - [StRS-0037]{StRS-0001} The software shall separate the content and the presentation of the documents.
 - [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
 - [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it.
-- [StRS-0049]{StRS-0047} It should be possible that only part of the files in the working folder are documents. The other parts includes code, graphs, historical documents in other format ...
+- [StRS-0049]{StRS-0047} The software shall handle the case only part of the files are documents, while the other part includes code, graphs, historical documents in other format ...
 - [StRS-0050]{StRS-0047} A customized index page of documents (with order/structure/relation) shall be provided.
 - [StRS-0043]{} The software shall be used for official documents.
 - [StRS-0046]{StRS-0043} The software shall support be used to track benchmark/version of documents.

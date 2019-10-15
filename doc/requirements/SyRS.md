@@ -92,9 +92,11 @@ Revision control:
     - Pending changes/different opinions.
     - To-be-reviewed draft.
     - Review approval as a group/management decision.
-- [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents.
-- [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document changes and changes with other files (code-only) involved.
-- [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
+- [SyRS-0102]{StRS-0049} The software shall have an explicit way to define/configure which file is document.
+- [SyRS-0100]{StRS-0049} The software shall provide a dual view of (1) only document, and (2) all files -- code, graphs, historical documents in other format ...
+- [SyRS-0101]{SyRS-0100} The software shall be able to show non-document content (e.g. graphs) in document mode.
+- [SyRS-0038]{StRS-0049,StRS-0013} The software shall be able to separate document changes and changes with other files (code-only) involved.
+- [SyRS-0028]{StRS-0012,StRS-0049} The software shall provide option for automatic synchronization with code revision control platforms.
 
 Document formatting:
 
@@ -116,13 +118,11 @@ Traceability:
 - [SyRS-0010]{StRS-0074} The software shall provide provide convenient tools to users to navigate between traceable items in both upstream and downstream directions.
 - [SyRS-0089]{SyRS-0074} As independent features may benefit (1) microservice architecture and (2) feature flags, the software shall distinguish/isolate independent traceable items with no common downstream item with others.
     - A pure tree structure contributes to zero common downstream items.
-- [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
-- [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
-- [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
-    - *(For TDD unit tests, a simple link should be enough. However, it is unlikely that a requirement/design document will be linking to a unit test.)*
-    - *(For BDD testing frameworks such as [cucumber](https://github.com/cucumber/cucumber), should the software provide some kind of pattern generator, or directly print out the test case in document?)*
-- [SyRS-0091]{SyRS-0045} The (unit)test status from a continuous integration platform, shall be integrated into this system.
-- [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to trace the completeness of traceable items through manual ways.
+- [SyRS-0043]{StRS-0018,StRS-0049} The software shall be able to build relationship between traceable items in documents.
+- [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between traceable items in documents and code in various languages.
+- [SyRS-0091]{SyRS-0044} Traceability item in testing code include (1) Gherkin feature files used by Cucumber/behave, (2) markdown feature files used by Thoughtworks Gauge, and (3) unit tests in various languages, the test status from a continuous integration platform shall be integrated into this system.
+- [SyRS-0103]{SyRS-0091} The testing results shall be displayed on level up to the leaf items in documents.
+- [SyRS-0057]{StRS-0049} In case the non-document files are either not included or not obey the rule, the software shall be able to trace the completeness of traceable items through manual ways.
 - [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems (which provide a TODO/in progress/done.
     - Examples include Trello and Atlassian JIRA.
     - No need to integrate to bug tracking systems, as bugs shall never appear in the requirement/design.
