@@ -68,10 +68,6 @@ User/repository management:
 
 Document visualization:
 
-- [SRS-WS-0010]{StRS-0050} The software shall provide an index page to:
-    - Show the readers the relationship between documents.
-    - Provide readers shortcuts to navigate to targeting documents.
-    - *(Shall the relationship be defined in `gitenter.yml`? Or can just from the reference section of each document?)*
 - [SRS-WS-0012]{SyAD-0028} The software shall show markdown format in a presentative way.
 - [SRS-WS-0015]{SRS-WS-0012} The software shall fully support internal and external hyperlinks defined in markdown format.
 - [SRS-WS-0013]{SRS-WS-0012} The software shall be able to display local images referred in markdown pages.

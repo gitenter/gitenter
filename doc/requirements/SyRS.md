@@ -52,7 +52,7 @@ In general, there's no need to trace the key procedures such as requirement engi
 - [SyRS-0002]{StRS-0013,StRS-0010} The software shall support standards of software development.
 - [SyRS-0004]{StRS-0003,SyRS-0002} The software shall support CMMI.
 - [SyRS-0005]{SyRS-0002} The software shall support ISO/IEC/IEEE standards of software development.
-- [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support general SDLC standards, include:
+- [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support general standards, include:
     - ISO/IEC/IEEE 12207: Systems and software engineering -- Software life cycle processes.
     - ISO/IEC/IEEE 15288: Systems and software engineering -- System life cycle processes.
 - [SyRS-0008]{StRS-0002,SyRS-0005} The software shall support requirement engineering standards, include:
@@ -93,8 +93,11 @@ Revision control:
     - To-be-reviewed draft.
     - Review approval as a group/management decision.
 - [SyRS-0102]{StRS-0049} The software shall have an explicit way to define/configure which file is document.
-- [SyRS-0100]{StRS-0049} The software shall provide a dual view of (1) only document, and (2) all files -- code, graphs, historical documents in other format ...
+- [SyRS-0100]{StRS-0049} The software shall provide a dual view of (1) document-only, and (2) all files -- code, graphs, historical documents in other format ...
 - [SyRS-0101]{SyRS-0100} The software shall be able to show non-document content (e.g. graphs) in document mode.
+- [SyRS-0104]{SyRS-0100} In document-only mode, the software shall parse the actual document name (not filename) in the index page.
+- [SyRS-0105]{SyRS-0100} In document-only mode, the software shall build the document relationship by references/dependencies (rather than folder structure). *(Should it be defined in a reference section of the documents themselves? Or a configuration file?)*
+- [SyRS-0106]{SyRS-0100} In document-only mode, the software shall show work progress of each individual document. *(Should we? At least it seems should be in the web/not git folder layer.)*
 - [SyRS-0038]{StRS-0049,StRS-0013} The software shall be able to separate document changes and changes with other files (code-only) involved.
 - [SyRS-0028]{StRS-0012,StRS-0049} The software shall provide option for automatic synchronization with code revision control platforms.
 
