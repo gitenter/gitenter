@@ -174,7 +174,7 @@ traceability:
 
 - [SyAD-0006]{SyRS-0036} The plain-text-based tag shall be unique throughout the entire document system.
 - [SyAD-0009]{SyRS-0036} The upstream items shall be explicit marked in file using the plain-text-based tags. There's no need to do the downstream ones.
-- [SyAD-0007]{SyAD-0009,SyAD-0005,SyRS-0072,SyRS-0076} In document, the tag and the upstream tag of a particular traceable item, shall be marked using the following format.
+- [SyAD-0007]{SyAD-0009,SyAD-0005,SyRS-0071,SyRS-0076} In document, the tag and the upstream tag of a particular traceable item, shall be marked using the following format.
 
 ```
 Optional block comments

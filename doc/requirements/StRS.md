@@ -168,17 +168,16 @@ Features:
 
 - [StRS-0018]{} The software shall assist various activities to establish, maintain, and use of the documentation system.
 - [StRS-0001]{StRS-0018} The software shall assist editing document.
-- [StRS-0036]{StRS-0001} The software shall support basic document formatting.
-- [StRS-0037]{StRS-0001} The software shall separate the content and the presentation of the documents.
 - [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
 - [StRS-0062]{StRS-0018} The software shall supporting document reading/viewing.
+- [StRS-0036]{StRS-0062} The software shall support basic document formatting.
+- [StRS-0037]{StRS-0001,StRS-0062} The software shall separate the content and the presentation of the documents.
 - [StRS-0045]{StRS-0018} The software shall support document reviewing and approval.
 - [StRS-0058]{StRS-0042,StRS-0045} The software shall support different project management procedures.
 - [StRS-0003]{StRS-0058} The software shall support waterfall life cycle model.
 - [StRS-0005]{StRS-0058} The software shall support Agile life cycle model.
 - [StRS-0061]{StRS-0018} The software shall supporting document achieving.
 - [StRS-0046]{StRS-0043,StRS-0018} The software shall support be used to track benchmark/version of documents.
-- [StRS-0004]{StRS-0043,StRS-0018} The software shall help recording and monitoring the evolution history of documents.
 
 - [StRS-0059]{StRS-0042} The software shall support different kind of documents.
 - [StRS-0002]{StRS-0059} The software shall be used for requirement engineering documents.
@@ -186,7 +185,7 @@ Features:
 - [StRS-0055]{StRS-0002} The software shall be integrate to some feature list/pool, which may be used for e.g. the marketing research or customer support departments.
 - [StRS-0008]{StRS-0059} The software shall be used for design control documents.
 - [StRS-0044]{StRS-0041,StRS-0059} The software shall be able to manage traceability in/between different layers.
-- [StRS-0039]{StRS-0044} The software shall be able to trace to downstream implementation in case applied (e.g. test cases of codes).
+- [StRS-0039]{StRS-0044,StRS-0013} The software shall be able to trace to downstream implementation in case applied (e.g. test cases of codes).
 
 - [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it.
 - [StRS-0049]{StRS-0047} The software shall handle the case only part of the files are documents, while the other part includes code, graphs, historical documents in other format ...
@@ -229,7 +228,7 @@ Procedure:
 - [StRS-0026]{} The software shall aim to provide services that does not exist, for unfulfilled user needs.
 - [StRS-0019]{StRS-0020,StRS-0026} The software shall not provide duplicated functions of an (on-line or local) word processor, such as Microsoft Office, Google Doc, Emacs, Vim, or Atom.
 - [StRS-0025]{StRS-0026} With the aim of handling multiple files in a documentation system, the software shall not provide tools for multiple users to edit the same file simultaneously, such as Google Drive.
-- [StRS-0012]{StRS-0004,StRS-0026} The software shall not provide duplicated functions of a code revision control platform, such as GitHub or BitBucket.
+- [StRS-0012]{StRS-0026} The software shall not provide duplicated functions of a code revision control platform, such as GitHub or BitBucket.
 
 *(Laws and regulations)*
 
