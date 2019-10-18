@@ -26,16 +26,21 @@ Notice that there are several different kind of data to be saved/cached in this 
 
 + Document themselves.
 + Historical states of the documents.
-+ Document metadata (author, date/time, version).
-+ User and authorization.
-+ Traceability caching (since only the upstream item is marked explicitly in the document).
-+ Reviewing data (review metadata, comments).
++ Document metadata (author/change actor, date/time, version).
++ User authentication data (decide whether the user is the right person).
+    + Note that software user is the git commit "pusher", who's not necessarily to be the git author of a historical commit. Also, a user may use multiple git clients with different git author setup.
++ User preferences.
++ Repository configurations.
++ User authorization (decide whether the user is allowed to access certain material) to repositories.
++ Caching of expansive calculations.
++ Online interaction data.
 
-Document themselves, historical states, and part of the metadata are by-default saved in the revision control system. The other one also may saved in the revision control system (this is the Gitolite approach), with several associated pros and cons.
+Document themselves, historical states, and document metadata are by-default saved in revision control system. User authentication cannot be saved in revision control system (as then everyone will have a local copy). Caching of expansive calculations and online interaction data is very hard to save in revision control system (will trigger confusing changes to modify the content of a historical git commit; or every tiny activity will trigger a new git commit with no meaningful structure in it).
+
+The other parts also may saved in the revision control system (this is the Gitolite approach), with several associated pros and cons.
 
 + Pros:
-    + The evolution history (and timestamps) of user and authorization can be automatically recorded.
-    + Traceability caching and reviewing data can by-default associate to some particular commit.
+    + The evolution history of configurations can be automatically recorded by git.
 + Cons:
     + Data can be only saved in plain text form.
 
@@ -45,19 +50,27 @@ Or they may be saved in a separated database (GitHub, BitBucket, GitLab, ... all
     + Can define flexible database structure based on the requirements, as in general database is more flexible on saving data compare to a revision control system.
     + Have 3rd party data persistent tools we can use.
 + Cons:
-    + Need to handle the complicity of query from different places.
-    + Difficult to handle the relationship in between data pieces spread between different places.
+    + Need to handle the complicity/consistency of query from different data sources.
+    + Data may become fragile by technical reason splits.
     + Some data may need to have duplicated storage.
 
+Our decision is to have repository configurations in configuration files (like CircleCI config) because they are:
+
++ Naturally associated to a git repository and/or a particular current state/commit of a repository.
++ If we need to do any document based calculation (like a git post-receive hook) we don't need to query database before start the analysis, and we only need to "write" to the database after the analysis finishes.
+
+Other configurations are saved in the database.
+
 - [SyAD-0004]{} The system shall be build on top of a dual data storage system of (1) a revision control system, and (2) a database.
-- [SyAD-0026]{SyAD-0004} The revision control system shall in charge of saving:
-    - Document themselves.
-    - Historical states of the documents.
-    - Document metadata (author, date/time, version).
-- [SyAD-0027]{SyAD-0004} The database shall in charge of saving:
-    - User and authorization.
-    - Traceability caching (since only the upstream item is marked explicitly in the document).
-    - Reviewing data (review metadata, comments).
+- [SyAD-0063]{SyAD-0004} Document themselves are saved in revision control system.
+- [SyAD-0064]{SyAD-0004} Historical states of the documents are saved in revision control system.
+- [SyAD-0065]{SyAD-0004} Document metadata (author/change actor, date/time, version) are saved in revision control system.
+- [SyAD-0066]{SyAD-0004} Repository configurations are saved in revision control system.
+- [SyAD-0067]{SyAD-0004} User authentication data (decide whether the user is the right person) are saved in the database.
+- [SyAD-0068]{SyAD-0004} User preferences are saved in the database.
+- [SyAD-0069]{SyAD-0004} User authorization (decide whether the user is allowed to access certain material) to repositories is saved in the database.
+- [SyAD-0070]{SyAD-0004} Caching of expansive calculations is saved in the database.
+- [SyAD-0071]{SyAD-0004} Online interaction data are saved in the database.
 
 ### Revision control system
 
@@ -72,9 +85,56 @@ Comparison of version control platforms for satisfying our targeting functional 
 | Separate code and document changes |  |  | Different branch. `git diff` to check if any document changes are involved. |
 
 - [SyAD-0001]{SyRS-0001} The software shall be built on top of `git`.
+- [SyAD-0048]{SyRS-0098} git commit SHA is used as the global version number of the document set.
+- [SyAD-0055]{SyAD-0001} Local git client shall be able to synchronize with git server through (1) SSH and (2) password authorizations.
+
+### Document formatting
+
+- [SyAD-0002]{SyRS-0034} The document shall be written using a markdown format.
+- [SyAD-0061]{SyAD-0002} The software shall define syntax on top of the markdown format to support extended functionalities.
+
+For a comparison with other markup languages, we listed the cons of the alternative choices:
+
++ HTML:
+    + Too complicated to be edited.
+    + Most advanced layout setups are not useful for official documents.
++ LaTeX:
+    + Not easy to read and edit.
+    + Display math equations are not particularly useful for our case. And if really needed, can be done by extended text boxes (like what Wikipedia is doing).
+    + The default PDF output is not easy to use for online activities (e.g. online review).
++ reStructuredText:
+    + Really similar to markdown, just with a little bit less user and library supports.
+    + If needed, we can easily switched in between the two or support both.
+
+### Tag and traceability
+
+- [SyAD-0006]{SyRS-0036} The plain-text-based tag shall be unique throughout the entire document system with multiple documents involved.
+- [SyAD-0062]{SyAD-0006,SyRS-0074} Downstream items are fully calculable from upstream items.
+- [SyAD-0007]{SyAD-0061,SyAD-0062,SyRS-0073} The traceable items are defined as extending the (unordered) bullet list items in markdown, with tag and upstream tags marked explicitly by a predefined syntax of markdown.
+
+```
+Optional block comments
+
+- [currentItemTag]{upstreamTags,are,seperated,by,comma} Traceable item context.
+    - Enumerate items in the traceable item context.
+    + Optional inline comments.
+    * Controversial issues/different approach?
+```
+
+- [SyAD-0028]{SyAD-0007} Beside the traceable item extension, the software shall fully support the original markdown syntax.
+    - *(Should we further distinguish bubble list `-`, `+` and `star` for different purposes? E.g. to use the first order ones to distinguish todo/implemented/fully tested)*
+- [SyAD-0008]{SyRS-0036,SyAD-0061} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
+- [SyAD-0010]{SyRS-0010} The downstream items shall be automatically calculated from upstream items.
+- [SyAD-0011]{SyAD-0010} The software shall raise exceptions if the traceability relationship contains errors.
+- [SyAD-0024]{SyAD-0011} There shall be a client-side validator to raises traceability errors before the new changes are committed/uploaded to the server.
+- [SyAD-0025]{SyAD-0062,SyAD-0010,SyAD-0011,SyAD-0070} There shall be a server-side analyzer which write the upstream/downstream relationship and save them into a database. The result is used in presenting in document display mode for user to navigate.
+
+*(TODO: The tagging syntax for implementation anchors?)*
+
+### Reviewing
+
 - [SyAD-0057]{StRS-0057,SyRS-0028,SyAD-0001} The software shall be fully compatible with git (especially `git merge`) commands generated by other tools (locally, or through revision control platforms of other proposes), and/or workflow that doesn't follow the pattern of this software.
     - *(Then how it controls all document changes are follow the desired approach -- assuming users commit to the reviewing system?)*
-- [SyAD-0048]{SyRS-0098} git commit ID is used as the global version number of the document set.
 - [SyAD-0032]{SyAD-0001,SyRS-0026} The user shall (be recommended to) handle regular backups by a series of commits in a separated branch.
 - [SyAD-0042]{SyAD-0032} If multiple authors are editing the document simultaneously, they shall all (be recommended to) merge into the same (non-master) branch.
     - Since reviewing/merge to master is a once-in-a-while event, this is opposite to the concept of continuous deployment.
@@ -96,27 +156,46 @@ Comparison of version control platforms for satisfying our targeting functional 
 - [SyAD-0046]{SyAD-0001} Users are suggested to make document and code changes in different branches.
     - In most cases those changes are done by different groups of people.
 - [SyAD-0047]{SyRS-0038,SyAD-0046} Separate document changes and other changes shall be done by checking if files returned by `git diff` are document/document accessories (images, ...).
-- [SyAD-0055]{SyAD-0001} Local git client shall be able to synchronize with git server through (1) SSH and (2) password authorizations.
 
-### Document formatting
+### Authorization
 
-For a comparison with other markup languages, we listed the cons of the alternative choices:
+- [SyAD-0040]{} There are multiple user management items related to this software.
+    - A user.
+    - An organization: it can be either an enterprise, a non-profit organization, a unofficial group, or some space some individual user registered.
+    - A repository: it is the output of a project. It is a computer folder and its content includes a set of documents.    
 
-+ HTML:
-    + Too complicated to be edited.
-    + Most advanced layout setups are not useful for simple documents.
-+ LaTeX:
-    + Not easy to read and edit.
-    + Display math equations are not particularly useful for our case. And if really needed, can be done by extended text boxes (like what WikiPedia is doing).
-    + The default PDF output is not easy to use for online activities (review meetings).
-+ reStructuredText:
-    + Really similar to markdown, just with a little bit less user and library supports.
-    + If needed, can be switched in between the two really easy.
+Since requirement engineering and design control is mostly for enterprise uses, it is less likely that individual user will do it in their hobby projects. And for reviewing, it by-default cannot be done by a one-person project. Also, notice that individual user can always sign up an organization and put her projects there. Therefore, a project always belongs to some particular organization (unlike in GitHub that project can either belong to an organization or a user).
 
-- [SyAD-0002]{SyRS-0034} The document shall be written using a modified `markdown` format.
-- [SyAD-0005]{SyRS-0073,SyAD-0002} The traceable items are defined by extending the (unordered) bullet list item in markdown.
+- [SyAD-0037]{SyAD-0040} An organization can have multiple users as its members. A user may be a member of more than one organizations.
+- [SyAD-0038]{SyAD-0037} A member of an organization may have the following specific role:
+    - A non-professional manager:
+        - Define members by add/remove users into/from that organization.
+        - Add/remove other users as non-professional managers.
+        - Billing (if applicable).
+- [SyAD-0036]{SyAD-0040} An organization can have multiple repositories. An repository can only belongs to one single organization.
+- [SyAD-0053]{} Any user can create repositories. After a new repository has been created, the user becomes the project organizer of that repository.
+    - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
+- [SyAD-0041]{SyAD-0038,SyRS-0093} A project organizer of an repository is in charge of:
+    - Choose/switch between the opinions whether the repository is private or public.
+    - Add/remove other users as project organizers.
+    - Authorize members (include herself) particular privilege of the corresponding repository, or choose the opinion whether users in some particular role can add particular privileges for themselves.
+    - Setup the logistics of a review activity.
+    - Organize the approval process of a review meeting.
+        - *(But then should this person be the pertinent manager, as she holds the liability on the decision? Or should there be a more complicated interface to let the project organizer to forward the documents to the manager for final decision?)*
+- [SyAD-0039]{SyRS-0088,SyAD-0041} A user may hold one of the following roles of a repository (She cannot hold multiple roles):
+    - Document editor.
+        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
+        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read and/or review may promote herself ads a reviewer.
+    - Document reviewer.
+        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read may promote herself ads a reviewer.
+        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
+    - Document reader.
+        - By default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
+        - The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
 
 ### Configuration
+
+- [SyAD-0072]{SyAD-0066} There should be configuration file(s) define the setups and feature toggles of the corresponding repository.
 
 We can either have configuration file to record what is included, or what is excluded.
 
@@ -171,69 +250,6 @@ traceability:
         - src/tests/java
 ```
 
-### Tag and traceability
-
-- [SyAD-0006]{SyRS-0036} The plain-text-based tag shall be unique throughout the entire document system.
-- [SyAD-0009]{SyRS-0036} The upstream items shall be explicit marked in file using the plain-text-based tags. There's no need to do the downstream ones.
-- [SyAD-0007]{SyAD-0009,SyAD-0005,SyRS-0071,SyRS-0076} In document, the tag and the upstream tag of a particular traceable item, shall be marked using the following format.
-
-```
-Optional block comments
-
-- [currentItemTag]{upstreamTags,are,seperated,by,comma} Traceable item context.
-    - Enumerate items in the traceable item context.
-    + Optional inline comments.
-    * Controversial issues/different approach?
-```
-
-- [SyAD-0028]{SyAD-0007} Beside the traceable item extension, the software shall fully support the original `markdown` syntax.
-    - *(Should we further distinguish bubble list `-`, `+` and `star` for different purposes? E.g. to use the first order ones to distinguish todo/implemented/fully tested)*
-- [SyAD-0008]{SyRS-0036} Tag names shall begin with a letter `a-zA-Z` or an underscore `_`. Subsequent characters can be letters, underscores, digits `0-9`, and hyphen `-`. Tag shall be case sensitive.
-- [SyAD-0010]{SyAD-0009,SyRS-0010} The software shall analyze the traceability relationship based on the provided upstream tags.
-- [SyAD-0011]{SyAD-0010} The software shall raise exceptions if the traceability relationship contains errors.
-- [SyAD-0024]{SyAD-0011} There shall be a client-side validator to raises traceability errors before the new changes are committed/uploaded to the server.
-- [SyAD-0025]{SyAD-0010,SyAD-0011,SyAD-0027} There shall be a server-side analyzer which write the upstream/downstream relationship into the database.
-
-*(TODO: The tagging syntax for implementation code and test cases?)*
-
-### Reviewing
-
-### Authorization
-
-- [SyAD-0040]{} There are multiple user management items related to this software.
-    - A user.
-    - An organization: it can be either an enterprise, a non-profit organization, a unofficial group, or some space some individual user registered.
-    - A repository: it is the output of a project. It is a computer folder and its content includes a set of documents.    
-
-Since requirement engineering and design control is mostly for enterprise uses, it is less likely that individual user will do it in their hobby projects. And for reviewing, it by-default cannot be done by a one-person project. Also, notice that individual user can always sign up an organization and put her projects there. Therefore, a project always belongs to some particular organization (unlike in GitHub that project can either belong to an organization or a user).
-
-- [SyAD-0037]{SyAD-0040} An organization can have multiple users as its members. A user may be a member of more than one organizations.
-- [SyAD-0038]{SyAD-0037} A member of an organization may have the following specific role:
-    - A non-professional manager:
-        - Define members by add/remove users into/from that organization.
-        - Add/remove other users as non-professional managers.
-        - Billing (if applicable).
-- [SyAD-0036]{SyAD-0040} An organization can have multiple repositories. An repository can only belongs to one single organization.
-- [SyAD-0053]{} Any user can create repositories. After a new repository has been created, the user becomes the project organizer of that repository.
-    - *(Or we may go a more complicated approach that an organization has multiple teams, and each team can create its repositories. But in that case, we may simply register multiple organizations. So we keep it simple in this way.)*
-- [SyAD-0041]{SyAD-0038,SyRS-0093} A project organizer of an repository is in charge of:
-    - Choose/switch between the opinions whether the repository is private or public.
-    - Add/remove other users as project organizers.
-    - Authorize members (include herself) particular privilege of the corresponding repository, or choose the opinion whether users in some particular role can add particular privileges for themselves.
-    - Setup the logistics of a review activity.
-    - Organize the approval process of a review meeting.
-        - *(But then should this person be the pertinent manager, as she holds the liability on the decision? Or should there be a more complicated interface to let the project organizer to forward the documents to the manager for final decision?)*
-- [SyAD-0039]{SyRS-0088,SyAD-0041} A user may hold one of the following roles of a repository (She cannot hold multiple roles):
-    - Document editor.
-        - This is the general role, rather than an temporary editing authorization for a particular amount of time and/or for some particular part of the document. This is for simplicity concerns.
-        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read and/or review may promote herself ads a reviewer.
-    - Document reviewer.
-        - Assigned by the project organizer. Or the project organizer may decide that anybody who can read may promote herself ads a reviewer.
-        - *(Document reader may be code editor. But if document and code stay in the same repo, then git push authorization need to distinguish which is which. Or we may forbidden update/merge to master in user's platform.)*
-    - Document reader.
-        - By default all users are readers of a public repository. While for private repository, all users belong to the same organization are by default the readers.
-        - The project organizer may setup a blacklist of who cannot read the repository (for both public and private ones). That will also automatically remove the user to the reviewer/editor roles.
-
 ### Feature toggle
 
 There shall be several different level of feature toggles, starting from the weakest one which can be overwritten:
@@ -269,8 +285,8 @@ So from a direct interacting with the requirement, the software shall include th
         - Hard to check if the data comes from the user's side is correct. Otherwise it may break the database consistency.
         - User has must-have client side installation -- it is extremely troublesome as our newest system need to be compatible with old client installations.
         - Makes integration with other revision control tools (GitHub, ...) impossible.
-- [SyAD-0020]{SyAD-0026} `git` revision control system.
-- [SyAD-0021]{SyAD-0027} Database.
+- [SyAD-0020]{SyAD-0004} `git` revision control system.
+- [SyAD-0021]{SyAD-0004} Database.
 - [SyAD-0017]{SyRS-0046} Web service(s), for:
     - Document visualization.
     - Reviewing.

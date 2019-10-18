@@ -119,7 +119,8 @@ Traceability:
     - One traceable item may have multiple downstream traceable anchors, e.g. for software maybe one in code and another one in test case.
     - *(Should we may the requirement stronger that the upstream item need to be a leaf?)*
     - *(Should a traceable anchor have more than one upstream? E.g. a test case covers multiple requirements? -- since traceable anchor have different requirement hence is with a different format (probably just mark the upstream item), it is always possible to mark more than one at the same place.)*
-- [SyRS-0050]{SyRS-0074} The upstream items may be prioritized. *(Should they?)*
+- [SyRS-0050]{SyRS-0074} There is no special order for the upstream and downstream items of a traceable item.
+    - If we are gonna calculate one from the other, we can't have order for the calculated one anyway.
 - [SyRS-0109]{SyRS-0073,SyRS-0074} It is recommended but not guaranteed that the upstream item should come before the downstream item in the same document.
 - [SyRS-0036]{SyRS-0076,SyRS-0073,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
     - *(Is there any possibility to trace graph items?)*
