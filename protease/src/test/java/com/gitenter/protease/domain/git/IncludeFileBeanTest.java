@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.dao.git.DocumentRepository;
-import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.dao.git.IncludeFileRepository;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -39,23 +39,25 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaGitDatabaseConnection",
 		"schemaTraceabilityDatabaseConnection",
 		"schemaReviewDatabaseConnection"})
-public class DocumentBeanTest {
+public class IncludeFileBeanTest {
 	
-	@Autowired DocumentRepository repository;
+	@Autowired IncludeFileRepository repository;
 	
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws IOException, GitAPIException, ParseException {
 		
-		DocumentBean item = repository.findById(1).get();
-		assertEquals(item.getName(), "file");
-		assertEquals(item.getRelativePath(), "file");
-		assertEquals(item.getContent(), "content");
+		IncludeFileBean includeFile = repository.findById(1).get();
+		assertEquals(includeFile.getName(), "file");
+		assertEquals(includeFile.getRelativePath(), "file");
+		assertEquals(includeFile.getContent(), "content");
 		
-		assertEquals(item.getCommit().getId(), Integer.valueOf(1));
-		assertEquals(item.getTraceableItems().size(), 1);
-		TraceableItemBean traceableItem = item.getTraceableItems().get(0);
+		assert includeFile instanceof TraceableDocumentBean;
+		TraceableDocumentBean traceableDocument = (TraceableDocumentBean)includeFile;
+		assertEquals(traceableDocument.getCommit().getId(), Integer.valueOf(1));
+		assertEquals(traceableDocument.getTraceableItems().size(), 1);
+		TraceableItemBean traceableItem = traceableDocument.getTraceableItems().get(0);
 		assertEquals(traceableItem.getItemTag(), "tag");
 		assertEquals(traceableItem.getContent(), "content");
 		assertEquals(traceableItem.getDownstreamItems().size(), 1);
@@ -73,7 +75,7 @@ public class DocumentBeanTest {
 	@Test
 	public void testAddTraceableItem() {
 		
-		DocumentBean document = new DocumentBean();
+		TraceableDocumentBean document = new TraceableDocumentBean();
 		
 		TraceableItemBean traceableItem1 = new TraceableItemBean();
 		traceableItem1.setDocument(document);

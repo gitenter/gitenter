@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.git.CommitRepository;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -132,13 +133,15 @@ public class CommitBeanTest {
 		assert item instanceof ValidCommitBean;
 		ValidCommitBean validItem = (ValidCommitBean)item;
 		
-		DocumentBean file = validItem.getDocument("file");
-		assertEquals(file.getRelativePath(), "file");
-		assertEquals(file.getName(), "file");
-		assertEquals(new String(file.getBlobContent()), "content");
+		IncludeFileBean file = validItem.getIncludeFile("file");
+		assert file instanceof TraceableDocumentBean;
+		TraceableDocumentBean document = (TraceableDocumentBean)file;
+		assertEquals(document.getRelativePath(), "file");
+		assertEquals(document.getName(), "file");
+		assertEquals(new String(document.getBlobContent()), "content");
 		
-		assertEquals(file.getCommit().getId(), Integer.valueOf(1));
-		assertEquals(file.getTraceableItems().size(), 1);
+		assertEquals(document.getCommit().getId(), Integer.valueOf(1));
+		assertEquals(document.getTraceableItems().size(), 1);
 	}
 	
 	/*

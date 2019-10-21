@@ -26,8 +26,8 @@ import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
-import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -52,7 +52,7 @@ public class CommitRepositoryTest {
 	@Autowired CommitRepository commitRepository;
 	
 	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired DocumentRepository documentRepository;
+	@Autowired IncludeFileRepository documentRepository;
 
 	@Test
 	@DbUnitMinimalDataSetup
@@ -126,10 +126,10 @@ public class CommitRepositoryTest {
 		commit.setRepository(repository);
 		repository.addCommit(commit);
 		
-		DocumentBean document = new DocumentBean();
+		TraceableDocumentBean document = new TraceableDocumentBean();
 		document.setRelativePath("file");
 		document.setCommit(commit);
-		commit.addDocument(document);
+		commit.addIncludeFile(document);
 		
 		TraceableItemBean traceableItem = new TraceableItemBean();
 		traceableItem.setItemTag("tag");
@@ -161,9 +161,9 @@ public class CommitRepositoryTest {
 		assertTrue(reloadCommit instanceof ValidCommitBean);
 		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
 		
-		DocumentBean reloadDocument = reloadValidCommit.getDocument("file");
+		TraceableDocumentBean reloadDocument = (TraceableDocumentBean)reloadValidCommit.getIncludeFile("file");
 		assertEquals(reloadDocument.getName(), "file");
-		assertNull(reloadValidCommit.getDocument("file-does-not-exist"));
+		assertNull(reloadValidCommit.getIncludeFile("file-does-not-exist"));
 		
 		assertEquals(reloadDocument.getTraceableItems().size(), 1);
 		TraceableItemBean reloadTraceableItem = reloadDocument.getTraceableItems().get(0);
@@ -192,10 +192,10 @@ public class CommitRepositoryTest {
 		commit.setRepository(repository);
 		repository.addCommit(commit);
 		
-		DocumentBean document = new DocumentBean();
+		TraceableDocumentBean document = new TraceableDocumentBean();
 		document.setRelativePath("file");
 		document.setCommit(commit);
-		commit.addDocument(document);
+		commit.addIncludeFile(document);
 		
 		/*
 		 * This part doesn't match with the static git repo, 
@@ -227,9 +227,9 @@ public class CommitRepositoryTest {
 		assertTrue(reloadCommit instanceof ValidCommitBean);
 		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
 		
-		DocumentBean reloadDocument = reloadValidCommit.getDocument("file");
+		TraceableDocumentBean reloadDocument = (TraceableDocumentBean)reloadValidCommit.getIncludeFile("file");
 		assertEquals(reloadDocument.getName(), "file");
-		assertNull(reloadValidCommit.getDocument("file-does-not-exist"));
+		assertNull(reloadValidCommit.getIncludeFile("file-does-not-exist"));
 		
 		assertEquals(reloadDocument.getTraceableItems().size(), 2);
 		TraceableItemBean reloadTraceableItem1 = reloadDocument.getTraceableItems().get(0);
@@ -263,15 +263,15 @@ public class CommitRepositoryTest {
 		commit.setRepository(repository);
 		repository.addCommit(commit);
 		
-		DocumentBean document1 = new DocumentBean();
+		TraceableDocumentBean document1 = new TraceableDocumentBean();
 		document1.setRelativePath("file1");
 		document1.setCommit(commit);
-		commit.addDocument(document1);
+		commit.addIncludeFile(document1);
 		
-		DocumentBean document2 = new DocumentBean();
+		TraceableDocumentBean document2 = new TraceableDocumentBean();
 		document2.setRelativePath("file2");
 		document2.setCommit(commit);
-		commit.addDocument(document2);
+		commit.addIncludeFile(document2);
 		
 		/*
 		 * This part doesn't match with the static git repo, 
@@ -303,9 +303,9 @@ public class CommitRepositoryTest {
 		assertTrue(reloadCommit instanceof ValidCommitBean);
 		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
 		
-		DocumentBean reloadDocument1 = reloadValidCommit.getDocument("file1");
+		TraceableDocumentBean reloadDocument1 = (TraceableDocumentBean)reloadValidCommit.getIncludeFile("file1");
 		assertEquals(reloadDocument1.getName(), "file1");
-		DocumentBean reloadDocument2 = reloadValidCommit.getDocument("file2");
+		TraceableDocumentBean reloadDocument2 = (TraceableDocumentBean)reloadValidCommit.getIncludeFile("file2");
 		assertEquals(reloadDocument2.getName(), "file2");
 		
 		assertEquals(reloadDocument1.getTraceableItems().size(), 1);

@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gitenter.protease.domain.git.CommitBean;
-import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 @Repository
@@ -90,14 +90,14 @@ public class CommitRepositoryImpl implements CommitRepository {
 		assert commit instanceof ValidCommitBean;
 		ValidCommitBean validCommit = (ValidCommitBean)commit;
 		
-		Map<DocumentBean,List<TraceableItemBean>> traceableItemCache = new HashMap<DocumentBean,List<TraceableItemBean>>();
-		for (DocumentBean document : validCommit.getDocuments()) {
+		Map<TraceableDocumentBean,List<TraceableItemBean>> traceableItemCache = new HashMap<TraceableDocumentBean,List<TraceableItemBean>>();
+		for (TraceableDocumentBean document : validCommit.getTraceableDocuments()) {
 			traceableItemCache.put(document, document.getTraceableItems());
 			document.setTraceableItems(null);
 		}
 		commitDatabaseRepository.saveAndFlush(commit);
 		
-		for (DocumentBean document : validCommit.getDocuments()) {
+		for (TraceableDocumentBean document : validCommit.getTraceableDocuments()) {
 			document.setTraceableItems(traceableItemCache.get(document));
 		}
 		return commitDatabaseRepository.saveAndFlush(commit);

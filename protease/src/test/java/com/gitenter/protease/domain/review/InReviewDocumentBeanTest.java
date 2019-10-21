@@ -20,13 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.dao.git.DocumentRepository;
-import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.review.DiscussionTopicBean;
-import com.gitenter.protease.domain.review.InReviewDocumentBean;
-import com.gitenter.protease.domain.review.OnlineDiscussionTopicBean;
-import com.gitenter.protease.domain.review.ReviewMeetingRecordBean;
-import com.gitenter.protease.domain.review.ReviewStatus;
+import com.gitenter.protease.dao.git.IncludeFileRepository;
+import com.gitenter.protease.domain.git.IncludeFileBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -51,14 +46,18 @@ public class InReviewDocumentBeanTest {
 	 * Cannot go with e.g. "InReviewDocumentRepository", for the same reason
 	 * that git data cannot be loaded as "SubsectionBean".
 	 */
-	@Autowired DocumentRepository repository;
+	@Autowired IncludeFileRepository repository;
 
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimal() throws IOException, GitAPIException {
 		
-		DocumentBean item = repository.findById(1).get();
+		/*
+		 * TODO:
+		 * How Hibernate handles mixin, if two different subclasses extend it?
+		 */
+		IncludeFileBean item = repository.findById(1).get();
 		assertTrue(item instanceof InReviewDocumentBean);
 		
 		InReviewDocumentBean document = (InReviewDocumentBean)item;
@@ -99,5 +98,4 @@ public class InReviewDocumentBeanTest {
 			}
 		}
 	}
-
 }
