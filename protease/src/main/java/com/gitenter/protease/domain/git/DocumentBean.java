@@ -3,12 +3,11 @@ package com.gitenter.protease.domain.git;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.gitenter.protease.domain.ModelBean;
+import com.gitenter.protease.domain.review.InReviewDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 
 import lombok.Getter;
@@ -22,7 +21,6 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "git", name = "document")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class DocumentBean extends IncludeFileBean implements ModelBean {
 	
 	/*
@@ -35,8 +33,7 @@ public class DocumentBean extends IncludeFileBean implements ModelBean {
 			optional=true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	private TraceableDocumentBean traceableDocument;
 	
-	/*
-	 * TODO:
-	 * Move `InReviewDocument` to `@OneToOne` map.
-	 */
+	@OneToOne(targetEntity=InReviewDocumentBean.class, mappedBy = "document", 
+			optional=true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	private InReviewDocumentBean inReviewDocument;
 }

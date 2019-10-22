@@ -30,8 +30,8 @@ public class VoteBean implements ModelBean {
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="document_id")
-	private InReviewDocumentBean document;
+	@JoinColumn(name="in_review_document_id")
+	private InReviewDocumentBean inReviewDocument;
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)

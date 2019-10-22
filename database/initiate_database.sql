@@ -326,16 +326,16 @@ CREATE TABLE review.in_review_document (
 
 CREATE TABLE review.vote (
 	id serial PRIMARY KEY,
-	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	in_review_document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
 	reviewer_id serial REFERENCES review.reviewer (id) ON DELETE CASCADE,
-	UNIQUE (document_id, reviewer_id),
+	UNIQUE (in_review_document_id, reviewer_id),
 
 	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D')
 );
 
 CREATE TABLE review.discussion_topic (
 	id serial PRIMARY KEY,
-	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	in_review_document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
 	line_number integer NOT NULL
 );
 
