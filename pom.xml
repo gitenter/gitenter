@@ -34,8 +34,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <gitar-version>0.0.3-prototype</gitar-version>
-        <lombok-version>1.18.4</lombok-version>
+
+        <!-- TODO: Should be able to boost all spring versions. Right now boost
+        spring/spring-data versions will break dbunit, while boost spring-boot version
+        will break redis connection. -->
+        <spring-version>5.1.8.RELEASE</spring-version>
+        <spring-boot-version>2.1.9.RELEASE</spring-boot-version>
+        <spring-data-version>2.1.9.RELEASE</spring-data-version>
+
+        <commonmark-version>0.12.1</commonmark-version>
+        <lombok-version>1.18.10</lombok-version>
         <logback-version>1.2.3</logback-version>
     </properties>
 
@@ -79,12 +89,16 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <!-- TODO:
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-api</artifactId>
+                        <version>5.5.2</version>-->
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.28.2</version>
+            <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

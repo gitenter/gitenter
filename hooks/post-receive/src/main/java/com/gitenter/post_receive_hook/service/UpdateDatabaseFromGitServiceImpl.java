@@ -9,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gitenter.enzymark.propertiesfile.PropertiesFileFormatException;
-import com.gitenter.enzymark.propertiesfile.PropertiesFileParser;
+import com.gitenter.enzymark.configfile.ConfigFileFormatException;
+import com.gitenter.enzymark.configfile.ConfigYamlParser;
+import com.gitenter.enzymark.configfile.bean.GitEnterConfigBean;
 import com.gitenter.enzymark.tracefactory.CommitBeanFactory;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
@@ -76,46 +77,36 @@ public class UpdateDatabaseFromGitServiceImpl implements UpdateDatabaseFromGitSe
 	private void updateGitCommit(File repositoryDirectory, RepositoryBean repository, GitCommit gitCommit) 
 			throws IOException, CheckoutConflictException, GitAPIException {
 
-		PropertiesFileParser propertiesFileParser;
+		CommitBean commit;
 		try {
-			propertiesFileParser = new PropertiesFileParser(repositoryDirectory, gitCommit.getSha(), "gitenter.properties"); 
-		}
-		catch (PropertiesFileFormatException e) {
-
-			InvalidCommitBean commit = new InvalidCommitBean();
-			commit.setErrorMessage(e.getMessage());
+			/*
+			 * TODO:
+			 * Support a set of names `gitenter.yml`/`gitenter.yaml`/...
+			 */
+			GitEnterConfigBean gitEnterConfig = ConfigYamlParser.parse(repositoryDirectory, gitCommit.getSha(), "gitenter.yml");
 			
 			/*
 			 * TODO:
-			 * This piece of code (until return) is duplicated.
+			 * Use gitEnterConfig.getTraceabilityScanPaths("markdown") for what
+			 * file to scan for traceability.
 			 */
-			commit.setRepository(repository);
-			commit.setFromGitCommit(gitCommit);
-			repository.addCommit(commit);
+			CommitBeanFactory factory = new CommitBeanFactory();
+			commit = factory.getCommit(gitCommit);			
+		}
+		catch (ConfigFileFormatException e) {
+			InvalidCommitBean invalidCommit = new InvalidCommitBean();
+			invalidCommit.setFromGitCommit(gitCommit);
+			invalidCommit.setErrorMessage(e.getMessage());
 			
-			commitRepository.saveAndFlush(commit);
-			return;
+			commit = invalidCommit;
+		}
+		catch (IOException e) {
+			IgnoredCommitBean ignoredCommit = new IgnoredCommitBean();
+			ignoredCommit.setFromGitCommit(gitCommit);
+			
+			commit = ignoredCommit;
 		}
 		
-		if (propertiesFileParser.isEnabledSystemwide() == false) {
-			
-			IgnoredCommitBean commit = new IgnoredCommitBean();
-			
-			commit.setRepository(repository);
-			commit.setFromGitCommit(gitCommit);
-			repository.addCommit(commit);
-			
-			commitRepository.saveAndFlush(commit);
-			return;
-		}
-		
-		CommitBeanFactory factory = new CommitBeanFactory();
-		CommitBean commit = factory.getCommit(gitCommit);
-		
-		/*
-		 * TODO:
-		 * This piece of code (until return) is duplicated.
-		 */
 		commit.setRepository(repository);
 		repository.addCommit(commit);
 

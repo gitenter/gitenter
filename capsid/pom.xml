@@ -14,12 +14,6 @@
     <name>Capsid</name>
     <description>The web layer</description>
 
-    <properties>
-        <spring-boot-version>2.1.6.RELEASE</spring-boot-version>
-        <spring-version>5.1.9.RELEASE</spring-version>
-        <commonmark-version>0.12.1</commonmark-version>
-    </properties>
-
     <build>
         <plugins>
             <!-- This is to avoid the "webxml attribute is required" error.

@@ -16,10 +16,6 @@
 
 	<name>GitEnter hooks</name>
 
-	<properties>
-		<spring-version>5.1.2.RELEASE</spring-version>
-	</properties>
-
 	<dependencies>
 		<!-- Compile -->
 		<dependency>

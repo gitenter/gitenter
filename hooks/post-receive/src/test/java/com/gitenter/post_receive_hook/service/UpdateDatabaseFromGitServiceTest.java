@@ -168,8 +168,12 @@ public class UpdateDatabaseFromGitServiceTest {
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
 		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
 		
-		String configTextContent = "enable_systemwide = on";
-		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", configTextContent);
+		String configTextContent = "version: 1\n" +
+				"documents:\n" + 
+				"\n" + 
+				"traceability:\n" + 
+				"    markdown:\n";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
 		
 		workspace.add();
 		workspace.commit("valid commit");
@@ -188,15 +192,19 @@ public class UpdateDatabaseFromGitServiceTest {
 	}
 	
 	@Test
-	public void testInvalidCommit() throws IOException, GitAPIException {
+	public void testWrongTraceabilityContentWillBeInvalidCommit() throws IOException, GitAPIException {
 		
 		setupGit();
 		
 		String fileTextContent = "- [tag]{refer-not-exist} a traceable item.";
 		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
 		
-		String configTextContent = "enable_systemwide = on";
-		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", configTextContent);
+		String configTextContent = "version: 1\n" +
+				"documents:\n" + 
+				"\n" + 
+				"traceability:\n" + 
+				"    markdown:\n";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
 		
 		workspace.add();
 		workspace.commit("invalid commit");
@@ -215,15 +223,44 @@ public class UpdateDatabaseFromGitServiceTest {
 	}
 	
 	@Test
-	public void testIgnoredCommit() throws IOException, GitAPIException {
+	public void testWrongConfigFileFormatWillBeInvalidCommit() throws IOException, GitAPIException {
 		
 		setupGit();
 		
-		String textContent = "enable_systemwide = off";
-		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", textContent);
+		String fileTextContent =
+				  "- [tag1] a traceable item.\n"
+				+ "- [tag2]{tag1} a traceable item with in-document reference.";
+		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
+		
+		String configTextContent = "not-exist: 1\n";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
 		
 		workspace.add();
-		workspace.commit("setup as disabled");
+		workspace.commit("invalid commit");
+		workspace.push(origin);
+		
+		HookInputSet input = getHookInputSet();		
+		List<RepositoryBean> mockRepositories = spyRepositoryRepositoryAndGetMockRepositories(input);
+		service.update(input);
+		
+		ArgumentCaptor<CommitBean> argument = ArgumentCaptor.forClass(CommitBean.class);
+		verify(commitRepository, times(1)).saveAndFlush(argument.capture());
+		CommitBean savedCommit = argument.getValue();
+		
+		assertEquals(savedCommit.getRepository(), mockRepositories.get(0));
+		assertTrue(savedCommit instanceof InvalidCommitBean);
+	}
+	
+	@Test
+	public void testNoConfigFileWillCauseIgnoredCommit() throws IOException, GitAPIException {
+		
+		setupGit();
+		
+		String fileTextContent = "whatever";
+		addAFile(gitNormalRepository.getDirectory(), "file.md", fileTextContent);
+		
+		workspace.add();
+		workspace.commit("no gitenter.yml file");
 		workspace.push(origin);
 		
 		HookInputSet input = getHookInputSet();		
@@ -254,8 +291,12 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		setupGit();
 		
-		String configTextContent = "enable_systemwide = on";
-		addAFile(gitNormalRepository.getDirectory(), "gitenter.properties", configTextContent);
+		String configTextContent = "version: 1\n" +
+				"documents:\n" + 
+				"\n" + 
+				"traceability:\n" + 
+				"    markdown:\n";
+		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
 		
 		workspace.add();
 		workspace.commit("first (valid) commit");
