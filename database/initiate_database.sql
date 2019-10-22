@@ -212,17 +212,17 @@ CREATE TABLE traceability.traceable_document (
 CREATE TABLE traceability.traceable_item (
 	id serial PRIMARY KEY,
 
-	include_file_id serial REFERENCES traceability.traceable_document (id) ON DELETE CASCADE,
+	traceable_document_id serial REFERENCES traceability.traceable_document (id) ON DELETE CASCADE,
 	item_tag text NOT NULL,
 	content text,
-	UNIQUE (include_file_id, item_tag)
+	UNIQUE (traceable_document_id, item_tag)
 );
 
-CREATE FUNCTION traceability.file_id_from_traceable_item (integer)
+CREATE FUNCTION traceability.traceable_document_id_from_traceable_item (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT tra.include_file_id INTO return_id FROM traceability.traceable_item AS tra
+	SELECT tra.traceable_document_id INTO return_id FROM traceability.traceable_item AS tra
 	WHERE tra.id = $1;
 	RETURN return_id;
 END;
@@ -244,8 +244,8 @@ CREATE TABLE traceability.traceability_map (
 	 * Here is a double-JOIN. If becomes so slow, may create another
 	 * method to do JOIN inside, or even remove this constrain.
 	 */
-	CHECK (git.commit_id_from_file(traceability.file_id_from_traceable_item(upstream_item_id))
-		= git.commit_id_from_file(traceability.file_id_from_traceable_item(downstream_item_id)))
+	CHECK (git.commit_id_from_file(traceability.traceable_document_id_from_traceable_item(upstream_item_id))
+		= git.commit_id_from_file(traceability.traceable_document_id_from_traceable_item(downstream_item_id)))
 );
 
 --------------------------------------------------------------------------------

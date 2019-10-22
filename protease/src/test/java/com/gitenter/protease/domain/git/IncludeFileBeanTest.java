@@ -53,9 +53,15 @@ public class IncludeFileBeanTest {
 		assertEquals(includeFile.getRelativePath(), "file");
 		assertEquals(includeFile.getContent(), "content");
 		
-		assert includeFile instanceof TraceableDocumentBean;
-		TraceableDocumentBean traceableDocument = (TraceableDocumentBean)includeFile;
-		assertEquals(traceableDocument.getCommit().getId(), Integer.valueOf(1));
+		assert includeFile instanceof DocumentBean;
+		DocumentBean document = (DocumentBean)includeFile;
+		assertEquals(document.getCommit().getId(), Integer.valueOf(1));
+		
+		/*
+		 * TODO:
+		 * Move this part to `com.gitent4er.protease.dao.traceability`.
+		 */
+		TraceableDocumentBean traceableDocument = document.getTraceableDocument();
 		assertEquals(traceableDocument.getTraceableItems().size(), 1);
 		TraceableItemBean traceableItem = traceableDocument.getTraceableItems().get(0);
 		assertEquals(traceableItem.getItemTag(), "tag");
@@ -75,26 +81,26 @@ public class IncludeFileBeanTest {
 	@Test
 	public void testAddTraceableItem() {
 		
-		TraceableDocumentBean document = new TraceableDocumentBean();
+		TraceableDocumentBean traceableDocument = new TraceableDocumentBean();
 		
 		TraceableItemBean traceableItem1 = new TraceableItemBean();
-		traceableItem1.setDocument(document);
+		traceableItem1.setTraceableDocument(traceableDocument);
 		traceableItem1.setItemTag("tag-1");
 		traceableItem1.setContent("content-1");
-		document.addTraceableItem(traceableItem1);
+		traceableDocument.addTraceableItem(traceableItem1);
 		
 		TraceableItemBean traceableItem2 = new TraceableItemBean();
-		traceableItem2.setDocument(document);
+		traceableItem2.setTraceableDocument(traceableDocument);
 		traceableItem2.setItemTag("tag-2");
 		traceableItem2.setContent("content-2");
-		document.addTraceableItem(traceableItem2);
+		traceableDocument.addTraceableItem(traceableItem2);
 		
 		traceableItem1.addDownstreamItem(traceableItem2);
 		traceableItem2.addUpstreamItem(traceableItem1);
 		
-		assertEquals("content-1", document.getTraceableItem("tag-1").getContent());
-		assertEquals("content-2", document.getTraceableItem("tag-2").getContent());
-		assertEquals("tag-2", document.getTraceableItem("tag-1").getDownstreamItems().get(0).getItemTag());
-		assertEquals("tag-1", document.getTraceableItem("tag-2").getUpstreamItems().get(0).getItemTag());
+		assertEquals("content-1", traceableDocument.getTraceableItem("tag-1").getContent());
+		assertEquals("content-2", traceableDocument.getTraceableItem("tag-2").getContent());
+		assertEquals("tag-2", traceableDocument.getTraceableItem("tag-1").getDownstreamItems().get(0).getItemTag());
+		assertEquals("tag-1", traceableDocument.getTraceableItem("tag-2").getUpstreamItems().get(0).getItemTag());
 	}
 }

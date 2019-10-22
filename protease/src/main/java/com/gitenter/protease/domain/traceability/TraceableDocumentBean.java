@@ -6,9 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -27,9 +33,19 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "traceability", name = "traceable_document")
-public class TraceableDocumentBean extends DocumentBean implements ModelBean {
+public class TraceableDocumentBean implements ModelBean {
 	
-	@OneToMany(targetEntity=TraceableItemBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="document")
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id", updatable=false)
+	private Integer id;
+	
+	@OneToOne(targetEntity=DocumentBean.class, fetch=FetchType.EAGER, optional=false)
+	@JoinColumn(name="id", referencedColumnName="id")
+    private DocumentBean document;
+	
+	@OneToMany(targetEntity=TraceableItemBean.class, mappedBy="traceableDocument",
+			fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private List<TraceableItemBean> traceableItems = new ArrayList<TraceableItemBean>();
 	
 	public boolean addTraceableItem(TraceableItemBean traceableItem) {

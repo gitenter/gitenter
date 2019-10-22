@@ -35,8 +35,8 @@ public class TraceableItemBean implements ModelBean {
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="include_file_id")
-	private TraceableDocumentBean document;
+	@JoinColumn(name="traceable_document_id")
+	private TraceableDocumentBean traceableDocument;
 	
 	@NotNull
 	@Column(name="item_tag", updatable=false)

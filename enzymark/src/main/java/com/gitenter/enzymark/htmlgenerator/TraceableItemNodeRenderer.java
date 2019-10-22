@@ -16,20 +16,20 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 
 import com.gitenter.enzymark.traceparser.TraceableItemParser;
-import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 class TraceableItemNodeRenderer implements NodeRenderer {
 	
 	private final HtmlWriter html;
-	private DocumentBean document;
+	private TraceableDocumentBean traceableDocument;
 	
 	private final HtmlRenderer defaultRenderer;
 
-	TraceableItemNodeRenderer(HtmlNodeRendererContext context, DocumentBean document) {
+	TraceableItemNodeRenderer(HtmlNodeRendererContext context, TraceableDocumentBean traceableDocument) {
 		
 		this.html = context.getWriter();
-		this.document = document;
+		this.traceableDocument = traceableDocument;
 		
 		defaultRenderer = HtmlRenderer.builder().build();
 	}
@@ -97,7 +97,7 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 							 * traceable item.
 							 */
 							String itemTag =  parsingResult.getTag();
-							TraceableItemBean traceableItem = document.getTraceableItem(itemTag);
+							TraceableItemBean traceableItem = traceableDocument.getTraceableItem(itemTag);
 							
 							html.tag("li id=\""+itemTag+"\" class=\"traceable-item\"");
 							
@@ -157,16 +157,16 @@ class TraceableItemNodeRenderer implements NodeRenderer {
 		 * path is a file rather than a directory. If not, then there will
 		 * be one more "../". 
 		 */
-		Path original = Paths.get(document.getRelativePath()).getParent();
+		Path original = Paths.get(traceableDocument.getDocument().getRelativePath()).getParent();
 		
 		if (original == null) {
 			/*
 			 * This is for the special case that document is at the root.
 			 */
-			return referredItem.getDocument().getRelativePath();
+			return referredItem.getTraceableDocument().getDocument().getRelativePath();
 		}
 		else {
-			Path referred = Paths.get(referredItem.getDocument().getRelativePath());
+			Path referred = Paths.get(referredItem.getTraceableDocument().getDocument().getRelativePath());
 			String relativeFilepath = original.relativize(referred).toString();
 			
 			return relativeFilepath;

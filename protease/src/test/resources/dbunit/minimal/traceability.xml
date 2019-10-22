@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <traceable_document id="1" />
-    <traceable_item id="1" include_file_id="1" item_tag="tag" content="content" />
+    <traceable_item id="1" traceable_document_id="1" item_tag="tag" content="content" />
     <traceability_map upstream_item_id="1" downstream_item_id="1" />
 </dataset>

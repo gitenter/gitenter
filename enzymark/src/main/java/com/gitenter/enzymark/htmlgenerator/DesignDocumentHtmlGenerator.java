@@ -13,9 +13,11 @@ import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlNodeRendererFactory;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.commonmark.renderer.html.HtmlRenderer.Builder;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 
 public class DesignDocumentHtmlGenerator implements HtmlGenerator {
 
@@ -36,19 +38,25 @@ public class DesignDocumentHtmlGenerator implements HtmlGenerator {
 		Parser parser = Parser.builder()
 				.extensions(extensions)
 				.build();
-		HtmlRenderer renderer = HtmlRenderer.builder()
-				.extensions(extensions)
-				.nodeRendererFactory(new HtmlNodeRendererFactory() {
-					public NodeRenderer create(HtmlNodeRendererContext context) {
-						return new TraceableItemNodeRenderer(context, document);
-					}
-				})
-				.nodeRendererFactory(new HtmlNodeRendererFactory() {
-					public NodeRenderer create(HtmlNodeRendererContext context) {
-						return new ImageNodeRenderer(context, document);
-					}
-				})
-				.build();
+		
+		Builder builder = HtmlRenderer.builder().extensions(extensions);
+		
+		TraceableDocumentBean traceableDocument = document.getTraceableDocument();
+		if (traceableDocument != null) {
+			builder = builder.nodeRendererFactory(new HtmlNodeRendererFactory() {
+				public NodeRenderer create(HtmlNodeRendererContext context) {
+					return new TraceableItemNodeRenderer(context, traceableDocument);
+				}
+			});
+		}
+		
+		builder = builder.nodeRendererFactory(new HtmlNodeRendererFactory() {
+			public NodeRenderer create(HtmlNodeRendererContext context) {
+				return new ImageNodeRenderer(context, document);
+			}
+		});
+		
+		HtmlRenderer renderer = builder.build();
 		
 		Node node = parser.parse(markdownContent);
 		String html = renderer.render(node);

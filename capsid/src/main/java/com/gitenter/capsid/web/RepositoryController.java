@@ -21,6 +21,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import com.gitenter.capsid.config.bean.GitDomainSource;
 import com.gitenter.capsid.service.RepositoryService;
+import com.gitenter.capsid.service.exception.UnreachableException;
 import com.gitenter.enzymark.htmlgenerator.DesignDocumentHtmlGenerator;
 import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
 import com.gitenter.protease.config.bean.GitSource;
@@ -32,6 +33,7 @@ import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.FileBean;
 import com.gitenter.protease.domain.git.IgnoredCommitBean;
+import com.gitenter.protease.domain.git.IncludeFileBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
@@ -230,9 +232,14 @@ public class RepositoryController {
 		
 		String relativePath = getWildcardValue(request);
 		model.addAttribute("relativePath", relativePath);
-		DocumentBean document = repositoryService.getDocumentFromCommitShaAndRelativePath(commitSha, relativePath);
+		IncludeFileBean includeFile = repositoryService.getIncludeFileFromCommitShaAndRelativePath(commitSha, relativePath);
 		
-		return showDocumentContent(document, request, model);
+		if (includeFile instanceof DocumentBean) {
+			return showDocumentContent((DocumentBean)includeFile, request, model);
+		}
+		else {
+			throw new UnreachableException("User queries a path which is not a document:"+relativePath);
+		}
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/repositories/{repositoryId}/branches/{branchName}/documents/directories/**", method=RequestMethod.GET)
@@ -247,9 +254,14 @@ public class RepositoryController {
 		
 		String relativePath = getWildcardValue(request);
 		model.addAttribute("relativePath", relativePath);
-		DocumentBean document = repositoryService.getDocumentFromRepositoryIdAndBranchAndRelativePath(repositoryId, branchName, relativePath);
+		IncludeFileBean includeFile = repositoryService.getIncludeFileFromRepositoryIdAndBranchAndRelativePath(repositoryId, branchName, relativePath);
 		
-		return showDocumentContent(document, request, model);
+		if (includeFile instanceof DocumentBean) {
+			return showDocumentContent((DocumentBean)includeFile, request, model);
+		}
+		else {
+			throw new UnreachableException("User queries a path which is not a document:"+relativePath);
+		}
 	}
 	
 	private String showDocumentContent(

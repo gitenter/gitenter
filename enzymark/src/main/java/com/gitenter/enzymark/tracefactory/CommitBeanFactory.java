@@ -17,6 +17,7 @@ import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 public class CommitBeanFactory {
@@ -37,16 +38,19 @@ public class CommitBeanFactory {
 			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
 				
 				DocumentBean document = new DocumentBean();
-				document.setCommit(validCommit);
-				validCommit.addDocument(document);
-				
 				document.setRelativePath(traceableDocument.getRelativePath());
+				document.setCommit(validCommit);
+				validCommit.addIncludeFile(document);
+				
+				TraceableDocumentBean traceableDocumentBean = new TraceableDocumentBean();
+				traceableDocumentBean.setDocument(document);
+				document.setTraceableDocument(traceableDocumentBean);
 				
 				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 					
 					TraceableItemBean itemBean = new TraceableItemBean();
-					itemBean.setDocument(document);
-					document.addTraceableItem(itemBean);
+					itemBean.setTraceableDocument(traceableDocumentBean);
+					traceableDocumentBean.addTraceableItem(itemBean);
 					
 					itemBean.setItemTag(traceableItem.getTag());
 					itemBean.setContent(traceableItem.getContent());

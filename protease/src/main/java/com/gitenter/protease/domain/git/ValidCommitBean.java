@@ -54,14 +54,24 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 	@OneToMany(targetEntity=IncludeFileBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
 	private List<IncludeFileBean> includeFiles = new ArrayList<IncludeFileBean>();
 	
-	public List<TraceableDocumentBean> getTraceableDocuments() {
-		List<TraceableDocumentBean> documents = new ArrayList<TraceableDocumentBean>();
+	public List<DocumentBean> getDocuments() {
+		List<DocumentBean> documents = new ArrayList<DocumentBean>();
 		for (IncludeFileBean includeFile : includeFiles) {
-			if (includeFile instanceof TraceableDocumentBean) {
-				documents.add((TraceableDocumentBean)includeFile);
+			if (includeFile instanceof DocumentBean) {
+				documents.add((DocumentBean)includeFile);
 			}
 		}
 		return documents;
+	}
+	
+	public List<TraceableDocumentBean> getTraceableDocuments() {
+		List<TraceableDocumentBean> traceableDocuments = new ArrayList<TraceableDocumentBean>();
+		for (DocumentBean document : getDocuments()) {
+			if (document.getTraceableDocument() != null) {
+				traceableDocuments.add(document.getTraceableDocument());
+			}
+		}
+		return traceableDocuments;
 	}
 	
 	@Transient
