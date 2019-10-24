@@ -50,4 +50,8 @@ public class IncludeFileBean extends FileBean implements ModelBean {
 	public String getContent() throws IOException, GitAPIException {
 		return new String(getBlobContent());
 	}
+	
+	@NotNull
+	@Column(name="file_type")
+	private FileType fileType;
 }

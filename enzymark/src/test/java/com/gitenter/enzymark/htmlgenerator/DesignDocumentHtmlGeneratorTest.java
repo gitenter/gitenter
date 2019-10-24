@@ -9,15 +9,17 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.FileType;
 import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 public class DesignDocumentHtmlGeneratorTest {
 	
 	@Test
-	public void testBold() throws IOException, GitAPIException {
+	public void testMarkdownBold() throws IOException, GitAPIException {
 		
 		DocumentBean document = new DocumentBean();
+		document.setFileType(FileType.MARKDOWN);
 		
 		String content = "**Bold**\n";
 		String expectedOutput = "<p><strong>Bold</strong></p>\n";
@@ -29,9 +31,10 @@ public class DesignDocumentHtmlGeneratorTest {
 	}
 
 	@Test
-	public void testItalic() throws IOException, GitAPIException {
+	public void testMarkdownItalic() throws IOException, GitAPIException {
 		
 		DocumentBean document = new DocumentBean();
+		document.setFileType(FileType.MARKDOWN);
 		
 		String content = "*italic*\n";
 		String expectedOutput = "<p><em>italic</em></p>\n";
@@ -43,9 +46,10 @@ public class DesignDocumentHtmlGeneratorTest {
 	}
 	
 	@Test
-	public void testNormalBubbleItem() throws IOException, GitAPIException {
+	public void testMarkdownNormalBubbleItem() throws IOException, GitAPIException {
 		
 		DocumentBean document = new DocumentBean();
+		document.setFileType(FileType.MARKDOWN);
 		
 		String content = "- This line is not a traceable text.\n";
 		String expectedOutput = "<ul>\n"
@@ -59,10 +63,11 @@ public class DesignDocumentHtmlGeneratorTest {
 	}
 	
 	@Test
-	public void testTraceableItem() throws IOException, GitAPIException {
+	public void testMarkdownTraceableItem() throws IOException, GitAPIException {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("fake-path-for-a-document.md");
+		document.setFileType(FileType.MARKDOWN);
 		
 		TraceableDocumentBean traceableDocument = new TraceableDocumentBean();
 		traceableDocument.setDocument(document);
@@ -95,9 +100,10 @@ public class DesignDocumentHtmlGeneratorTest {
 	}
 	
 	@Test
-	public void testNestedBubbleItem() throws IOException, GitAPIException {
+	public void testMarkdownNestedBubbleItem() throws IOException, GitAPIException {
 		
 		DocumentBean document = new DocumentBean();
+		document.setFileType(FileType.MARKDOWN);
 		
 		String content = "- Outer layer.\n" +
 				"  - Inner layer.\n";
@@ -116,10 +122,11 @@ public class DesignDocumentHtmlGeneratorTest {
 	}
 	
 	@Test
-	public void testImages() throws IOException, GitAPIException {
+	public void testMarkdownImages() throws IOException, GitAPIException {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("fake-path-for-a-document.md");
+		document.setFileType(FileType.MARKDOWN);
 		
 		String content = "![alt text](sample.png \"title text\")\n";
 		String expectedOutput = "<p><img src=\"../../blobs/directories/sample.png\" alt=\"alt text\" title=\"title text\" /></p>\n";

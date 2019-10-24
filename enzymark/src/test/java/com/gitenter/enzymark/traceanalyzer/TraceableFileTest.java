@@ -10,7 +10,9 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 
-public class TraceableDocumentTest {
+import com.gitenter.protease.domain.git.FileType;
+
+public class TraceableFileTest {
 	
 	@Test
 	public void testIfNoTraceableItemIncluded() throws Exception {
@@ -27,7 +29,7 @@ public class TraceableDocumentTest {
 				+ "more text\n"
 				+ "\n";
 		
-		TraceableDocument document = mock(TraceableDocument.class);
+		TraceableFile document = mock(TraceableFile.class);
 		document.parse(textContent);
 		
 		verify(document, never()).addTraceableItem(any(TraceableItem.class));
@@ -38,8 +40,8 @@ public class TraceableDocumentTest {
 		
 		String textContent = "- [tag]{refer} Traceable item content with **bold** and *italic*.\n";
 		
-		TraceableDocument document = new TraceableDocument("/fake/relative/file/path");
-		TraceableDocument spyDocument = spy(document);
+		TraceableFile document = new TraceableFile("/fake/relative/file/path.md", FileType.MARKDOWN);
+		TraceableFile spyDocument = spy(document);
 		spyDocument.parse(textContent);
 		
 		verify(spyDocument, times(1)).addTraceableItem(any(TraceableItem.class));
@@ -67,8 +69,8 @@ public class TraceableDocumentTest {
 				+ "- [another-tag] Another dummy traceable item.\n"
 				+ "- [the-third-tag]{} A third traceable item";
 		
-		TraceableDocument document = new TraceableDocument("/fake/relative/file/path");
-		TraceableDocument spyDocument = spy(document);
+		TraceableFile document = new TraceableFile("/fake/relative/file/path.md", FileType.MARKDOWN);
+		TraceableFile spyDocument = spy(document);
 		spyDocument.parse(textContent);
 		
 		verify(spyDocument, times(3)).addTraceableItem(any(TraceableItem.class));

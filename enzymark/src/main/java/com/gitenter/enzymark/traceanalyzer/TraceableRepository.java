@@ -15,7 +15,7 @@ import lombok.Getter;
 public class TraceableRepository {
 	
 	@Getter
-	private List<TraceableDocument> traceableDocuments = new ArrayList<TraceableDocument>();
+	private List<TraceableFile> traceableFiles = new ArrayList<TraceableFile>();
 	
 	private Map<String,TraceableItem> traceableItemMap = new HashMap<String,TraceableItem>();
 
@@ -23,9 +23,9 @@ public class TraceableRepository {
 
 	}
 
-	public void addTraceableDocument(TraceableDocument document) throws ItemTagNotUniqueException {
+	public void addTraceableFile(TraceableFile document) throws ItemTagNotUniqueException {
 
-		traceableDocuments.add(document);
+		traceableFiles.add(document);
 		
 		for (TraceableItem traceableItem : document.getTraceableItems()) {
 			putIntoTraceableItem(traceableItem);

@@ -6,18 +6,24 @@ import java.util.List;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 
+import com.gitenter.protease.domain.git.FileType;
+
 import lombok.Getter;
 
-public class TraceableDocument {
+public class TraceableFile {
 	
 	@Getter
 	private String relativePath;
 	
 	@Getter
+	private FileType fileType;
+	
+	@Getter
 	private List<TraceableItem> traceableItems = new ArrayList<TraceableItem>();
 	
-	public TraceableDocument(String relativePath) throws ItemTagNotUniqueException {
+	public TraceableFile(String relativePath, FileType fileType) throws ItemTagNotUniqueException {
 		this.relativePath = relativePath;
+		this.fileType = fileType;
 	}
 	
 //	public TraceableDocument(TraceableRepository repository, File documentFile) throws IOException, ItemTagNotUniqueException {

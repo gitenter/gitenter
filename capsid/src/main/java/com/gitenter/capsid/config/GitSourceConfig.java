@@ -25,7 +25,7 @@ public class GitSourceConfig {
 	public GitSource dockerGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
+		gitSource.setRootFolderPath("/home/git");
 		return gitSource;
 	}
 
@@ -34,7 +34,7 @@ public class GitSourceConfig {
 	public GitSource stagingGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
+		gitSource.setRootFolderPath("/home/git");
 		return gitSource;
 	}
 	
@@ -43,7 +43,7 @@ public class GitSourceConfig {
 	public GitSource productionGitSource() {
 		
 		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
+		gitSource.setRootFolderPath("/home/git");
 		return gitSource;
 	}
 }

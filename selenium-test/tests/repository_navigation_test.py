@@ -249,6 +249,9 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
                     "//input[@value='tag1' and @class='upstream']/parent::form").get_attribute("action"),
                 "{}/branches/master/documents/directories/root-file.md#tag1".format(repo_link))
 
+    # TODO:
+    # Mixed of traceable documents, and document without traceable items in it.
+
     def test_valid_commit_display_image(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file")

@@ -89,6 +89,8 @@ public class UpdateDatabaseFromGitServiceImpl implements UpdateDatabaseFromGitSe
 			 * TODO:
 			 * Use gitEnterConfig.getTraceabilityScanPaths("markdown") for what
 			 * file to scan for traceability.
+			 * 
+			 * This involves change of TraceableRepositoryFactory.recursivelyInsertGitDocuments() 
 			 */
 			CommitBeanFactory factory = new CommitBeanFactory();
 			commit = factory.getCommit(gitCommit);			

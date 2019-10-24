@@ -9,7 +9,7 @@ import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.enzymark.traceanalyzer.TraceAnalyzerException;
-import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
+import com.gitenter.enzymark.traceanalyzer.TraceableFile;
 import com.gitenter.enzymark.traceanalyzer.TraceableItem;
 import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
 import com.gitenter.gitar.GitCommit;
@@ -35,10 +35,16 @@ public class CommitBeanFactory {
 			validCommit.setFromGitCommit(gitCommit);
 			
 			Map<TraceableItem,TraceableItemBean> traceabilityIterateMap = new HashMap<TraceableItem,TraceableItemBean>();
-			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
+			for (TraceableFile traceableFile : traceableRepository.getTraceableFiles()) {
 				
+				/*
+				 * TODO:
+				 * Traceable files can either be documents, or other files. 
+				 * Should distinguish in here.
+				 */
 				DocumentBean document = new DocumentBean();
-				document.setRelativePath(traceableDocument.getRelativePath());
+				document.setRelativePath(traceableFile.getRelativePath());
+				document.setFileType(traceableFile.getFileType());
 				document.setCommit(validCommit);
 				validCommit.addIncludeFile(document);
 				
@@ -46,7 +52,7 @@ public class CommitBeanFactory {
 				traceableDocumentBean.setDocument(document);
 				document.setTraceableDocument(traceableDocumentBean);
 				
-				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
+				for (TraceableItem traceableItem : traceableFile.getTraceableItems()) {
 					
 					TraceableItemBean itemBean = new TraceableItemBean();
 					itemBean.setTraceableDocument(traceableDocumentBean);
@@ -59,7 +65,7 @@ public class CommitBeanFactory {
 				}
 			}
 				
-			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
+			for (TraceableFile traceableDocument : traceableRepository.getTraceableFiles()) {
 				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 					
 					/*

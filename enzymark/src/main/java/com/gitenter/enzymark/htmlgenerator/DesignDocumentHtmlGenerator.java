@@ -17,51 +17,61 @@ import org.commonmark.renderer.html.HtmlRenderer.Builder;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.FileType;
 import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 
 public class DesignDocumentHtmlGenerator implements HtmlGenerator {
 
 	private DocumentBean document;
-	private String markdownContent;
+	
+	/*
+	 * Reason for this is to trigger git call in constructor, rather than when
+	 * calling `getHtml()`.
+	 */
+	private String content;
 	
 	public DesignDocumentHtmlGenerator(DocumentBean document) throws IOException, GitAPIException {
 		this.document = document;
-		this.markdownContent = document.getContent();
+		this.content = document.getContent();
 	}
 	
 	public String getHtml() {
 		
-		List<Extension> extensions = new ArrayList<Extension>();
-		extensions.add(TablesExtension.create());
-		extensions.add(StrikethroughExtension.create());
-		
-		Parser parser = Parser.builder()
-				.extensions(extensions)
-				.build();
-		
-		Builder builder = HtmlRenderer.builder().extensions(extensions);
-		
-		TraceableDocumentBean traceableDocument = document.getTraceableDocument();
-		if (traceableDocument != null) {
+		if (document.getFileType().equals(FileType.MARKDOWN)) {
+			List<Extension> extensions = new ArrayList<Extension>();
+			extensions.add(TablesExtension.create());
+			extensions.add(StrikethroughExtension.create());
+			
+			Parser parser = Parser.builder()
+					.extensions(extensions)
+					.build();
+			
+			Builder builder = HtmlRenderer.builder().extensions(extensions);
+			
+			TraceableDocumentBean traceableDocument = document.getTraceableDocument();
+			if (traceableDocument != null) {
+				builder = builder.nodeRendererFactory(new HtmlNodeRendererFactory() {
+					public NodeRenderer create(HtmlNodeRendererContext context) {
+						return new TraceableItemNodeRenderer(context, traceableDocument);
+					}
+				});
+			}
+			
 			builder = builder.nodeRendererFactory(new HtmlNodeRendererFactory() {
 				public NodeRenderer create(HtmlNodeRendererContext context) {
-					return new TraceableItemNodeRenderer(context, traceableDocument);
+					return new ImageNodeRenderer(context, document);
 				}
 			});
+			
+			HtmlRenderer renderer = builder.build();
+			
+			Node node = parser.parse(content);
+			String html = renderer.render(node);
+			
+			return html;
 		}
 		
-		builder = builder.nodeRendererFactory(new HtmlNodeRendererFactory() {
-			public NodeRenderer create(HtmlNodeRendererContext context) {
-				return new ImageNodeRenderer(context, document);
-			}
-		});
-		
-		HtmlRenderer renderer = builder.build();
-		
-		Node node = parser.parse(markdownContent);
-		String html = renderer.render(node);
-		
-		return html;
+		return content;
 	}
 
 }

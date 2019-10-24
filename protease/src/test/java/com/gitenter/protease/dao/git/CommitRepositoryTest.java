@@ -27,6 +27,7 @@ import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.FileType;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
@@ -129,6 +130,7 @@ public class CommitRepositoryTest {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("file");
+		document.setFileType(FileType.MARKDOWN);
 		document.setCommit(commit);
 		commit.addIncludeFile(document);
 		
@@ -200,6 +202,7 @@ public class CommitRepositoryTest {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("file");
+		document.setFileType(FileType.MARKDOWN);
 		document.setCommit(commit);
 		commit.addIncludeFile(document);
 		
@@ -276,11 +279,13 @@ public class CommitRepositoryTest {
 		
 		DocumentBean document1 = new DocumentBean();
 		document1.setRelativePath("file1");
+		document1.setFileType(FileType.MARKDOWN);
 		document1.setCommit(commit);
 		commit.addIncludeFile(document1);
 		
 		DocumentBean document2 = new DocumentBean();
 		document2.setRelativePath("file2");
+		document2.setFileType(FileType.MARKDOWN);
 		document2.setCommit(commit);
 		commit.addIncludeFile(document2);
 		

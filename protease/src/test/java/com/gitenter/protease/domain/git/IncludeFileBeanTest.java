@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.git;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -52,14 +53,15 @@ public class IncludeFileBeanTest {
 		assertEquals(includeFile.getName(), "file");
 		assertEquals(includeFile.getRelativePath(), "file");
 		assertEquals(includeFile.getContent(), "content");
+		assertEquals(includeFile.getFileType(), FileType.MARKDOWN);
 		
-		assert includeFile instanceof DocumentBean;
+		assertTrue(includeFile instanceof DocumentBean);
 		DocumentBean document = (DocumentBean)includeFile;
 		assertEquals(document.getCommit().getId(), Integer.valueOf(1));
 		
 		/*
 		 * TODO:
-		 * Move this part to `com.gitent4er.protease.dao.traceability`.
+		 * Move this part to `com.gitenter.protease.dao.traceability`.
 		 */
 		TraceableDocumentBean traceableDocument = document.getTraceableDocument();
 		assertEquals(traceableDocument.getTraceableItems().size(), 1);
@@ -70,37 +72,5 @@ public class IncludeFileBeanTest {
 		assertEquals(traceableItem.getUpstreamItems().size(), 1);
 		assertEquals(traceableItem.getDownstreamItems().get(0).getItemTag(), traceableItem.getItemTag());
 		assertEquals(traceableItem.getUpstreamItems().get(0).getItemTag(), traceableItem.getItemTag());
-	}
-	
-	/*
-	 * TODO:
-	 * Should we remove the nontrivial constructor of "TraceableItemBean",
-	 * and initialize "DocumentBean" only through the ORM (so
-	 * "List<TraceableItemBean> traceableItems" is naturally initialized)?
-	 */
-	@Test
-	public void testAddTraceableItem() {
-		
-		TraceableDocumentBean traceableDocument = new TraceableDocumentBean();
-		
-		TraceableItemBean traceableItem1 = new TraceableItemBean();
-		traceableItem1.setTraceableDocument(traceableDocument);
-		traceableItem1.setItemTag("tag-1");
-		traceableItem1.setContent("content-1");
-		traceableDocument.addTraceableItem(traceableItem1);
-		
-		TraceableItemBean traceableItem2 = new TraceableItemBean();
-		traceableItem2.setTraceableDocument(traceableDocument);
-		traceableItem2.setItemTag("tag-2");
-		traceableItem2.setContent("content-2");
-		traceableDocument.addTraceableItem(traceableItem2);
-		
-		traceableItem1.addDownstreamItem(traceableItem2);
-		traceableItem2.addUpstreamItem(traceableItem1);
-		
-		assertEquals("content-1", traceableDocument.getTraceableItem("tag-1").getContent());
-		assertEquals("content-2", traceableDocument.getTraceableItem("tag-2").getContent());
-		assertEquals("tag-2", traceableDocument.getTraceableItem("tag-1").getDownstreamItems().get(0).getItemTag());
-		assertEquals("tag-1", traceableDocument.getTraceableItem("tag-2").getUpstreamItems().get(0).getItemTag());
 	}
 }

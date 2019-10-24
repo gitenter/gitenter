@@ -17,7 +17,11 @@ public class GitDomainSource {
 		 * https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_ssh_protocol
 		 * ssh://git@localhost:8822/home/git/rrr/raa.git
 		 */
-		String gitHost = port.equals(22) ? domainName : domainName+":"+port;
-		return "ssh://git@"+gitHost+gitSource.getBareRepositoryDirectory(orgName, repoName).getAbsolutePath();
+		if (port.equals(22)) {
+			return "git@"+domainName+":"+gitSource.getBareRepositoryDirectory(orgName, repoName).getAbsolutePath();
+		}
+		else {
+			return "ssh://git@"+domainName+":"+port+gitSource.getBareRepositoryDirectory(orgName, repoName).getAbsolutePath();
+		}
 	}
 }

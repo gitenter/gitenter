@@ -183,6 +183,7 @@ CREATE TABLE git.include_file (
     id serial PRIMARY KEY,
 	commit_id serial REFERENCES git.valid_commit (id) ON DELETE CASCADE,
 	relative_path text NOT NULL,
+    file_type text NOT NULL CHECK (file_type='markdown' OR file_type='gherkin'),
 	UNIQUE(commit_id, relative_path)
 );
 
