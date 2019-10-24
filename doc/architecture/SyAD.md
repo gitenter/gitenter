@@ -216,16 +216,11 @@ We'll go with the inclusion approach, because it
     + *(Like GitHub hooks, we can technically skip it for a commit not in HEAD of a push through. So then it is not that horrible.)*
 + Can explicitly mark the "documents" so can support dual view. Then we can exclude e.g. `README.md` in code, to be a document.
 
-- [SyAD-0013]{} There shall be one configuration file used for this system.
-- [SyAD-0060]{} The configuration file is in YAML format.
-- [SyAD-0059]{SyAD-0013,SyAD-0060} The configuration file stays at the root of the repository and may be named `.gitenter.yml`, `.gitenter.yaml`, `.gitenter-config.yml`, or `.gitenter-config.yaml`.
+- [SyAD-0013]{SyAD-0072} There shall be one configuration file used for this system.
+- [SyAD-0060]{SyAD-0013} The configuration file is in YAML format.
+- [SyAD-0059]{SyAD-0013,SyAD-0060} The configuration file stays at the root of the repository, and may be named `.gitenter.yml`, `.gitenter.yaml`, `.gitenter-config.yml` or `.gitenter-config.yaml`.
 
-Reviewing is generally for documents (regardless of whether they contain traceable items), while traceability is for anything contains traceable items (may include not only document, but also Gherkin/unittest/...). While there's no need for (and we can't make) the two to be the same set, we should make the document view (in dual view) to support most needs, include
-
-+ A quick view of the testing/traceable code piece.
-+ Integrate/show the testing result one step up.
-
-*(TODO: that means we need to split `git.document` and `traceability.traceable_files` in database table.)*
+Reviewing is generally for documents (regardless of whether they contain traceable items), while traceability is for anything contains traceable items (may include not only document, but also Gherkin/unittest/...). There's no need for (and we can't make) the two to be the same set.
 
 - [SyAD-0054]{SyAD-0060} Example `.gitenter.yml`
     - Path can be either subfolder or matching pattern.
@@ -241,7 +236,7 @@ documents:
     - meeting_notes
 
 traceability:
-    documents:
+    markdown:
         - requirements/*.md
         - design_doc
     gherkin:
