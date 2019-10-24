@@ -52,7 +52,7 @@ In general, there's no need to trace the key procedures such as requirement engi
 - [SyRS-0002]{StRS-0013,StRS-0010} The software shall support standards of software development.
 - [SyRS-0004]{StRS-0003,SyRS-0002} The software shall support CMMI.
 - [SyRS-0005]{SyRS-0002} The software shall support ISO/IEC/IEEE standards of software development.
-- [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support general SDLC standards, include:
+- [SyRS-0006]{StRS-0003,SyRS-0005} The software shall support general standards, include:
     - ISO/IEC/IEEE 12207: Systems and software engineering -- Software life cycle processes.
     - ISO/IEC/IEEE 15288: Systems and software engineering -- System life cycle processes.
 - [SyRS-0008]{StRS-0002,SyRS-0005} The software shall support requirement engineering standards, include:
@@ -76,12 +76,8 @@ In general, there's no need to trace the key procedures such as requirement engi
 
 Revision control:
 
-- [SyRS-0001]{StRS-0046,StRS-0004,StRS-0009,StRS-0045} The software shall be built on top of a revision control system, which helps:
-    - Provide benchmark/version of documents.
-    - Recording and monitoring the evolution history of documents.
-    - Provide a platform for coordinating document editing jobs among multiple people.
-    - (For document editors and reviewers) provide a comparison between a benchmark version and the most up-to-date version, to facilitate document reviewing of a new/unapproved version.
-    - (For document users) provide a comparison between different document benchmark versions.
+- [SyRS-0107]{StRS-0001,StRS-0045,StRS-0046} The software shall help recording and evolution history of documents, to (1) assist editing or (2) shown between different benchmark versions for reviewing or monitoring.
+- [SyRS-0001]{SyRS-0107,StRS-0009} The software shall be built on top of a revision control system.
 - [SyRS-0061]{SyRS-0001,StRS-0047} The software shall provide revision control for individual documents in both global and document-wise scopes.
 - [SyRS-0098]{SyRS-0061} The revision control system shall provide a version number in global scope.
     - A global version is important, since the documents are highly entangled to each other by traceable items.
@@ -92,41 +88,57 @@ Revision control:
     - Pending changes/different opinions.
     - To-be-reviewed draft.
     - Review approval as a group/management decision.
-- [SyRS-0019]{StRS-0049} The software shall be flexible to the case that only part of files under revision control are documents.
-- [SyRS-0038]{SyRS-0019,StRS-0013} The software shall be able to separate document changes and changes with other files (code-only) involved.
-- [SyRS-0028]{StRS-0012,SyRS-0019} The software shall provide option for automatic synchronization with code revision control platforms.
+- [SyRS-0038]{SyRS-0001,StRS-0049,StRS-0013} The software shall be able to distinguish non-document-only change and document-related changes, and provide other functions accordingly (e.g. to not dup content of other features if document is not changing).
+- [SyRS-0028]{SyRS-0001,StRS-0012} The software shall provide option for automatic synchronization with revision control platforms using the same tool for the other proposes (e.g. code).
+
+Viewing:
+
+- [SyRS-0102]{StRS-0049} The software shall have an explicit way to define/configure which file is document.
+- [SyRS-0100]{StRS-0049} The software shall provide a dual view of (1) document-only, and (2) all files -- code, graphs, historical documents in other format ...
+- [SyRS-0101]{SyRS-0100} The software shall be able to show non-document content (e.g. graphs) in document mode.
+- [SyRS-0104]{SyRS-0100} In document-only mode, the software shall parse the actual document name (not filename) in the index page.
+- [SyRS-0105]{SyRS-0100} In document-only mode, the software shall build the document relationship by references/dependencies (rather than folder structure). *(Should it be defined in a reference section of the documents themselves? Or a configuration file?)*
+- [SyRS-0106]{SyRS-0100} In document-only mode, the software shall show work progress of each individual document. *(Should we? At least it seems should be in the web/not git folder layer.)*
 
 Document formatting:
 
-- [SyRS-0034]{StRS-0036,StRS-0037} The documents shall be written using a markup language.
+- [SyRS-0034]{StRS-0036,StRS-0037,StRS-0020} The documents shall be written using a markup language.
 - [SyRS-0031]{StRS-0010} The software shall provide document templates based on the regulatory standards. *(Or should we go the other direction to "compile" the documents to regulatory standards?)*
 
 Traceability:
 
-- [SyRS-0070]{StRS-0044} A traceable document item shall be either a requirement or a design decision.
-- [SyRS-0071]{SyRS-0070} A traceable document item is one (or two) short sentence, which may contains an enumerated list.
-- [SyRS-0072]{SyRS-0071} A traceable document may have associated comments (e.g. in deep explanation of concerns).
-- [SyRS-0076]{SyRS-0070,SyRS-0031} A traceable document item may be surrounded by the descriptive parts of the document, which may follow some kind of document templates.
-- [SyRS-0074]{StRS-0044} A traceable item may have multiple upstream and multiple downstream items.
-- [SyRS-0050]{SyRS-0074} The upstream items may be prioritized. *(Should they?)*
-- [SyRS-0073]{SyRS-0074} Individual traceable items has no or loose order, for which the order comes from the constrain that the upstream items shall come first in a same document.
-- [SyRS-0075]{SyRS-0070} Related traceable items, or traceable items about a same aspect of the product, may be grouped together in the document. But this is not a mandatory input.
-- [SyRS-0036]{SyRS-0074,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
+- [SyRS-0070]{StRS-0044} A traceable item shall be a requirement, a design decision.
+- [SyRS-0111]{StRS-0039} A traceable anchor is a marker in the downstream implementation.
+- [SyRS-0110]{SyRS-0111} The traceable anchor includes (1) Gherkin feature files used by Cucumber/behave, (2) markdown feature files used by Thoughtworks Gauge, (3) unit tests in various programming languages, and (4) general markers in code or other type of implementations.
+- [SyRS-0108]{StRS-0044} A traceable item stays inside of a document.
+- [SyRS-0071]{SyRS-0108} A traceable item is one (or two) short sentence, and it may contains an enumerated list and/or associated comments (e.g. in deep explanation of concerns).
+- [SyRS-0076]{SyRS-0108,SyRS-0031} A traceable item may be surrounded by the descriptive parts of the document, which may follow some kind of document templates.
+- [SyRS-0073]{SyRS-0108} Individual traceable items are loosely ordered and/or grouped in or cross documents. The ordering/grouping structure should be preserved.
+- [SyRS-0074]{SyRS-0070} A traceable item may have multiple upstream and multiple downstream items. The traceable item with no downstream items (may still have downstream implementation anchor) is called a leaf.
+- [SyRS-0113]{SyRS-0111} A traceable anchor shall have one upstream item and no downstream items.
+    - One traceable item may have multiple downstream traceable anchors, e.g. for software maybe one in code and another one in test case.
+    - *(Should we may the requirement stronger that the upstream item need to be a leaf?)*
+    - *(Should a traceable anchor have more than one upstream? E.g. a test case covers multiple requirements? -- since traceable anchor have different requirement hence is with a different format (probably just mark the upstream item), it is always possible to mark more than one at the same place.)*
+- [SyRS-0050]{SyRS-0074} There is no special order for the upstream and downstream items of a traceable item.
+    - If we are gonna calculate one from the other, we can't have order for the calculated one anyway.
+- [SyRS-0109]{SyRS-0073,SyRS-0074} It is recommended but not guaranteed that the upstream item should come before the downstream item in the same document.
+- [SyRS-0036]{SyRS-0076,SyRS-0073,SyRS-0034} A plain-text-based tagging system is used to handle traceability between document items.
     - *(Is there any possibility to trace graph items?)*
-- [SyRS-0010]{StRS-0074} The software shall provide provide convenient tools to users to navigate between traceable items in both upstream and downstream directions.
-- [SyRS-0089]{SyRS-0074} As independent features may benefit (1) microservice architecture and (2) feature flags, the software shall distinguish/isolate independent traceable items with no common downstream item with others.
-    - A pure tree structure contributes to zero common downstream items.
-- [SyRS-0043]{StRS-0018,SyRS-0019} The software shall be able to build traceability relationship between documents and non-document files (if applicable).
-- [SyRS-0044]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and implementing code pieces.
-- [SyRS-0045]{StRS-0039,SyRS-0043} The software shall be able to build traceability relationship between design items and test cases.
-    - *(For TDD unit tests, a simple link should be enough. However, it is unlikely that a requirement/design document will be linking to a unit test.)*
-    - *(For BDD testing frameworks such as [cucumber](https://github.com/cucumber/cucumber), should the software provide some kind of pattern generator, or directly print out the test case in document?)*
-- [SyRS-0091]{SyRS-0045} The (unit)test status from a continuous integration platform, shall be integrated into this system.
-- [SyRS-0057]{SyRS-0019} In case the non-document files are either not included or not obey the rule, the software shall be able to trace the completeness of traceable items through manual ways.
-- [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems (which provide a TODO/in progress/done.
+
+- [SyRS-0010]{SyRS-0074,StRS-001} The software shall provide convenient tools to users to navigate between traceable items in both upstream and downstream directions.
+- [SyRS-0089]{SyRS-0074} The software shall help identifying/isolating independent traceable items with no common downstream item with others.
+    - This is to help identify independent features may benefit (1) microservice architecture and (2) feature flags.
+    - Implemented as pure tree structure contributes to zero common downstream items.
+- [SyRS-0057]{SyRS-0074} Leaf traceable items shall have an associated status (TODO/in progress/done) that users can manually mark/switch.
+    - It is not relevant whether this traceable item has a downstream implementation anchor, as the implementation may either be completed or not.
+    - *(Should we apply this status to all traceable items? Pro is then we can make less strict assumption on how user implement traceability, con is then there are overwhelming of pre-sentence features.)*
+- [SyRS-0092]{SyRS-0057} The software shall be integrated to task management systems.
     - Examples include Trello and Atlassian JIRA.
     - No need to integrate to bug tracking systems, as bugs shall never appear in the requirement/design.
-- [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag renaming.
+- [SyRS-0091]{SyRS-0110} In case traceable anchor is a test, the test status from a continuous integration platform shall be integrated into this system.
+- [SyRS-0103]{SyRS-0091} The testing results shall be displayed on level up to the corresponding traceable item in documents.
+
+- [SyRS-0069]{SyRS-0036} The software shall provide an easy way for tag creation and renaming.
 
 Reviewing:
 

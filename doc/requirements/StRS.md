@@ -14,34 +14,50 @@ Revision control is needed for serious documentation system which includes multi
 
 However, while there are various different tools for source code revision control and collaboration, similar tool does not exist for documents. Alternative solutions includes:
 
-+ Google Drive or similar services:
++ Google Drive or similar services
     + Pros:
         + On-line word processor.
-        + Support collaborations, includes:
-            + Multiple users can collaborate and edit one single document *simultaneously*.
-            + Comments.
-            + Bookmarks.
-        + Version control.
+        + Multiple users can collaborate and edit one single document *simultaneously*.
+        + Support reviewing and comments.
+        + Minimal version control.
     + Cons:
         + Content is not separated from presentation.
+        + Can't edit documents offline.
+        + Blur boundary between editing and reading mode.
         + Major functions only support activities of *one single* document.
         + Can't support larger projects with multiple document files involved.
-        + Collaboration is not specific for serious SDLC.
-+ Atlassian Confluence or similar services:
+        + Can only setup links between documents through raw URL. Does not support traceability.
+        + Can't integrate with project management.
++ Atlassian Confluence or similar services
     + Pros:
         + On-line word processor.
-        + Support a project with multiple documents.
-        + Support collaboration for SDLC.
+        + Support reviewing and comments.
+        + Support a project with multiple documents. Can easily cross-link between documents with a better interface than raw URL.
+        + Integrate with project management (through JIRA). Can link JIRA ticket in documents and update status.
+        + Minimal version control.
     + Cons:
         + Content is not separated from presentation.
+        + Can't edit documents offline.
+        + Can't track cross-documents versioning and changes.
+        + Does not support traceability.
+        + Versioning get confused when multiple users edit one single document before publishing. No explicit mechanism resolving conflict.
 + Read the Docs
     + Pros:
         + Support a project with multiple documents.
         + Content is separated from presentation.
-        + Version control of the project as a whole.
     + Cons:
-        + No way to setup traceable links between document items.
-        + Collaboration is not specific for serious SDLC.
+        + Does not support reviewing and comments.
+        + Can't integrate with project management.
+        + Actual version control visualization can only be done through other sites (GitHub, Gitlab, ...).
+        + No way to setup links between documents. Does not support traceability.
++ GitHub/Gitlab
+    + Pros:
+        + Version control of the project as a whole.
+        + Support reviewing and comments.
+    + Cons:
+        + Only have minimal presentation mode.
+        + Reviewing and comments can only be done through diff/tiny reviewing cycle (and overfit to code review). It is not the way people read documents.
+        + Can only setup links between documents through raw URL. Does not support traceability.
 + Wiki:
     + Pros:
         + Support a project with multiple documents by CamelCase names and "link pattern".
@@ -50,13 +66,16 @@ However, while there are various different tools for source code revision contro
     + Cons:
         + Links between documents are in a less official and anarchical way.
         + Version control only based on one single document.
-        + Collaboration is not specific for serious SDLC.
+        + Does not support reviewing and comments.
+        + Can't integrate with project management.
 + Greenlight Guru:
-	+ Cons:
-		+ No version control.
-		+ Workflow is too specific for particular purposes.
-		+ Not scaleable to large projects.
-+ Naive and simple version numbers.
+    + Pros:
+        + Specified for medical device document and quality management. Support traceability, risk management, ...
+    + *(Not sure if reviewing can be down online or offline?)*
+    + Cons:
+        + No version control. Use naive and simple version numbers.
+        + Workflow is too specific for particular purposes.
+        + Not scaleable to large projects.
 
 We are going to make a tool which provide the flexibility and complicity of a source code revision control system, but fits better to document collaboration.
 
@@ -80,7 +99,7 @@ On the other hand, even for companies which don't mandatorily need a documentati
 + Requirement engineering
 + Design control
 + Reviewing
-+ SDLC management
++ Project management
 
 *(Describing the scope of the system being developed or changed.)*
 
@@ -100,8 +119,6 @@ Currently, we only aim on serving enterprise requirement/design documents.
 
 ### Acronyms and abbreviations
 
-+ **SLDC**: Systems development life cycle
-
 ## Stakeholders
 
 *(List the stakeholders or the classes of stakeholders and describe how they will influence the organization and business, or will be related to the development and operation of the system.)*
@@ -112,7 +129,7 @@ Customer:
 
 - R&D engineers (users).
 - Companies which obey quality control procedure.
-- Regulatory departments.
+- Regulatory/auditing departments.
 
 Technical:
 
@@ -133,24 +150,12 @@ These parties are equally important for the success of the product. But in this 
 
 ### User needs
 
-Features:
-
-- [StRS-0001]{} The software is a tool to assist editing document.
-- [StRS-0036]{StRS-0001} The software shall support basic document formatting.
-- [StRS-0037]{StRS-0001} The software shall separate the content and the presentation of the documents.
-- [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
-- [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it.
-- [StRS-0049]{StRS-0047} It should be possible that only part of the files in the working folder are documents. The other parts includes code, graphs, historical documents in other format ...
-- [StRS-0050]{StRS-0047} A customized index page of documents (with order/structure/relation) shall be provided.
-- [StRS-0043]{} The software shall be used for official documents.
-- [StRS-0046]{StRS-0043} The software shall support be used to track benchmark/version of documents.
-- [StRS-0004]{StRS-0043} The software shall help recording and monitoring the evolution history of documents.
-
-*(Do we want to track the progress of each editing document? How?)*
-
 Regulatory/field of usage:
 
-- [StRS-0041]{} The software shall be used while executing the quality control procedure.
+- [StRS-0043]{} The software shall be used for official documents.
+- [StRS-0042]{} The software shall be used for R&D activities of a future product.
+
+- [StRS-0041]{StRS-0042} The software shall be used while executing the quality control procedure.
 - [StRS-0010]{StRS-0041} The software shall be provide supports of common regulatory standards.
 - [StRS-0014]{StRS-0010} The software may be used for development of quality sensitive products.
 - [StRS-0015]{StRS-0014} The software may be used for medical device industry.
@@ -159,27 +164,43 @@ Regulatory/field of usage:
 - [StRS-0017]{StRS-0014} The software may be used in transportation related industries.
 - [StRS-0013]{StRS-0043} The software may be used for software development.
 
-Procedure:
+Features:
 
-- [StRS-0042]{} The software shall be used for R&D activities of a future product.
-- [StRS-0040]{StRS-0010,StRS-0042} The software shall support collaboration under various SDLC procedures.
-- [StRS-0009]{StRS-0040} The software shall support multiple users working together for a single product.
-- [StRS-0048]{StRS-0009} The software shall support multiple teams to work on different parts of the document.
-- [StRS-0003]{StRS-0040} The software shall support waterfall life cycle model.
-- [StRS-0005]{StRS-0040} The software shall support Agile life cycle model.
-- [StRS-0018]{StRS-0040} The software shall assist various activities to establish, maintain, and use of the documentation system.
-- [StRS-0002]{StRS-0018} The software shall be used for requirement engineering documents.
+- [StRS-0018]{} The software shall assist various activities to establish, maintain, and use of the documentation system.
+- [StRS-0001]{StRS-0018} The software shall assist editing document.
+- [StRS-0020]{StRS-0001} The software shall give flexible for user to use their familiar word processors.
+- [StRS-0062]{StRS-0018} The software shall supporting document reading/viewing.
+- [StRS-0036]{StRS-0062} The software shall support basic document formatting.
+- [StRS-0037]{StRS-0001,StRS-0062} The software shall separate the content and the presentation of the documents.
+- [StRS-0045]{StRS-0018} The software shall support document reviewing and approval.
+- [StRS-0058]{StRS-0042,StRS-0045} The software shall support different project management procedures.
+- [StRS-0003]{StRS-0058} The software shall support waterfall life cycle model.
+- [StRS-0005]{StRS-0058} The software shall support Agile life cycle model.
+- [StRS-0061]{StRS-0018} The software shall supporting document achieving.
+- [StRS-0046]{StRS-0043,StRS-0018} The software shall support be used to track benchmark/version of documents.
+
+- [StRS-0059]{StRS-0042} The software shall support different kind of documents.
+- [StRS-0002]{StRS-0059} The software shall be used for requirement engineering documents.
     - *(Should the software also provide tools for brainstorming of requirements/features? -- The actually process may be similar to comments on the review meeting, but it happens BEFORE a document even exist.)*
 - [StRS-0055]{StRS-0002} The software shall be integrate to some feature list/pool, which may be used for e.g. the marketing research or customer support departments.
-- [StRS-0008]{StRS-0018} The software shall be used for design control documents.
-- [StRS-0039]{StRS-0018,StRS-0013} The software shall be used to trace the origins of product code pieces.
-- [StRS-0038]{StRS-0018} The software shall be used to manage test cases.
-- [StRS-0044]{StRS-0018} The software shall be able to manage traceability in/between different layers.
-- [StRS-0045]{StRS-0018} The software shall be used for document reviewing.
+- [StRS-0008]{StRS-0059} The software shall be used for design control documents.
+- [StRS-0044]{StRS-0041,StRS-0059} The software shall be able to manage traceability in/between different layers.
+- [StRS-0039]{StRS-0044,StRS-0013} The software shall be able to trace to downstream implementation in case applied (e.g. test cases of codes).
+
+- [StRS-0047]{} The software shall help managing a document set of multiple related documents involved in it.
+- [StRS-0049]{StRS-0047} The software shall handle the case only part of the files are documents, while the other part includes code, graphs, historical documents in other format ...
+
+*(Risk analysis?)*
+
+Procedure:
 
 ### Operational scenarios
 
-- [StRS-0011]{StRS-0009} The software shall support various different users roles.
+- [StRS-0040]{StRS-0042} The software shall support collaborations.
+- [StRS-0009]{StRS-0040} The software shall support multiple teams/users working together for a single product/document.
+- [StRS-0048]{StRS-0009} The software shall support multiple people to act as different roles to contribute to the document.
+- [StRS-0011]{StRS-0048} The software shall support different access level of the document.
+
 - [StRS-0057]{} The software shall keep the flexibility that user(s) only commit to part of the provided features.
 
 ### Operational environment
@@ -207,7 +228,7 @@ Procedure:
 - [StRS-0026]{} The software shall aim to provide services that does not exist, for unfulfilled user needs.
 - [StRS-0019]{StRS-0020,StRS-0026} The software shall not provide duplicated functions of an (on-line or local) word processor, such as Microsoft Office, Google Doc, Emacs, Vim, or Atom.
 - [StRS-0025]{StRS-0026} With the aim of handling multiple files in a documentation system, the software shall not provide tools for multiple users to edit the same file simultaneously, such as Google Drive.
-- [StRS-0012]{StRS-0004,StRS-0026} The software shall not provide duplicated functions of a code revision control platform, such as GitHub or BitBucket.
+- [StRS-0012]{StRS-0026} The software shall not provide duplicated functions of a code revision control platform, such as GitHub or BitBucket.
 
 *(Laws and regulations)*
 

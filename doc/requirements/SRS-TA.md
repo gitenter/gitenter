@@ -67,7 +67,7 @@ The traceability validator has a lot of overlapping functions with this software
 - [SRS-TA-0003]{SyAD-0010,SRS-TA-0005,SRS-TA-0006} The software shall be able to calculate downstream relationship based on the provided upstream relationship.
 - [SRS-TA-0002]{SyRS-0089} The software shall be able to find traceability items which don't have common downstream items with others.
 - [SRS-TA-0004]{SRS-TA-0002,SRS-TA-0003} The software shall be able to calculate item pairs' common downstream items based on the upstream/downstream relationship.
-- [SRS-TA-0014]{SyAD-0027} The traceability relationship shall be saved to the database.
+- [SRS-TA-0014]{SyAD-0070} The traceability relationship shall be saved to the database.
 - [SRS-TA-0007]{SyAD-0011,SyAD-0006} The software shall raise exceptions if the traceable item tag is not unique.
 - [SRS-TA-0012]{SyAD-0011} The software shall raise exceptions if the marked upstream item doesn't exist project-wise.
 - [SRS-TA-0008]{SyAD-0011} The software shall raise exceptions if the traceable items form loop relationship.
