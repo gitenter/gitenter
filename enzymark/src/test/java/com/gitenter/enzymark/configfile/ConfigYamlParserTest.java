@@ -110,6 +110,8 @@ public class ConfigYamlParserTest {
 		
 		GitEnterConfigBean gitEnterConfig = ConfigYamlParser.parse(configFile);
 		assertEquals(gitEnterConfig.getVersion(), new Integer(1));
+		assertNull(gitEnterConfig.getDocumentScanPaths());
+		assertFalse(gitEnterConfig.isTraceablityScanEnabled());
 	}
 	
 	/*

@@ -9,8 +9,8 @@
         <jsp:include page="components/commit-menu.jsp"/>
       </div>
       <div>
-        <h3>Turn off for Traceability Analysis</h3>
-        <p>To turn it on, include a file with name <code>gitenter.properties</code>, and have <code>enable_systemwide = on</code> in its content.</p>
+        <h3>Commit Turned off</h3>
+        <p>To turn it on, include a file with name <code>gitenter.yml</code>.</p>
       </div>
       <jsp:include page="components/repository-collaboration.jsp"/>
     </article>

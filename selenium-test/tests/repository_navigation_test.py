@@ -64,7 +64,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             self.assertEqual(
                 urlparse(self.driver.current_url).path,
                 "/organizations/{}/repositories/{}/branches/master".format(self.org_id, self.repo_id))
-            assert "Turn off for Traceability Analysis" in self.driver.page_source
+            assert "Commit Turned off" in self.driver.page_source
 
             self.driver.get(urljoin(
                 self.root_url,
@@ -76,13 +76,16 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             self.assertEqual(len(commit_web_elements), 1)
             commit_link = commit_web_elements[0].get_attribute("action")
             self.driver.get(commit_link)
-            assert "Turn off for Traceability Analysis" in self.driver.page_source
+            assert "Commit Turned off" in self.driver.page_source
             assert "Browse Historical Commits" not in self.driver.page_source
 
     def test_invalid_commit(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file")
-            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.yml", """version: 1
+documents:
+traceability:
+    markdown:"""))
             git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "- [tag]{refer-not-exist} a traceable item."))
 
             local_path = self._clone_repo_and_return_local_path()
@@ -112,7 +115,10 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(
-                AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+                AddToGitConcreteFile("gitenter.yml", """version: 1
+documents:
+traceability:
+    markdown:"""))
             git_commit_datapack.add_file(
                 AddToGitConcreteFile("file.md", "- [tag1] a traceable item.\n- [tag2]{tag1} another traceable item."))
 
@@ -126,7 +132,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             assert "Browse files and folders" in self.driver.page_source
             self.assertEqual(self.driver.find_element_by_class_name("nav-current").text, "Branch: master")
             self.assertEqual(self.driver.find_element_by_class_name("document-file").get_attribute("value"), "file.md")
-            self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.properties")
+            self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.yml")
 
             document_link = self.driver.find_element_by_xpath("//input[@value='file.md']/parent::form").get_attribute("action")
             self.driver.get(document_link)
@@ -146,7 +152,7 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
             assert "Browse files and folders" in self.driver.page_source
             self.assertTrue("Commit:" in self.driver.find_element_by_class_name("nav-current").text)
             self.assertEqual(self.driver.find_element_by_class_name("document-file").get_attribute("value"), "file.md")
-            self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.properties")
+            self.assertEqual(self.driver.find_element_by_class_name("non-document-file").text, "gitenter.yml")
 
             document_link = self.driver.find_element_by_xpath("//input[@value='file.md']/parent::form").get_attribute("action")
             self.driver.get(document_link)
@@ -170,7 +176,10 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
     def test_valid_commit_two_files_in_root(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file")
-            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.yml", """version: 1
+documents:
+traceability:
+    markdown:"""))
             git_commit_datapack.add_file(AddToGitConcreteFile("file1.md", "- [tag1] a traceable item."))
             git_commit_datapack.add_file(AddToGitConcreteFile("file2.md", "- [tag2]{tag1} another traceable item."))
 
@@ -210,7 +219,10 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file")
             git_commit_datapack.add_file(
-                AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+                AddToGitConcreteFile("gitenter.yml", """version: 1
+documents:
+traceability:
+    markdown:"""))
             git_commit_datapack.add_file(
                 AddToGitConcreteFile("root-file.md", "- [tag1] a traceable item."))
             git_commit_datapack.add_file(
@@ -255,7 +267,10 @@ class TestRepositoryNavigation(RepositoryCreatedTestSuite):
     def test_valid_commit_display_image(self):
         with login_as(self.driver, self.root_url, self.repo_organizer_username, self.repo_organizer_password):
             git_commit_datapack = GitCommitDatapack("add commit setup file")
-            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.properties", "enable_systemwide = on"))
+            git_commit_datapack.add_file(AddToGitConcreteFile("gitenter.yml", """version: 1
+documents:
+traceability:
+    markdown:"""))
             git_commit_datapack.add_file(AddToGitConcreteFile("file.md", "![alt text](image.jpg \"image title\")"))
             git_commit_datapack.add_file(AddToGitSymlinkFile("image.jpg", "resources/sample_files/sample.jpg"))
 

@@ -170,7 +170,6 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		String configTextContent = "version: 1\n" +
 				"documents:\n" + 
-				"\n" + 
 				"traceability:\n" + 
 				"    markdown:\n";
 		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
@@ -201,7 +200,6 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		String configTextContent = "version: 1\n" +
 				"documents:\n" + 
-				"\n" + 
 				"traceability:\n" + 
 				"    markdown:\n";
 		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
@@ -293,7 +291,6 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		String configTextContent = "version: 1\n" +
 				"documents:\n" + 
-				"\n" + 
 				"traceability:\n" + 
 				"    markdown:\n";
 		addAFile(gitNormalRepository.getDirectory(), "gitenter.yml", configTextContent);
