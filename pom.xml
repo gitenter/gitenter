@@ -37,11 +37,10 @@
 
         <gitar-version>0.0.3-prototype</gitar-version>
 
-        <!-- TODO: Should be able to boost all spring versions. Right now boost
-        spring/spring-data versions will break dbunit, while boost spring-boot version
-        will break redis connection. -->
-        <spring-version>5.1.8.RELEASE</spring-version>
-        <spring-boot-version>2.1.9.RELEASE</spring-boot-version>
+        <!-- TODO: Spring and Spring-data has version 5.2.0.RELEASE. However, upgrade
+        to them will cause dbunit to break. -->
+        <spring-version>5.1.9.RELEASE</spring-version>
+        <spring-boot-version>2.2.0.RELEASE</spring-boot-version>
         <spring-data-version>2.1.9.RELEASE</spring-data-version>
 
         <commonmark-version>0.12.1</commonmark-version>
