@@ -41,7 +41,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
 public class RepositoryController {
 	
 	@Autowired GitSource gitSource;
-	@Autowired GitDomainSource domainSource;
+	@Autowired GitDomainSource gitDomainSource;
 	
 	@Autowired RepositoryService repositoryService;
 
@@ -64,8 +64,8 @@ public class RepositoryController {
 			
 			model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 			
-			model.addAttribute("gitSshProtocolUrl", domainSource.getGitSshProtocolUrl(
-					gitSource, repository.getOrganization().getName(), repository.getName()));
+			model.addAttribute("gitSshProtocolUrl", gitDomainSource.getGitSshProtocolUrl(
+					repository.getOrganization().getName(), repository.getName()));
 			
 			return "repository/setup-a-new-repository";
 		}
@@ -131,8 +131,8 @@ public class RepositoryController {
 		model.addAttribute("branchNames", repository.getBranchNames());
 		model.addAttribute("repositoryMemberRoleValues", RepositoryMemberRole.values());
 		
-		model.addAttribute("gitSshProtocolUrl", domainSource.getGitSshProtocolUrl(
-				gitSource, repository.getOrganization().getName(), repository.getName()));
+		model.addAttribute("gitSshProtocolUrl", gitDomainSource.getGitSshProtocolUrl(
+				repository.getOrganization().getName(), repository.getName()));
 		
 		if (commit instanceof ValidCommitBean) {
 			model.addAttribute("root", ((ValidCommitBean)commit).getRoot());			
