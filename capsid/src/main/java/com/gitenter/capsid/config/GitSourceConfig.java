@@ -14,36 +14,27 @@ public class GitSourceConfig {
 	@Profile("local")
 	@Bean
 	public GitSource stsGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
-		return gitSource;
+		return new GitSource(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
 	}
 	
+	/*
+	 * This is the path web-app container sees, not the path for git container sees.
+	 */
 	@Profile("docker")
 	@Bean
 	public GitSource dockerGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
-		return gitSource;
+		return new GitSource("/data");
 	}
 
 	@Profile("staging")
 	@Bean
 	public GitSource stagingGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
-		return gitSource;
+		return new GitSource("/data");
 	}
 	
 	@Profile("production")
 	@Bean
 	public GitSource productionGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/data");
-		return gitSource;
+		return new GitSource("/data");
 	}
 }

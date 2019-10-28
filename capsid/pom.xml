@@ -14,12 +14,6 @@
     <name>Capsid</name>
     <description>The web layer</description>
 
-    <properties>
-        <spring-boot-version>2.1.6.RELEASE</spring-boot-version>
-        <spring-version>5.1.9.RELEASE</spring-version>
-        <commonmark-version>0.12.1</commonmark-version>
-    </properties>
-
     <build>
         <plugins>
             <!-- This is to avoid the "webxml attribute is required" error.
@@ -177,13 +171,9 @@
             <artifactId>jstl</artifactId>
         </dependency>
         <dependency>
-            <!-- Can't go with the newest version, e.g., 3.0.1. Otherwise will get
-                `java.lang.NoClassDefFoundError` for `redis.clients.util.SafeEncoder`.
-                Need to match with Spring Boot version.
-                https://stackoverflow.com/questions/33128318/why-getting-noclassdeffound-error-for-jedisconnection-when-using-spring-redis -->
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>2.9.0</version>
+            <version>3.1.0</version>
             <type>jar</type>
         </dependency>
 

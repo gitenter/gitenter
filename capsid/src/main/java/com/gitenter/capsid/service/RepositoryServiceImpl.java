@@ -10,18 +10,18 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.service.exception.CommitShaNotExistException;
-import com.gitenter.capsid.service.exception.DocumentNotExistException;
+import com.gitenter.capsid.service.exception.IncludeFileNotExistException;
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.protease.dao.auth.RepositoryGitUpdateFactory;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitGitUpdateFactory;
 import com.gitenter.protease.dao.git.CommitRepository;
-import com.gitenter.protease.dao.git.DocumentRepository;
+import com.gitenter.protease.dao.git.IncludeFileRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
-import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.FileBean;
+import com.gitenter.protease.domain.git.IncludeFileBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
 @Service
@@ -29,7 +29,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 	
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired CommitRepository commitRepository;
-	@Autowired DocumentRepository documentRepository;
+	@Autowired IncludeFileRepository includeFileRepository;
 	
 	@Autowired private RepositoryGitUpdateFactory repositoryGitUpdateFactory;
 	@Autowired private CommitGitUpdateFactory commitGitUpdateFactory;
@@ -84,25 +84,25 @@ public class RepositoryServiceImpl implements RepositoryService {
 	}
 
 	@Override
-	public DocumentBean getDocumentFromCommitShaAndRelativePath(
+	public IncludeFileBean getIncludeFileFromCommitShaAndRelativePath(
 			String commitSha, 
 			String relativePath) throws IOException, GitAPIException {
 	
-		List<DocumentBean> documents = documentRepository.findByCommitShaAndRelativePath(commitSha, relativePath);
-		if (documents.size() == 0) {
-			throw new DocumentNotExistException(commitSha, relativePath);
+		List<IncludeFileBean> files = includeFileRepository.findByCommitShaAndRelativePath(commitSha, relativePath);
+		if (files.size() == 0) {
+			throw new IncludeFileNotExistException(commitSha, relativePath);
 		}
 		
-		DocumentBean document = documents.get(0);
+		IncludeFileBean file = files.get(0);
 		
-		commitGitUpdateFactory.update(document.getCommit());
-		repositoryGitUpdateFactory.update(document.getCommit().getRepository());
+		commitGitUpdateFactory.update(file.getCommit());
+		repositoryGitUpdateFactory.update(file.getCommit().getRepository());
 		
-		return document;
+		return file;
 	}
 
 	@Override
-	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativePath(
+	public IncludeFileBean getIncludeFileFromRepositoryIdAndBranchAndRelativePath(
 			Integer repositoryId, 
 			String branchName, 
 			String relativePath) throws IOException, GitAPIException {
@@ -111,15 +111,15 @@ public class RepositoryServiceImpl implements RepositoryService {
 		assert commit instanceof ValidCommitBean;
 		ValidCommitBean validCommit = (ValidCommitBean)commit;
 		
-		List<DocumentBean> documents = documentRepository.findByCommitShaAndRelativePath(commit.getSha(), relativePath);
-		if (documents.size() == 0) {
-			throw new DocumentNotExistException(repositoryId, branchName, relativePath);
+		List<IncludeFileBean> includeFiles = includeFileRepository.findByCommitShaAndRelativePath(commit.getSha(), relativePath);
+		if (includeFiles.size() == 0) {
+			throw new IncludeFileNotExistException(repositoryId, branchName, relativePath);
 		}
 		
-		DocumentBean document = documents.get(0);
-		document.setCommit(validCommit);
+		IncludeFileBean includeFile = includeFiles.get(0);
+		includeFile.setCommit(validCommit);
 		
-		return document;
+		return includeFile;
 	}
 
 	@Override

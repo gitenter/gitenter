@@ -8,9 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,7 +30,16 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(schema = "review", name = "in_review_document")
-public class InReviewDocumentBean extends DocumentBean implements ModelBean {
+public class InReviewDocumentBean implements ModelBean {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id", updatable=false)
+	private Integer id;
+	
+	@OneToOne(targetEntity=DocumentBean.class, fetch=FetchType.EAGER, optional=false)
+	@JoinColumn(name="id", referencedColumnName="id")
+    private DocumentBean document;
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -47,9 +60,9 @@ public class InReviewDocumentBean extends DocumentBean implements ModelBean {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date statusSetupAt;
 	
-	@OneToMany(targetEntity=DiscussionTopicBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="document")
+	@OneToMany(targetEntity=DiscussionTopicBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="inReviewDocument")
 	private List<DiscussionTopicBean> discussionTopics;
 	
-	@OneToMany(targetEntity=VoteBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="document")
+	@OneToMany(targetEntity=VoteBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="inReviewDocument")
 	private List<VoteBean> votes;
 }

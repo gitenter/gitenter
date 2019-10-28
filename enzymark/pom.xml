@@ -14,10 +14,6 @@
     <name>Enzymark</name>
     <description>The utilities</description>
 
-    <properties>
-        <commonmark-version>0.12.1</commonmark-version>
-    </properties>
-
     <dependencies>
         <!-- local packages -->
         <dependency>
@@ -60,9 +56,14 @@
             <version>${commonmark-version}</version>
         </dependency>
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.25</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <!--

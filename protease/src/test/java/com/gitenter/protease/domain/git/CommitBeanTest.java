@@ -132,13 +132,14 @@ public class CommitBeanTest {
 		assert item instanceof ValidCommitBean;
 		ValidCommitBean validItem = (ValidCommitBean)item;
 		
-		DocumentBean file = validItem.getDocument("file");
-		assertEquals(file.getRelativePath(), "file");
-		assertEquals(file.getName(), "file");
-		assertEquals(new String(file.getBlobContent()), "content");
+		IncludeFileBean file = validItem.getIncludeFile("file");
+		assert file instanceof DocumentBean;
+		DocumentBean document = (DocumentBean)file;
+		assertEquals(document.getRelativePath(), "file");
+		assertEquals(document.getName(), "file");
+		assertEquals(new String(document.getBlobContent()), "content");
 		
-		assertEquals(file.getCommit().getId(), Integer.valueOf(1));
-		assertEquals(file.getTraceableItems().size(), 1);
+		assertEquals(document.getCommit().getId(), Integer.valueOf(1));
 	}
 	
 	/*

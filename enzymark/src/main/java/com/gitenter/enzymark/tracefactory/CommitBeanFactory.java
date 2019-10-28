@@ -9,7 +9,7 @@ import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.enzymark.traceanalyzer.TraceAnalyzerException;
-import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
+import com.gitenter.enzymark.traceanalyzer.TraceableFile;
 import com.gitenter.enzymark.traceanalyzer.TraceableItem;
 import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
 import com.gitenter.gitar.GitCommit;
@@ -17,6 +17,7 @@ import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 public class CommitBeanFactory {
@@ -34,19 +35,28 @@ public class CommitBeanFactory {
 			validCommit.setFromGitCommit(gitCommit);
 			
 			Map<TraceableItem,TraceableItemBean> traceabilityIterateMap = new HashMap<TraceableItem,TraceableItemBean>();
-			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
+			for (TraceableFile traceableFile : traceableRepository.getTraceableFiles()) {
 				
+				/*
+				 * TODO:
+				 * Traceable files can either be documents, or other files. 
+				 * Should distinguish in here.
+				 */
 				DocumentBean document = new DocumentBean();
+				document.setRelativePath(traceableFile.getRelativePath());
+				document.setFileType(traceableFile.getFileType());
 				document.setCommit(validCommit);
-				validCommit.addDocument(document);
+				validCommit.addIncludeFile(document);
 				
-				document.setRelativePath(traceableDocument.getRelativePath());
+				TraceableDocumentBean traceableDocumentBean = new TraceableDocumentBean();
+				traceableDocumentBean.setDocument(document);
+				document.setTraceableDocument(traceableDocumentBean);
 				
-				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
+				for (TraceableItem traceableItem : traceableFile.getTraceableItems()) {
 					
 					TraceableItemBean itemBean = new TraceableItemBean();
-					itemBean.setDocument(document);
-					document.addTraceableItem(itemBean);
+					itemBean.setTraceableDocument(traceableDocumentBean);
+					traceableDocumentBean.addTraceableItem(itemBean);
 					
 					itemBean.setItemTag(traceableItem.getTag());
 					itemBean.setContent(traceableItem.getContent());
@@ -55,7 +65,7 @@ public class CommitBeanFactory {
 				}
 			}
 				
-			for (TraceableDocument traceableDocument : traceableRepository.getTraceableDocuments()) {
+			for (TraceableFile traceableDocument : traceableRepository.getTraceableFiles()) {
 				for (TraceableItem traceableItem : traceableDocument.getTraceableItems()) {
 					
 					/*

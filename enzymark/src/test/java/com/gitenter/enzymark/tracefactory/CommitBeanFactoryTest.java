@@ -19,6 +19,7 @@ import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.InvalidCommitBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 public class CommitBeanFactoryTest {
@@ -57,6 +58,8 @@ public class CommitBeanFactoryTest {
 		assertEquals(validCommit.getDocuments().size(), 2);
 		for (DocumentBean document : validCommit.getDocuments()) {
 			
+			TraceableDocumentBean traceableDocument = document.getTraceableDocument();
+			
 			/*
 			 * Can't use `validCommit.getDocument("file1.md")` because that will trigger
 			 * `getFile` which needs the placeholders which are not properly setup
@@ -64,9 +67,9 @@ public class CommitBeanFactoryTest {
 			 */
 			switch (document.getRelativePath()) {
 			case "root-file.md":
-				assertEquals(document.getTraceableItems().size(), 2);
+				assertEquals(traceableDocument.getTraceableItems().size(), 2);
 				
-				for (TraceableItemBean traceableItem : document.getTraceableItems()) {
+				for (TraceableItemBean traceableItem : traceableDocument.getTraceableItems()) {
 					switch (traceableItem.getItemTag()) {
 					case "tag1":
 						assertEquals(traceableItem.getDownstreamItems().size(), 2);
@@ -87,8 +90,8 @@ public class CommitBeanFactoryTest {
 				break;
 			
 			case "nested-folder/nested-file.md":
-				assertEquals(document.getTraceableItems().size(), 1);
-				TraceableItemBean traceableItem = document.getTraceableItems().get(0);
+				assertEquals(traceableDocument.getTraceableItems().size(), 1);
+				TraceableItemBean traceableItem = traceableDocument.getTraceableItems().get(0);
 				assertEquals(traceableItem.getDownstreamItems().size(), 0);
 				assertEquals(traceableItem.getUpstreamItems().size(), 2);
 				break;

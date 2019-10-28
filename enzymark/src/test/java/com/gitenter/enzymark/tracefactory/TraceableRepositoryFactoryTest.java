@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.gitenter.enzymark.traceanalyzer.TraceAnalyzerException;
-import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
+import com.gitenter.enzymark.traceanalyzer.TraceableFile;
 import com.gitenter.enzymark.traceanalyzer.TraceableItem;
 import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
 import com.gitenter.gitar.GitFolder;
@@ -22,6 +22,44 @@ import com.gitenter.gitar.GitWorkspace;
 public class TraceableRepositoryFactoryTest {
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
+	
+	@Test 
+	public void testMarkdownCanBeTraceable() throws Exception {
+		
+		File directory = folder.newFolder("repo");
+		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
+		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
+		
+		addAFile(directory, "file.md", "");
+		
+		workspace.add();
+		workspace.commit("dummy commit message");
+		GitFolder gitFolder = workspace.getRoot();
+		
+		TraceableRepositoryFactory factory = new TraceableRepositoryFactory();
+		TraceableRepository traceableRepository = factory.getTraceableRepository(gitFolder);
+		
+		assertEquals(traceableRepository.getTraceableFiles().size(), 1);
+	}
+	
+	@Test 
+	public void testConfigYamlCannotBeTraceable() throws Exception {
+		
+		File directory = folder.newFolder("repo");
+		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
+		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
+		
+		addAFile(directory, "gitenter.yml", "");
+		
+		workspace.add();
+		workspace.commit("dummy commit message");
+		GitFolder gitFolder = workspace.getRoot();
+		
+		TraceableRepositoryFactory factory = new TraceableRepositoryFactory();
+		TraceableRepository traceableRepository = factory.getTraceableRepository(gitFolder);
+		
+		assertEquals(traceableRepository.getTraceableFiles().size(), 0);	
+	}
 
 	@Test
 	public void testBuildTraceableRepositorySingleFile() throws IOException, GitAPIException, TraceAnalyzerException {
@@ -43,8 +81,8 @@ public class TraceableRepositoryFactoryTest {
 		TraceableRepositoryFactory factory = new TraceableRepositoryFactory();
 		TraceableRepository traceableRepository = factory.getTraceableRepository(gitFolder);
 		
-		assertEquals(traceableRepository.getTraceableDocuments().size(), 1);
-		TraceableDocument document = traceableRepository.getTraceableDocuments().get(0);
+		assertEquals(traceableRepository.getTraceableFiles().size(), 1);
+		TraceableFile document = traceableRepository.getTraceableFiles().get(0);
 		
 		for (TraceableItem currentItem : document.getTraceableItems()) {
 
@@ -86,9 +124,9 @@ public class TraceableRepositoryFactoryTest {
 		TraceableRepositoryFactory factory = new TraceableRepositoryFactory();
 		TraceableRepository traceableRepository = factory.getTraceableRepository(gitFolder);
 		
-		assertEquals(traceableRepository.getTraceableDocuments().size(), 2);
+		assertEquals(traceableRepository.getTraceableFiles().size(), 2);
 		
-		for (TraceableDocument document : traceableRepository.getTraceableDocuments()) {
+		for (TraceableFile document : traceableRepository.getTraceableFiles()) {
 			for (TraceableItem currentItem : document.getTraceableItems()) {
 	
 				if (currentItem.getTag().equals("tag1")) {

@@ -6,8 +6,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
-import com.gitenter.protease.domain.git.DocumentBean;
 import com.gitenter.protease.domain.git.FileBean;
+import com.gitenter.protease.domain.git.IncludeFileBean;
 
 public interface RepositoryService {
 
@@ -20,10 +20,10 @@ public interface RepositoryService {
 			Integer repositoryId, 
 			String commitSha) throws IOException, GitAPIException;
 	
-	public DocumentBean getDocumentFromCommitShaAndRelativePath(
+	public IncludeFileBean getIncludeFileFromCommitShaAndRelativePath(
 			String commitSha, 
 			String relativePath) throws IOException, GitAPIException;
-	public DocumentBean getDocumentFromRepositoryIdAndBranchAndRelativePath(
+	public IncludeFileBean getIncludeFileFromRepositoryIdAndBranchAndRelativePath(
 			Integer repositoryId, 
 			String branchName, 
 			String relativePath) throws IOException, GitAPIException;

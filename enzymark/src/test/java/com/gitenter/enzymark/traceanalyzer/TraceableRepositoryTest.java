@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.gitenter.protease.domain.git.FileType;
+
 public class TraceableRepositoryTest {
 	
 	@Test
@@ -17,9 +19,9 @@ public class TraceableRepositoryTest {
 		String textContent =
 				  "- [tag1] a traceable item.\n"
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
-		TraceableDocument document = new TraceableDocument("/fake/relative/file/path/for/document1");
+		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/document1.md", FileType.MARKDOWN);
 		document.parse(textContent);
-		repository.addTraceableDocument(document);
+		repository.addTraceableFile(document);
 		
 		repository.refreshUpstreamAndDownstreamItems();		
 		
@@ -63,22 +65,22 @@ public class TraceableRepositoryTest {
 		String textContent1 = 
 				  "- [tag1] a traceable item.\n"
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
-		String path1 = "/fake/relative/file/path/for/document1";
-		TraceableDocument document1 = new TraceableDocument(path1);
+		String path1 = "/fake/relative/file/path/for/document1.md";
+		TraceableFile document1 = new TraceableFile(path1, FileType.MARKDOWN);
 		document1.parse(textContent1);
-		repository.addTraceableDocument(document1);
+		repository.addTraceableFile(document1);
 		
 		String testContent2 = "- [tag3]{tag1,tag2} a traceable item with cross-document reference.";
-		String path2 = "/fake/relative/file/path/for/document2";
-		TraceableDocument document2 = new TraceableDocument(path2);
+		String path2 = "/fake/relative/file/path/for/document2.md";
+		TraceableFile document2 = new TraceableFile(path2, FileType.MARKDOWN);
 		document2.parse(testContent2);
-		repository.addTraceableDocument(document2);
+		repository.addTraceableFile(document2);
 		
 		repository.refreshUpstreamAndDownstreamItems();
 		
-		assertEquals(repository.getTraceableDocuments().size(), 2);
+		assertEquals(repository.getTraceableFiles().size(), 2);
 		
-		for (TraceableDocument document : repository.getTraceableDocuments()) {
+		for (TraceableFile document : repository.getTraceableFiles()) {
 			for (TraceableItem currentItem : document.getTraceableItems()) {
 				
 				if (currentItem.getTag().equals("tag1")) {
@@ -149,9 +151,9 @@ public class TraceableRepositoryTest {
 		String textContent = 
 				  "- [tag] a traceable item.\n"
 				+ "- [tag] another traceable item with tag conflict.";
-		TraceableDocument document = new TraceableDocument("/fake/relative/file/path/for/document1");
+		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/document.md", FileType.MARKDOWN);
 		document.parse(textContent);
-		repository.addTraceableDocument(document);
+		repository.addTraceableFile(document);
 		
 		repository.refreshUpstreamAndDownstreamItems();	
 	}
@@ -162,14 +164,14 @@ public class TraceableRepositoryTest {
 		TraceableRepository repository = new TraceableRepository();
 		
 		String content1 = "- [tag] a traceable item.";
-		TraceableDocument document1 = new TraceableDocument("/fake/relative/file/path/for/document1");
+		TraceableFile document1 = new TraceableFile("/fake/relative/file/path/for/document1.md", FileType.MARKDOWN);
 		document1.parse(content1);
-		repository.addTraceableDocument(document1);
+		repository.addTraceableFile(document1);
 		
 		String content2 = "- [tag] a traceable item with cross-document tag conflict.";
-		TraceableDocument document2 = new TraceableDocument("/fake/relative/file/path/for/document2");
+		TraceableFile document2 = new TraceableFile("/fake/relative/file/path/for/document2.md", FileType.MARKDOWN);
 		document2.parse(content2);
-		repository.addTraceableDocument(document2);
+		repository.addTraceableFile(document2);
 		
 		repository.refreshUpstreamAndDownstreamItems();	
 	}
@@ -180,9 +182,9 @@ public class TraceableRepositoryTest {
 		TraceableRepository repository = new TraceableRepository();
 		
 		String content = "- [tag]{refer-not-exist} another traceable item with reference not exist.";
-		TraceableDocument document = new TraceableDocument("/fake/relative/file/path/for/document1");
+		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/documen.md", FileType.MARKDOWN);
 		document.parse(content);
-		repository.addTraceableDocument(document);
+		repository.addTraceableFile(document);
 		
 		repository.refreshUpstreamAndDownstreamItems();	
 	}

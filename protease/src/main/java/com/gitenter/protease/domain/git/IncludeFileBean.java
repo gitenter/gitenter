@@ -1,4 +1,6 @@
-package com.gitenter.protease.domain.review;
+package com.gitenter.protease.domain.git;
+
+import java.io.IOException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,17 +15,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import com.gitenter.protease.domain.ModelBean;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/*
+ * It seems if we extend another bean, the attributes
+ * in the superclass automatically becomes @Transient.
+ */
 @Getter
 @Setter
 @Entity
-@Table(schema = "review", name = "discussion_topic")
+@Table(schema = "git", name = "include_file")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class DiscussionTopicBean implements ModelBean {
+public class IncludeFileBean extends FileBean implements ModelBean {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -32,10 +40,18 @@ public class DiscussionTopicBean implements ModelBean {
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="in_review_document_id")
-	private InReviewDocumentBean inReviewDocument;
+	@JoinColumn(name="commit_id")
+	private ValidCommitBean commit;
 	
 	@NotNull
-	@Column(name="line_number", updatable=false)
-	private Integer lineNumber;
+	@Column(name="relative_path", updatable=false)
+	private String relativePath;
+	
+	public String getContent() throws IOException, GitAPIException {
+		return new String(getBlobContent());
+	}
+	
+	@NotNull
+	@Column(name="file_type")
+	private FileType fileType;
 }

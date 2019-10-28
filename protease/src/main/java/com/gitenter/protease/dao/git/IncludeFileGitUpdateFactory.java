@@ -13,31 +13,31 @@ import com.gitenter.gitar.GitHistoricalFile;
 import com.gitenter.gitar.GitRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.GitUpdateFactory;
-import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.IncludeFileBean;
 
 @Component
-public class DocumentGitUpdateFactory implements GitUpdateFactory<DocumentBean> {
+public class IncludeFileGitUpdateFactory implements GitUpdateFactory<IncludeFileBean> {
 
 	@Autowired private GitSource gitSource;
 	
-	public void update(DocumentBean document) throws IOException, GitAPIException {
+	public void update(IncludeFileBean includeFile) throws IOException, GitAPIException {
 
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(
-				document.getCommit().getRepository().getOrganization().getName(), 
-				document.getCommit().getRepository().getName());
+				includeFile.getCommit().getRepository().getOrganization().getName(), 
+				includeFile.getCommit().getRepository().getName());
 		
 		GitRepository gitRepository = GitBareRepository.getInstance(repositoryDirectory);
-		GitCommit gitCommit = gitRepository.getCommit(document.getCommit().getSha());
-		GitHistoricalFile gitFile = gitCommit.getFile(document.getRelativePath());
+		GitCommit gitCommit = gitRepository.getCommit(includeFile.getCommit().getSha());
+		GitHistoricalFile gitFile = gitCommit.getFile(includeFile.getRelativePath());
 		
-		assert document.getRelativePath().equals(gitFile.getRelativePath());
-		document.setFromGit(gitFile);
+		assert includeFile.getRelativePath().equals(gitFile.getRelativePath());
+		includeFile.setFromGit(gitFile);
 
 		/*
 		 * TODO:
 		 * But validCommit placeholders is not setup yet.
 		 */
-		assert document.getCommit().getSha().equals(gitCommit.getSha());
-		document.getCommit().setFromGitCommit(gitCommit);
+		assert includeFile.getCommit().getSha().equals(gitCommit.getSha());
+		includeFile.getCommit().setFromGitCommit(gitCommit);
 	}
 }

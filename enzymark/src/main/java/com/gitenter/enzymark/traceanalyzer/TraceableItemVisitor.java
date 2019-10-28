@@ -12,11 +12,11 @@ import com.gitenter.enzymark.traceparser.TraceableItemParser;
 
 class TraceableItemVisitor extends AbstractVisitor {
 	
-	private TraceableDocument document;
+	private TraceableFile document;
 	
 	private final HtmlRenderer defaultRenderer;
 	
-	TraceableItemVisitor(TraceableDocument document) {
+	TraceableItemVisitor(TraceableFile document) {
 		
 		defaultRenderer = HtmlRenderer.builder().build();
 		this.document = document;

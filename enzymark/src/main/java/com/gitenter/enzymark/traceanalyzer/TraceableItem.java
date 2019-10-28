@@ -16,7 +16,7 @@ public class TraceableItem {
 	private String content;
 	
 	@Getter
-	private TraceableDocument document;
+	private TraceableFile document;
 	
 	@Getter
 	private List<TraceableItem> upstreamItems = new ArrayList<TraceableItem>();
@@ -32,7 +32,7 @@ public class TraceableItem {
 	 */
 	String[] upstreamItemTags;
 	
-	TraceableItem(String tag, String content, TraceableDocument document, String[] upstreamItemTags) {
+	TraceableItem(String tag, String content, TraceableFile document, String[] upstreamItemTags) {
 		this.tag = tag;
 		this.content = content;
 		this.document = document;

@@ -123,21 +123,6 @@ CREATE TABLE auth.member_feature_toggle (
 	is_on boolean NOT NULL
 );
 
--- TODO:
--- Add a lock on whether the git files are allowed to be modified (as obviously)
--- you don't want multiple people/server instance to `git push` which trigger the
--- modification of the git files of one repo at the same time.
--- Or maybe we should use Redis to implement this lock.
-CREATE TABLE auth.repository_feature_toggle (
-	id serial PRIMARY KEY,
-	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
-
-	feature_shortname char(1) NOT NULL,
-	UNIQUE(repository_id, feature_shortname),
-
-	is_on boolean NOT NULL
-);
-
 --------------------------------------------------------------------------------
 
 CREATE SCHEMA git;
@@ -194,42 +179,51 @@ CREATE TABLE git.ignored_commit (
 	id serial PRIMARY KEY REFERENCES git.git_commit (id) ON DELETE CASCADE
 );
 
-CREATE TABLE git.document (
-	id serial PRIMARY KEY,
+CREATE TABLE git.include_file (
+    id serial PRIMARY KEY,
 	commit_id serial REFERENCES git.valid_commit (id) ON DELETE CASCADE,
 	relative_path text NOT NULL,
+    file_type text NOT NULL CHECK (file_type='markdown' OR file_type='gherkin'),
 	UNIQUE(commit_id, relative_path)
 );
 
-CREATE FUNCTION git.commit_id_from_document (integer)
+CREATE FUNCTION git.commit_id_from_file (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT doc.commit_id INTO return_id FROM git.document AS doc
-	WHERE doc.id = $1;
+	SELECT file.commit_id INTO return_id FROM git.include_file AS file
+	WHERE file.id = $1;
 	RETURN return_id;
 END;
 $return_id$ LANGUAGE plpgsql
 IMMUTABLE;
 
+CREATE TABLE git.document (
+	id serial PRIMARY KEY REFERENCES git.include_file (id) ON DELETE CASCADE
+);
+
 --------------------------------------------------------------------------------
 
 CREATE SCHEMA traceability;
 
+CREATE TABLE traceability.traceable_document (
+	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE
+);
+
 CREATE TABLE traceability.traceable_item (
 	id serial PRIMARY KEY,
 
-	document_id serial REFERENCES git.document (id) ON DELETE CASCADE,
+	traceable_document_id serial REFERENCES traceability.traceable_document (id) ON DELETE CASCADE,
 	item_tag text NOT NULL,
 	content text,
-	UNIQUE (document_id, item_tag)
+	UNIQUE (traceable_document_id, item_tag)
 );
 
-CREATE FUNCTION traceability.document_id_from_traceable_item (integer)
+CREATE FUNCTION traceability.traceable_document_id_from_traceable_item (integer)
 RETURNS integer AS $return_id$
 DECLARE return_id integer;
 BEGIN
-	SELECT tra.document_id INTO return_id FROM traceability.traceable_item AS tra
+	SELECT tra.traceable_document_id INTO return_id FROM traceability.traceable_item AS tra
 	WHERE tra.id = $1;
 	RETURN return_id;
 END;
@@ -238,7 +232,7 @@ IMMUTABLE;
 
 CREATE UNIQUE INDEX traceable_item_tag_unique_per_commit_idx
 	ON traceability.traceable_item (
-		git.commit_id_from_document(id),
+		git.commit_id_from_file(id),
 		item_tag
 );
 
@@ -251,8 +245,8 @@ CREATE TABLE traceability.traceability_map (
 	 * Here is a double-JOIN. If becomes so slow, may create another
 	 * method to do JOIN inside, or even remove this constrain.
 	 */
-	CHECK (git.commit_id_from_document(traceability.document_id_from_traceable_item(upstream_item_id))
-		= git.commit_id_from_document(traceability.document_id_from_traceable_item(downstream_item_id)))
+	CHECK (git.commit_id_from_file(traceability.traceable_document_id_from_traceable_item(upstream_item_id))
+		= git.commit_id_from_file(traceability.traceable_document_id_from_traceable_item(downstream_item_id)))
 );
 
 --------------------------------------------------------------------------------
@@ -317,7 +311,7 @@ CREATE TABLE review.finalization_subsection (
 CREATE TABLE review.in_review_document (
 	id serial PRIMARY KEY REFERENCES git.document (id) ON DELETE CASCADE,
 	subsection_id serial REFERENCES review.subsection (id) ON DELETE CASCADE,
-	CHECK (git.commit_id_from_document(id) = subsection_id),
+	CHECK (git.commit_id_from_file(id) = subsection_id),
 
 	previous_version_id integer REFERENCES review.in_review_document (id) ON DELETE CASCADE,
 
@@ -333,16 +327,16 @@ CREATE TABLE review.in_review_document (
 
 CREATE TABLE review.vote (
 	id serial PRIMARY KEY,
-	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	in_review_document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
 	reviewer_id serial REFERENCES review.reviewer (id) ON DELETE CASCADE,
-	UNIQUE (document_id, reviewer_id),
+	UNIQUE (in_review_document_id, reviewer_id),
 
 	status_shortname char(1) NOT NULL CHECK (status_shortname='A' OR status_shortname='P' OR status_shortname='R' OR status_shortname='D')
 );
 
 CREATE TABLE review.discussion_topic (
 	id serial PRIMARY KEY,
-	document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
+	in_review_document_id serial REFERENCES review.in_review_document (id) ON DELETE CASCADE,
 	line_number integer NOT NULL
 );
 

@@ -14,7 +14,15 @@ public class GitSource {
 	 * in JDBC. Will think carefully how to implement it
 	 * later.
 	 */
-	private String rootFolderPath;
+	final private String rootFolderPath;
+	
+	public GitSource(String rootFolderPath) {
+		this.rootFolderPath = rootFolderPath;
+	}
+	
+	public GitSource(File rootFile) {
+		this.rootFolderPath = rootFile.getPath();
+	}
 	
 	public File getRootDirectory() {
 		return new File(rootFolderPath);
@@ -60,13 +68,5 @@ public class GitSource {
 			throw new IOException(bareRepositoryDirectory+" is not a bare repository directory");
 		}
 		return gitFolder.substring(0, gitFolder.length()-4);
-	}
-
-	public void setRootFolderPath(String rootFolderPath) {
-		this.rootFolderPath = rootFolderPath;
-	}
-	
-	public void setRootFolderPath(File file) {
-		this.rootFolderPath = file.getPath();
 	}
 }

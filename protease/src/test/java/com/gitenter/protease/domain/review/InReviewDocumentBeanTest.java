@@ -1,6 +1,7 @@
 package com.gitenter.protease.domain.review;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -20,13 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.dao.git.DocumentRepository;
+import com.gitenter.protease.dao.git.IncludeFileRepository;
 import com.gitenter.protease.domain.git.DocumentBean;
-import com.gitenter.protease.domain.review.DiscussionTopicBean;
-import com.gitenter.protease.domain.review.InReviewDocumentBean;
-import com.gitenter.protease.domain.review.OnlineDiscussionTopicBean;
-import com.gitenter.protease.domain.review.ReviewMeetingRecordBean;
-import com.gitenter.protease.domain.review.ReviewStatus;
+import com.gitenter.protease.domain.git.IncludeFileBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -51,35 +48,41 @@ public class InReviewDocumentBeanTest {
 	 * Cannot go with e.g. "InReviewDocumentRepository", for the same reason
 	 * that git data cannot be loaded as "SubsectionBean".
 	 */
-	@Autowired DocumentRepository repository;
+	@Autowired IncludeFileRepository repository;
 
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimal() throws IOException, GitAPIException {
 		
-		DocumentBean item = repository.findById(1).get();
-		assertTrue(item instanceof InReviewDocumentBean);
+		/*
+		 * TODO:
+		 * How Hibernate handles mixin, if two different subclasses extend it?
+		 */
+		IncludeFileBean item = repository.findById(1).get();
+		assertTrue(item instanceof DocumentBean);
 		
-		InReviewDocumentBean document = (InReviewDocumentBean)item;
+		DocumentBean document = (DocumentBean)item;
+		InReviewDocumentBean inReviewDocument = document.getInReviewDocument();
+		assertNotNull(inReviewDocument);
 		
 		/*
 		 * TODO:
 		 * Git data are not loaded for subsection.
 		 */
-		assertEquals(document.getSubsection().getReview().getVersionNumber(), "v1");
+		assertEquals(inReviewDocument.getSubsection().getReview().getVersionNumber(), "v1");
 
-		assertEquals(document.getStatus(), ReviewStatus.APPROVED);
+		assertEquals(inReviewDocument.getStatus(), ReviewStatus.APPROVED);
 		
-		assertEquals(document.getDiscussionTopics().size(), 2);
-		for (DiscussionTopicBean discussionTopic : document.getDiscussionTopics()) {
+		assertEquals(inReviewDocument.getDiscussionTopics().size(), 2);
+		for (DiscussionTopicBean discussionTopic : inReviewDocument.getDiscussionTopics()) {
 			if (discussionTopic.getId().equals(1)) {
 				/*
 				 * The double-linked document is actually been git loaded, thanks for
 				 * a singleton setup of Hibernate ORM.
 				 */
-				assertEquals(discussionTopic.getDocument().getRelativePath(), item.getRelativePath());
-				assertEquals(discussionTopic.getDocument().getBlobContent(), item.getBlobContent());
+				assertEquals(discussionTopic.getInReviewDocument().getDocument().getRelativePath(), item.getRelativePath());
+				assertEquals(discussionTopic.getInReviewDocument().getDocument().getBlobContent(), item.getBlobContent());
 				assertEquals(discussionTopic.getLineNumber(), Integer.valueOf(1));
 				
 				assertTrue(discussionTopic instanceof ReviewMeetingRecordBean);
@@ -99,5 +102,4 @@ public class InReviewDocumentBeanTest {
 			}
 		}
 	}
-
 }

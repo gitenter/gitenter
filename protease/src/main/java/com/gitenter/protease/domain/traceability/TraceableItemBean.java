@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.gitenter.protease.domain.ModelBean;
-import com.gitenter.protease.domain.git.DocumentBean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,8 +35,8 @@ public class TraceableItemBean implements ModelBean {
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="document_id")
-	private DocumentBean document;
+	@JoinColumn(name="traceable_document_id")
+	private TraceableDocumentBean traceableDocument;
 	
 	@NotNull
 	@Column(name="item_tag", updatable=false)

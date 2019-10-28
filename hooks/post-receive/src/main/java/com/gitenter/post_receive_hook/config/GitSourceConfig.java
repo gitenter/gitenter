@@ -25,36 +25,24 @@ public class GitSourceConfig {
 	@Profile("local")
 	@Bean
 	public GitSource stsGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
-		return gitSource;
+		return new GitSource(new File(System.getProperty("user.home"), "Workspace/gitenter-test/local-git-server"));
 	}
 	
 	@Profile("docker")
 	@Bean
 	public GitSource dockerGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/git");
-		return gitSource;
+		return new GitSource("/home/git");
 	}
 
 	@Profile("staging")
 	@Bean
 	public GitSource stagingGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/git");
-		return gitSource;
+		return new GitSource("/home/git");
 	}
 	
 	@Profile("production")
 	@Bean
 	public GitSource productionGitSource() {
-		
-		GitSource gitSource = new GitSource();
-		gitSource.setRootFolderPath("/home/git");
-		return gitSource;
+		return new GitSource("/home/git");
 	}
 }

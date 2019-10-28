@@ -14,8 +14,6 @@
     <description>The data model and persistent layer</description>
 
     <properties>
-        <spring-version>5.1.8.RELEASE</spring-version>
-        <spring-data-version>2.1.9.RELEASE</spring-data-version>
         <jaxb-version>2.3.0</jaxb-version>
     </properties>
 
@@ -102,7 +100,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.4.3.Final</version>
+            <version>5.4.6.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -113,11 +111,12 @@
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
             <version>1.7.0</version>
+            <!-- TODO: Can upgrade to 2.3.0 but there are code/tests to fix -->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

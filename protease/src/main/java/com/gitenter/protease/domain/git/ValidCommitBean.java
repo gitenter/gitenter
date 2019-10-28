@@ -19,6 +19,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.util.GitPlaceholder;
 import com.gitenter.protease.domain.ModelBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,8 +51,28 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 	 * Probably still want to set it up, but use the explicit name
 	 * such as `getDocumentsGitUnbootstrapped()`.
 	 */
-	@OneToMany(targetEntity=DocumentBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
-	private List<DocumentBean> documents = new ArrayList<DocumentBean>();
+	@OneToMany(targetEntity=IncludeFileBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="commit")
+	private List<IncludeFileBean> includeFiles = new ArrayList<IncludeFileBean>();
+	
+	public List<DocumentBean> getDocuments() {
+		List<DocumentBean> documents = new ArrayList<DocumentBean>();
+		for (IncludeFileBean includeFile : includeFiles) {
+			if (includeFile instanceof DocumentBean) {
+				documents.add((DocumentBean)includeFile);
+			}
+		}
+		return documents;
+	}
+	
+	public List<TraceableDocumentBean> getTraceableDocuments() {
+		List<TraceableDocumentBean> traceableDocuments = new ArrayList<TraceableDocumentBean>();
+		for (DocumentBean document : getDocuments()) {
+			if (document.getTraceableDocument() != null) {
+				traceableDocuments.add(document.getTraceableDocument());
+			}
+		}
+		return traceableDocuments;
+	}
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
@@ -83,23 +104,22 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 	}
 	
 	@Transient
-	private Map<String,DocumentBean> documentMap;
+	private Map<String,IncludeFileBean> includeFileMap;
 	
-	private void lazilyInitializeDocumentMap() {
-		if (documentMap != null) {
+	private void lazilyInitializeIncludeFileMap() {
+		if (includeFileMap != null) {
 			return;
 		}
 		
-		documentMap = new HashMap<String,DocumentBean>();
-		for (DocumentBean document : documents) {
-			documentMap.put(document.getRelativePath(), document);
+		includeFileMap = new HashMap<String,IncludeFileBean>();
+		for (IncludeFileBean includeFile : getIncludeFiles()) {
+			includeFileMap.put(includeFile.getRelativePath(), includeFile);
 		}
 	}
 	
-	public boolean includeDocument(String relativePath) {
-		
-		lazilyInitializeDocumentMap();
-		return documentMap.containsKey(relativePath);
+	public boolean includeFile(String relativePath) {
+		lazilyInitializeIncludeFileMap();
+		return includeFileMap.containsKey(relativePath);
 	}
 	
 	/*
@@ -112,10 +132,10 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 	 * "DocumentRepository.findByCommitIdAndRelativePath()"
 	 * or "DocumentRepository.findByCommitShaAndRelativePath()"?
 	 */
-	public DocumentBean getDocument(String relativePath) throws IOException, GitAPIException {
+	public IncludeFileBean getIncludeFile(String relativePath) throws IOException, GitAPIException {
 
-		lazilyInitializeDocumentMap();
-		DocumentBean item = documentMap.get(relativePath);
+		lazilyInitializeIncludeFileMap();
+		IncludeFileBean item = includeFileMap.get(relativePath);
 		
 		if (item == null) {
 			return null;
@@ -137,8 +157,8 @@ public class ValidCommitBean extends CommitBean implements ModelBean {
 		return item;
 	}
 	
-	public boolean addDocument(DocumentBean document) {
-		boolean result = documents.add(document);
+	public boolean addIncludeFile(IncludeFileBean includeFile) {
+		boolean result = includeFiles.add(includeFile);
 		return result;
 	}
 }

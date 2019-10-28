@@ -2,5 +2,6 @@
 <dataset>
     <git_commit id="1" repository_id="1" sha="c36a5aed6e1c9f6a6c59bb21288a9d0bdbe93b73" />
     <valid_commit id="1" />
-    <document id="1" commit_id="1" relative_path="file" />
+    <include_file id="1" commit_id="1" relative_path="file" file_type="markdown" />
+    <document id="1" />
 </dataset>

@@ -8,11 +8,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.enzymark.traceanalyzer.ItemTagNotUniqueException;
 import com.gitenter.enzymark.traceanalyzer.TraceAnalyzerException;
-import com.gitenter.enzymark.traceanalyzer.TraceableDocument;
+import com.gitenter.enzymark.traceanalyzer.TraceableFile;
 import com.gitenter.enzymark.traceanalyzer.TraceableRepository;
 import com.gitenter.gitar.GitFile;
 import com.gitenter.gitar.GitFolder;
 import com.gitenter.gitar.GitPath;
+import com.gitenter.protease.domain.git.FileType;
 
 public class TraceableRepositoryFactory {
 	
@@ -54,12 +55,15 @@ public class TraceableRepositoryFactory {
 				 * and `gitar` becomes the testing mock of that microservice),
 				 * only that layer need to be changed.
 				 */
-				if (!gitFile.getRelativePath().equals("gitenter.properties")
-						&& gitFile.getMimeType().equals("text/markdown")) {
-					
-					TraceableDocument document = new TraceableDocument(gitFile.getRelativePath());
-					document.parse(new String(gitFile.getBlobContent()));
-					repository.addTraceableDocument(document);
+				
+				/*
+				 * YAML (`gitenter.yml`, ...) will have fileType==null, so will not count.
+				 */
+				FileType fileType = FileType.fromMimeType(gitFile.getMimeType());
+				if (fileType != null) {
+					TraceableFile traceableFile = new TraceableFile(gitFile.getRelativePath(), fileType);
+					traceableFile.parse(new String(gitFile.getBlobContent()));
+					repository.addTraceableFile(traceableFile);
 				}
 			}
 			else {

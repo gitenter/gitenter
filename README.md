@@ -159,7 +159,7 @@ Code deployment is currently setup through CircleCI.
 ## Unclassified TODOs and features
 
 + If only one single upstream item is provided, and it is in the same document/paragraph, should the item be just `tab` of the upstream one, rather than list separately with "hard to understand" link?
-+ [ ] No need for `enable_systemwide` value in `gitenter.properties`. An alternative way is to `git diff` (1) this properties file and (2) the specified included folders. If there is any change happens, then turn on the system; otherwise turn it off.
++ [ ] We can smartly decide to not redo the traceability analysis if `git diff` is none for the traceable files.
 + [ ] RNAtom id generator has a bug when the item is with empty upstream but in the form of `- [tag]` rather than `-[tag]{}`.
 + [ ] Currently domain layer is in charge of mapping to database table/working with ORM, while it also have non-ORM owned attributes which fill values from git. Repositories are in charge of load both. We have pain issue that when e.g. load a one-to-many object, the git values are not bootstrapped.
     + Separate the domain layer to the database access layer. Domain layer then have dual backup layers of ORM DTO and git DTO. Each DTO has its corresponding repository/DAO. Domain layer are queries by the (stateless) service layer, which further call the repositories/DAOs.

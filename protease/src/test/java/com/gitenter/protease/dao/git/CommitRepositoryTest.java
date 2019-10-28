@@ -27,7 +27,9 @@ import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
+import com.gitenter.protease.domain.git.FileType;
 import com.gitenter.protease.domain.git.ValidCommitBean;
+import com.gitenter.protease.domain.traceability.TraceableDocumentBean;
 import com.gitenter.protease.domain.traceability.TraceableItemBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -52,7 +54,7 @@ public class CommitRepositoryTest {
 	@Autowired CommitRepository commitRepository;
 	
 	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired DocumentRepository documentRepository;
+	@Autowired IncludeFileRepository documentRepository;
 
 	@Test
 	@DbUnitMinimalDataSetup
@@ -128,14 +130,19 @@ public class CommitRepositoryTest {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("file");
+		document.setFileType(FileType.MARKDOWN);
 		document.setCommit(commit);
-		commit.addDocument(document);
+		commit.addIncludeFile(document);
+		
+		TraceableDocumentBean traceableDocument = new TraceableDocumentBean();
+		traceableDocument.setDocument(document);
+		document.setTraceableDocument(traceableDocument);
 		
 		TraceableItemBean traceableItem = new TraceableItemBean();
 		traceableItem.setItemTag("tag");
 		traceableItem.setContent("content");
-		traceableItem.setDocument(document);
-		document.addTraceableItem(traceableItem);
+		traceableItem.setTraceableDocument(traceableDocument);
+		traceableDocument.addTraceableItem(traceableItem);
 		
 		traceableItem.setDownstreamItems(Arrays.asList(traceableItem));
 		traceableItem.setUpstreamItems(Arrays.asList(traceableItem));
@@ -161,12 +168,13 @@ public class CommitRepositoryTest {
 		assertTrue(reloadCommit instanceof ValidCommitBean);
 		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
 		
-		DocumentBean reloadDocument = reloadValidCommit.getDocument("file");
+		DocumentBean reloadDocument = (DocumentBean)reloadValidCommit.getIncludeFile("file");
 		assertEquals(reloadDocument.getName(), "file");
-		assertNull(reloadValidCommit.getDocument("file-does-not-exist"));
+		assertNull(reloadValidCommit.getIncludeFile("file-does-not-exist"));
 		
-		assertEquals(reloadDocument.getTraceableItems().size(), 1);
-		TraceableItemBean reloadTraceableItem = reloadDocument.getTraceableItems().get(0);
+		TraceableDocumentBean reloadTraceableDocument = reloadDocument.getTraceableDocument();
+		assertEquals(reloadTraceableDocument.getTraceableItems().size(), 1);
+		TraceableItemBean reloadTraceableItem = reloadTraceableDocument.getTraceableItems().get(0);
 		assertEquals(reloadTraceableItem.getItemTag(), "tag");
 		assertEquals(reloadTraceableItem.getContent(), "content");
 		
@@ -194,8 +202,13 @@ public class CommitRepositoryTest {
 		
 		DocumentBean document = new DocumentBean();
 		document.setRelativePath("file");
+		document.setFileType(FileType.MARKDOWN);
 		document.setCommit(commit);
-		commit.addDocument(document);
+		commit.addIncludeFile(document);
+		
+		TraceableDocumentBean traceableDocument = new TraceableDocumentBean();
+		traceableDocument.setDocument(document);
+		document.setTraceableDocument(traceableDocument);
 		
 		/*
 		 * This part doesn't match with the static git repo, 
@@ -205,14 +218,14 @@ public class CommitRepositoryTest {
 		TraceableItemBean traceableItem1 = new TraceableItemBean();
 		traceableItem1.setItemTag("tag-1");
 		traceableItem1.setContent("content-1");
-		traceableItem1.setDocument(document);
-		document.addTraceableItem(traceableItem1);
+		traceableItem1.setTraceableDocument(traceableDocument);
+		traceableDocument.addTraceableItem(traceableItem1);
 		
 		TraceableItemBean traceableItem2 = new TraceableItemBean();
 		traceableItem2.setItemTag("tag-2");
 		traceableItem2.setContent("content-2");
-		traceableItem2.setDocument(document);
-		document.addTraceableItem(traceableItem2);
+		traceableItem2.setTraceableDocument(traceableDocument);
+		traceableDocument.addTraceableItem(traceableItem2);
 		
 		traceableItem1.setDownstreamItems(Arrays.asList(traceableItem2));
 		traceableItem2.setUpstreamItems(Arrays.asList(traceableItem1));
@@ -227,15 +240,16 @@ public class CommitRepositoryTest {
 		assertTrue(reloadCommit instanceof ValidCommitBean);
 		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
 		
-		DocumentBean reloadDocument = reloadValidCommit.getDocument("file");
+		DocumentBean reloadDocument = (DocumentBean)reloadValidCommit.getIncludeFile("file");
 		assertEquals(reloadDocument.getName(), "file");
-		assertNull(reloadValidCommit.getDocument("file-does-not-exist"));
+		assertNull(reloadValidCommit.getIncludeFile("file-does-not-exist"));
 		
-		assertEquals(reloadDocument.getTraceableItems().size(), 2);
-		TraceableItemBean reloadTraceableItem1 = reloadDocument.getTraceableItems().get(0);
+		TraceableDocumentBean reloadTraceableDocument = reloadDocument.getTraceableDocument();
+		assertEquals(reloadTraceableDocument.getTraceableItems().size(), 2);
+		TraceableItemBean reloadTraceableItem1 = reloadTraceableDocument.getTraceableItems().get(0);
 		assertEquals(reloadTraceableItem1.getItemTag(), "tag-1");
 		assertEquals(reloadTraceableItem1.getContent(), "content-1");
-		TraceableItemBean reloadTraceableItem2 = reloadDocument.getTraceableItems().get(1);
+		TraceableItemBean reloadTraceableItem2 = reloadTraceableDocument.getTraceableItems().get(1);
 		assertEquals(reloadTraceableItem2.getItemTag(), "tag-2");
 		assertEquals(reloadTraceableItem2.getContent(), "content-2");
 		
@@ -265,13 +279,23 @@ public class CommitRepositoryTest {
 		
 		DocumentBean document1 = new DocumentBean();
 		document1.setRelativePath("file1");
+		document1.setFileType(FileType.MARKDOWN);
 		document1.setCommit(commit);
-		commit.addDocument(document1);
+		commit.addIncludeFile(document1);
 		
 		DocumentBean document2 = new DocumentBean();
 		document2.setRelativePath("file2");
+		document2.setFileType(FileType.MARKDOWN);
 		document2.setCommit(commit);
-		commit.addDocument(document2);
+		commit.addIncludeFile(document2);
+		
+		TraceableDocumentBean traceableDocument1 = new TraceableDocumentBean();
+		traceableDocument1.setDocument(document1);
+		document1.setTraceableDocument(traceableDocument1);
+		
+		TraceableDocumentBean traceableDocument2 = new TraceableDocumentBean();
+		traceableDocument2.setDocument(document2);
+		document2.setTraceableDocument(traceableDocument2);
 		
 		/*
 		 * This part doesn't match with the static git repo, 
@@ -281,14 +305,14 @@ public class CommitRepositoryTest {
 		TraceableItemBean traceableItem1 = new TraceableItemBean();
 		traceableItem1.setItemTag("tag-1");
 		traceableItem1.setContent("content-1");
-		traceableItem1.setDocument(document1);
-		document1.addTraceableItem(traceableItem1);
+		traceableItem1.setTraceableDocument(traceableDocument1);
+		traceableDocument1.addTraceableItem(traceableItem1);
 		
 		TraceableItemBean traceableItem2 = new TraceableItemBean();
 		traceableItem2.setItemTag("tag-2");
 		traceableItem2.setContent("content-2");
-		traceableItem2.setDocument(document2);
-		document2.addTraceableItem(traceableItem2);
+		traceableItem2.setTraceableDocument(traceableDocument2);
+		traceableDocument2.addTraceableItem(traceableItem2);
 		
 		traceableItem1.setDownstreamItems(Arrays.asList(traceableItem2));
 		traceableItem2.setUpstreamItems(Arrays.asList(traceableItem1));
@@ -303,17 +327,19 @@ public class CommitRepositoryTest {
 		assertTrue(reloadCommit instanceof ValidCommitBean);
 		ValidCommitBean reloadValidCommit = (ValidCommitBean)reloadCommit;
 		
-		DocumentBean reloadDocument1 = reloadValidCommit.getDocument("file1");
+		DocumentBean reloadDocument1 = (DocumentBean)reloadValidCommit.getIncludeFile("file1");
 		assertEquals(reloadDocument1.getName(), "file1");
-		DocumentBean reloadDocument2 = reloadValidCommit.getDocument("file2");
+		DocumentBean reloadDocument2 = (DocumentBean)reloadValidCommit.getIncludeFile("file2");
 		assertEquals(reloadDocument2.getName(), "file2");
 		
-		assertEquals(reloadDocument1.getTraceableItems().size(), 1);
-		TraceableItemBean reloadTraceableItem1 = reloadDocument1.getTraceableItems().get(0);
+		TraceableDocumentBean reloadTraceableDocument1 = reloadDocument1.getTraceableDocument();
+		assertEquals(reloadTraceableDocument1.getTraceableItems().size(), 1);
+		TraceableItemBean reloadTraceableItem1 = reloadTraceableDocument1.getTraceableItems().get(0);
 		assertEquals(reloadTraceableItem1.getItemTag(), "tag-1");
 		assertEquals(reloadTraceableItem1.getContent(), "content-1");
-		assertEquals(reloadDocument2.getTraceableItems().size(), 1);
-		TraceableItemBean reloadTraceableItem2 = reloadDocument2.getTraceableItems().get(0);
+		TraceableDocumentBean reloadTraceableDocument2 = reloadDocument2.getTraceableDocument();
+		assertEquals(reloadTraceableDocument2.getTraceableItems().size(), 1);
+		TraceableItemBean reloadTraceableItem2 = reloadTraceableDocument2.getTraceableItems().get(0);
 		assertEquals(reloadTraceableItem2.getItemTag(), "tag-2");
 		assertEquals(reloadTraceableItem2.getContent(), "content-2");
 		
