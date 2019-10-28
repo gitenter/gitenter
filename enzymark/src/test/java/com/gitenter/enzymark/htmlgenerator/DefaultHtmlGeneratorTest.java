@@ -13,7 +13,9 @@ import org.junit.jupiter.api.io.TempDir;
 public class DefaultHtmlGeneratorTest {
 	
 	@Test
-	public void testBold(@TempDir File file) throws IOException, GitAPIException {
+	public void testBold(@TempDir File tmpFolder) throws IOException, GitAPIException {
+		File file = new File(tmpFolder, "file");
+		file.createNewFile();
 		
 		String content = "**Bold**\n";
 		String expectedOutput = "<p><strong>Bold</strong></p>\n";
@@ -24,7 +26,9 @@ public class DefaultHtmlGeneratorTest {
 	}
 	
 	@Test
-	public void testItalic(@TempDir File file) throws IOException, GitAPIException {
+	public void testItalic(@TempDir File tmpFolder) throws IOException, GitAPIException {
+		File file = new File(tmpFolder, "file");
+		file.createNewFile();
 		
 		String content = "*italic*\n";
 		String expectedOutput = "<p><em>italic</em></p>\n";

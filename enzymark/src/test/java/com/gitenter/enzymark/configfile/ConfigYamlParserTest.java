@@ -18,9 +18,6 @@ import com.gitenter.enzymark.configfile.bean.GitEnterConfigBean;
 
 public class ConfigYamlParserTest {
 	
-	@TempDir
-	public File testFolder;
-	
 	@Test
 	public void testParseWithValidInput() throws Exception {
 		
@@ -108,7 +105,9 @@ public class ConfigYamlParserTest {
 	}
 	
 	@Test
-	public void testParseFromFile(@TempDir File configFile) throws Exception {
+	public void testParseFromFile(@TempDir File tmpFolder) throws Exception {
+		File configFile = new File(tmpFolder, "gitenter.yaml");
+		configFile.createNewFile();
 		
 		String yamlContent = "version: 1";
 		FileUtils.writeStringToFile(configFile, yamlContent, Charset.forName("UTF-8"));

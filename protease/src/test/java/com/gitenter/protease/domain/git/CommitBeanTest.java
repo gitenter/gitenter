@@ -1,20 +1,21 @@
 package com.gitenter.protease.domain.git;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.text.ParseException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -26,7 +27,7 @@ import com.gitenter.protease.dao.git.CommitRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles(profiles = "minimal")
 @ContextConfiguration(classes=ProteaseConfig.class)
 @TestExecutionListeners({
@@ -66,8 +67,9 @@ public class CommitBeanTest {
 		 * Currently if we `getRepository` from a commit object,
 		 * the git related placeholders are not bootstrapped yet.
 		 */
-		exception.expect(NullPointerException.class);
-		item.getRepository().getBranches();
+		Assertions.assertThrows(NullPointerException.class, () -> {
+			item.getRepository().getBranches();
+		});
 	}
 	
 	@Test

@@ -1,7 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,24 +17,22 @@ import org.apache.sshd.common.config.keys.AuthorizedKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.config.keys.DefaultAuthorizedKeysAuthenticator;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.gitenter.protease.domain.auth.SshKeyBean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class SshKeyBeanTest {
-	
-	@Rule public TemporaryFolder folder = new TemporaryFolder();
 	
 	private String keyType;
 	private String keyData;
 	private String comment;
 	
+	@TempDir
+	File tmpFolder;
+	
 	private File authorizedKeyFile;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		
 		keyType = "ssh-rsa";
@@ -44,7 +42,8 @@ public class SshKeyBeanTest {
 		String username = "username";
 		String command = "command=\"./git-authorization.sh "+username+"\",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty";
 		
-		authorizedKeyFile = folder.newFile("authorized_keys");
+		authorizedKeyFile = new File(tmpFolder, "gitenter.yaml");
+		authorizedKeyFile.createNewFile();
 		
 		byte[] encoded = (command+" "+keyType+" "+keyData+" "+comment+"\n").getBytes();
 		Files.write(Paths.get(authorizedKeyFile.getAbsolutePath()), encoded);
