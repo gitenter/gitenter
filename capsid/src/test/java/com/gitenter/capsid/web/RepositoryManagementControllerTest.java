@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -30,7 +30,7 @@ public class RepositoryManagementControllerTest {
 	private RepositoryService mockRepositoryService;
 	private RepositoryManagerService mockRepositoryManagerService;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 
 		mockMemberService = mock(MemberService.class);

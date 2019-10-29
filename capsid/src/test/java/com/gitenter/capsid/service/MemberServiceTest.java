@@ -1,8 +1,8 @@
 package com.gitenter.capsid.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,9 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,7 +22,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gitenter.capsid.dto.MemberProfileDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
@@ -32,7 +33,7 @@ import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.SshKeyRepository;
 import com.gitenter.protease.domain.auth.MemberBean;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("local")
 public class MemberServiceTest {
@@ -47,7 +48,7 @@ public class MemberServiceTest {
 	
 	private MemberBean member;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 
 		given(passwordEncoder.encode("password")).willReturn("wordpass");
@@ -69,9 +70,11 @@ public class MemberServiceTest {
 		assertEquals(memberService.getMemberByUsername("username"), member);
 	}
 	
-	@Test(expected = UserNotExistException.class)
+	@Test
 	public void testGetMemberByUsernameWithInValidUsername() throws IOException {
-		memberService.getMemberByUsername("not_exist");
+		Assertions.assertThrows(UserNotExistException.class, () -> {
+			memberService.getMemberByUsername("not_exist");
+		});
 	}
 	
 	@Test
@@ -93,7 +96,7 @@ public class MemberServiceTest {
 		assertEquals(member.getEmail(), "updated_username@email.com");
 	}
 	
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username="hijacked_username")
 	public void testUpdateMemberWithHijackedUser() throws IOException {
 		
@@ -102,7 +105,9 @@ public class MemberServiceTest {
 		profile.setDisplayName("Updated User Name");
 		profile.setEmail("updated_username@email.com");
 		
-		memberService.updateMember(profile);		
+		Assertions.assertThrows(AccessDeniedException.class, () -> {
+			memberService.updateMember(profile);
+		});
 	}
 	
 	@Test

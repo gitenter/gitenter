@@ -1,7 +1,7 @@
 package com.gitenter.post_receive_hook.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -16,11 +16,10 @@ import java.util.List;
 import java.util.Random;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +28,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.gitar.GitCommit;
@@ -37,8 +36,6 @@ import com.gitenter.gitar.GitNormalRepository;
 import com.gitenter.gitar.GitRemote;
 import com.gitenter.gitar.GitWorkspace;
 import com.gitenter.post_receive_hook.PostReceiveConfig;
-import com.gitenter.post_receive_hook.service.HookInputSet;
-import com.gitenter.post_receive_hook.service.UpdateDatabaseFromGitServiceImpl;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
@@ -53,7 +50,7 @@ import com.gitenter.protease.domain.git.ValidCommitBean;
  * Mock DataSource so we don't have dependency on `ActiveProfiles`.
  * Also remove `sed` in `docker_build_java.sh`.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes=PostReceiveConfig.class)
 @ActiveProfiles("local")
 public class UpdateDatabaseFromGitServiceTest {
@@ -63,7 +60,7 @@ public class UpdateDatabaseFromGitServiceTest {
 	@Spy private RepositoryRepository repositoryRepository;
 	@Mock private CommitRepository commitRepository;
 	
-	@Rule public TemporaryFolder folder = new TemporaryFolder();
+	@TempDir public File tmpFolder;
 
 	private GitNormalRepository gitNormalRepository;
 	private GitBareRepository gitBareRepository;
@@ -71,7 +68,7 @@ public class UpdateDatabaseFromGitServiceTest {
 	private GitWorkspace workspace;
 	private GitRemote origin;
 	
-	@Before
+	@BeforeEach
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
@@ -80,11 +77,14 @@ public class UpdateDatabaseFromGitServiceTest {
 		
 		Random rand = new Random();
 		String name = "repo-"+rand.nextInt(Integer.MAX_VALUE);
-		File normalDirectory = folder.newFolder(name);
+		
+		File normalDirectory = new File(tmpFolder, name);
+		normalDirectory.mkdir();
 		gitNormalRepository = GitNormalRepository.getInstance(normalDirectory);
 		workspace = gitNormalRepository.getCurrentBranch().checkoutTo();
 		
-		File bareDirectory = folder.newFolder(name+".git");
+		File bareDirectory = new File(tmpFolder, name+".git");
+		bareDirectory.mkdir();
 		gitBareRepository = GitBareRepository.getInstance(bareDirectory);
 		gitNormalRepository.createOrUpdateRemote("origin", gitBareRepository.getDirectory().toString());
 		origin = gitNormalRepository.getRemote("origin");

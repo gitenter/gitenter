@@ -1,12 +1,10 @@
 package com.gitenter.post_receive_hook.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
-import org.junit.Test;
-
-import com.gitenter.post_receive_hook.service.HookInputSet;
+import org.junit.jupiter.api.Test;
 
 public class HookInputSetTest {
 

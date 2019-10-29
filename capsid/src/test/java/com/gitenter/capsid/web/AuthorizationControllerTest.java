@@ -9,8 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -18,10 +20,14 @@ import com.gitenter.capsid.service.AnonymousService;
 
 public class AuthorizationControllerTest {
 	
-	private static MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@MockBean
+    private AnonymousService mockService;
+	
+	@BeforeEach
+	public void setUp() throws Exception {
 
 		/*
 		 * TODO:
