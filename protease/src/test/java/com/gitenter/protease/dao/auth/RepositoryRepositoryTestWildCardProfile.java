@@ -10,10 +10,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,12 +48,12 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaReviewDatabaseConnection"})
 public class RepositoryRepositoryTestWildCardProfile {
 	
-	@ClassRule public static final TemporaryFolder tempFolder = new TemporaryFolder();
+	@TempDir
+	public static File tmpFolder;
 	
 	/*
-	 * Cannot define this bean in `TestGitSourceConfig`, because (starting from JUnit 4.11)
-	 * `TemporaryFolder` needs to be used together with `@Rule`, but we cannot define
-	 * `@Rule` in a non-unittest class.
+	 * Cannot define this bean in `TestGitSourceConfig`, because `@TempDir` in a 
+	 * testing thing which should not be used in non-unittest class.
 	 */
 	@Configuration
 	static class Config {
@@ -63,9 +62,12 @@ public class RepositoryRepositoryTestWildCardProfile {
 		@Bean
 		public GitSource wildcardGitSource() throws IOException {
 			
+			File repositoryDirectory = new File(tmpFolder, "wildcard.git");
+			repositoryDirectory.mkdir();
+			
 			GitSource gitSource = mock(GitSource.class);
 			when(gitSource.getBareRepositoryDirectory(any(String.class), any(String.class)))
-				.thenReturn(tempFolder.newFolder("wildcard.git"));
+				.thenReturn(repositoryDirectory);
 			
 			return gitSource;
 		}
