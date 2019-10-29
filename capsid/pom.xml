@@ -157,7 +157,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>5.1.5.RELEASE</version>
         </dependency>
         <dependency>
             <!-- Since we exclude all the dependencies of "protease",

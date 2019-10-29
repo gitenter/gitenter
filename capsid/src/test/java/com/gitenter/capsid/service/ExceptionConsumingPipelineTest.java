@@ -1,13 +1,13 @@
 package com.gitenter.capsid.service;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
 import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
@@ -34,7 +34,7 @@ public class ExceptionConsumingPipelineTest {
 		
 		MemberBean memberBean = new MemberBean();
 	
-		ItemNotUniqueException expectedEx = Assertions.assertThrows(ItemNotUniqueException.class, () -> {
+		ItemNotUniqueException expectedEx = assertThrows(ItemNotUniqueException.class, () -> {
 			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, memberBean);
 		});
 		assertTrue(expectedEx.getMessage().contains("username value breaks SQL constrain."));
@@ -56,7 +56,7 @@ public class ExceptionConsumingPipelineTest {
 		
 		RepositoryBean repositoryBean = new RepositoryBean();
 		
-		Assertions.assertThrows(PersistenceException.class, () -> {
+		assertThrows(PersistenceException.class, () -> {
 			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, repositoryBean);
 		});
 	}
@@ -77,7 +77,7 @@ public class ExceptionConsumingPipelineTest {
 		
 		RepositoryBean repositoryBean = new RepositoryBean();
 		
-		ItemNotUniqueException expectedEx = Assertions.assertThrows(ItemNotUniqueException.class, () -> {
+		ItemNotUniqueException expectedEx = assertThrows(ItemNotUniqueException.class, () -> {
 			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, repositoryBean);
 		});
 		assertTrue(expectedEx.getMessage().contains("name value breaks SQL constrain."));
@@ -99,7 +99,7 @@ public class ExceptionConsumingPipelineTest {
 		
 		MemberBean memberBean = new MemberBean();
 		
-		Assertions.assertThrows(PersistenceException.class, () -> {
+		assertThrows(PersistenceException.class, () -> {
 			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, memberBean);
 		});
 	}

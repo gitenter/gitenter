@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.session.data.redis.RedisFlushMode;
+import org.springframework.session.FlushMode;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
@@ -43,7 +43,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @Configuration
 @EnableRedisHttpSession(
 		maxInactiveIntervalInSeconds=86400,
-		redisFlushMode=RedisFlushMode.ON_SAVE,
+		flushMode=FlushMode.ON_SAVE,
 		redisNamespace="spring:session")
 public class SessionConfig {
 

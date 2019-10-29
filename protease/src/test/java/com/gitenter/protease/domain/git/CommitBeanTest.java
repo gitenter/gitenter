@@ -1,13 +1,13 @@
 package com.gitenter.protease.domain.git;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.text.ParseException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Rule;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.ExpectedException;
@@ -67,7 +67,7 @@ public class CommitBeanTest {
 		 * Currently if we `getRepository` from a commit object,
 		 * the git related placeholders are not bootstrapped yet.
 		 */
-		Assertions.assertThrows(NullPointerException.class, () -> {
+		assertThrows(NullPointerException.class, () -> {
 			item.getRepository().getBranches();
 		});
 	}

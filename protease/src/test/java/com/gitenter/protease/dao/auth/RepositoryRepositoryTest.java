@@ -1,11 +1,12 @@
 package com.gitenter.protease.dao.auth;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
 
 import javax.persistence.PersistenceException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class RepositoryRepositoryTest {
 		toBeSavedOrganization.setDisplayName(existingRepository.getDisplayName());
 		toBeSavedOrganization.setIsPublic(true);
 		
-		Assertions.assertThrows(PersistenceException.class, () -> {
+		assertThrows(PersistenceException.class, () -> {
 			repositoryRepository.saveAndFlush(toBeSavedOrganization);
 		});
 	}

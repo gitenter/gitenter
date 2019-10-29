@@ -2,6 +2,7 @@ package com.gitenter.capsid.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,7 +72,7 @@ public class MemberServiceTest {
 	
 	@Test
 	public void testGetMemberByUsernameWithInValidUsername() throws IOException {
-		Assertions.assertThrows(UserNotExistException.class, () -> {
+		assertThrows(UserNotExistException.class, () -> {
 			memberService.getMemberByUsername("not_exist");
 		});
 	}
@@ -105,7 +105,7 @@ public class MemberServiceTest {
 		profile.setDisplayName("Updated User Name");
 		profile.setEmail("updated_username@email.com");
 		
-		Assertions.assertThrows(AccessDeniedException.class, () -> {
+		assertThrows(AccessDeniedException.class, () -> {
 			memberService.updateMember(profile);
 		});
 	}

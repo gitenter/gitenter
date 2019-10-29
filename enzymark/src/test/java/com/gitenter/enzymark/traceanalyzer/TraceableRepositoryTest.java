@@ -1,11 +1,11 @@
 package com.gitenter.enzymark.traceanalyzer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.gitenter.protease.domain.git.FileType;
@@ -154,7 +154,7 @@ public class TraceableRepositoryTest {
 				+ "- [tag] another traceable item with tag conflict.";
 		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/document.md", FileType.MARKDOWN);
 		
-		Assertions.assertThrows(ItemTagNotUniqueException.class, () -> {
+		assertThrows(ItemTagNotUniqueException.class, () -> {
 			document.parse(textContent);
 			repository.addTraceableFile(document);
 			repository.refreshUpstreamAndDownstreamItems();	
@@ -172,7 +172,7 @@ public class TraceableRepositoryTest {
 		String content2 = "- [tag] a traceable item with cross-document tag conflict.";
 		TraceableFile document2 = new TraceableFile("/fake/relative/file/path/for/document2.md", FileType.MARKDOWN);
 		
-		Assertions.assertThrows(ItemTagNotUniqueException.class, () -> {
+		assertThrows(ItemTagNotUniqueException.class, () -> {
 			document1.parse(content1);
 			repository.addTraceableFile(document1);
 			document2.parse(content2);
@@ -189,7 +189,7 @@ public class TraceableRepositoryTest {
 		String content = "- [tag]{refer-not-exist} another traceable item with reference not exist.";
 		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/documen.md", FileType.MARKDOWN);
 		
-		Assertions.assertThrows(UpstreamTagNotExistException.class, () -> {
+		assertThrows(UpstreamTagNotExistException.class, () -> {
 			document.parse(content);
 			repository.addTraceableFile(document);	
 			repository.refreshUpstreamAndDownstreamItems();	
