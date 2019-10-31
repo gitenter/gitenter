@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.gitenter.capsid.config.bean.GoogleSignin;
 import com.gitenter.capsid.dto.LoginDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
@@ -23,6 +24,8 @@ import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 public class AuthorizationController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
+	
+	@Autowired GoogleSignin googleSignin;
 	
 	private final AnonymousService anonymousService;
 
@@ -87,6 +90,11 @@ public class AuthorizationController {
 		}
 
 		model.addAttribute("loginDTO", new LoginDTO());
+		
+		model.addAttribute("metaTags", googleSignin.getMetaElement());
+		
+		model.addAttribute("googleSigninButton", googleSignin.getButton());
+		
 		return "authorization/login";
 	}
 }

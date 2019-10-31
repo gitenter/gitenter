@@ -39,6 +39,12 @@
               <input type="button" onclick="location.href='<s:url value="/register" />';" value="Sign up" />
             </td>
           </tr>
+          <tr>
+            <td></td>
+            <td>
+              ${googleSigninButton}
+            </td>
+          </tr>
         </table>
       </sf:form>
       </div>
