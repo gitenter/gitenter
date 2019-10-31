@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <gitar-version>0.0.3-prototype</gitar-version>
+        <gitar-version>0.0.4-prototype</gitar-version>
 
         <!-- TODO: Spring and Spring-data has version 5.2.0.RELEASE. However, upgrade
         to them will cause dbunit to break. -->
