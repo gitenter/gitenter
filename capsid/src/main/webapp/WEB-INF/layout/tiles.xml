@@ -16,7 +16,6 @@
 
   <definition name="authorization/login" extends="unauth-base">
     <put-attribute name="body" value="/WEB-INF/views/authorization/login.jsp" />
-    <put-attribute name="meta" expression="${metaTags}" />
   </definition>
   <definition name="authorization/register" extends="unauth-base">
     <put-attribute name="body" value="/WEB-INF/views/authorization/register.jsp" />

@@ -91,10 +91,15 @@ public class AuthorizationController {
 
 		model.addAttribute("loginDTO", new LoginDTO());
 		
-		model.addAttribute("metaTags", googleSignin.getMetaElement());
-		
+		model.addAttribute("googleSigninMetaElement", googleSignin.getMetaElement());
 		model.addAttribute("googleSigninButton", googleSignin.getButton());
 		
 		return "authorization/login";
+	}
+	
+	@RequestMapping(value="/oauth2callback", method=RequestMethod.GET)
+	public String oAuth2Callback() {
+		
+		return "redirect:/";
 	}
 }
