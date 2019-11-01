@@ -1,15 +1,14 @@
 package com.gitenter.enzymark.tracefactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.gitenter.enzymark.traceanalyzer.TraceAnalyzerException;
 import com.gitenter.enzymark.traceanalyzer.TraceableFile;
@@ -21,12 +20,12 @@ import com.gitenter.gitar.GitWorkspace;
 
 public class TraceableRepositoryFactoryTest {
 	
-	@Rule public TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	public File folder;
 	
 	@Test 
-	public void testMarkdownCanBeTraceable() throws Exception {
+	public void testMarkdownCanBeTraceable(@TempDir File directory) throws Exception {
 		
-		File directory = folder.newFolder("repo");
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
@@ -43,9 +42,8 @@ public class TraceableRepositoryFactoryTest {
 	}
 	
 	@Test 
-	public void testConfigYamlCannotBeTraceable() throws Exception {
-		
-		File directory = folder.newFolder("repo");
+	public void testConfigYamlCannotBeTraceable(@TempDir File directory) throws Exception {
+
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
@@ -62,13 +60,12 @@ public class TraceableRepositoryFactoryTest {
 	}
 
 	@Test
-	public void testBuildTraceableRepositorySingleFile() throws IOException, GitAPIException, TraceAnalyzerException {
+	public void testBuildTraceableRepositorySingleFile(@TempDir File directory) throws IOException, GitAPIException, TraceAnalyzerException {
 		
 		String textContent = 
 				  "- [tag1] a traceable item.\n"
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
-		
-		File directory = folder.newFolder("repo");
+
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
@@ -99,15 +96,14 @@ public class TraceableRepositoryFactoryTest {
 	}
 	
 	@Test
-	public void testBuildTraceableRepositoryHierarchyOfFiles() throws IOException, GitAPIException, TraceAnalyzerException {
+	public void testBuildTraceableRepositoryHierarchyOfFiles(@TempDir File directory) throws IOException, GitAPIException, TraceAnalyzerException {
 		
 		String textContent1 = 
 				  "- [tag1] a traceable item.\n"
 				+ "- [tag2]{tag1} a traceable item with in-document reference.";
 		
 		String textContent2 = "- [tag3]{tag1,tag2} a traceable item with cross-document reference.";
-		
-		File directory = folder.newFolder("repo");
+
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		

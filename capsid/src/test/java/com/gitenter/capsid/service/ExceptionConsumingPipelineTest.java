@@ -1,13 +1,14 @@
 package com.gitenter.capsid.service;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
 
 import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
 
@@ -16,14 +17,9 @@ import com.gitenter.protease.domain.auth.MemberBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 public class ExceptionConsumingPipelineTest {
-	
-	@Rule 
-	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Test
 	public void testConsumePersistenceExceptionSingleConstrainSuccessfullyRaiseItemNotUniqueException() throws IOException {
-		expectedEx.expect(ItemNotUniqueException.class);
-	    expectedEx.expectMessage("username value breaks SQL constrain.");
 		
 		PSQLException psqlException = new PSQLException(
 				"ERROR: duplicate key value violates unique constraint \"member_username_key\"\n" + 
@@ -37,10 +33,14 @@ public class ExceptionConsumingPipelineTest {
 				constraintViolationException);
 		
 		MemberBean memberBean = new MemberBean();
-		ExceptionConsumingPipeline.consumePersistenceException(persistenceException, memberBean);
+	
+		ItemNotUniqueException expectedEx = assertThrows(ItemNotUniqueException.class, () -> {
+			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, memberBean);
+		});
+		assertTrue(expectedEx.getMessage().contains("username value breaks SQL constrain."));
 	}
 	
-	@Test(expected = PersistenceException.class)
+	@Test
 	public void testConsumePersistenceExceptionSingleConstrainBeanDoesNotMatch() throws IOException {
 		
 		PSQLException psqlException = new PSQLException(
@@ -55,13 +55,14 @@ public class ExceptionConsumingPipelineTest {
 				constraintViolationException);
 		
 		RepositoryBean repositoryBean = new RepositoryBean();
-		ExceptionConsumingPipeline.consumePersistenceException(persistenceException, repositoryBean);
+		
+		assertThrows(PersistenceException.class, () -> {
+			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, repositoryBean);
+		});
 	}
 	
 	@Test
 	public void testConsumePersistenceExceptionCompoundConstrainSuccessfullyRaiseItemNotUniqueException() throws IOException {
-		expectedEx.expect(ItemNotUniqueException.class);
-	    expectedEx.expectMessage("name value breaks SQL constrain.");
 		
 		PSQLException psqlException = new PSQLException(
 				"ERROR: duplicate key value violates unique constraint \"repository_organization_id_name_key\"\n" + 
@@ -75,10 +76,14 @@ public class ExceptionConsumingPipelineTest {
 				constraintViolationException);
 		
 		RepositoryBean repositoryBean = new RepositoryBean();
-		ExceptionConsumingPipeline.consumePersistenceException(persistenceException, repositoryBean);
+		
+		ItemNotUniqueException expectedEx = assertThrows(ItemNotUniqueException.class, () -> {
+			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, repositoryBean);
+		});
+		assertTrue(expectedEx.getMessage().contains("name value breaks SQL constrain."));
 	}
 	
-	@Test(expected = PersistenceException.class)
+	@Test
 	public void testConsumePersistenceExceptionCompoundConstrainBeanDoesNotMatch() throws IOException {
 		
 		PSQLException psqlException = new PSQLException(
@@ -93,6 +98,9 @@ public class ExceptionConsumingPipelineTest {
 				constraintViolationException);
 		
 		MemberBean memberBean = new MemberBean();
-		ExceptionConsumingPipeline.consumePersistenceException(persistenceException, memberBean);
+		
+		assertThrows(PersistenceException.class, () -> {
+			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, memberBean);
+		});
 	}
 }

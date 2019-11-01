@@ -3,10 +3,10 @@ package com.gitenter.protease.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -32,7 +32,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
  * schema at all. Not sure the reason.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes=ProteaseConfig.class)
 @TestExecutionListeners({
 	DependencyInjectionTestExecutionListener.class,

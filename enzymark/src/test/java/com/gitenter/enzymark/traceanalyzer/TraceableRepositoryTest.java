@@ -1,11 +1,12 @@
 package com.gitenter.enzymark.traceanalyzer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.gitenter.protease.domain.git.FileType;
 
@@ -143,7 +144,7 @@ public class TraceableRepositoryTest {
 		}
 	}
 	
-	@Test(expected = ItemTagNotUniqueException.class)
+	@Test
 	public void testSameFileTagNotUnique() throws Exception {
 		
 		TraceableRepository repository = new TraceableRepository();
@@ -152,40 +153,46 @@ public class TraceableRepositoryTest {
 				  "- [tag] a traceable item.\n"
 				+ "- [tag] another traceable item with tag conflict.";
 		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/document.md", FileType.MARKDOWN);
-		document.parse(textContent);
-		repository.addTraceableFile(document);
 		
-		repository.refreshUpstreamAndDownstreamItems();	
+		assertThrows(ItemTagNotUniqueException.class, () -> {
+			document.parse(textContent);
+			repository.addTraceableFile(document);
+			repository.refreshUpstreamAndDownstreamItems();	
+		});
 	}
 	
-	@Test(expected = ItemTagNotUniqueException.class)
+	@Test
 	public void testDifferentFilesTagNotUnique() throws Exception {
 		
 		TraceableRepository repository = new TraceableRepository();
 		
 		String content1 = "- [tag] a traceable item.";
 		TraceableFile document1 = new TraceableFile("/fake/relative/file/path/for/document1.md", FileType.MARKDOWN);
-		document1.parse(content1);
-		repository.addTraceableFile(document1);
 		
 		String content2 = "- [tag] a traceable item with cross-document tag conflict.";
 		TraceableFile document2 = new TraceableFile("/fake/relative/file/path/for/document2.md", FileType.MARKDOWN);
-		document2.parse(content2);
-		repository.addTraceableFile(document2);
 		
-		repository.refreshUpstreamAndDownstreamItems();	
+		assertThrows(ItemTagNotUniqueException.class, () -> {
+			document1.parse(content1);
+			repository.addTraceableFile(document1);
+			document2.parse(content2);
+			repository.addTraceableFile(document2);
+			repository.refreshUpstreamAndDownstreamItems();	
+		});
 	}
 	
-	@Test(expected = UpstreamTagNotExistException.class)
+	@Test
 	public void testUpstreamTagNotExist() throws Exception {
 		
 		TraceableRepository repository = new TraceableRepository();
 		
 		String content = "- [tag]{refer-not-exist} another traceable item with reference not exist.";
 		TraceableFile document = new TraceableFile("/fake/relative/file/path/for/documen.md", FileType.MARKDOWN);
-		document.parse(content);
-		repository.addTraceableFile(document);
 		
-		repository.refreshUpstreamAndDownstreamItems();	
+		assertThrows(UpstreamTagNotExistException.class, () -> {
+			document.parse(content);
+			repository.addTraceableFile(document);	
+			repository.refreshUpstreamAndDownstreamItems();	
+		});
 	}
 }

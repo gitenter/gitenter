@@ -1,7 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,34 +17,30 @@ import org.apache.sshd.common.config.keys.AuthorizedKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.config.keys.DefaultAuthorizedKeysAuthenticator;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.gitenter.protease.domain.auth.SshKeyBean;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class SshKeyBeanTest {
 	
-	@Rule public TemporaryFolder folder = new TemporaryFolder();
+	private static final String keyType = "ssh-rsa";
+	private static final String keyData = "AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9";
+	private static final String comment = "comment";
 	
-	private String keyType;
-	private String keyData;
-	private String comment;
+	private static final String username = "username";
 	
-	private File authorizedKeyFile;
+	private static File authorizedKeyFile;
 	
-	@Before
-	public void setUp() throws IOException {
-		
-		keyType = "ssh-rsa";
-		keyData = "AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9";
-		comment = "comment";
-		
-		String username = "username";
+	@TempDir
+	static File tmpFolder;
+	
+	@BeforeAll
+	public static void setUpClass() throws IOException {
+
 		String command = "command=\"./git-authorization.sh "+username+"\",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty";
 		
-		authorizedKeyFile = folder.newFile("authorized_keys");
+		authorizedKeyFile = new File(tmpFolder, "gitenter.yaml");
+		authorizedKeyFile.createNewFile();
 		
 		byte[] encoded = (command+" "+keyType+" "+keyData+" "+comment+"\n").getBytes();
 		Files.write(Paths.get(authorizedKeyFile.getAbsolutePath()), encoded);

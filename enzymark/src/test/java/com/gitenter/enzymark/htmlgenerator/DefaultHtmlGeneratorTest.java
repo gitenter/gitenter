@@ -1,25 +1,21 @@
 package com.gitenter.enzymark.htmlgenerator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class DefaultHtmlGeneratorTest {
 	
-	@Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-	
 	@Test
-	public void testBold() throws IOException, GitAPIException {
-		
-		File file = folder.newFile("markdown.md");
+	public void testBold(@TempDir File tmpFolder) throws IOException, GitAPIException {
+		File file = new File(tmpFolder, "file");
+		file.createNewFile();
 		
 		String content = "**Bold**\n";
 		String expectedOutput = "<p><strong>Bold</strong></p>\n";
@@ -30,9 +26,9 @@ public class DefaultHtmlGeneratorTest {
 	}
 	
 	@Test
-	public void testItalic() throws IOException, GitAPIException {
-		
-		File file = folder.newFile("markdown.md");
+	public void testItalic(@TempDir File tmpFolder) throws IOException, GitAPIException {
+		File file = new File(tmpFolder, "file");
+		file.createNewFile();
 		
 		String content = "*italic*\n";
 		String expectedOutput = "<p><em>italic</em></p>\n";

@@ -1,25 +1,22 @@
 package com.gitenter.enzymark.configfile;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.gitenter.enzymark.configfile.bean.GitEnterConfigBean;
 
 public class ConfigYamlParserTest {
-	
-	@Rule
-	public TemporaryFolder testFolder = new TemporaryFolder();
 	
 	@Test
 	public void testParseWithValidInput() throws Exception {
@@ -62,7 +59,7 @@ public class ConfigYamlParserTest {
 		assertFalse(gitEnterConfig.isTraceablityScanEnabled());
 	}
 	
-	@Test(expected = ConfigFileFormatException.class)
+	@Test
 	public void testParseWithUnexpectedRootAttribute() throws Exception {
 		
 		String yamlContent = "version: 1\n" + 
@@ -73,10 +70,12 @@ public class ConfigYamlParserTest {
 				"    - meeting_notes\n" +
 				"does-not-exist: value\n";
 
-		ConfigYamlParser.parse(yamlContent);
+		assertThrows(ConfigFileFormatException.class, () -> {
+			ConfigYamlParser.parse(yamlContent);
+		});
 	}
 	
-	@Test(expected = ConfigFileFormatException.class)
+	@Test
 	public void testParseWithUnexpectedTraceabilityAttribute() throws Exception {
 		
 		String yamlContent = "version: 1\n" + 
@@ -90,20 +89,25 @@ public class ConfigYamlParserTest {
 				"    does-not-exist:\n" + 
 				"        - file_path/\n";
 
-		ConfigYamlParser.parse(yamlContent);
-	}
-	
-	@Test(expected = ConfigFileFormatException.class)
-	public void testParseWithWrongValueType() throws Exception {
-		
-		String yamlContent = "version: not an integer\n";
-		ConfigYamlParser.parse(yamlContent);
+		assertThrows(ConfigFileFormatException.class, () -> {
+			ConfigYamlParser.parse(yamlContent);
+		});
 	}
 	
 	@Test
-	public void testParseFromFile() throws Exception {
+	public void testParseWithWrongValueType() throws Exception {
 		
-		File configFile = testFolder.newFile("gitenter.yml");
+		String yamlContent = "version: not an integer\n";
+		
+		assertThrows(ConfigFileFormatException.class, () -> {
+			ConfigYamlParser.parse(yamlContent);
+		});
+	}
+	
+	@Test
+	public void testParseFromFile(@TempDir File tmpFolder) throws Exception {
+		File configFile = new File(tmpFolder, "gitenter.yaml");
+		configFile.createNewFile();
 		
 		String yamlContent = "version: 1";
 		FileUtils.writeStringToFile(configFile, yamlContent, Charset.forName("UTF-8"));

@@ -1,7 +1,7 @@
 package com.gitenter.protease.dao.auth;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -10,10 +10,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +20,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -34,7 +33,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles(profiles = "wildcard")
 @ContextConfiguration(classes=ProteaseConfig.class)
 @TestExecutionListeners({
@@ -49,12 +48,12 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaReviewDatabaseConnection"})
 public class RepositoryRepositoryTestWildCardProfile {
 	
-	@ClassRule public static final TemporaryFolder tempFolder = new TemporaryFolder();
+	@TempDir
+	public static File tmpFolder;
 	
 	/*
-	 * Cannot define this bean in `TestGitSourceConfig`, because (starting from JUnit 4.11)
-	 * `TemporaryFolder` needs to be used together with `@Rule`, but we cannot define
-	 * `@Rule` in a non-unittest class.
+	 * Cannot define this bean in `TestGitSourceConfig`, because `@TempDir` in a 
+	 * testing thing which should not be used in non-unittest class.
 	 */
 	@Configuration
 	static class Config {
@@ -63,9 +62,12 @@ public class RepositoryRepositoryTestWildCardProfile {
 		@Bean
 		public GitSource wildcardGitSource() throws IOException {
 			
+			File repositoryDirectory = new File(tmpFolder, "wildcard.git");
+			repositoryDirectory.mkdir();
+			
 			GitSource gitSource = mock(GitSource.class);
 			when(gitSource.getBareRepositoryDirectory(any(String.class), any(String.class)))
-				.thenReturn(tempFolder.newFolder("wildcard.git"));
+				.thenReturn(repositoryDirectory);
 			
 			return gitSource;
 		}

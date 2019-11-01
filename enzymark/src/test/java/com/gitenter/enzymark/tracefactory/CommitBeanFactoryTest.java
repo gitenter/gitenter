@@ -1,16 +1,15 @@
 package com.gitenter.enzymark.tracefactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.gitar.GitNormalRepository;
@@ -24,10 +23,8 @@ import com.gitenter.protease.domain.traceability.TraceableItemBean;
 
 public class CommitBeanFactoryTest {
 	
-	@Rule public TemporaryFolder folder = new TemporaryFolder();
-	
 	@Test
-	public void testGetValidCommit() throws IOException, GitAPIException {
+	public void testGetValidCommit(@TempDir File directory) throws IOException, GitAPIException {
 		
 		String textContent1 = 
 				  "- [tag1] a traceable item.\n"
@@ -35,7 +32,6 @@ public class CommitBeanFactoryTest {
 		
 		String textContent2 = "- [tag3]{tag1,tag2} a traceable item with cross-document reference.";
 		
-		File directory = folder.newFolder("repo");
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
@@ -103,11 +99,10 @@ public class CommitBeanFactoryTest {
 	}
 	
 	@Test
-	public void testGetInvalidCommit() throws IOException, GitAPIException {
+	public void testGetInvalidCommit(@TempDir File directory) throws IOException, GitAPIException {
 		
 		String textContent = "- [tag]{refer-not-exist} a traceable item.";
 		
-		File directory = folder.newFolder("repo");
 		GitNormalRepository repository = GitNormalRepository.getInstance(directory);
 		GitWorkspace workspace = repository.getCurrentBranch().checkoutTo();
 		
