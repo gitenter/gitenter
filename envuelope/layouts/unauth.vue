@@ -12,9 +12,7 @@
       </form>
     </header>
 
-    <article>
-      <nuxt />
-    </article>
+    <nuxt />
 
     <footer>
       <a href="/about/">About</a> | <a href="/contact/">Contact</a><br>

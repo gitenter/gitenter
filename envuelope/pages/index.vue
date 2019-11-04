@@ -1,28 +1,45 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        envuelope
-      </h1>
-      <h2 class="subtitle">
-        My superior Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+  <div>
+    <article>
+      <div class="login">
+        <form id="loginDTO" action="/login?logout" method="POST">
+          <table class="fill-in">
+            <tr>
+              <td>Username</td>
+              <td>
+                <input id="username" name="username" type="text" value=""/>
+              </td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td>
+                <input id="password" name="password" type="password" value=""/>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="word">
+                <input id="remember_me" name="remember-me" type="checkbox" checked />
+                <label for="remember_me">Remember me</label>
+              </td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td class="button">
+                <input type="submit" value="Log in" />
+                <input type="button" onclick="location.href='/register';" value="Sign up" />
+              </td>
+            </tr>
+          </table>
+        <div>
+        <input type="hidden" name="_csrf" value="ebe28b79-3705-4e2e-8604-f89336182e35" />
+        </div></form>
+      </div>
+    </article>
+    <div class="container">
+      <div>
+        <logo />
       </div>
     </div>
   </div>
