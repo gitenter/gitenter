@@ -87,6 +87,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout().logoutUrl("/logout")
 			.and()
 			.rememberMe().tokenValiditySeconds(2419200).key("enterovirus");
+		
+		http.csrf().disable();
 	}
 	
 	@Bean
