@@ -3,6 +3,7 @@ package com.gitenter.capsid.service;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,17 @@ public class MemberServiceImpl implements MemberService {
 		this.memberRepository = memberRepository;
 		this.sshKeyRepository = sshKeyRepository;
 		this.passwordEncoder = passwordEncoder;
+	}
+	
+	@Override
+	public MemberBean getMemberById(Integer memberId) throws IOException {
+		Optional<MemberBean> members = memberRepository.findById(memberId);
+		if (members.isPresent()) {
+			return members.get();
+		}
+		else {
+			throw new UserNotExistException(memberId);
+		}
 	}
 
 	@Override

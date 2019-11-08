@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +21,7 @@ public class RestAuthorizationController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RestAuthorizationController.class);
 	
-	private final AnonymousService anonymousService;
-
-	@Autowired
-	public RestAuthorizationController(AnonymousService anonymousService) {
-		this.anonymousService = anonymousService;
-	}
+	@Autowired private AnonymousService anonymousService;
 
 	/*
 	 * TODO: 
@@ -36,7 +30,7 @@ public class RestAuthorizationController {
 	@CrossOrigin
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	@ResponseBody
-	public MemberRegisterDTO showRegisterForm(Model model) {
+	public MemberRegisterDTO showRegisterForm() {
 		return new MemberRegisterDTO();
 	}
 	

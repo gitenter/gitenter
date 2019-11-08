@@ -23,6 +23,7 @@ public interface MemberService {
 	 * as we cannot annotate @PreAuthorize in the class scope (rather than
 	 * in the method scope), there's not a lot of benefits doing that.
 	 */
+	public MemberBean getMemberById(Integer memberId) throws IOException;
 	public MemberBean getMemberByUsername(String username) throws IOException;
 	public MemberBean getMe(Authentication authentication) throws IOException;
 	

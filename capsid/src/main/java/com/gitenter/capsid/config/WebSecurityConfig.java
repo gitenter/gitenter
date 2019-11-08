@@ -45,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		.antMatchers("/api/glee/**").hasAnyAuthority("ADMIN", "USER")
 //		.antMatchers("/api/users/**").hasAuthority("ADMIN")
 		.antMatchers("/api/**").authenticated()
+//		.antMatchers("/**").permitAll()
 		.anyRequest().authenticated()
 		.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(new GitEnterAccessDeniedHandler());
 			
