@@ -14,6 +14,10 @@
     <name>Capsid</name>
     <description>The web layer</description>
 
+    <properties>
+        <rest-assured-version>4.1.2</rest-assured-version>
+    </properties>
+
     <build>
         <plugins>
             <!-- This is to avoid the "webxml attribute is required" error.
@@ -159,6 +163,21 @@
             <!-- No need to provide a version. Managed by Spring Boot. -->
         </dependency>
         <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>2.3.7.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth.boot</groupId>
+            <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-jwt</artifactId>
+            <version>1.0.11.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
         </dependency>
@@ -239,6 +258,32 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--
+            The below two packages are included in `rest-assured`. However, Spring load
+            3.1.1 for which the class name has been changed after that. Therefore, we
+            need to include them explicitly, or otherwise we'll get errors for
+            `java.lang.NoClassDefFoundError`
+            https://stackoverflow.com/questions/44993615/java-lang-noclassdeffounderror-io-restassured-mapper-factory-gsonobjectmapperfa
+        -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${rest-assured-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>xml-path</artifactId>
+            <version>${rest-assured-version}</version>
+            <scope>test</scope>
+        </dependency>
+
 <!--         <dependency>
             <groupId>org.springframework.test.htmlunit</groupId>
             <artifactId>spring-test-htmlunit</artifactId>

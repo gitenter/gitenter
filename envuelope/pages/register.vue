@@ -65,7 +65,7 @@ export default {
   methods: {
     register() {
       console.log("Register user!!");
-      axios.post('http://localhost:8080/register', {
+      axios.post('http://localhost:8080/api/register', {
         "username": this.username,
         "password": this.password,
         "displayName": this.displayName,
@@ -73,8 +73,7 @@ export default {
       },
       {
         headers: {
-          "Content-Type": "application/json",
-          'Access-Control-Allow-Origin': '*',
+          "Content-Type": "application/json"
         }
       })
         .then((Response) => {})

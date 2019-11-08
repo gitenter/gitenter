@@ -1,4 +1,4 @@
-package com.gitenter.capsid.web;
+package com.gitenter.capsid.api;
 
 import javax.validation.Valid;
 
@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gitenter.capsid.dto.LoginDTO;
 import com.gitenter.capsid.dto.MemberRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
 
 @RestController
+@RequestMapping(value="/api")
 public class RestAuthorizationController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RestAuthorizationController.class);
@@ -51,18 +50,5 @@ public class RestAuthorizationController {
 		anonymousService.signUp(memberRegisterDTO);
 		
 		return memberRegisterDTO;
-	}
-	
-	@RequestMapping(value="/restlogin", method=RequestMethod.GET)
-	public String showLoginForm(
-			Model model,
-			@RequestParam(value="error", required=false) String error) {
-		
-		if (error != null) {
-			model.addAttribute("message", "Invalid username and password!");
-		}
-
-		model.addAttribute("loginDTO", new LoginDTO());
-		return "authorization/login";
 	}
 }
