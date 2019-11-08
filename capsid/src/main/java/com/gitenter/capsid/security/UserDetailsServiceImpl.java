@@ -25,6 +25,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		}
 		MemberBean member = members.get(0);
 		
-		return new GitEnterUser(member.getUsername(), member.getPassword());
+		return new GitEnterUserDetails(member.getUsername(), member.getPassword());
 	}
 }

@@ -11,13 +11,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.gitenter.protease.domain.auth.OrganizationMemberRole;
 
-public class GitEnterUser extends User implements UserDetails {
+public class GitEnterUserDetails extends User implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
 	private List<GrantedAuthority> authorities;
 	
-	public GitEnterUser(String username, String password) {
+	public GitEnterUserDetails(String username, String password) {
 		super(username, password, new ArrayList<GrantedAuthority>());
 		
 		authorities = new ArrayList<GrantedAuthority>();

@@ -1,6 +1,4 @@
-package com.gitenter.capsid.oauth2;
-
-import java.util.Arrays;
+package com.gitenter.capsid.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,11 +11,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /*
  * Mostly follows https://www.toptal.com/spring/spring-boot-oauth2-jwt-rest-protection
@@ -31,18 +25,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-	// public void configure(AuthorizationServerSecurityConfigurer security) throws
-	// Exception {
-	//
-	// }
-	//
-	// public void configure(AuthorizationServerEndpointsConfigurer endpoints)
-	// throws Exception {
-	//
-	// }
-
-	//// @Autowired
-	//// @Qualifier("authenticationManagerBean")
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	@Autowired
@@ -77,15 +59,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 			.scopes("read", "write").resourceIds("api");
 	}
 
-//	@Override
-//	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-//		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-//		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-//
-//		endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenEnhancerChain)
-//				.authenticationManager(authenticationManager);
-//	}
-	
 	@Override
 	public void configure(final AuthorizationServerEndpointsConfigurer endpoints) {
 		 endpoints
@@ -99,35 +72,4 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		 JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
 		 return converter;
 	}
-
-//	// @Override
-//	// public void configure(ClientDetailsServiceConfigurer clients) {
-//	// // .. your client configuration that allows the password grant
-//	// }
-//
-//	// @Bean
-//	public TokenStore tokenStore() {
-//		return new JwtTokenStore(accessTokenConverter());
-//	}
-//
-//	@Bean
-//	public TokenEnhancer tokenEnhancer() {
-//		return new GitEnterTokenEnhancer();
-//	}
-//
-//	// @Bean
-//	public JwtAccessTokenConverter accessTokenConverter() {
-//		JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-//		converter.setSigningKey("123");
-//		return converter;
-//	}
-	//
-	//// @Bean
-	//// @Primary
-	// public DefaultTokenServices tokenServices() {
-	// DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-	// defaultTokenServices.setTokenStore(tokenStore());
-	// defaultTokenServices.setSupportRefreshToken(true);
-	// return defaultTokenServices;
-	// }
 }
