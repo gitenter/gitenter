@@ -62,7 +62,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(final AuthorizationServerEndpointsConfigurer endpoints) {
 		endpoints
-//			.prefix("/api") // Cannot. Otherwise it `/oauth/token` will get "{"error":"unauthorized","error_description":"Full authentication is required to access this resource"}"
 			.accessTokenConverter(accessTokenConverter())
 			.userDetailsService(userDetailsService)
 			.authenticationManager(authenticationManager);
