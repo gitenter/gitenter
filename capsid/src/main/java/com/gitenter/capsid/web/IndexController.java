@@ -19,10 +19,10 @@ public class IndexController {
 		String username = authentication.getName();
 		
 		/*
-		 * The other possibility is just get member, and do the loops
+		 * The other possibility is just get user, and do the loops
 		 * (even with condition to check role) inside of the presentation
 		 * layer. I am not doing it, to hide the implementation detail
-		 * of member roles (by the database/domain layer) inside of 
+		 * of user roles (by the database/domain layer) inside of 
 		 * the service layer.
 		 */
 		model.addAttribute("managedOrganizations", userService.getManagedOrganizations(username));

@@ -228,13 +228,13 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 */
 		
 		/*
-		 * The alternative approach is to have input "memberId", then
+		 * The alternative approach is to have input "userId", then
 		 * find "mapId" and delete it. We don't do it because it:
 		 * (1) need more SQL queries, 
 		 * (2) seems have consistency problem with Hibernate when first we 
-		 * "Hibernate.initialize(repository.getRepositoryMemberMaps());".
+		 * "Hibernate.initialize(repository.getRepositoryUserMaps());".
 		 * 
-		 * We have knowledge of `repositoryMemberMapId` when we generate
+		 * We have knowledge of `repositoryUserMapId` when we generate
 		 * the delete page with links.
 		 */
 		repositoryUserMapRepository.throughSqlDeleteById(repositoryUserMapId);

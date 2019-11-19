@@ -40,7 +40,7 @@ public class UserServiceTest {
 
 	@MockBean private UserRepository userRepository;
 	@MockBean private OrganizationRepository organizationRepository;
-	@MockBean private OrganizationUserMapRepository organizationMemberMapRepository;
+	@MockBean private OrganizationUserMapRepository organizationUserMapRepository;
 	@MockBean private SshKeyRepository sshKeyRepository;
 	@MockBean private PasswordEncoder passwordEncoder;
 	
@@ -89,7 +89,7 @@ public class UserServiceTest {
 		userService.updateUser(profile);
 		
 		/*
-		 * `member` is updated, but that's the same pointer.
+		 * `user` is updated, but that's the same pointer.
 		 */
 		verify(userRepository, times(1)).saveAndFlush(user);
 		assertEquals(user.getDisplayName(), "Updated User Name");

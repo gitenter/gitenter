@@ -62,7 +62,7 @@ public class RepositoryController {
 			model.addAttribute("organization", repository.getOrganization());
 			model.addAttribute("repository", repository);
 			
-			model.addAttribute("repositoryMemberRoleValues", RepositoryUserRole.values());
+			model.addAttribute("repositoryUserRoleValues", RepositoryUserRole.values());
 			
 			model.addAttribute("gitSshProtocolUrl", gitDomainSource.getGitSshProtocolUrl(
 					repository.getOrganization().getName(), repository.getName()));
@@ -129,7 +129,7 @@ public class RepositoryController {
 		model.addAttribute("commit", commit);
 		
 		model.addAttribute("branchNames", repository.getBranchNames());
-		model.addAttribute("repositoryMemberRoleValues", RepositoryUserRole.values());
+		model.addAttribute("repositoryUserRoleValues", RepositoryUserRole.values());
 		
 		model.addAttribute("gitSshProtocolUrl", gitDomainSource.getGitSshProtocolUrl(
 				repository.getOrganization().getName(), repository.getName()));

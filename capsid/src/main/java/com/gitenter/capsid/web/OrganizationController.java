@@ -23,7 +23,7 @@ public class OrganizationController {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
 		model.addAttribute("repositories", organizationService.getVisibleRepositories(organizationId, authentication));
-		model.addAttribute("members", organizationService.getAllUsers(organizationId));
+		model.addAttribute("users", organizationService.getAllUsers(organizationId));
 
 		return "index/organization";
 	}

@@ -44,12 +44,12 @@ public class ExceptionConsumingPipelineTest {
 	public void testConsumePersistenceExceptionSingleConstrainBeanDoesNotMatch() throws IOException {
 		
 		PSQLException psqlException = new PSQLException(
-				"ERROR: duplicate key value violates unique constraint \"member_username_key\"\n" + 
+				"ERROR: duplicate key value violates unique constraint \"application_user_username_key\"\n" + 
 				"  Detail: Key (username)=(username) already exists.", PSQLState.QUERY_CANCELED);
 		ConstraintViolationException constraintViolationException = new ConstraintViolationException(
 				"could not execute statement",
 				psqlException,
-				"member_username_key");
+				"application_user_username_key");
 		PersistenceException persistenceException = new PersistenceException(
 				"org.hibernate.exception.ConstraintViolationException: could not execute statement",
 				constraintViolationException);

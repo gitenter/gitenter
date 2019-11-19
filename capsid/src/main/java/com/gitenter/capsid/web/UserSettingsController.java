@@ -60,14 +60,14 @@ public class UserSettingsController {
 	@RequestMapping(value="/profile", method=RequestMethod.GET)
 	public String showUpdateProfileForm(Model model, Authentication authentication) throws Exception {
 		
-		model.addAttribute("memberProfileDTO", userService.getUserProfileDTO(authentication));
+		model.addAttribute("userProfileDTO", userService.getUserProfileDTO(authentication));
 		
 		return "settings/profile";
 	}
 	
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
 	public String processUpdateProfile(
-			@ModelAttribute("memberProfileDTO") @Valid UserProfileDTO profileAfterChange, 
+			@ModelAttribute("userProfileDTO") @Valid UserProfileDTO profileAfterChange, 
 			Errors errors, 
 			RedirectAttributes model) throws Exception {
 		
@@ -96,7 +96,7 @@ public class UserSettingsController {
 		
 		/*
 		 * Right now the only thing to show is "username". So for the display 
-		 * propose of this page, we don't need to load the memberBean at all 
+		 * propose of this page, we don't need to load the userBean at all 
 		 * (we can simply use the value of "authentication.getName()"). 
 		 * 
 		 * However, we do want to use the validation of the corresponding DTO,
@@ -104,7 +104,7 @@ public class UserSettingsController {
 		 * the reason we want to load this DTO.
 		 */
 		UserRegisterDTO userRegisterDTO = userService.getUserRegisterDTO(authentication);
-		model.addAttribute("memberRegisterDTO", userRegisterDTO);
+		model.addAttribute("userRegisterDTO", userRegisterDTO);
 		
 		return "settings/account/password";
 	}
@@ -118,7 +118,7 @@ public class UserSettingsController {
 			 * > Validation failed for object='XXX'. Error count: XXX
 			 * rather than write that information into the "Error" class.
 			 */
-			@ModelAttribute("memberRegisterDTO") @Valid UserRegisterDTO registerAfterChange, 
+			@ModelAttribute("userRegisterDTO") @Valid UserRegisterDTO registerAfterChange, 
 			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
 			RedirectAttributes model) throws Exception {
@@ -182,7 +182,7 @@ public class UserSettingsController {
 	public String showSshKeyForm(Model model, Authentication authentication) throws Exception {
 		
 		UserBean user = userService.getUserByUsername(authentication.getName());
-		model.addAttribute("member", user);
+		model.addAttribute("user", user);
 		
 		model.addAttribute("sshKeyFieldDTO", new SshKeyFieldDTO());
 		return "settings/ssh";
@@ -196,7 +196,7 @@ public class UserSettingsController {
 			Authentication authentication) throws Exception {
 		
 		UserBean user = userService.getUserByUsername(authentication.getName());
-		model.addAttribute("member", user);
+		model.addAttribute("user", user);
 		
 		if (errors.hasErrors()) {
 			

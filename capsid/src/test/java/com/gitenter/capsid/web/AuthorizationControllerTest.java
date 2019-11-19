@@ -45,7 +45,7 @@ public class AuthorizationControllerTest {
 		
 		mockMvc.perform(get("/register"))
 		.andExpect(view().name("authorization/register"))
-		.andExpect(model().attributeExists("memberRegisterDTO"));
+		.andExpect(model().attributeExists("userRegisterDTO"));
 	}
 	
 	@Test
@@ -80,7 +80,7 @@ public class AuthorizationControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(4))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "username", "password", "displayName", "email"))
+				"userRegisterDTO", "username", "password", "displayName", "email"))
 		.andReturn().getResponse().getContentAsString().contains("must not be null");
 		
 		/*
@@ -104,7 +104,7 @@ public class AuthorizationControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "email"))
+				"userRegisterDTO", "email"))
 		.andReturn().getResponse().getContentAsString().contains("not a well-formed email address");
 	}
 	
@@ -120,7 +120,7 @@ public class AuthorizationControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(3))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "username", "password", "displayName"))
+				"userRegisterDTO", "username", "password", "displayName"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between 2 and 64");
 	}
 	
@@ -136,7 +136,7 @@ public class AuthorizationControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(3))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "username", "password", "displayName"))
+				"userRegisterDTO", "username", "password", "displayName"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 }

@@ -48,7 +48,7 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 			/*
 			 * TODO:
 			 * Can we go through `OrganizationUserMap` so we don't need to iterate
-			 * through the entire list for members?
+			 * through the entire list for users?
 			 */
 			for (UserBean user : organization.getUsers(role)) {
 				if (user.getUsername().equals(authentication.getName())) {
@@ -65,8 +65,8 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 			
 			/*
 			 * TODO:
-			 * Can we go through `RepositoryMemberMap` so we don't need to iterate
-			 * through the entire list of members?
+			 * Can we go through `RepositoryUserMap` so we don't need to iterate
+			 * through the entire list of users?
 			 */
 			for (UserBean user : repository.getUsers(role)) {
 				if (user.getUsername().equals(authentication.getName())) {

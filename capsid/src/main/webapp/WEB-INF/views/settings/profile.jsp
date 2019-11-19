@@ -9,12 +9,12 @@
     </nav>
     <article>
       <div>
-      <sf:form method="POST" modelAttribute="memberProfileDTO" >
+      <sf:form method="POST" modelAttribute="userProfileDTO" >
         <table class="fill-in">
           <tr>
             <td>Username</td>
             <td class="pre-fill">
-              ${memberProfileDTO.username}
+              ${userProfileDTO.username}
               <sf:hidden path="username" />
             </td>
           </tr>

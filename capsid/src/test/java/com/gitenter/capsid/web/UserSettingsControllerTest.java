@@ -55,7 +55,7 @@ public class UserSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(2))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "displayName", "email"))
+				"userProfileDTO", "displayName", "email"))
 		.andReturn().getResponse().getContentAsString().contains("must not be null");
 	}
 	
@@ -70,7 +70,7 @@ public class UserSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "email"))
+				"userProfileDTO", "email"))
 		.andReturn().getResponse().getContentAsString().contains("not a well-formed email address");
 	}
 	
@@ -85,7 +85,7 @@ public class UserSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "displayName"))
+				"userProfileDTO", "displayName"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 	
@@ -100,7 +100,7 @@ public class UserSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "displayName"))
+				"userProfileDTO", "displayName"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 	
@@ -139,7 +139,7 @@ public class UserSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(2+1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "password"))
+				"userRegisterDTO", "password"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 	

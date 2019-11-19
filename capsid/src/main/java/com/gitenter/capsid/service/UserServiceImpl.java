@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
 		 * If not, we need to find out a smarter way to handle the case of listing 
 		 * all organizations (we can have it iterated/filtered multiple times 
 		 * when display), for example a dirty fix of implement a proxy pattern
-		 * inside of the "getMember()" method
+		 * inside of the "getUser()" method
 		 */
 		UserBean user = getUserByUsername(username);
 		return user.getOrganizations(OrganizationUserRole.MANAGER);

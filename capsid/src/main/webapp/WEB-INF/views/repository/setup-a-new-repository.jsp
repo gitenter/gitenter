@@ -9,7 +9,7 @@
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}/repositories/${repository.id}" />"><c:out value="${repository.displayName}" /></a> &rarr; 
       <span class="nav-current">Setup a new repository</span>
-      <security:authorize access="hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)">
+      <security:authorize access="hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)">
         <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
         <sf:form method="GET" action="${repo_settings_url}">
           <input type="submit" value="Settings" />

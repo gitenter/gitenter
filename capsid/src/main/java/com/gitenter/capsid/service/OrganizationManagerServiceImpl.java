@@ -118,7 +118,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 * the reason this checking is important.
 		 */
 		if (!map.getOrganization().getId().equals(organization.getId())) {
-			throw new UnreachableException("Remove organization member input not consistency. "
+			throw new UnreachableException("Remove organization user input not consistency. "
 					+ "organizationUserMapId "+organizationUserMapId+" doesn't belong to the "
 					+ "target organization "+organization);
 		}
@@ -128,13 +128,13 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
+	public void addOrganizationManager(OrganizationBean organization, Integer organizationUserMapId) throws IOException {
 		
-		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationMemberMapId);
+		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
 		
 		if (!map.getOrganization().getId().equals(organization.getId())) {
-			throw new UnreachableException("Add organization member input not consistency. "
-					+ "organizationMemberMapId "+organizationMemberMapId+" doesn't belong to the "
+			throw new UnreachableException("Add organization user input not consistency. "
+					+ "organizationUserMapId "+organizationUserMapId+" doesn't belong to the "
 					+ "target organization "+organization);
 		}
 		
@@ -156,7 +156,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
 		
 		if (!map.getOrganization().getId().equals(organization.getId())) {
-			throw new UnreachableException("Remove organization member input not consistency. "
+			throw new UnreachableException("Remove organization user input not consistency. "
 					+ "organizationUserMapId "+organizationUserMapId+" doesn't belong to the"
 					+ " target organization "+organization);
 		}
