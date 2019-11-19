@@ -16,24 +16,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gitenter.capsid.dto.PersonProfileDTO;
-import com.gitenter.capsid.dto.PersonRegisterDTO;
+import com.gitenter.capsid.dto.UserProfileDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.dto.SshKeyFieldDTO;
-import com.gitenter.capsid.service.PersonService;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.capsid.service.UserService;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 
 @Controller
 @RequestMapping("/settings")
-public class PersonSettingsController {
+public class UserSettingsController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(PersonSettingsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserSettingsController.class);
 	
-	private final PersonService personService;
+	private final UserService userService;
 	
 	@Autowired
-	public PersonSettingsController(PersonService personService) {
-		this.personService = personService;
+	public UserSettingsController(UserService userService) {
+		this.userService = userService;
 	}
 
 	@RequestMapping(method=RequestMethod.GET)
@@ -60,14 +60,14 @@ public class PersonSettingsController {
 	@RequestMapping(value="/profile", method=RequestMethod.GET)
 	public String showUpdateProfileForm(Model model, Authentication authentication) throws Exception {
 		
-		model.addAttribute("memberProfileDTO", personService.getPersonProfileDTO(authentication));
+		model.addAttribute("memberProfileDTO", userService.getUserProfileDTO(authentication));
 		
 		return "settings/profile";
 	}
 	
 	@RequestMapping(value="/profile", method=RequestMethod.POST)
 	public String processUpdateProfile(
-			@ModelAttribute("memberProfileDTO") @Valid PersonProfileDTO profileAfterChange, 
+			@ModelAttribute("memberProfileDTO") @Valid UserProfileDTO profileAfterChange, 
 			Errors errors, 
 			RedirectAttributes model) throws Exception {
 		
@@ -84,7 +84,7 @@ public class PersonSettingsController {
 		 * in the service layer.
 		 * > assert authentication.getName().equals(profileAfterChange.getUsername());
 		 */
-		personService.updatePerson(profileAfterChange);
+		userService.updateUser(profileAfterChange);
 		logger.debug("User changed profile. New profile: "+profileAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
@@ -103,8 +103,8 @@ public class PersonSettingsController {
 		 * as well as its share the password encoder with sign up. That's
 		 * the reason we want to load this DTO.
 		 */
-		PersonRegisterDTO personRegisterDTO = personService.getPersonRegisterDTO(authentication);
-		model.addAttribute("memberRegisterDTO", personRegisterDTO);
+		UserRegisterDTO userRegisterDTO = userService.getUserRegisterDTO(authentication);
+		model.addAttribute("memberRegisterDTO", userRegisterDTO);
 		
 		return "settings/account/password";
 	}
@@ -118,7 +118,7 @@ public class PersonSettingsController {
 			 * > Validation failed for object='XXX'. Error count: XXX
 			 * rather than write that information into the "Error" class.
 			 */
-			@ModelAttribute("memberRegisterDTO") @Valid PersonRegisterDTO registerAfterChange, 
+			@ModelAttribute("memberRegisterDTO") @Valid UserRegisterDTO registerAfterChange, 
 			Errors errors, 
 			@RequestParam(value="old_password") String oldPassword,
 			RedirectAttributes model) throws Exception {
@@ -136,7 +136,7 @@ public class PersonSettingsController {
 			return "settings/account/password";
 		}
 		
-		if (personService.updatePassword(registerAfterChange, oldPassword)) {
+		if (userService.updatePassword(registerAfterChange, oldPassword)) {
 			logger.info("User changed password: "+registerAfterChange.getUsername());
 			
 			model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
@@ -161,7 +161,7 @@ public class PersonSettingsController {
 			RedirectAttributes model,
 			HttpServletRequest request) throws Exception {
 		
-		if (personService.deletePerson(authentication.getName(), password)) {
+		if (userService.deleteUser(authentication.getName(), password)) {
 			request.logout();
 			
 			logger.info("User account deleted. Username: "+authentication.getName()+". IP: "+request.getRemoteAddr());
@@ -181,8 +181,8 @@ public class PersonSettingsController {
 	@RequestMapping(value="/ssh", method=RequestMethod.GET)
 	public String showSshKeyForm(Model model, Authentication authentication) throws Exception {
 		
-		PersonBean person = personService.getPersonByUsername(authentication.getName());
-		model.addAttribute("member", person);
+		UserBean user = userService.getUserByUsername(authentication.getName());
+		model.addAttribute("member", user);
 		
 		model.addAttribute("sshKeyFieldDTO", new SshKeyFieldDTO());
 		return "settings/ssh";
@@ -195,8 +195,8 @@ public class PersonSettingsController {
 			Model model, 
 			Authentication authentication) throws Exception {
 		
-		PersonBean person = personService.getPersonByUsername(authentication.getName());
-		model.addAttribute("member", person);
+		UserBean user = userService.getUserByUsername(authentication.getName());
+		model.addAttribute("member", user);
 		
 		if (errors.hasErrors()) {
 			
@@ -222,7 +222,7 @@ public class PersonSettingsController {
 			return "settings/ssh";
 		}
 		
-		personService.addSshKey(sshKey, person);
+		userService.addSshKey(sshKey, user);
 		
 		return "redirect:/settings/ssh";
 	}

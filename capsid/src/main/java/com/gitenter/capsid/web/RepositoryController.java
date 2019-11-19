@@ -27,7 +27,7 @@ import com.gitenter.enzymark.htmlgenerator.HtmlGenerator;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryPersonRole;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.DocumentBean;
@@ -62,7 +62,7 @@ public class RepositoryController {
 			model.addAttribute("organization", repository.getOrganization());
 			model.addAttribute("repository", repository);
 			
-			model.addAttribute("repositoryMemberRoleValues", RepositoryPersonRole.values());
+			model.addAttribute("repositoryMemberRoleValues", RepositoryUserRole.values());
 			
 			model.addAttribute("gitSshProtocolUrl", gitDomainSource.getGitSshProtocolUrl(
 					repository.getOrganization().getName(), repository.getName()));
@@ -122,14 +122,14 @@ public class RepositoryController {
 		
 		RepositoryBean repository = commit.getRepository();
 		OrganizationBean organization = repository.getOrganization();
-		Hibernate.initialize(repository.getRepositoryPersonMaps());
+		Hibernate.initialize(repository.getRepositoryUserMaps());
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);
 		model.addAttribute("commit", commit);
 		
 		model.addAttribute("branchNames", repository.getBranchNames());
-		model.addAttribute("repositoryMemberRoleValues", RepositoryPersonRole.values());
+		model.addAttribute("repositoryMemberRoleValues", RepositoryUserRole.values());
 		
 		model.addAttribute("gitSshProtocolUrl", gitDomainSource.getGitSshProtocolUrl(
 				repository.getOrganization().getName(), repository.getName()));

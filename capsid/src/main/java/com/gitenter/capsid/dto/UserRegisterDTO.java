@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(callSuper=true)
-public class PersonRegisterDTO extends PersonProfileDTO {
+public class UserRegisterDTO extends UserProfileDTO {
 	
 	/*
 	 * TODO:
@@ -36,16 +36,16 @@ public class PersonRegisterDTO extends PersonProfileDTO {
 	@ToString.Exclude
 	private String password;
 	
-	public PersonBean toBean(PasswordEncoder passwordEncoder) {
+	public UserBean toBean(PasswordEncoder passwordEncoder) {
 		
-		PersonBean personBean = new PersonBean();
+		UserBean userBean = new UserBean();
 		
-		personBean.setUsername(getUsername());
-		personBean.setPassword(passwordEncoder.encode(password));
-		personBean.setDisplayName(getDisplayName());
-		personBean.setEmail(getEmail());
-		personBean.setRegisterAt(new Date());
+		userBean.setUsername(getUsername());
+		userBean.setPassword(passwordEncoder.encode(password));
+		userBean.setDisplayName(getDisplayName());
+		userBean.setEmail(getEmail());
+		userBean.setRegisterAt(new Date());
 		
-		return personBean;
+		return userBean;
 	}
 }

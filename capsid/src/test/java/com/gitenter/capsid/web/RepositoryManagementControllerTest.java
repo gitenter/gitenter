@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.gitenter.capsid.service.PersonService;
+import com.gitenter.capsid.service.UserService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
@@ -25,7 +25,7 @@ public class RepositoryManagementControllerTest {
 	
 	private MockMvc mockMvc;
 	
-	private PersonService mockPersonService;
+	private UserService mockUserService;
 	private OrganizationService mockOrganizationService;
 	private RepositoryService mockRepositoryService;
 	private RepositoryManagerService mockRepositoryManagerService;
@@ -33,12 +33,12 @@ public class RepositoryManagementControllerTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 
-		mockPersonService = mock(PersonService.class);
+		mockUserService = mock(UserService.class);
 		mockOrganizationService = mock(OrganizationService.class);
 		mockRepositoryService = mock(RepositoryService.class);
 		mockRepositoryManagerService = mock(RepositoryManagerService.class);
 		RepositoryManagementController controller = new RepositoryManagementController(
-				mockPersonService, mockOrganizationService, mockRepositoryService, mockRepositoryManagerService);
+				mockUserService, mockOrganizationService, mockRepositoryService, mockRepositoryManagerService);
 		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 		
 		OrganizationBean organization = new OrganizationBean();

@@ -50,12 +50,12 @@ public class OrganizationBean implements ModelBean {
 	private List<RepositoryBean> repositories;
 
 	@ToString.Exclude
-	@OneToMany(targetEntity=OrganizationPersonMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<OrganizationPersonMapBean> organizationPersonMaps = new ArrayList<OrganizationPersonMapBean>();
+	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
+	private List<OrganizationUserMapBean> organizationUserMaps = new ArrayList<OrganizationUserMapBean>();
 	
 	/*
 	 * The alternative approach is to get them by a customized JOINed SQL query
-	 * from `OrganizationPersonMapRepository`.
+	 * from `OrganizationUserMapRepository`.
 	 * 
 	 * Will not do it until some performance
 	 * bottleneck is shown. Also, since Hibernate may optimize its query cache so
@@ -63,9 +63,9 @@ public class OrganizationBean implements ModelBean {
 	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
 	 * actually have not-worse performance.
 	 */
-	public Collection<OrganizationPersonMapBean> getPersonMaps(OrganizationPersonRole role) {
-		Collection<OrganizationPersonMapBean> items = new ArrayList<OrganizationPersonMapBean>();
-		for (OrganizationPersonMapBean map : organizationPersonMaps) {
+	public Collection<OrganizationUserMapBean> getUserMaps(OrganizationUserRole role) {
+		Collection<OrganizationUserMapBean> items = new ArrayList<OrganizationUserMapBean>();
+		for (OrganizationUserMapBean map : organizationUserMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map);
 			}
@@ -73,18 +73,18 @@ public class OrganizationBean implements ModelBean {
 		return items;
 	}
 	
-	public Collection<PersonBean> getPersons(OrganizationPersonRole role) {
-		Collection<PersonBean> items = new ArrayList<PersonBean>();
-		for (OrganizationPersonMapBean map : getPersonMaps(role)) {
-			items.add(map.getPerson());
+	public Collection<UserBean> getUsers(OrganizationUserRole role) {
+		Collection<UserBean> items = new ArrayList<UserBean>();
+		for (OrganizationUserMapBean map : getUserMaps(role)) {
+			items.add(map.getUser());
 		}
 		return items;
 	}
 	
-	public Collection<PersonBean> getPersons() {
-		Collection<PersonBean> items = new ArrayList<PersonBean>();
-		for (OrganizationPersonMapBean map : organizationPersonMaps) {
-			items.add(map.getPerson());
+	public Collection<UserBean> getUsers() {
+		Collection<UserBean> items = new ArrayList<UserBean>();
+		for (OrganizationUserMapBean map : organizationUserMaps) {
+			items.add(map.getUser());
 		}
 		return items;
 	}
@@ -104,33 +104,33 @@ public class OrganizationBean implements ModelBean {
 		repositories.add(repository);
 	}
 	
-	void addMap(OrganizationPersonMapBean map) {
-		organizationPersonMaps.add(map);
+	void addMap(OrganizationUserMapBean map) {
+		organizationUserMaps.add(map);
 	}
 	
 	/*
 	 * TODO:
 	 * Consider to have a JOIN query to get that.
 	 */
-//	public boolean isManagedBy (Integer personId) {
-//		for (PersonBean manager : managers) {
-//			if (manager.getId().equals(personId)) {
+//	public boolean isManagedBy (Integer userId) {
+//		for (UserBean manager : managers) {
+//			if (manager.getId().equals(userId)) {
 //				return true;
 //			}
 //		}
 //		return false;
 //	}
 //	
-//	public boolean addManager (PersonBean manager) {
+//	public boolean addManager (UserBean manager) {
 //		return managers.add(manager);
 //	}
 //	
-//	public boolean removeManager (Integer personId) {
+//	public boolean removeManager (Integer userId) {
 //		
-//		Iterator<PersonBean> i = managers.iterator();
+//		Iterator<UserBean> i = managers.iterator();
 //		while (i.hasNext()) {
-//			PersonBean manager = i.next();
-//			if (manager.getId().equals(personId)) {
+//			UserBean manager = i.next();
+//			if (manager.getId().equals(userId)) {
 //				i.remove();
 //				return true;
 //			}

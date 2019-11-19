@@ -12,22 +12,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.gitenter.capsid.dto.PersonProfileDTO;
-import com.gitenter.capsid.dto.PersonRegisterDTO;
+import com.gitenter.capsid.dto.UserProfileDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
-import com.gitenter.protease.dao.auth.PersonRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
 import com.gitenter.protease.dao.auth.SshKeyRepository;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationPersonRole;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryPersonRole;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 
 /*
  * It is quite ironical that Spring @autowired are contradict with
  * object-oriented programming. Say a more OO approach is we have
- * a domain class "Person" which:
+ * a domain class "User" which:
  * (1) hold its own information such as its "username", and
  * (2) can "createOrganization()" so need to @autowired "*Repository" in.
  * But it seems impossible in the current framework.
@@ -35,30 +35,30 @@ import com.gitenter.protease.domain.auth.SshKeyBean;
  * Therefore, these classes will go with really procedured approach. 
  */
 @Service
-public class PersonServiceImpl implements PersonService {
+public class UserServiceImpl implements UserService {
 	
 	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
-	private final PersonRepository personRepository;
+	private final UserRepository userRepository;
 	private final SshKeyRepository sshKeyRepository;
 	
 	private final PasswordEncoder passwordEncoder;
 	
 	@Autowired
-	public PersonServiceImpl(
-			PersonRepository personRepository, 
+	public UserServiceImpl(
+			UserRepository userRepository, 
 			SshKeyRepository sshKeyRepository,
 			PasswordEncoder passwordEncoder) {
-		this.personRepository = personRepository;
+		this.userRepository = userRepository;
 		this.sshKeyRepository = sshKeyRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
-	public PersonBean getPersonByUsername(String username) throws IOException {
-		List<PersonBean> persons = personRepository.findByUsername(username);
-		if (persons.size() == 1) {
-			return persons.get(0);
+	public UserBean getUserByUsername(String username) throws IOException {
+		List<UserBean> users = userRepository.findByUsername(username);
+		if (users.size() == 1) {
+			return users.get(0);
 		}
 		else {
 			throw new UserNotExistException(username);
@@ -67,63 +67,63 @@ public class PersonServiceImpl implements PersonService {
 	
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public PersonBean getMe(Authentication authentication) throws IOException {
-		return getPersonByUsername(authentication.getName());
+	public UserBean getMe(Authentication authentication) throws IOException {
+		return getUserByUsername(authentication.getName());
 	}
 	
 	@Override
-	public PersonProfileDTO getPersonProfileDTO(Authentication authentication) throws IOException {
+	public UserProfileDTO getUserProfileDTO(Authentication authentication) throws IOException {
 		
-		PersonBean person = getPersonByUsername(authentication.getName());
+		UserBean user = getUserByUsername(authentication.getName());
 		
-		PersonProfileDTO profile = new PersonProfileDTO();
-		profile.fillFromBean(person);
+		UserProfileDTO profile = new UserProfileDTO();
+		profile.fillFromBean(user);
 		
 		return profile;
 	}
 	
 	@Override
-	public PersonRegisterDTO getPersonRegisterDTO(Authentication authentication) throws IOException {
+	public UserRegisterDTO getUserRegisterDTO(Authentication authentication) throws IOException {
 		
-		PersonBean person = getPersonByUsername(authentication.getName());
+		UserBean user = getUserByUsername(authentication.getName());
 		
 		/*
 		 * Can just use superclass method, as fulfill "password"
 		 * attribute is not necessary.
 		 */
-		PersonRegisterDTO profileAndPassword = new PersonRegisterDTO();
-		profileAndPassword.fillFromBean(person);
+		UserRegisterDTO profileAndPassword = new UserRegisterDTO();
+		profileAndPassword.fillFromBean(user);
 		
 		return profileAndPassword;
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#profile, T(com.gitenter.capsid.security.PersonSecurityRole).SELF)")
-	public void updatePerson(PersonProfileDTO profile) throws IOException {
+	@PreAuthorize("hasPermission(#profile, T(com.gitenter.capsid.security.UserSecurityRole).SELF)")
+	public void updateUser(UserProfileDTO profile) throws IOException {
 		
-		PersonBean person = getPersonByUsername(profile.getUsername());
-		profile.updateBean(person);
+		UserBean user = getUserByUsername(profile.getUsername());
+		profile.updateBean(user);
 		
 		/* Since "saveAndFlush()" will decide by itself whether the operation is
 		 * INSERT or UPDATE, the bean being actually modified and refreshed should 
 		 * be the bean queried from the database, rather than the bean user just
 		 * produced. 
 		 */
-		personRepository.saveAndFlush(person);
+		userRepository.saveAndFlush(user);
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#register, T(com.gitenter.capsid.security.PersonSecurityRole).SELF)")
-	public boolean updatePassword(PersonRegisterDTO register, String oldPassword) throws IOException {
+	@PreAuthorize("hasPermission(#register, T(com.gitenter.capsid.security.UserSecurityRole).SELF)")
+	public boolean updatePassword(UserRegisterDTO register, String oldPassword) throws IOException {
 		
-		PersonBean person = getPersonByUsername(register.getUsername());
+		UserBean user = getUserByUsername(register.getUsername());
 		
-		if (!passwordEncoder.matches(oldPassword, person.getPassword())) {
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
 			return false;
 		}
 		else {
-			person.setPassword(passwordEncoder.encode(register.getPassword()));
-			personRepository.saveAndFlush(person);
+			user.setPassword(passwordEncoder.encode(register.getPassword()));
+			userRepository.saveAndFlush(user);
 			
 			return true;
 		}
@@ -138,7 +138,7 @@ public class PersonServiceImpl implements PersonService {
 		
 		/* 
 		 * I believe that Hibernate should be smart enough that when
-		 * "personRepository.findById()" is called the second time in an execution,
+		 * "userRepository.findById()" is called the second time in an execution,
 		 * it will not reach the database again but use the same return value.
 		 * (As it march with what Martin Flower said of "Identity Map" of an ORM
 		 * design). Need to double check. 
@@ -148,53 +148,53 @@ public class PersonServiceImpl implements PersonService {
 		 * when display), for example a dirty fix of implement a proxy pattern
 		 * inside of the "getMember()" method
 		 */
-		PersonBean person = getPersonByUsername(username);
-		return person.getOrganizations(OrganizationPersonRole.MANAGER);
+		UserBean user = getUserByUsername(username);
+		return user.getOrganizations(OrganizationUserRole.MANAGER);
 	}
 
 	@Override
 	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException {
 		
-		PersonBean person = getPersonByUsername(username);
-		return person.getOrganizations(OrganizationPersonRole.MEMBER);
+		UserBean user = getUserByUsername(username);
+		return user.getOrganizations(OrganizationUserRole.MEMBER);
 	}
 
 	@Override
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException {
 		
-		PersonBean person = getPersonByUsername(username);
-		return person.getRepositories(RepositoryPersonRole.ORGANIZER);
+		UserBean user = getUserByUsername(username);
+		return user.getRepositories(RepositoryUserRole.ORGANIZER);
 	}
 
 	@Override
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException {
 		
-		PersonBean person = getPersonByUsername(username);
-		return person.getRepositories(RepositoryPersonRole.EDITOR);
+		UserBean user = getUserByUsername(username);
+		return user.getRepositories(RepositoryUserRole.EDITOR);
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#person, T(com.gitenter.capsid.security.PersonSecurityRole).SELF)")
-	public void addSshKey(SshKeyBean sshKey, PersonBean person) throws IOException {
+	@PreAuthorize("hasPermission(#user, T(com.gitenter.capsid.security.UserSecurityRole).SELF)")
+	public void addSshKey(SshKeyBean sshKey, UserBean user) throws IOException {
 		
-		sshKey.setPerson(person);
-		person.addSshKey(sshKey);
+		sshKey.setUser(user);
+		user.addSshKey(sshKey);
 		
 		sshKeyRepository.saveAndFlush(sshKey);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#username, T(com.gitenter.capsid.security.PersonSecurityRole).SELF)")
-	public boolean deletePerson(String username, String password) throws IOException {
+	@PreAuthorize("hasPermission(#username, T(com.gitenter.capsid.security.UserSecurityRole).SELF)")
+	public boolean deleteUser(String username, String password) throws IOException {
 		
-		PersonBean person = getPersonByUsername(username);
+		UserBean user = getUserByUsername(username);
 		
-		if (!passwordEncoder.matches(password, person.getPassword())) {
+		if (!passwordEncoder.matches(password, user.getPassword())) {
 			return false;
 		}
 		else {
-			auditLogger.info("User account has been deleted: "+person);
-			personRepository.delete(person);
+			auditLogger.info("User account has been deleted: "+user);
+			userRepository.delete(user);
 			return true;
 		}
 	}

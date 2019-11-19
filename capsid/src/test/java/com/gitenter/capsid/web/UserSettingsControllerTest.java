@@ -18,20 +18,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.gitenter.capsid.dto.PersonRegisterDTO;
-import com.gitenter.capsid.service.PersonService;
+import com.gitenter.capsid.dto.UserRegisterDTO;
+import com.gitenter.capsid.service.UserService;
 
-public class PersonSettingsControllerTest {
+public class UserSettingsControllerTest {
 	
 	private MockMvc mockMvc;
 	
-	private PersonService mockPersonService;
+	private UserService mockUserService;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
 
-		mockPersonService = mock(PersonService.class);
-		PersonSettingsController controller = new PersonSettingsController(mockPersonService);
+		mockUserService = mock(UserService.class);
+		UserSettingsController controller = new UserSettingsController(mockUserService);
 		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 	
@@ -107,10 +107,10 @@ public class PersonSettingsControllerTest {
 	@Test
 	public void testUpdatePassword() throws Exception {
 		
-		when(mockPersonService.updatePassword(any(PersonRegisterDTO.class), eq("correct_old_password")))
+		when(mockUserService.updatePassword(any(UserRegisterDTO.class), eq("correct_old_password")))
 		.thenReturn(true);
 		
-		when(mockPersonService.updatePassword(any(PersonRegisterDTO.class), eq("wrong_old_password")))
+		when(mockUserService.updatePassword(any(UserRegisterDTO.class), eq("wrong_old_password")))
 		.thenReturn(false);
 		
 		mockMvc.perform(post("/settings/account/password")

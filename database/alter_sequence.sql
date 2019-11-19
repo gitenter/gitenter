@@ -11,9 +11,9 @@
 -- Typical error:
 -- > ERROR: duplicate key value violates unique constraint "person_pkey"
 -- >  Detail: Key (id)=(1) already exists.
-ALTER SEQUENCE auth.person_id_seq RESTART WITH 2;
+ALTER SEQUENCE auth.application_user_id_seq RESTART WITH 2;
 ALTER SEQUENCE auth.organization_id_seq RESTART WITH 2;
-ALTER SEQUENCE auth.organization_person_map_id_seq RESTART WITH 2;
+ALTER SEQUENCE auth.organization_user_map_id_seq RESTART WITH 2;
 ALTER SEQUENCE auth.repository_id_seq RESTART WITH 2;
-ALTER SEQUENCE auth.repository_person_map_id_seq RESTART WITH 2;
+ALTER SEQUENCE auth.repository_user_map_id_seq RESTART WITH 2;
 ALTER SEQUENCE auth.ssh_key_id_seq RESTART WITH 2;

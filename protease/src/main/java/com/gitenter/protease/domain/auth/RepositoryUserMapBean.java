@@ -20,8 +20,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "auth", name = "repository_person_map")
-public class RepositoryPersonMapBean implements MapBean<RepositoryBean,PersonBean,RepositoryPersonRole> {
+@Table(schema = "auth", name = "repository_user_map")
+public class RepositoryUserMapBean implements MapBean<RepositoryBean,UserBean,RepositoryUserRole> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -35,8 +35,8 @@ public class RepositoryPersonMapBean implements MapBean<RepositoryBean,PersonBea
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="person_id")
-	private PersonBean person;
+	@JoinColumn(name="user_id")
+	private UserBean user;
 	
 	/*
 	 * Rather than a lookup table in SQL, we define the
@@ -49,22 +49,22 @@ public class RepositoryPersonMapBean implements MapBean<RepositoryBean,PersonBea
 	 * https://dzone.com/articles/mapping-enums-done-right
 	 * 
 	 * NOTE:
-	 * Can't do inner classes of "RepositoryPersonRole" and 
-	 * "RepositoryPersonRoleConventer". Failed to load ApplicationContext.
+	 * Can't do inner classes of "RepositoryUserRole" and 
+	 * "RepositoryUserRoleConventer". Failed to load ApplicationContext.
 	 */
 	@Column(name="role_shortname")
-	@Convert(converter = RepositoryPersonRoleConventer.class)
-	private RepositoryPersonRole role;
+	@Convert(converter = RepositoryUserRoleConventer.class)
+	private RepositoryUserRole role;
 	
-	public static RepositoryPersonMapBean link(RepositoryBean repository, PersonBean person, RepositoryPersonRole role) {
+	public static RepositoryUserMapBean link(RepositoryBean repository, UserBean user, RepositoryUserRole role) {
 		
-		RepositoryPersonMapBean map = new RepositoryPersonMapBean();
+		RepositoryUserMapBean map = new RepositoryUserMapBean();
 		map.repository = repository;
-		map.person = person;
+		map.user = user;
 		map.role = role;
 		
 		repository.addMap(map);
-		person.addMap(map);
+		user.addMap(map);
 		
 		return map;
 	}
@@ -72,7 +72,7 @@ public class RepositoryPersonMapBean implements MapBean<RepositoryBean,PersonBea
 	@Override
 	public boolean isAlterable(String operatorUsername) {
 		
-		String toBeDeletedUsername = person.getUsername();
+		String toBeDeletedUsername = user.getUsername();
 		return !toBeDeletedUsername.equals(operatorUsername);
 	}
 }

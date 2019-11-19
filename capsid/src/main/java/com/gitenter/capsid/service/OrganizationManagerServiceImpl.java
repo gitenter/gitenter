@@ -17,22 +17,22 @@ import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.capsid.service.exception.UnreachableException;
-import com.gitenter.protease.dao.auth.PersonRepository;
-import com.gitenter.protease.dao.auth.OrganizationPersonMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationPersonMapBean;
-import com.gitenter.protease.domain.auth.OrganizationPersonRole;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
 
 @Service
 public class OrganizationManagerServiceImpl implements OrganizationManagerService {
 	
 	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 	
-	@Autowired PersonRepository personRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationPersonMapRepository organizationPersonMapRepository;
+	@Autowired OrganizationUserMapRepository organizationUserMapRepository;
 	
 	/*
 	 * TODO:
@@ -43,12 +43,12 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public void createOrganization(PersonBean me, OrganizationDTO organizationDTO) throws IOException {
+	public void createOrganization(UserBean me, OrganizationDTO organizationDTO) throws IOException {
 		OrganizationBean organization = organizationDTO.toBean();
 		try {
 			/*
 			 * Need to save first. Otherwise when saving 
-			 * "OrganizationPersonMapBean", non-null error will
+			 * "OrganizationUserMapBean", non-null error will
 			 * be raised for "organization_id" column.
 			 */
 			organizationRepository.saveAndFlush(organization);
@@ -58,16 +58,16 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		}
 		
 		/*
-		 * Cannot using "personRepository" or "organizationRepository"
+		 * Cannot using "userRepository" or "organizationRepository"
 		 * to save. It will double-insert the target row and cause primary
 		 * key error.
 		 */
-		OrganizationPersonMapBean map = OrganizationPersonMapBean.link(organization, me, OrganizationPersonRole.MANAGER);
-		organizationPersonMapRepository.saveAndFlush(map);
+		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, me, OrganizationUserRole.MANAGER);
+		organizationUserMapRepository.saveAndFlush(map);
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
 	public void updateOrganization(
 			Authentication authentication, 
 			OrganizationBean organizationBean, 
@@ -84,34 +84,34 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth. OrganizationPersonRole).MANAGER)")
-	public void addOrganizationMember(OrganizationBean organization, PersonBean person) {
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth. OrganizationUserRole).MANAGER)")
+	public void addOrganizationMember(OrganizationBean organization, UserBean user) {
 
-		OrganizationPersonMapBean map = OrganizationPersonMapBean.link(organization, person, OrganizationPersonRole.MEMBER);
-		organizationPersonMapRepository.saveAndFlush(map);
+		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, user, OrganizationUserRole.MEMBER);
+		organizationUserMapRepository.saveAndFlush(map);
 	}
 	
-	private OrganizationPersonMapBean getOrganizationPersonMapBean(Integer organizationPersonMapId) throws IOException {
+	private OrganizationUserMapBean getOrganizationUserMapBean(Integer organizationUserMapId) throws IOException {
 		
-		Optional<OrganizationPersonMapBean> maps = organizationPersonMapRepository.findById(organizationPersonMapId);
+		Optional<OrganizationUserMapBean> maps = organizationUserMapRepository.findById(organizationUserMapId);
 		
 		if (maps.isPresent()) {
 			return maps.get();
 		}
 		else {
-			throw new IdNotExistException(OrganizationPersonMapBean.class, organizationPersonMapId);
+			throw new IdNotExistException(OrganizationUserMapBean.class, organizationUserMapId);
 		}
 	}
 	
 	@Override
 	@Transactional
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MANAGER)")
-	public void removeOrganizationMember(OrganizationBean organization, Integer organizationPersonMapId) throws IOException {
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
+	public void removeOrganizationMember(OrganizationBean organization, Integer organizationUserMapId) throws IOException {
 		
-		OrganizationPersonMapBean map = getOrganizationPersonMapBean(organizationPersonMapId);
+		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
 		
 		/*
-		 * Doesn't for the SQL operation part, since if the `organizationPersonMapId` does not
+		 * Doesn't for the SQL operation part, since if the `organizationUserMapId` does not
 		 * exist then `DELECT` simply does nothing. The problem is the `@PreAuthorize` is only
 		 * for the operator has authorization for the current organization, but have no
 		 * requirement if the `mapId` belongs to a completely different organization. That's
@@ -119,18 +119,18 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 */
 		if (!map.getOrganization().getId().equals(organization.getId())) {
 			throw new UnreachableException("Remove organization member input not consistency. "
-					+ "organizationPersonMapId "+organizationPersonMapId+" doesn't belong to the "
+					+ "organizationUserMapId "+organizationUserMapId+" doesn't belong to the "
 					+ "target organization "+organization);
 		}
 		
-		organizationPersonMapRepository.throughSqlDeleteById(organizationPersonMapId);
+		organizationUserMapRepository.throughSqlDeleteById(organizationUserMapId);
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
 	public void addOrganizationManager(OrganizationBean organization, Integer organizationMemberMapId) throws IOException {
 		
-		OrganizationPersonMapBean map = getOrganizationPersonMapBean(organizationMemberMapId);
+		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationMemberMapId);
 		
 		if (!map.getOrganization().getId().equals(organization.getId())) {
 			throw new UnreachableException("Add organization member input not consistency. "
@@ -138,43 +138,43 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 					+ "target organization "+organization);
 		}
 		
-		if (map.getRole().equals(OrganizationPersonRole.MANAGER)) {
+		if (map.getRole().equals(OrganizationUserRole.MANAGER)) {
 			throw new UnreachableException("User is already a manager of the target organization.");
 		}
 		
-		map.setRole(OrganizationPersonRole.MANAGER);
-		organizationPersonMapRepository.saveAndFlush(map);
+		map.setRole(OrganizationUserRole.MANAGER);
+		organizationUserMapRepository.saveAndFlush(map);
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
 	public void removeOrganizationManager(
 			Authentication authentication,
 			OrganizationBean organization, 
-			Integer organizationPersonMapId) throws IOException {
+			Integer organizationUserMapId) throws IOException {
 		
-		OrganizationPersonMapBean map = getOrganizationPersonMapBean(organizationPersonMapId);
+		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
 		
 		if (!map.getOrganization().getId().equals(organization.getId())) {
 			throw new UnreachableException("Remove organization member input not consistency. "
-					+ "organizationPersonMapId "+organizationPersonMapId+" doesn't belong to the"
+					+ "organizationUserMapId "+organizationUserMapId+" doesn't belong to the"
 					+ " target organization "+organization);
 		}
 		
-		if (!map.getRole().equals(OrganizationPersonRole.MANAGER)) {
+		if (!map.getRole().equals(OrganizationUserRole.MANAGER)) {
 			throw new UnreachableException("User is currently not a manager of the target organization. Current role "+map.getRole());
 		}
 		
-		if (authentication.getName().equals(map.getPerson().getUsername())) {
+		if (authentication.getName().equals(map.getUser().getUsername())) {
 			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as a manager of organization "+organization);
 		}
 		
-		map.setRole(OrganizationPersonRole.MEMBER);
-		organizationPersonMapRepository.saveAndFlush(map);
+		map.setRole(OrganizationUserRole.MEMBER);
+		organizationUserMapRepository.saveAndFlush(map);
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MANAGER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
 	public void deleteOrganization(OrganizationBean organization) throws IOException {
 		
 		auditLogger.info("Organization has been deleted: "+organization);

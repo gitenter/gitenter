@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.OrganizationDTO;
-import com.gitenter.capsid.service.PersonService;
+import com.gitenter.capsid.service.UserService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
 public class OrganizationManagementController {
 	
-	private PersonService personService;
+	private UserService userService;
 	private OrganizationService organizationService;
 	private OrganizationManagerService organizationManagerService;
 
 	@Autowired
 	public OrganizationManagementController(
-			PersonService personService, 
+			UserService userService, 
 			OrganizationService organizationService,
 			OrganizationManagerService organizationManagerService) {
 
-		this.personService = personService;
+		this.userService = userService;
 		this.organizationService = organizationService;
 		this.organizationManagerService = organizationManagerService;
 	}
@@ -59,7 +59,7 @@ public class OrganizationManagementController {
 		}
 		
 		try {
-			PersonBean me = personService.getMe(authentication);
+			UserBean me = userService.getMe(authentication);
 			organizationManagerService.createOrganization(me, organizationDTO);
 		}
 		catch(ItemNotUniqueException e) {
@@ -151,7 +151,7 @@ public class OrganizationManagementController {
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		PersonBean toBeAddMember = personService.getPersonByUsername(username);
+		UserBean toBeAddMember = userService.getUserByUsername(username);
 		organizationManagerService.addOrganizationMember(organization, toBeAddMember);		
 		/*
 		 * TODO:

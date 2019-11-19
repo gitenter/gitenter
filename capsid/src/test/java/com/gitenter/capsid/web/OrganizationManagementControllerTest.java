@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.gitenter.capsid.service.PersonService;
+import com.gitenter.capsid.service.UserService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
 
@@ -21,18 +21,18 @@ public class OrganizationManagementControllerTest {
 	
 	private MockMvc mockMvc;
 	
-	private PersonService mockPersonService;
+	private UserService mockUserService;
 	private OrganizationService mockOrganizationService;
 	private OrganizationManagerService mockOrganizationManagerService;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
 
-		mockPersonService = mock(PersonService.class);
+		mockUserService = mock(UserService.class);
 		mockOrganizationService = mock(OrganizationService.class);
 		mockOrganizationManagerService = mock(OrganizationManagerService.class);
 		OrganizationManagementController controller = new OrganizationManagementController(
-				mockPersonService, mockOrganizationService, mockOrganizationManagerService);
+				mockUserService, mockOrganizationService, mockOrganizationManagerService);
 		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 	

@@ -24,29 +24,29 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.gitenter.capsid.dto.PersonProfileDTO;
-import com.gitenter.capsid.dto.PersonRegisterDTO;
+import com.gitenter.capsid.dto.UserProfileDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
-import com.gitenter.protease.dao.auth.PersonRepository;
-import com.gitenter.protease.dao.auth.OrganizationPersonMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.SshKeyRepository;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("local")
-public class PersonServiceTest {
+public class UserServiceTest {
 
-	@MockBean private PersonRepository personRepository;
+	@MockBean private UserRepository userRepository;
 	@MockBean private OrganizationRepository organizationRepository;
-	@MockBean private OrganizationPersonMapRepository organizationMemberMapRepository;
+	@MockBean private OrganizationUserMapRepository organizationMemberMapRepository;
 	@MockBean private SshKeyRepository sshKeyRepository;
 	@MockBean private PasswordEncoder passwordEncoder;
 	
-	@Autowired private PersonService personService;
+	@Autowired private UserService userService;
 	
-	private PersonBean person;
+	private UserBean user;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -54,59 +54,59 @@ public class PersonServiceTest {
 		given(passwordEncoder.encode("password")).willReturn("wordpass");
 		given(passwordEncoder.matches("password", "wordpass")).willReturn(true);
 		
-		person = new PersonBean();
-		person.setUsername("username");
-		person.setPassword(passwordEncoder.encode("password"));
-		person.setDisplayName("User Name");
-		person.setEmail("username@email.com");
-		List<PersonBean> persons = new ArrayList<PersonBean>();
-		persons.add(person);
+		user = new UserBean();
+		user.setUsername("username");
+		user.setPassword(passwordEncoder.encode("password"));
+		user.setDisplayName("User Name");
+		user.setEmail("username@email.com");
+		List<UserBean> users = new ArrayList<UserBean>();
+		users.add(user);
 		
-		given(personRepository.findByUsername("username")).willReturn(persons);
+		given(userRepository.findByUsername("username")).willReturn(users);
 	}
 	
 	@Test
-	public void testGetPersonByUsernameWithValidUsername() throws IOException {
-		assertEquals(personService.getPersonByUsername("username"), person);
+	public void testGetUserByUsernameWithValidUsername() throws IOException {
+		assertEquals(userService.getUserByUsername("username"), user);
 	}
 	
 	@Test
-	public void testGetPersonByUsernameWithInValidUsername() throws IOException {
+	public void testGetUserByUsernameWithInValidUsername() throws IOException {
 		assertThrows(UserNotExistException.class, () -> {
-			personService.getPersonByUsername("not_exist");
+			userService.getUserByUsername("not_exist");
 		});
 	}
 	
 	@Test
 	@WithMockUser(username="username")
-	public void testUpdatePersonWithAuthorizedUser() throws IOException {
+	public void testUpdateUserWithAuthorizedUser() throws IOException {
 		
-		PersonProfileDTO profile = new PersonProfileDTO();
+		UserProfileDTO profile = new UserProfileDTO();
 		profile.setUsername("username");
 		profile.setDisplayName("Updated User Name");
 		profile.setEmail("updated_username@email.com");
 		
-		personService.updatePerson(profile);
+		userService.updateUser(profile);
 		
 		/*
 		 * `member` is updated, but that's the same pointer.
 		 */
-		verify(personRepository, times(1)).saveAndFlush(person);
-		assertEquals(person.getDisplayName(), "Updated User Name");
-		assertEquals(person.getEmail(), "updated_username@email.com");
+		verify(userRepository, times(1)).saveAndFlush(user);
+		assertEquals(user.getDisplayName(), "Updated User Name");
+		assertEquals(user.getEmail(), "updated_username@email.com");
 	}
 	
 	@Test
 	@WithMockUser(username="hijacked_username")
-	public void testUpdatePersonWithHijackedUser() throws IOException {
+	public void testUpdateUserWithHijackedUser() throws IOException {
 		
-		PersonProfileDTO profile = new PersonProfileDTO();
+		UserProfileDTO profile = new UserProfileDTO();
 		profile.setUsername("username");
 		profile.setDisplayName("Updated User Name");
 		profile.setEmail("updated_username@email.com");
 		
 		assertThrows(AccessDeniedException.class, () -> {
-			personService.updatePerson(profile);
+			userService.updateUser(profile);
 		});
 	}
 	
@@ -114,24 +114,24 @@ public class PersonServiceTest {
 	@WithMockUser(username="username")
 	public void testUpdatePasswordCorrectOldPassword() throws IOException {
 		
-		PersonRegisterDTO register = new PersonRegisterDTO();
+		UserRegisterDTO register = new UserRegisterDTO();
 		register.setUsername("username");
 		register.setPassword("new_password");
 		
-		assertTrue(personService.updatePassword(register, "password"));
+		assertTrue(userService.updatePassword(register, "password"));
 		
-		verify(personRepository, times(1)).saveAndFlush(person);
+		verify(userRepository, times(1)).saveAndFlush(user);
 	}
 	
 	@Test
 	@WithMockUser(username="username")
 	public void testUpdatePasswordWrongOldPassword() throws IOException {
 		
-		PersonRegisterDTO register = new PersonRegisterDTO();
+		UserRegisterDTO register = new UserRegisterDTO();
 		register.setUsername("username");
 		register.setPassword("new_password");
 		
-		assertFalse(personService.updatePassword(register, "wrong_password"));
-		verify(personRepository, times(0)).saveAndFlush(person);
+		assertFalse(userService.updatePassword(register, "wrong_password"));
+		verify(userRepository, times(0)).saveAndFlush(user);
 	}
 }

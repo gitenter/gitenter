@@ -1,6 +1,6 @@
 CREATE SCHEMA auth;
 
-CREATE TABLE auth.person (
+CREATE TABLE auth.application_user (
 	id serial PRIMARY KEY,
 	username text NOT NULL UNIQUE,
 	password text NOT NULL,
@@ -15,24 +15,24 @@ CREATE TABLE auth.organization (
 	display_name text NOT NULL
 );
 
-CREATE TABLE auth.organization_person_map (
+CREATE TABLE auth.organization_user_map (
 	id serial PRIMARY KEY,
 
 	/*
-	 * `ON DELETE RESTRICT` for `person_id` because otherwise when a person
+	 * `ON DELETE RESTRICT` for `user_id` because otherwise when a person
 	 * is removed, some organization will become orphan ones with no
 	 * manager (and nobody can further add manager/member). This force
 	 * delete organization duties before a person can be removed from
 	 * the system.
 	 */
 	organization_id serial REFERENCES auth.organization (id) ON DELETE CASCADE,
-	person_id serial REFERENCES auth.person (id) ON DELETE RESTRICT,
+	user_id serial REFERENCES auth.application_user (id) ON DELETE RESTRICT,
 
 	/*
 	 * With this constrain, a person can at most have one role
 	 * in a particular organization.
 	 */
-	UNIQUE (organization_id, person_id),
+	UNIQUE (organization_id, user_id),
 
 	/*
 	 * Rather than a lookup table in SQL, we define the enum types
@@ -63,16 +63,16 @@ CREATE TABLE auth.repository (
 	is_public boolean NOT NULL
 );
 
-CREATE TABLE auth.repository_person_map (
+CREATE TABLE auth.repository_user_map (
 	id serial PRIMARY KEY,
 
 	repository_id serial REFERENCES auth.repository (id) ON DELETE CASCADE,
-	person_id serial REFERENCES auth.person (id) ON DELETE CASCADE,
+	user_id serial REFERENCES auth.application_user (id) ON DELETE CASCADE,
 	/*
 	 * With this constrain, a user can at most have one role on
 	 * some particular repository.
 	 */
-	UNIQUE (repository_id, person_id),
+	UNIQUE (repository_id, user_id),
 
 	/*
 	 * Currently we have "role_shortname" to have values:
@@ -94,7 +94,7 @@ CREATE TABLE auth.repository_person_map (
 
 CREATE TABLE auth.ssh_key (
 	id serial PRIMARY KEY,
-	person_id serial REFERENCES auth.person (id) ON DELETE CASCADE,
+	user_id serial REFERENCES auth.application_user (id) ON DELETE CASCADE,
 
 	/*
 	 * Key type has limited possibilities of “ecdsa-sha2-nistp256”,
@@ -113,12 +113,12 @@ CREATE TABLE auth.ssh_key (
 	comment text
 );
 
-CREATE TABLE auth.person_feature_toggle (
+CREATE TABLE auth.application_user_feature_toggle (
 	id serial PRIMARY KEY,
-	person_id serial REFERENCES auth.person (id) ON DELETE CASCADE,
+	user_id serial REFERENCES auth.application_user (id) ON DELETE CASCADE,
 
 	feature_shortname char(1) NOT NULL,
-	UNIQUE(person_id, feature_shortname),
+	UNIQUE(user_id, feature_shortname),
 
 	is_on boolean NOT NULL
 );
@@ -276,8 +276,8 @@ IMMUTABLE;
 CREATE TABLE review.attendee (
 	id serial PRIMARY KEY,
 	review_id serial REFERENCES review.review (id) ON DELETE CASCADE,
-	person_id serial REFERENCES auth.person (id) ON DELETE CASCADE,
-	UNIQUE (review_id, person_id)
+	user_id serial REFERENCES auth.application_user (id) ON DELETE CASCADE,
+	UNIQUE (review_id, user_id)
 );
 
 -- CREATE TABLE review.author (
@@ -292,7 +292,7 @@ CREATE TABLE review.reviewer (
 CREATE TABLE review.subsection (
 	id serial PRIMARY KEY REFERENCES git.valid_commit (id) ON DELETE CASCADE,
 	review_id serial REFERENCES review.review (id) ON DELETE CASCADE,
-	person_id serial REFERENCES auth.person (id) ON DELETE RESTRICT,
+	user_id serial REFERENCES auth.application_user (id) ON DELETE RESTRICT,
 	CHECK (git.repository_id_from_commit(id) = review.repository_id_from_review(review_id)),
 
 	create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -385,7 +385,7 @@ CREATE TABLE review.comment (
  */
 -- CREATE TABLE review.notification (
 -- 	id serial PRIMARY KEY,
--- 	person_id serial REFERENCES auth.person (id) ON DELETE CASCADE,
+-- 	user_id serial REFERENCES auth.application_user (id) ON DELETE CASCADE,
 -- 	discussion_topic_id serial REFERENCES review.discussion_topic (id) ON DELETE CASCADE,
 --
 -- 	is_read boolean NOT NULL DEFAULT FALSE,

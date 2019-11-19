@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gitenter.capsid.dto.LoginDTO;
-import com.gitenter.capsid.dto.PersonRegisterDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
 
@@ -38,7 +38,7 @@ public class AuthorizationController {
 		 * The modelAttribute NEED to be the same as the class name,
 		 * otherwise the <sf:errors> will not render. 
 		 */
-		model.addAttribute("memberRegisterDTO", new PersonRegisterDTO());
+		model.addAttribute("memberRegisterDTO", new UserRegisterDTO());
 		return "authorization/register";
 	}
 	
@@ -48,7 +48,7 @@ public class AuthorizationController {
 			 * Use "ModelAttribute" rather than directly put the value into model,
 			 * otherwise the <sf:errors> will not render. 
 			 */
-			@ModelAttribute("memberRegisterDTO") @Valid PersonRegisterDTO memberRegisterDTO, 
+			@ModelAttribute("memberRegisterDTO") @Valid UserRegisterDTO memberRegisterDTO, 
 			Errors errors,
 			Model model,
 			HttpServletRequest request) throws Exception {

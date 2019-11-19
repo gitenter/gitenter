@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.gitenter.capsid.service.exception.MaliciousOperationException;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PersonProfileDTO implements ReadDTO<PersonBean>, UpdateDTO<PersonBean> {
+public class UserProfileDTO implements ReadDTO<UserBean>, UpdateDTO<UserBean> {
 	
 	@NotNull
 	@Size(min=2, max=16)
@@ -40,30 +40,30 @@ public class PersonProfileDTO implements ReadDTO<PersonBean>, UpdateDTO<PersonBe
 	private String email;
 	
 	@Override
-	public void fillFromBean(PersonBean personBean) {
+	public void fillFromBean(UserBean userBean) {
 		
 		/*
 		 * Since password cannot be reversely analyzed,
 		 * the corresponding item is just list as blank.
 		 */
-		this.username = personBean.getUsername();
-		this.displayName = personBean.getDisplayName();
-		this.email = personBean.getEmail();
+		this.username = userBean.getUsername();
+		this.displayName = userBean.getDisplayName();
+		this.email = userBean.getEmail();
 	}
 	
 	@Override
-	public void updateBean(PersonBean personBean) throws IOException {
+	public void updateBean(UserBean userBean) throws IOException {
 		
 		/*
-		 * Since this class doesn't cover all attributes of "PersonBean"
+		 * Since this class doesn't cover all attributes of "UserBean"
 		 * (e.g., "password" is missing), it cannot create and return a
-		 * "PersonBean" but can only modify one which already exist.
+		 * "UserBean" but can only modify one which already exist.
 		 */
-		if (!personBean.getUsername().equals(username)) {
+		if (!userBean.getUsername().equals(username)) {
 			throw new MaliciousOperationException("Somebody is trying to update user profile of somebody else.");
 		}
 		
-		personBean.setDisplayName(displayName);
-		personBean.setEmail(email);
+		userBean.setDisplayName(displayName);
+		userBean.setEmail(email);
 	}
 }

@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryPersonMapBean;
-import com.gitenter.protease.domain.auth.RepositoryPersonRole;
+import com.gitenter.protease.domain.auth.RepositoryUserMapBean;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -39,11 +39,11 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaGitDatabaseConnection",
 		"schemaTraceabilityDatabaseConnection",
 		"schemaReviewDatabaseConnection"})
-public class RepositoryPersonMapRepositoryTest {
+public class RepositoryUserMapRepositoryTest {
 	
-	@Autowired RepositoryPersonMapRepository repositoryPersonMapRepository;
+	@Autowired RepositoryUserMapRepository repositoryUserMapRepository;
 	
-	@Autowired PersonRepository personRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired RepositoryRepository repositoryRepository;
 	
 	@Test
@@ -51,10 +51,10 @@ public class RepositoryPersonMapRepositoryTest {
 	@DbUnitMinimalDataTearDown
 	public void testFindByUsernameAndRepositoryId() {
 		
-		List<RepositoryPersonMapBean> maps = repositoryPersonMapRepository.findByUsernameAndRepositoryId("username", 1);		
+		List<RepositoryUserMapBean> maps = repositoryUserMapRepository.findByUsernameAndRepositoryId("username", 1);		
 		
 		assertEquals(maps.size(), 1);
-		assertEquals(maps.get(0).getPerson().getUsername(), "username");
+		assertEquals(maps.get(0).getUser().getUsername(), "username");
 	}
 	
 	@Test
@@ -62,11 +62,11 @@ public class RepositoryPersonMapRepositoryTest {
 	@DbUnitMinimalDataTearDown
 	public void testFindByUsernameAndOrganizationNameAndRepositoryName() {
 		
-		List<RepositoryPersonMapBean> maps = repositoryPersonMapRepository.findByUsernameAndOrganizationNameAndRepositoryName(
+		List<RepositoryUserMapBean> maps = repositoryUserMapRepository.findByUsernameAndOrganizationNameAndRepositoryName(
 				"username", "organization", "repository");		
 		
 		assertEquals(maps.size(), 1);
-		assertEquals(maps.get(0).getPerson().getUsername(), "username");
+		assertEquals(maps.get(0).getUser().getUsername(), "username");
 	}
 	
 	@Test
@@ -75,21 +75,21 @@ public class RepositoryPersonMapRepositoryTest {
 	@DbUnitMinimalDataTearDown
 	public void testRemoveUserFromRepsoitory() {
 		
-		PersonBean person = personRepository.findById(1).get();
-		assertEquals(person.getRepositories(RepositoryPersonRole.ORGANIZER).size(), 1);
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getRepositories(RepositoryUserRole.ORGANIZER).size(), 1);
 		
-		Integer mapId = person.getRepositoryPersonMaps().get(0).getId();
-		repositoryPersonMapRepository.throughSqlDeleteById(mapId);
+		Integer mapId = user.getRepositoryUserMaps().get(0).getId();
+		repositoryUserMapRepository.throughSqlDeleteById(mapId);
 		
 		/*
 		 * Can't do it. Because Hibernate will be too smart to not generate the query
 		 * to touch the database again (identity mapping pattern), so the assert will
 		 * be wrong.
 		 */
-//		person = personRepository.findById(1).get();
-//		assertEquals(person.getRepositories(RepositoryPersonRole.ORGANIZER).size(), 0);
+//		user = userRepository.findById(1).get();
+//		assertEquals(user.getRepositories(RepositoryUserRole.ORGANIZER).size(), 0);
 		
 		RepositoryBean repository = repositoryRepository.findById(1).get();
-		assertEquals(repository.getPersons(RepositoryPersonRole.ORGANIZER).size(), 0);
+		assertEquals(repository.getUsers(RepositoryUserRole.ORGANIZER).size(), 0);
 	}
 }

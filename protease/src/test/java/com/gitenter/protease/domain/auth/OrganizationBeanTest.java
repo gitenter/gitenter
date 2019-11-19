@@ -21,8 +21,8 @@ import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.dao.auth.PersonRepository;
-import com.gitenter.protease.dao.auth.RepositoryPersonMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
+import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -44,9 +44,9 @@ public class OrganizationBeanTest {
 
 	@Autowired private OrganizationRepository organizationRepository;
 	
-	@Autowired PersonRepository personRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired RepositoryPersonMapRepository repositoryPersonMapRepository;
+	@Autowired RepositoryUserMapRepository repositoryUserMapRepository;
 	
 	@Test
 	@Transactional
@@ -64,8 +64,8 @@ public class OrganizationBeanTest {
 		assertEquals(item.getName(), "organization");
 		assertEquals(item.getDisplayName(), "Organization");
 		
-		assertEquals(item.getPersons(OrganizationPersonRole.MANAGER).size(), 1);
-		assertEquals(item.getPersons(OrganizationPersonRole.MEMBER).size(), 0);
+		assertEquals(item.getUsers(OrganizationUserRole.MANAGER).size(), 1);
+		assertEquals(item.getUsers(OrganizationUserRole.MEMBER).size(), 0);
 	}
 	
 	/*
@@ -95,15 +95,15 @@ public class OrganizationBeanTest {
 		 */
 		repositoryRepository.saveAndFlush(repository);
 		
-		PersonBean person = personRepository.findById(1).get();
-		assertEquals(person.getRepositories(RepositoryPersonRole.ORGANIZER).size(), 1);
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getRepositories(RepositoryUserRole.ORGANIZER).size(), 1);
 		
-		RepositoryPersonMapBean map = RepositoryPersonMapBean.link(repository, person, RepositoryPersonRole.ORGANIZER);
-		repositoryPersonMapRepository.saveAndFlush(map);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, user, RepositoryUserRole.ORGANIZER);
+		repositoryUserMapRepository.saveAndFlush(map);
 		
-		PersonBean updatedPerson = personRepository.findById(1).get();
-		assertEquals(updatedPerson.getRepositories(RepositoryPersonRole.ORGANIZER).size(), 2);
-		for (RepositoryBean iterRepository : updatedPerson.getRepositories(RepositoryPersonRole.ORGANIZER)) {
+		UserBean updatedUser = userRepository.findById(1).get();
+		assertEquals(updatedUser.getRepositories(RepositoryUserRole.ORGANIZER).size(), 2);
+		for (RepositoryBean iterRepository : updatedUser.getRepositories(RepositoryUserRole.ORGANIZER)) {
 			switch(iterRepository.getName()) {
 			case "repository":
 				break;
@@ -116,7 +116,7 @@ public class OrganizationBeanTest {
 		}
 		
 		RepositoryBean updatedNewRepository = repositoryRepository.findByOrganizationNameAndRepositoryName(organization.getName(), "new_repository").get(0);
-		assertEquals(updatedNewRepository.getPersons(RepositoryPersonRole.ORGANIZER).size(), 1);
-		assertEquals(updatedNewRepository.getPersons(RepositoryPersonRole.ORGANIZER).get(0).getUsername(), person.getUsername());
+		assertEquals(updatedNewRepository.getUsers(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(updatedNewRepository.getUsers(RepositoryUserRole.ORGANIZER).get(0).getUsername(), user.getUsername());
 	}
 }

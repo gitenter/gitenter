@@ -13,7 +13,7 @@ import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
 
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 public class ExceptionConsumingPipelineTest {
@@ -22,20 +22,20 @@ public class ExceptionConsumingPipelineTest {
 	public void testConsumePersistenceExceptionSingleConstrainSuccessfullyRaiseItemNotUniqueException() throws IOException {
 		
 		PSQLException psqlException = new PSQLException(
-				"ERROR: duplicate key value violates unique constraint \"person_username_key\"\n" + 
+				"ERROR: duplicate key value violates unique constraint \"appliation_user_username_key\"\n" + 
 				"  Detail: Key (username)=(username) already exists.", PSQLState.QUERY_CANCELED);
 		ConstraintViolationException constraintViolationException = new ConstraintViolationException(
 				"could not execute statement",
 				psqlException,
-				"person_username_key");
+				"application_user_username_key");
 		PersistenceException persistenceException = new PersistenceException(
 				"org.hibernate.exception.ConstraintViolationException: could not execute statement",
 				constraintViolationException);
 		
-		PersonBean person = new PersonBean();
+		UserBean user = new UserBean();
 	
 		ItemNotUniqueException expectedEx = assertThrows(ItemNotUniqueException.class, () -> {
-			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, person);
+			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, user);
 		});
 		assertTrue(expectedEx.getMessage().contains("username value breaks SQL constrain."));
 	}
@@ -97,10 +97,10 @@ public class ExceptionConsumingPipelineTest {
 				"org.hibernate.exception.ConstraintViolationException: could not execute statement",
 				constraintViolationException);
 		
-		PersonBean person = new PersonBean();
+		UserBean user = new UserBean();
 		
 		assertThrows(PersistenceException.class, () -> {
-			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, person);
+			ExceptionConsumingPipeline.consumePersistenceException(persistenceException, user);
 		});
 	}
 }

@@ -17,7 +17,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -39,7 +39,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaReviewDatabaseConnection"})
 public class SshKeyRepositoryTest {
 
-	@Autowired PersonRepository personRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired SshKeyRepository sshKeyRepository;
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
@@ -61,8 +61,8 @@ public class SshKeyRepositoryTest {
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void test() throws Exception {	
-		PersonBean person = personRepository.findById(1).get();
-		assertEquals(person.getSshKeys().size(), 1);
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getSshKeys().size(), 1);
 		
 		String keyType = "ssh-rsa";
 		String keyData = "AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9";
@@ -71,21 +71,21 @@ public class SshKeyRepositoryTest {
 		/*
 		 * TODO:
 		 * 
-		 * Any way to not setup the double relationship (person-sshKey) manually?
-		 * Notice that we cannot change "setPerson()" to include "addSshKey()",
-		 * as "setPerson()" is also used for Hibernate.
+		 * Any way to not setup the double relationship (user-sshKey) manually?
+		 * Notice that we cannot change "setUser()" to include "addSshKey()",
+		 * as "setUser()" is also used for Hibernate.
 		 */
 		SshKeyBean sshKey = new SshKeyBean();
 		sshKey.setBean(keyType+" "+keyData+" "+comment);
-		sshKey.setPerson(person);
-		person.addSshKey(sshKey);
+		sshKey.setUser(user);
+		user.addSshKey(sshKey);
 		
 		sshKeyRepository.saveAndFlush(sshKey);
 		
-		PersonBean refreshedPerson = personRepository.findById(1).get();
-		assertEquals(refreshedPerson.getSshKeys().size(), 2);
+		UserBean refreshedUser = userRepository.findById(1).get();
+		assertEquals(refreshedUser.getSshKeys().size(), 2);
 		
-		SshKeyBean refreshedSshKey = refreshedPerson.getSshKeys().get(1);
+		SshKeyBean refreshedSshKey = refreshedUser.getSshKeys().get(1);
 		assertEquals(refreshedSshKey.getKeyType(), keyType);
 		assertEquals(refreshedSshKey.getKeyData(), keyData);
 		assertEquals(refreshedSshKey.getComment(), comment);

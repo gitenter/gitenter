@@ -12,19 +12,19 @@ import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidDataStateException;
-import com.gitenter.protease.dao.auth.OrganizationPersonMapRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationPersonMapBean;
-import com.gitenter.protease.domain.auth.OrganizationPersonRole;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
 	
 	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationPersonMapRepository organizationPersonMapRepository;
+	@Autowired OrganizationUserMapRepository organizationUserMapRepository;
 
 	@Override
 	public OrganizationBean getOrganization(Integer organizationId) throws IOException {
@@ -40,32 +40,32 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	@Override
-	public Collection<OrganizationPersonMapBean> getManagerMaps(Integer organizationId) throws IOException {
+	public Collection<OrganizationUserMapBean> getManagerMaps(Integer organizationId) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getPersonMaps(OrganizationPersonRole.MANAGER);
+		return organization.getUserMaps(OrganizationUserRole.MANAGER);
 	}
 	
 	@Override
-	public Collection<OrganizationPersonMapBean> getMemberMaps(Integer organizationId) throws IOException {
+	public Collection<OrganizationUserMapBean> getMemberMaps(Integer organizationId) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getPersonMaps(OrganizationPersonRole.MEMBER);
+		return organization.getUserMaps(OrganizationUserRole.MEMBER);
 	}
 	
 	@Override
-	public Collection<PersonBean> getAllPersons(Integer organizationId) throws IOException {
+	public Collection<UserBean> getAllUsers(Integer organizationId) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getPersons();
+		return organization.getUsers();
 	}
 	
 	@Override
 	@PreAuthorize("isAuthenticated()")
 	public boolean isManager(Integer organizationId, Authentication authentication) throws IOException {
 		
-		List<OrganizationPersonMapBean> maps = organizationPersonMapRepository.findByUsernameAndOrganizationIdAndRole(
-				authentication.getName(), organizationId, OrganizationPersonRole.MANAGER);
+		List<OrganizationUserMapBean> maps = organizationUserMapRepository.findByUsernameAndOrganizationIdAndRole(
+				authentication.getName(), organizationId, OrganizationUserRole.MANAGER);
 		
 		if (maps.size() == 1) {
 			return true;
@@ -82,8 +82,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@PreAuthorize("isAuthenticated()")
 	public boolean isMember(Integer organizationId, Authentication authentication) throws IOException {
 		
-		List<OrganizationPersonMapBean> maps = organizationPersonMapRepository.findByUsernameAndOrganizationIdAndRole(
-				authentication.getName(), organizationId, OrganizationPersonRole.MEMBER);
+		List<OrganizationUserMapBean> maps = organizationUserMapRepository.findByUsernameAndOrganizationIdAndRole(
+				authentication.getName(), organizationId, OrganizationUserRole.MEMBER);
 		
 		if (maps.size() == 1) {
 			return true;

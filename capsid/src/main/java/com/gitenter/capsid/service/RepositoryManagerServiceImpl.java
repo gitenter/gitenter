@@ -25,28 +25,28 @@ import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
-import com.gitenter.protease.dao.auth.PersonRepository;
-import com.gitenter.protease.dao.auth.OrganizationPersonMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.dao.auth.RepositoryPersonMapRepository;
+import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
-import com.gitenter.protease.domain.auth.PersonBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationPersonMapBean;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryPersonMapBean;
-import com.gitenter.protease.domain.auth.RepositoryPersonRole;
+import com.gitenter.protease.domain.auth.RepositoryUserMapBean;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 
 @Service
 public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
-	@Autowired PersonRepository personRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationPersonMapRepository organizationPersonMapRepository;
+	@Autowired OrganizationUserMapRepository organizationUserMapRepository;
 	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired RepositoryPersonMapRepository repositoryPersonMapRepository;
+	@Autowired RepositoryUserMapRepository repositoryUserMapRepository;
 	
 	@Autowired GitSource gitSource;
 	
@@ -58,9 +58,9 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationPersonRole).MEMBER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MEMBER)")
 	public void createRepository(
-			PersonBean me, 
+			UserBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException {
@@ -80,8 +80,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			ExceptionConsumingPipeline.consumePersistenceException(e, repository);
 		}
 		
-		RepositoryPersonMapBean map = RepositoryPersonMapBean.link(repository, me, RepositoryPersonRole.ORGANIZER);
-		repositoryPersonMapRepository.saveAndFlush(map);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, me, RepositoryUserRole.ORGANIZER);
+		repositoryUserMapRepository.saveAndFlush(map);
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		
@@ -185,7 +185,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryPersonRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
 	public void updateRepository(
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException {
@@ -195,13 +195,13 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryPersonRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
 	public void addCollaborator(
 			RepositoryBean repository, 
-			PersonBean collaborator, 
+			UserBean collaborator, 
 			String roleName) throws IOException {
 		
-		List<OrganizationPersonMapBean> maps = organizationPersonMapRepository.fineByPersonAndOrganization(
+		List<OrganizationUserMapBean> maps = organizationUserMapRepository.fineByUserAndOrganization(
 				collaborator, repository.getOrganization());
 		if (maps.size() == 0) {
 			throw new InvalidOperationException("User "+collaborator.getUsername()+" cannot be added "
@@ -209,22 +209,22 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 					+ "not a member of organization "+repository.getOrganization().getName()+".");
 		}
 		
-		RepositoryPersonRole role = RepositoryPersonRole.collaboratorRoleOf(roleName);
+		RepositoryUserRole role = RepositoryUserRole.collaboratorRoleOf(roleName);
 		
-		RepositoryPersonMapBean map = RepositoryPersonMapBean.link(repository, collaborator, role);
-		repositoryPersonMapRepository.saveAndFlush(map);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, collaborator, role);
+		repositoryUserMapRepository.saveAndFlush(map);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryPersonRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
 	@Transactional
 	public void removeCollaborator(
 			RepositoryBean repository, 
-			Integer repositoryPersonMapId) throws IOException {
+			Integer repositoryUserMapId) throws IOException {
 		
 		/*
 		 * TODO:
-		 * Should we validate the `repositoryPersonMapId`?
+		 * Should we validate the `repositoryUserMapId`?
 		 */
 		
 		/*
@@ -237,11 +237,11 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 * We have knowledge of `repositoryMemberMapId` when we generate
 		 * the delete page with links.
 		 */
-		repositoryPersonMapRepository.throughSqlDeleteById(repositoryPersonMapId);
+		repositoryUserMapRepository.throughSqlDeleteById(repositoryUserMapId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryPersonRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
 	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
 		auditLogger.info("Repository has been deleted: "+repository);

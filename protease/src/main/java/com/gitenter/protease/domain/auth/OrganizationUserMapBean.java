@@ -20,8 +20,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(schema = "auth", name = "organization_person_map")
-public class OrganizationPersonMapBean implements MapBean<OrganizationBean,PersonBean,OrganizationPersonRole> {
+@Table(schema = "auth", name = "organization_user_map")
+public class OrganizationUserMapBean implements MapBean<OrganizationBean,UserBean,OrganizationUserRole> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -35,13 +35,13 @@ public class OrganizationPersonMapBean implements MapBean<OrganizationBean,Perso
 	
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="person_id")
-	private PersonBean person;
+	@JoinColumn(name="user_id")
+	private UserBean user;
 	
 	@NotNull
 	@Column(name="role_shortname")
-	@Convert(converter = OrganizationPersonRoleConventer.class)
-	private OrganizationPersonRole role;
+	@Convert(converter = OrganizationUserRoleConventer.class)
+	private OrganizationUserRole role;
 
 	/*
 	 * TODO:
@@ -54,22 +54,22 @@ public class OrganizationPersonMapBean implements MapBean<OrganizationBean,Perso
 	 * 
 	 * (2) Then set attributes no longer work. A workaround is to define "setLeft()" and
 	 * "setRight" and override in subclass. However, it gets messy as we actually should
-	 * super the left/right attributes ("OrganizationBean" and "PersonBean" for this case),
+	 * super the left/right attributes ("OrganizationBean" and "UserBean" for this case),
 	 * but it cannot be done as in this layer JPA need to use these attributes.
 	 * 
 	 * (3) We need some abstract superclass of "OrganizationBean" which implement "addMap()".
 	 * 
 	 * May be impossible but I can investigate later.
 	 */
-	public static OrganizationPersonMapBean link(OrganizationBean organization, PersonBean person, OrganizationPersonRole role) {
+	public static OrganizationUserMapBean link(OrganizationBean organization, UserBean user, OrganizationUserRole role) {
 		
-		OrganizationPersonMapBean map = new OrganizationPersonMapBean();
+		OrganizationUserMapBean map = new OrganizationUserMapBean();
 		map.organization = organization;
-		map.person = person;
+		map.user = user;
 		map.role = role;
 		
 		organization.addMap(map);
-		person.addMap(map);
+		user.addMap(map);
 		
 		return map;
 	}
@@ -77,7 +77,7 @@ public class OrganizationPersonMapBean implements MapBean<OrganizationBean,Perso
 	@Override
 	public boolean isAlterable(String operatorUsername) {
 		
-		String toBeDeletedUsername = person.getUsername();
+		String toBeDeletedUsername = user.getUsername();
 		return !toBeDeletedUsername.equals(operatorUsername);
 	}
 }
