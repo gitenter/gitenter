@@ -5,7 +5,7 @@ import com.gitenter.protease.domain.Role;
 import lombok.Getter;
 
 @Getter
-public enum OrganizationMemberRole implements Role {
+public enum OrganizationPersonRole implements Role {
 
 	MANAGER('G', "Non-professional manager"),
 	MEMBER('M', "Ordinary member");
@@ -13,12 +13,12 @@ public enum OrganizationMemberRole implements Role {
 	private Character shortName;
 	private String displayName;
 
-	private OrganizationMemberRole(Character shortName, String displayName) {
+	private OrganizationPersonRole(Character shortName, String displayName) {
 		this.shortName = shortName;
 		this.displayName = displayName;
 	}
 
-	public static OrganizationMemberRole fromShortName(Character shortName) {
+	public static OrganizationPersonRole fromShortName(Character shortName) {
 		switch (shortName) {
 		case 'G':
 			return MANAGER;
@@ -26,7 +26,7 @@ public enum OrganizationMemberRole implements Role {
 			return MEMBER;
 		
 		default:
-			throw new IllegalArgumentException("Organization member role shortName: "+shortName+" is not supported.");
+			throw new IllegalArgumentException("Organization person role shortName: "+shortName+" is not supported.");
 		}
 	}
 }

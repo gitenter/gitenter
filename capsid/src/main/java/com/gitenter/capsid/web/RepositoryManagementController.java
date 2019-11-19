@@ -14,32 +14,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
-import com.gitenter.capsid.service.MemberService;
+import com.gitenter.capsid.service.PersonService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.PersonBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.domain.auth.RepositoryPersonRole;
 
 @Controller
 public class RepositoryManagementController {
 	
-	private MemberService memberService;
+	private PersonService personService;
 	private OrganizationService organizationService;
 	private RepositoryService repositoryService;
 	private RepositoryManagerService repositoryManagerService;
 
 	@Autowired
 	public RepositoryManagementController(
-			MemberService memberService, 
+			PersonService personService, 
 			OrganizationService organizationService,
 			RepositoryService repositoryService,
 			RepositoryManagerService repositoryManagerService) {
 		
-		this.memberService = memberService;
+		this.personService = personService;
 		this.organizationService = organizationService;
 		this.repositoryService = repositoryService;
 		this.repositoryManagerService = repositoryManagerService;
@@ -83,7 +83,7 @@ public class RepositoryManagementController {
 		}
 		
 		try {
-			MemberBean me = memberService.getMe(authentication);
+			PersonBean me = personService.getMe(authentication);
 			repositoryManagerService.createRepository(me, organization, repositoryDTO, includeSetupFiles);
 		}
 		catch(ItemNotUniqueException e) {
@@ -171,7 +171,7 @@ public class RepositoryManagementController {
 		model.addAttribute("repository", repository);
 		model.addAttribute("operatorUsername", authentication.getName());
 		
-		model.addAttribute("collaboratorRoles", RepositoryMemberRole.collaboratorRoles());
+		model.addAttribute("collaboratorRoles", RepositoryPersonRole.collaboratorRoles());
 		
 		return "repository-management/collaborators";
 	}
@@ -184,7 +184,7 @@ public class RepositoryManagementController {
 			String roleName) throws Exception {
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
-		MemberBean collaborator = memberService.getMemberByUsername(username);
+		PersonBean collaborator = personService.getPersonByUsername(username);
 		/*
 		 * TODO:
 		 * Catch the errors and redirect to the original page, if the collaborator manager 

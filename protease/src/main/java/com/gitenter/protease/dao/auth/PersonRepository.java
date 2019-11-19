@@ -5,12 +5,12 @@ import java.util.Optional;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.PersonBean;
 
-public interface MemberRepository extends PagingAndSortingRepository<MemberBean, Integer> {
+public interface PersonRepository extends PagingAndSortingRepository<PersonBean, Integer> {
 
-	public Optional<MemberBean> findById(Integer id);
-	public List<MemberBean> findByUsername(String username);
+	public Optional<PersonBean> findById(Integer id);
+	public List<PersonBean> findByUsername(String username);
 	
 	/*
 	 * In Spring Data JPA, save() does both jobs of INSERT and UPDATE,
@@ -19,7 +19,7 @@ public interface MemberRepository extends PagingAndSortingRepository<MemberBean,
 	 * The difference between save() and saveAndFlush() is 
 	 * saveAndFlush() will commit immediately, while save() will only 
 	 * comment when commit() or flush(). */
-	public MemberBean saveAndFlush(MemberBean member);
+	public PersonBean saveAndFlush(PersonBean person);
 	
-	public void delete(MemberBean member);
+	public void delete(PersonBean person);
 }

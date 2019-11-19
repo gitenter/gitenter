@@ -97,7 +97,7 @@ public class InReviewDocumentBeanTest {
 				OnlineDiscussionTopicBean onlineTopic = (OnlineDiscussionTopicBean)discussionTopic;
 				
 				assertEquals(onlineTopic.getComments().size(), 1);
-				assertEquals(onlineTopic.getComments().get(0).getAttendee().getMember().getUsername(), "username");
+				assertEquals(onlineTopic.getComments().get(0).getAttendee().getPerson().getUsername(), "username");
 				assertEquals(onlineTopic.getComments().get(0).getContent(), "comment content");
 			}
 		}

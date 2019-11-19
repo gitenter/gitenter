@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.OrganizationDTO;
-import com.gitenter.capsid.service.MemberService;
+import com.gitenter.capsid.service.PersonService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.PersonBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
 public class OrganizationManagementController {
 	
-	private MemberService memberService;
+	private PersonService personService;
 	private OrganizationService organizationService;
 	private OrganizationManagerService organizationManagerService;
 
 	@Autowired
 	public OrganizationManagementController(
-			MemberService memberService, 
+			PersonService personService, 
 			OrganizationService organizationService,
 			OrganizationManagerService organizationManagerService) {
 
-		this.memberService = memberService;
+		this.personService = personService;
 		this.organizationService = organizationService;
 		this.organizationManagerService = organizationManagerService;
 	}
@@ -59,7 +59,7 @@ public class OrganizationManagementController {
 		}
 		
 		try {
-			MemberBean me = memberService.getMe(authentication);
+			PersonBean me = personService.getMe(authentication);
 			organizationManagerService.createOrganization(me, organizationDTO);
 		}
 		catch(ItemNotUniqueException e) {
@@ -151,7 +151,7 @@ public class OrganizationManagementController {
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		MemberBean toBeAddMember = memberService.getMemberByUsername(username);
+		PersonBean toBeAddMember = personService.getPersonByUsername(username);
 		organizationManagerService.addOrganizationMember(organization, toBeAddMember);		
 		/*
 		 * TODO:
@@ -182,7 +182,7 @@ public class OrganizationManagementController {
 		
 		model.addAttribute("organization", organizationService.getOrganization(organizationId));
 		model.addAttribute("managerMaps", organizationService.getManagerMaps(organizationId));
-		model.addAttribute("ordinaryMemberMaps", organizationService.getOrdinaryMemberMaps(organizationId));
+		model.addAttribute("ordinaryMemberMaps", organizationService.getMemberMaps(organizationId));
 		model.addAttribute("operatorUsername", authentication.getName());
 		
 		return "organization-management/managers";

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.gitenter.protease.domain.ModelBean;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.PersonBean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,8 +44,8 @@ public class AttendeeBean implements ModelBean {
 	 */
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="member_id")
-	private MemberBean member;
+	@JoinColumn(name="person_id")
+	private PersonBean person;
 	
 	@ManyToMany(mappedBy="attendees", fetch=FetchType.LAZY)
 	private List<ReviewMeetingBean> reviewMeetings;

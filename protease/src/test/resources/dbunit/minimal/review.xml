@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <review id="1" repository_id="1" version_number="v1" description="review description" />
-    <attendee id="1" review_id="1" member_id="1" />
+    <attendee id="1" review_id="1" person_id="1" />
     <reviewer id="1" liability_description="liability description" />
 
-    <subsection id="1" review_id="1" member_id="1" />
+    <subsection id="1" review_id="1" person_id="1" />
     <discussion_subsection id="1" />
 
     <in_review_document id="1" subsection_id="1" status_shortname="A" />

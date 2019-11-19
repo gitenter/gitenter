@@ -33,8 +33,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(schema = "auth", name = "member")
-public class MemberBean implements ModelBean {
+@Table(schema = "auth", name = "person")
+public class PersonBean implements ModelBean {
 
 	/*
 	 * @GeneratedValue for automatically generate primary keys.
@@ -85,15 +85,15 @@ public class MemberBean implements ModelBean {
 	private Date registerAt;
 
 	@ToString.Exclude
-	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
-	private List<OrganizationMemberMapBean> organizationMemberMaps;
+	@OneToMany(targetEntity=OrganizationPersonMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="person")
+	private List<OrganizationPersonMapBean> organizationPersonMaps;
 	
 	@ToString.Exclude
-	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	@OneToMany(targetEntity=RepositoryPersonMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="person")
+	private List<RepositoryPersonMapBean> repositoryPersonMaps = new ArrayList<RepositoryPersonMapBean>();
 	
 	@ToString.Exclude
-	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="member")
+	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="person")
 	private List<SshKeyBean> sshKeys;
 	
 	/*
@@ -102,9 +102,9 @@ public class MemberBean implements ModelBean {
 	 * method can contain a switch which queries corresponding list. Will have no
 	 * affect to the outside part.
 	 */
-	public List<OrganizationBean> getOrganizations(OrganizationMemberRole role) {
+	public List<OrganizationBean> getOrganizations(OrganizationPersonRole role) {
 		List<OrganizationBean> items = new ArrayList<OrganizationBean>();
-		for (OrganizationMemberMapBean map : organizationMemberMaps) {
+		for (OrganizationPersonMapBean map : organizationPersonMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map.getOrganization());
 			}
@@ -112,9 +112,9 @@ public class MemberBean implements ModelBean {
 		return items;
 	}
 	
-	public List<RepositoryBean> getRepositories(RepositoryMemberRole role) {
+	public List<RepositoryBean> getRepositories(RepositoryPersonRole role) {
 		List<RepositoryBean> items = new ArrayList<RepositoryBean>();
-		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+		for (RepositoryPersonMapBean map : repositoryPersonMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map.getRepository());
 			}
@@ -122,12 +122,12 @@ public class MemberBean implements ModelBean {
 		return items;
 	}
 	
-	void addMap(OrganizationMemberMapBean map) {
-		organizationMemberMaps.add(map);
+	void addMap(OrganizationPersonMapBean map) {
+		organizationPersonMaps.add(map);
 	}
 	
-	void addMap(RepositoryMemberMapBean map) {
-		repositoryMemberMaps.add(map);
+	void addMap(RepositoryPersonMapBean map) {
+		repositoryPersonMaps.add(map);
 	}
 	
 	public boolean addSshKey(SshKeyBean sshKey) {

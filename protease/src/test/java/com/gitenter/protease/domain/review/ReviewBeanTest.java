@@ -48,7 +48,7 @@ public class ReviewBeanTest {
 		assertEquals(item.getRepository().getName(), "repository");
 		
 		assertEquals(item.getAttendees().size(), 1);
-		assertEquals(item.getAttendees().get(0).getMember().getUsername(), "username");
+		assertEquals(item.getAttendees().get(0).getPerson().getUsername(), "username");
 		assertEquals(item.getAttendees().get(0).getReview().getVersionNumber(), "v1");
 		
 		assertEquals(item.getSubsections().size(), 1);

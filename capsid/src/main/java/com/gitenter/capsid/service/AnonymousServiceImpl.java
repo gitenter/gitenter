@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.capsid.dto.PersonRegisterDTO;
+import com.gitenter.protease.dao.auth.PersonRepository;
+import com.gitenter.protease.domain.auth.PersonBean;
 
 @Service
 public class AnonymousServiceImpl implements AnonymousService {
 
-	@Autowired private MemberRepository memberRepository;
+	@Autowired private PersonRepository personRepository;
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	/*
@@ -26,14 +26,14 @@ public class AnonymousServiceImpl implements AnonymousService {
 	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
 	 */
 	@Override
-	public void signUp(MemberRegisterDTO memberRegisterDTO) throws IOException {
+	public void signUp(PersonRegisterDTO personRegisterDTO) throws IOException {
 		
-		MemberBean memberBean = memberRegisterDTO.toBean(passwordEncoder);
+		PersonBean personBean = personRegisterDTO.toBean(passwordEncoder);
 		try {
-			memberRepository.saveAndFlush(memberBean);
+			personRepository.saveAndFlush(personBean);
 		}
 		catch(PersistenceException e) {
-			ExceptionConsumingPipeline.consumePersistenceException(e, memberBean);
+			ExceptionConsumingPipeline.consumePersistenceException(e, personBean);
 		}
 		
 		/*

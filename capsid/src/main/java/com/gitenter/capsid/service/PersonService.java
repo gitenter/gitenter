@@ -5,14 +5,14 @@ import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
 
-import com.gitenter.capsid.dto.MemberProfileDTO;
-import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.capsid.dto.PersonProfileDTO;
+import com.gitenter.capsid.dto.PersonRegisterDTO;
+import com.gitenter.protease.domain.auth.PersonBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 
-public interface MemberService {
+public interface PersonService {
 	
 	/*
 	 * These methods using input "username" rather than "authentication",
@@ -23,17 +23,17 @@ public interface MemberService {
 	 * as we cannot annotate @PreAuthorize in the class scope (rather than
 	 * in the method scope), there's not a lot of benefits doing that.
 	 */
-	public MemberBean getMemberByUsername(String username) throws IOException;
-	public MemberBean getMe(Authentication authentication) throws IOException;
+	public PersonBean getPersonByUsername(String username) throws IOException;
+	public PersonBean getMe(Authentication authentication) throws IOException;
 	
 	/*
 	 * Basically to have the input of "Authentication", it has similar the same
 	 * effect as @PreAuthorize("isAuthenticated()").
 	 */
-	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) throws IOException;
-	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) throws IOException;
-	public void updateMember(MemberProfileDTO profile) throws IOException;
-	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException;
+	public PersonProfileDTO getPersonProfileDTO(Authentication authentication) throws IOException;
+	public PersonRegisterDTO getPersonRegisterDTO(Authentication authentication) throws IOException;
+	public void updatePerson(PersonProfileDTO profile) throws IOException;
+	public boolean updatePassword(PersonRegisterDTO register, String oldPassword) throws IOException;
 	
 	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException;
 	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException;
@@ -41,6 +41,6 @@ public interface MemberService {
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException;
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
 	
-	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException;
-	public boolean deleteMember(String username, String password) throws IOException;
+	public void addSshKey(SshKeyBean sshKey, PersonBean person) throws IOException;
+	public boolean deletePerson(String username, String password) throws IOException;
 }

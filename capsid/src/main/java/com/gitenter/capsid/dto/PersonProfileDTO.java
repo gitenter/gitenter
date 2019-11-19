@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.gitenter.capsid.service.exception.MaliciousOperationException;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.PersonBean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBean> {
+public class PersonProfileDTO implements ReadDTO<PersonBean>, UpdateDTO<PersonBean> {
 	
 	@NotNull
 	@Size(min=2, max=16)
@@ -40,30 +40,30 @@ public class MemberProfileDTO implements ReadDTO<MemberBean>, UpdateDTO<MemberBe
 	private String email;
 	
 	@Override
-	public void fillFromBean(MemberBean memberBean) {
+	public void fillFromBean(PersonBean personBean) {
 		
 		/*
 		 * Since password cannot be reversely analyzed,
 		 * the corresponding item is just list as blank.
 		 */
-		this.username = memberBean.getUsername();
-		this.displayName = memberBean.getDisplayName();
-		this.email = memberBean.getEmail();
+		this.username = personBean.getUsername();
+		this.displayName = personBean.getDisplayName();
+		this.email = personBean.getEmail();
 	}
 	
 	@Override
-	public void updateBean(MemberBean memberBean) throws IOException {
+	public void updateBean(PersonBean personBean) throws IOException {
 		
 		/*
-		 * Since this class doesn't cover all attributes of "MemberBean"
+		 * Since this class doesn't cover all attributes of "PersonBean"
 		 * (e.g., "password" is missing), it cannot create and return a
-		 * "MemberBean" but can only modify one which already exist.
+		 * "PersonBean" but can only modify one which already exist.
 		 */
-		if (!memberBean.getUsername().equals(username)) {
+		if (!personBean.getUsername().equals(username)) {
 			throw new MaliciousOperationException("Somebody is trying to update user profile of somebody else.");
 		}
 		
-		memberBean.setDisplayName(displayName);
-		memberBean.setEmail(email);
+		personBean.setDisplayName(displayName);
+		personBean.setEmail(email);
 	}
 }

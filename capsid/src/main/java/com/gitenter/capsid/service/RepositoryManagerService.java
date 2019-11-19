@@ -5,14 +5,14 @@ import java.io.IOException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.PersonBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 public interface RepositoryManagerService {
 
 	public void createRepository(
-			MemberBean me, 
+			PersonBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException;
@@ -22,11 +22,11 @@ public interface RepositoryManagerService {
 	
 	public void addCollaborator(
 			RepositoryBean repository, 
-			MemberBean collaborator, 
+			PersonBean collaborator, 
 			String roleName) throws IOException;
 	public void removeCollaborator(
 			RepositoryBean repository, 
-			Integer repositoryMemberMapId) throws IOException;
+			Integer repositoryPersonMapId) throws IOException;
 	
 	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException;
 }

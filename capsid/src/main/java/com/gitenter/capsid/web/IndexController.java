@@ -6,12 +6,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.gitenter.capsid.service.MemberService;
+import com.gitenter.capsid.service.PersonService;
 
 @Controller
 public class IndexController {
 	
-	@Autowired MemberService memberService;
+	@Autowired PersonService personService;
 
 	@RequestMapping("/")
 	public String showMainPage(Model model, Authentication authentication) throws Exception {
@@ -25,10 +25,10 @@ public class IndexController {
 		 * of member roles (by the database/domain layer) inside of 
 		 * the service layer.
 		 */
-		model.addAttribute("managedOrganizations", memberService.getManagedOrganizations(username));
-		model.addAttribute("belongedOrganizations", memberService.getBelongedOrganizations(username));
-		model.addAttribute("organizedRepositories", memberService.getOrganizedRepositories(username));
-		model.addAttribute("authoredRepositories", memberService.getAuthoredRepositories(username));
+		model.addAttribute("managedOrganizations", personService.getManagedOrganizations(username));
+		model.addAttribute("belongedOrganizations", personService.getBelongedOrganizations(username));
+		model.addAttribute("organizedRepositories", personService.getOrganizedRepositories(username));
+		model.addAttribute("authoredRepositories", personService.getAuthoredRepositories(username));
 
 		return "index/main";
 	}

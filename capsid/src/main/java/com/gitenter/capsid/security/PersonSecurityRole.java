@@ -2,7 +2,7 @@ package com.gitenter.capsid.security;
 
 import com.gitenter.protease.domain.Role;
 
-public enum MemberSecurityRole implements Role {
+public enum PersonSecurityRole implements Role {
 	
 	SELF;
 }

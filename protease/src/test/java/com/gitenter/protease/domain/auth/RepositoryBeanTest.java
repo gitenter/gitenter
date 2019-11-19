@@ -27,8 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.gitar.GitCommit;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
+import com.gitenter.protease.dao.auth.PersonRepository;
+import com.gitenter.protease.dao.auth.RepositoryPersonMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitRepository;
 import com.gitenter.protease.domain.git.BranchBean;
@@ -54,9 +54,9 @@ public class RepositoryBeanTest {
 
 	@Autowired RepositoryRepository repository;
 	
-	@Autowired MemberRepository memberRepository;
+	@Autowired PersonRepository personRepository;
 	@Autowired CommitRepository commitRepository;
-	@Autowired RepositoryMemberMapRepository repositoryMemberMapRepository;
+	@Autowired RepositoryPersonMapRepository repositoryPersonMapRepository;
 	
 	@Test
 	@Transactional
@@ -76,9 +76,9 @@ public class RepositoryBeanTest {
 		assertEquals(item.getDescription(), "Repo description");
 		assertEquals(item.getIsPublic(), true);
 
-		assertEquals(item.getMembers(RepositoryMemberRole.ORGANIZER).size(), 1);
-		assertEquals(item.getMembers(RepositoryMemberRole.EDITOR).size(), 0);
-		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
+		assertEquals(item.getPersons(RepositoryPersonRole.ORGANIZER).size(), 1);
+		assertEquals(item.getPersons(RepositoryPersonRole.EDITOR).size(), 0);
+		assertEquals(item.getPersons(RepositoryPersonRole.BLACKLIST).size(), 0);
 	}
 	
 	@Test
@@ -253,32 +253,32 @@ public class RepositoryBeanTest {
 	public void testAddCollaboator() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
-		assertEquals(item.getMembers(RepositoryMemberRole.ORGANIZER).size(), 1);
-		assertEquals(item.getMembers(RepositoryMemberRole.EDITOR).size(), 0);
-		assertEquals(item.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
+		assertEquals(item.getPersons(RepositoryPersonRole.ORGANIZER).size(), 1);
+		assertEquals(item.getPersons(RepositoryPersonRole.EDITOR).size(), 0);
+		assertEquals(item.getPersons(RepositoryPersonRole.BLACKLIST).size(), 0);
 		
-		MemberBean editor = new MemberBean();
+		PersonBean editor = new PersonBean();
 		editor.setUsername("editor");
 		editor.setPassword("password");
 		editor.setDisplayName("Editor");
 		editor.setEmail("editor@email.com");
 		editor.setRegisterAt(new Date());
 		
-		memberRepository.saveAndFlush(editor);
+		personRepository.saveAndFlush(editor);
 		
-		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(item, editor, RepositoryMemberRole.EDITOR);
-		repositoryMemberMapRepository.saveAndFlush(map);
+		RepositoryPersonMapBean map = RepositoryPersonMapBean.link(item, editor, RepositoryPersonRole.EDITOR);
+		repositoryPersonMapRepository.saveAndFlush(map);
 		
 		RepositoryBean updatedItem = repository.findById(1).get();
-		assertEquals(updatedItem.getMembers(RepositoryMemberRole.ORGANIZER).size(), 1);
-		assertEquals(updatedItem.getMembers(RepositoryMemberRole.EDITOR).size(), 1);
-		assertEquals(updatedItem.getMembers(RepositoryMemberRole.BLACKLIST).size(), 0);
-		assertEquals(updatedItem.getMembers(RepositoryMemberRole.EDITOR).get(0).getUsername(), "editor");
+		assertEquals(updatedItem.getPersons(RepositoryPersonRole.ORGANIZER).size(), 1);
+		assertEquals(updatedItem.getPersons(RepositoryPersonRole.EDITOR).size(), 1);
+		assertEquals(updatedItem.getPersons(RepositoryPersonRole.BLACKLIST).size(), 0);
+		assertEquals(updatedItem.getPersons(RepositoryPersonRole.EDITOR).get(0).getUsername(), "editor");
 		
-		MemberBean updatedEditor = memberRepository.findByUsername("editor").get(0);
-		assertEquals(updatedEditor.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 0);
-		assertEquals(updatedEditor.getRepositories(RepositoryMemberRole.EDITOR).size(), 1);
-		assertEquals(updatedEditor.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
-		assertEquals(updatedEditor.getRepositories(RepositoryMemberRole.EDITOR).get(0).getName(), item.getName());
+		PersonBean updatedEditor = personRepository.findByUsername("editor").get(0);
+		assertEquals(updatedEditor.getRepositories(RepositoryPersonRole.ORGANIZER).size(), 0);
+		assertEquals(updatedEditor.getRepositories(RepositoryPersonRole.EDITOR).size(), 1);
+		assertEquals(updatedEditor.getRepositories(RepositoryPersonRole.BLACKLIST).size(), 0);
+		assertEquals(updatedEditor.getRepositories(RepositoryPersonRole.EDITOR).get(0).getName(), item.getName());
 	}
 }
