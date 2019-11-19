@@ -43,7 +43,7 @@ Therefore, we choose `GitPython` ([tutorial](https://gitpython.readthedocs.io/en
 
 ```
 python3 -m unittest tests.authorization_test
-python3 -m unittest tests.member_settings_test
+python3 -m unittest tests.user_settings_test
 python3 -m unittest tests.organization_creation_test
 python3 -m unittest tests.organization_management_test
 python3 -m unittest tests.repository_creation_test

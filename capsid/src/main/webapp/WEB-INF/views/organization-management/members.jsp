@@ -8,7 +8,7 @@
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <a href="<s:url value="/organizations/${organization.id}" />"><c:out value="${organization.displayName}" /></a> &rarr;
       <a href="<s:url value="/organizations/${organization.id}/settings" />">Settings</a> &rarr; 
-      <span class="nav-current">Manage users</span>
+      <span class="nav-current">Manage members</span>
     </nav>
     <article>
       <div class="left-narrow">
@@ -18,7 +18,7 @@
           <li>
             <c:if test="${map.isAlterable(operatorUsername)}">
               <span class="user-deletable"><c:out value="${map.user.displayName}" /></span>
-              <s:url var="remove_user_url" value="/organizations/${organization.id}/settings/users/remove" />
+              <s:url var="remove_user_url" value="/organizations/${organization.id}/settings/members/remove" />
               <sf:form method="POST" action="${remove_user_url}">
                 <input type="hidden" name="to_be_remove_username" value="${map.user.username}" /> 
                 <input type="hidden" name="organization_user_map_id" value="${map.id}" />
@@ -33,7 +33,7 @@
         </ul>
       </div>
       <div class="right-wide">
-        <s:url var="add_manager_url" value="/organizations/${organization.id}/settings/users/add" />
+        <s:url var="add_manager_url" value="/organizations/${organization.id}/settings/members/add" />
         <sf:form method="POST" action="${add_manager_url}">
           <table class="fill-in">
             <c:if test="${errorMessage != null}">
@@ -48,7 +48,7 @@
             </tr>
             <tr>
               <td></td>
-              <td class="button"><input type="submit" value="Add a new user" /></td>
+              <td class="button"><input type="submit" value="Add a new member" /></td>
             </tr>
           </table>
         </sf:form>

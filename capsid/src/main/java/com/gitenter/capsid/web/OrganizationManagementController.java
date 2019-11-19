@@ -133,7 +133,7 @@ public class OrganizationManagementController {
 	 * Wonder if there's a way to make a general framework which can handle
 	 * the two all together?
 	 */
-	@RequestMapping(value="/organizations/{organizationId}/settings/users", method=RequestMethod.GET)
+	@RequestMapping(value="/organizations/{organizationId}/settings/members", method=RequestMethod.GET)
 	public String showMemberManagementPage(
 			@PathVariable Integer organizationId,
 			Model model,
@@ -145,7 +145,7 @@ public class OrganizationManagementController {
 		return "organization-management/members";
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/settings/users/add", method=RequestMethod.POST)
+	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
 	public String addAUserToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
@@ -159,10 +159,10 @@ public class OrganizationManagementController {
 		 * if the manager username is invalid.
 		 */
 		
-		return "redirect:/organizations/"+organizationId+"/settings/users";
+		return "redirect:/organizations/"+organizationId+"/settings/members";
 	}
 	
-	@RequestMapping(value="/organizations/{organizationId}/settings/users/remove", method=RequestMethod.POST)
+	@RequestMapping(value="/organizations/{organizationId}/settings/members/remove", method=RequestMethod.POST)
 	public String removeAUserToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_remove_username") String username,
@@ -171,7 +171,7 @@ public class OrganizationManagementController {
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		organizationManagerService.removeOrganizationMember(organization, organizationUserMapId);		
 		
-		return "redirect:/organizations/"+organizationId+"/settings/users";
+		return "redirect:/organizations/"+organizationId+"/settings/members";
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/managers", method=RequestMethod.GET)
