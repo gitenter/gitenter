@@ -11,7 +11,7 @@ import re
 import sys
 
 from settings.postgres import postgres_engine
-from managers import RepositoryMemberMapManager
+from managers import RepositoryUserMapManager
 
 
 def parse_repo_path(repo_path):
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=connection)
     session = Session()
 
-    print(RepositoryMemberMapManager.is_editable(session, username, org_name, repo_name))
+    print(RepositoryUserMapManager.is_editable(session, username, org_name, repo_name))
 
     session.close()
     connection.close()

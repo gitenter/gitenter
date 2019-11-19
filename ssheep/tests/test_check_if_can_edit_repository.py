@@ -2,13 +2,13 @@ from unittest import TestCase
 from sqlalchemy.orm import sessionmaker
 
 from settings.postgres import postgres_engine
-from managers import RepositoryMemberMapManager
+from managers import RepositoryUserMapManager
 from models import (
-    Member,
+    User,
     Organization,
-    OrganizationMemberMap,
+    OrganizationUserMap,
     Repository,
-    RepositoryMemberMap
+    RepositoryUserMap
 )
 from check_if_can_edit_repository import parse_repo_path
 
@@ -33,17 +33,17 @@ class TestSshKeyManager(TestCase):
         self.transaction.rollback()
 
     def test_repo_editor_can_editor_public_repo(self):
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         org = Organization(
             name="org",
             display_name="Organization")
-        OrganizationMemberMap(
+        OrganizationUserMap(
             organization=org,
-            member=member,
+            user=user,
             role_shortname='M')
         repo = Repository(
             organization=org,
@@ -51,30 +51,30 @@ class TestSshKeyManager(TestCase):
             display_name="A Repository",
             is_public=True
         )
-        RepositoryMemberMap(
+        RepositoryUserMap(
             repository=repo,
-            member=member,
+            user=user,
             role_shortname='E'
         )
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
         self.assertTrue(
-            RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+            RepositoryUserMapManager.is_editable(self.session, "username", "org", "repo"))
 
     def test_repo_editor_can_editor_private_repo(self):
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         org = Organization(
             name="org",
             display_name="Organization")
-        OrganizationMemberMap(
+        OrganizationUserMap(
             organization=org,
-            member=member,
+            user=user,
             role_shortname='M')
         repo = Repository(
             organization=org,
@@ -82,30 +82,30 @@ class TestSshKeyManager(TestCase):
             display_name="A Repository",
             is_public=False
         )
-        RepositoryMemberMap(
+        RepositoryUserMap(
             repository=repo,
-            member=member,
+            user=user,
             role_shortname='E'
         )
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
         self.assertTrue(
-            RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+            RepositoryUserMapManager.is_editable(self.session, "username", "org", "repo"))
 
     def test_org_member_cannot_editor_public_repo(self):
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         org = Organization(
             name="org",
             display_name="Organization")
-        OrganizationMemberMap(
+        OrganizationUserMap(
             organization=org,
-            member=member,
+            user=user,
             role_shortname='M')
         Repository(
             organization=org,
@@ -114,24 +114,24 @@ class TestSshKeyManager(TestCase):
             is_public=True
         )
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
         self.assertFalse(
-            RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+            RepositoryUserMapManager.is_editable(self.session, "username", "org", "repo"))
 
     def test_org_member_cannot_editor_private_repo(self):
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         org = Organization(
             name="org",
             display_name="Organization")
-        OrganizationMemberMap(
+        OrganizationUserMap(
             organization=org,
-            member=member,
+            user=user,
             role_shortname='M')
         Repository(
             organization=org,
@@ -140,18 +140,18 @@ class TestSshKeyManager(TestCase):
             is_public=False
         )
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
         self.assertFalse(
-            RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+            RepositoryUserMapManager.is_editable(self.session, "username", "org", "repo"))
 
     def test_nonmember_cannot_editor_public_repo(self):
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         org = Organization(
             name="org",
             display_name="Organization")
@@ -162,18 +162,18 @@ class TestSshKeyManager(TestCase):
             is_public=True
         )
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
         self.assertFalse(
-            RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+            RepositoryUserMapManager.is_editable(self.session, "username", "org", "repo"))
 
     def test_nonmember_cannot_editor_private_repo(self):
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         org = Organization(
             name="org",
             display_name="Organization")
@@ -184,11 +184,11 @@ class TestSshKeyManager(TestCase):
             is_public=False
         )
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
         self.assertFalse(
-            RepositoryMemberMapManager.is_editable(self.session, "member", "org", "repo"))
+            RepositoryUserMapManager.is_editable(self.session, "username", "org", "repo"))
 
 
 class TestParseRepoPath(TestCase):
