@@ -10,15 +10,18 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gitenter.capsid.dto.OrganizationDTO;
+import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
@@ -43,12 +46,17 @@ public class OrganizationManagerServiceTest {
 	private UserBean ordinaryMember;
 	private UserBean nonmember;
 	
+	private final Integer organizationId = 1;
+	private final Integer managerMapId = 1;
+	private final Integer ordinaryMemberMapId = 2;
+	
 	@BeforeEach
 	public void setUp() throws Exception {
 
 		organization = new OrganizationBean();
 		organization.setName("org");
 		organization.setDisplayName("Organization");
+		organization.setId(organizationId);
 		
 		manager = new UserBean();
 		ordinaryMember = new UserBean();
@@ -58,11 +66,14 @@ public class OrganizationManagerServiceTest {
 		ordinaryMember.setUsername("ordinary_member");
 		nonmember.setUsername("nonmember");
 		
-		OrganizationUserMapBean.link(organization, manager, OrganizationUserRole.MANAGER);
-		OrganizationUserMapBean.link(organization, ordinaryMember, OrganizationUserRole.ORDINARY_MEMBER);
+		OrganizationUserMapBean managerMap = OrganizationUserMapBean.link(organization, manager, OrganizationUserRole.MANAGER);
+		OrganizationUserMapBean ordinaryMemberMap = OrganizationUserMapBean.link(organization, ordinaryMember, OrganizationUserRole.ORDINARY_MEMBER);
 		
-		Optional<OrganizationBean> organization_or_null = Optional.of(organization);
-		given(organizationRepository.findById(1)).willReturn(organization_or_null);
+		Optional<OrganizationUserMapBean> managerMapOrNull = Optional.of(managerMap);
+		Optional<OrganizationUserMapBean> ordinaryMemberMapOrNull = Optional.of(ordinaryMemberMap);
+		
+		given(organizationUserMapRepository.findById(managerMapId)).willReturn(managerMapOrNull);
+		given(organizationUserMapRepository.findById(ordinaryMemberMapId)).willReturn(ordinaryMemberMapOrNull);
 	}
 
 	@Test
@@ -106,8 +117,75 @@ public class OrganizationManagerServiceTest {
 		});
 	}
 	
-	/*
-	 * TODO:
-	 * `removeOrganizationMember`. Not as easy as `addOrganizationMember` as MapId is needed.
-	 */
+	@Test
+	@WithMockUser(username="manager")
+	public void testManagerCanRemoveOrganizationMember() throws IOException {
+		
+		assertEquals(organizationService.getAllMembers(organization).size(), 2);
+		organizationManagerService.removeOrganizationMember(organization, ordinaryMemberMapId);
+		assertEquals(organizationService.getAllMembers(organization).size(), 1);
+	}
+	
+	@Test
+	@WithMockUser(username="ordinary_member")
+	public void testOrdinaryMemberCannotRemoveOrganizationMember() throws IOException {
+		
+		/*
+		 * TODO:
+		 * Should it be the case she can remove herself?
+		 */
+		assertThrows(AccessDeniedException.class, () -> {
+			organizationManagerService.removeOrganizationMember(organization, ordinaryMemberMapId);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="manager")
+	public void testManagerCanAddAndRemoveOrganizationManagerButCannotRemoveHerselfAsManager() throws IOException {
+		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("manager");
+
+		assertEquals(organizationService.getManagerMaps(organization).size(), 1);
+		organizationManagerService.addOrganizationManager(organization, ordinaryMemberMapId);
+		assertEquals(organizationService.getManagerMaps(organization).size(), 2);
+		
+		organizationManagerService.removeOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);
+		assertEquals(organizationService.getManagerMaps(organization).size(), 1);
+		
+		assertThrows(InvalidOperationException.class, () -> {
+			organizationManagerService.removeOrganizationManager(mockAuthentication, organization, managerMapId);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="ordinary_member")
+	public void testOrdinaryMemberCannotAddAndRemoveOrganizationManager() throws IOException {
+		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("ordinary_member");
+
+		assertThrows(AccessDeniedException.class, () -> {
+			organizationManagerService.addOrganizationManager(organization, ordinaryMemberMapId);
+		});
+		
+		assertThrows(AccessDeniedException.class, () -> {
+			organizationManagerService.removeOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="manager")
+	public void testManagerCanDeleteOrganization() throws IOException {
+		organizationManagerService.deleteOrganization(organization);
+	}
+	
+	@Test
+	@WithMockUser(username="ordinary_member")
+	public void testOrdinaryMemberCannotDeleteOrganization() throws IOException {
+
+		assertThrows(AccessDeniedException.class, () -> {
+			organizationManagerService.deleteOrganization(organization);
+		});
+	}
 }

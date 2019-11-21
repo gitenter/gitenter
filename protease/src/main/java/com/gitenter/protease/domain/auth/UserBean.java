@@ -126,8 +126,16 @@ public class UserBean implements ModelBean {
 		organizationUserMaps.add(map);
 	}
 	
+	boolean removeMap(OrganizationUserMapBean map) {
+		return organizationUserMaps.remove(map);
+	}
+	
 	void addMap(RepositoryUserMapBean map) {
 		repositoryUserMaps.add(map);
+	}
+	
+	boolean removeMap(RepositoryUserMapBean map) {
+		return repositoryUserMaps.remove(map);
 	}
 	
 	public boolean addSshKey(SshKeyBean sshKey) {

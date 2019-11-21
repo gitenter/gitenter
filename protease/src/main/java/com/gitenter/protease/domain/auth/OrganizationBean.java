@@ -108,6 +108,10 @@ public class OrganizationBean implements ModelBean {
 		organizationUserMaps.add(map);
 	}
 	
+	boolean removeMap(OrganizationUserMapBean map) {
+		return organizationUserMaps.remove(map);
+	}
+	
 	/*
 	 * TODO:
 	 * Consider to have a JOIN query to get that.

@@ -121,6 +121,10 @@ public class UserBeanTest {
 		user = userRepository.findById(1).get();
 		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 2);
 		
+		map.unlink();
+		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
+		assertEquals(organization.getUsers(OrganizationUserRole.MANAGER).size(), 0);
+		
 //		organizationUserMapRepository.delete(map);
 //		userRepository.delete(user);
 	}

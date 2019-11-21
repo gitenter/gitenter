@@ -42,6 +42,8 @@ public class OrganizationServiceTest {
 	private UserBean manager;
 	private UserBean ordinaryMember;
 	
+	private final Integer organizationId = 1;
+	
 	@BeforeEach
 	public void setUp() throws Exception {
 
@@ -62,8 +64,8 @@ public class OrganizationServiceTest {
 		OrganizationUserMapBean.link(organization, manager, OrganizationUserRole.MANAGER);
 		OrganizationUserMapBean.link(organization, ordinaryMember, OrganizationUserRole.ORDINARY_MEMBER);
 
-		Optional<OrganizationBean> organization_or_null = Optional.of(organization);
-		given(organizationRepository.findById(1)).willReturn(organization_or_null);
+		Optional<OrganizationBean> organizationOrNull = Optional.of(organization);
+		given(organizationRepository.findById(organizationId)).willReturn(organizationOrNull);
 	}
 
 	@Test
@@ -87,7 +89,7 @@ public class OrganizationServiceTest {
 	@Test
 	@WithMockUser(username="nonmember")
 	public void testNonmemberCannotGetManagerMaps() throws IOException {
-		OrganizationBean organization = organizationService.getOrganization(1);
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		assertThrows(AccessDeniedException.class, () -> {
 			organizationService.getManagerMaps(organization);
 		});
@@ -96,7 +98,7 @@ public class OrganizationServiceTest {
 	@Test
 	@WithMockUser(username="manager")
 	public void testManagerCanGetOrdinaryMemberMaps() throws IOException {
-		OrganizationBean organization = organizationService.getOrganization(1);
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		Collection<OrganizationUserMapBean> ordinaryMemberMaps = organizationService.getOrdinaryMemberMaps(organization);
 		assertEquals(ordinaryMemberMaps.size(), 1);
 		assertEquals(ordinaryMemberMaps.iterator().next().getUser(), ordinaryMember);
@@ -105,7 +107,7 @@ public class OrganizationServiceTest {
 	@Test
 	@WithMockUser(username="ordinary_member")
 	public void testOrdinaryMemberCannotGetOrdinaryMemberMaps() throws IOException {
-		OrganizationBean organization = organizationService.getOrganization(1);
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		assertThrows(AccessDeniedException.class, () -> {
 			organizationService.getOrdinaryMemberMaps(organization);
 		});
@@ -114,7 +116,7 @@ public class OrganizationServiceTest {
 	@Test
 	@WithMockUser(username="nonmember")
 	public void testNonmemberGetOrdinaryMemberMaps() throws IOException {
-		OrganizationBean organization = organizationService.getOrganization(1);
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		assertThrows(AccessDeniedException.class, () -> {
 			organizationService.getOrdinaryMemberMaps(organization);
 		});
@@ -123,7 +125,7 @@ public class OrganizationServiceTest {
 	@Test
 	@WithMockUser(username="nonmember")
 	public void testGetAllMembers() throws IOException {
-		OrganizationBean organization = organizationService.getOrganization(1);
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		Collection<UserBean> members = organizationService.getAllMembers(organization);
 		assertEquals(members.size(), 2);
 		assertTrue(members.iterator().next().equals(manager) || members.iterator().next().equals(ordinaryMember));

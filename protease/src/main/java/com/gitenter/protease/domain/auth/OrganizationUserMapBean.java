@@ -74,6 +74,11 @@ public class OrganizationUserMapBean implements MapBean<OrganizationBean,UserBea
 		return map;
 	}
 	
+	public void unlink() {
+		organization.removeMap(this);
+		user.removeMap(this);
+	}
+	
 	@Override
 	public boolean isAlterable(String operatorUsername) {
 		
