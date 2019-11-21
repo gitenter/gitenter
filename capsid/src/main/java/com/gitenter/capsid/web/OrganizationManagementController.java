@@ -101,8 +101,7 @@ public class OrganizationManagementController {
 			@PathVariable Integer organizationId,
 			@Valid OrganizationDTO organizationDTOAfterChange, 
 			Errors errors, 
-			RedirectAttributes model,
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		
@@ -114,7 +113,7 @@ public class OrganizationManagementController {
 			return "organization-management/profile";
 		}
 
-		organizationManagerService.updateOrganization(authentication, organization, organizationDTOAfterChange);
+		organizationManagerService.updateOrganization(organization, organizationDTOAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/organizations/"+organizationId+"/settings/profile";

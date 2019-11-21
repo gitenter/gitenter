@@ -68,8 +68,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Override
 	@PreAuthorize("hasPermission(#organizationBean, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public void updateOrganization(
-			Authentication authentication, 
+	public void updateOrganization( 
 			OrganizationBean organizationBean, 
 			OrganizationDTO organizationDTO) throws IOException {
 		

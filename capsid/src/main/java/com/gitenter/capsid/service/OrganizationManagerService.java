@@ -13,7 +13,6 @@ public interface OrganizationManagerService {
 	public void createOrganization(UserBean me, OrganizationDTO organizationDTO) throws IOException;
 	
 	public void updateOrganization(
-			Authentication authentication, 
 			OrganizationBean organizationBean, 
 			OrganizationDTO organizationDTO) throws IOException;
 	
