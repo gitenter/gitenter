@@ -65,7 +65,7 @@ public class OrganizationBeanTest {
 		assertEquals(item.getDisplayName(), "Organization");
 		
 		assertEquals(item.getUsers(OrganizationUserRole.MANAGER).size(), 1);
-		assertEquals(item.getUsers(OrganizationUserRole.MEMBER).size(), 0);
+		assertEquals(item.getUsers(OrganizationUserRole.ORDINARY_MEMBER).size(), 0);
 	}
 	
 	/*

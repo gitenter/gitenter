@@ -14,9 +14,9 @@ public interface OrganizationService {
 
 	public OrganizationBean getOrganization(Integer organizationId) throws IOException;
 
-	public Collection<OrganizationUserMapBean> getManagerMaps(Integer organizationId) throws IOException;
-	public Collection<OrganizationUserMapBean> getMemberMaps(Integer organizationId) throws IOException;
-	public Collection<UserBean> getAllUsers(Integer organizationId) throws IOException;
+	public Collection<OrganizationUserMapBean> getManagerMaps(OrganizationBean organization) throws IOException;
+	public Collection<OrganizationUserMapBean> getOrdinaryMemberMaps(OrganizationBean organization) throws IOException;
+	public Collection<UserBean> getAllMembers(OrganizationBean organization) throws IOException;
 	public boolean isManager(Integer organizationId, Authentication authentication) throws IOException;
 	public boolean isMember(Integer organizationId, Authentication authentication) throws IOException;
 	

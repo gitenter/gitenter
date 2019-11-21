@@ -33,7 +33,7 @@
         </ul>
         <h5>Ordinary Members</h5>
         <ul class="user-list">
-        <c:forEach var="map" items="${memberMaps}">
+        <c:forEach var="map" items="${ordinaryMemberMaps}">
           <li>
             <span class="user-deletable"><c:out value="${map.user.displayName}" /></span>
             <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/add" />

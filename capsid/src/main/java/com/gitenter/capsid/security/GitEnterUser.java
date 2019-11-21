@@ -27,7 +27,7 @@ public class GitEnterUser extends User implements UserDetails {
 		 * Remove String-typed "SimpleGrantedAuthority" to a customized one.
 		 */
 		authorities.add(new SimpleGrantedAuthority(OrganizationUserRole.MANAGER.name()));
-		authorities.add(new SimpleGrantedAuthority(OrganizationUserRole.MEMBER.name()));
+		authorities.add(new SimpleGrantedAuthority(OrganizationUserRole.ORDINARY_MEMBER.name()));
 	}
 
 	@Override

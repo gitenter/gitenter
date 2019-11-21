@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
 	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException {
 		
 		UserBean user = getUserByUsername(username);
-		return user.getOrganizations(OrganizationUserRole.MEMBER);
+		return user.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER);
 	}
 
 	@Override

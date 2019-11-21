@@ -180,9 +180,11 @@ public class OrganizationManagementController {
 			Model model,
 			Authentication authentication) throws Exception {
 		
-		model.addAttribute("organization", organizationService.getOrganization(organizationId));
-		model.addAttribute("managerMaps", organizationService.getManagerMaps(organizationId));
-		model.addAttribute("memberMaps", organizationService.getMemberMaps(organizationId));
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("managerMaps", organizationService.getManagerMaps(organization));
+		model.addAttribute("ordinaryMemberMaps", organizationService.getOrdinaryMemberMaps(organization));
 		model.addAttribute("operatorUsername", authentication.getName());
 		
 		return "organization-management/managers";

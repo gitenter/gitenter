@@ -87,7 +87,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth. OrganizationUserRole).MANAGER)")
 	public void addOrganizationMember(OrganizationBean organization, UserBean user) {
 
-		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, user, OrganizationUserRole.MEMBER);
+		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, user, OrganizationUserRole.ORDINARY_MEMBER);
 		organizationUserMapRepository.saveAndFlush(map);
 	}
 	
@@ -169,7 +169,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as a manager of organization "+organization);
 		}
 		
-		map.setRole(OrganizationUserRole.MEMBER);
+		map.setRole(OrganizationUserRole.ORDINARY_MEMBER);
 		organizationUserMapRepository.saveAndFlush(map);
 	}
 	

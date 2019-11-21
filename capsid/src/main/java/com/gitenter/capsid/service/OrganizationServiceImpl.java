@@ -39,24 +39,24 @@ public class OrganizationServiceImpl implements OrganizationService {
 		}
 	}
 	
+	/*
+	 * Only interface methods can use `@PreAuthorize`. It doesn't trigger
+	 * authorization if a nested method has that annotation.
+	 */
 	@Override
-	public Collection<OrganizationUserMapBean> getManagerMaps(Integer organizationId) throws IOException {
-		
-		OrganizationBean organization = getOrganization(organizationId);
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
+	public Collection<OrganizationUserMapBean> getManagerMaps(OrganizationBean organization) throws IOException {
 		return organization.getUserMaps(OrganizationUserRole.MANAGER);
 	}
 	
 	@Override
-	public Collection<OrganizationUserMapBean> getMemberMaps(Integer organizationId) throws IOException {
-		
-		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getUserMaps(OrganizationUserRole.MEMBER);
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
+	public Collection<OrganizationUserMapBean> getOrdinaryMemberMaps(OrganizationBean organization) throws IOException {
+		return organization.getUserMaps(OrganizationUserRole.ORDINARY_MEMBER);
 	}
 	
 	@Override
-	public Collection<UserBean> getAllUsers(Integer organizationId) throws IOException {
-		
-		OrganizationBean organization = getOrganization(organizationId);
+	public Collection<UserBean> getAllMembers(OrganizationBean organization) throws IOException {
 		return organization.getUsers();
 	}
 	
@@ -83,7 +83,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public boolean isMember(Integer organizationId, Authentication authentication) throws IOException {
 		
 		List<OrganizationUserMapBean> maps = organizationUserMapRepository.findByUsernameAndOrganizationIdAndRole(
-				authentication.getName(), organizationId, OrganizationUserRole.MEMBER);
+				authentication.getName(), organizationId, OrganizationUserRole.ORDINARY_MEMBER);
 		
 		if (maps.size() == 1) {
 			return true;

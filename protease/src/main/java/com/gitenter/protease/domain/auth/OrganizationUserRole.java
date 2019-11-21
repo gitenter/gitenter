@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum OrganizationUserRole implements Role {
 
 	MANAGER('G', "Non-professional manager"),
-	MEMBER('M', "Ordinary member");
+	ORDINARY_MEMBER('M', "Ordinary member");
 	
 	private Character shortName;
 	private String displayName;
@@ -23,7 +23,7 @@ public enum OrganizationUserRole implements Role {
 		case 'G':
 			return MANAGER;
 		case 'M':
-			return MEMBER;
+			return ORDINARY_MEMBER;
 		
 		default:
 			throw new IllegalArgumentException("Organization user role shortName: "+shortName+" is not supported.");

@@ -40,8 +40,8 @@
           Members
         </h3>
         <ul class="user-list">
-          <c:forEach var="user" items="${users}">
-            <li><span class="user"><c:out value="${user.displayName}" /></span></li>
+          <c:forEach var="member" items="${members}">
+            <li><span class="user"><c:out value="${member.displayName}" /></span></li>
           </c:forEach>
         </ul>
       </div>

@@ -100,7 +100,7 @@ public class OrganizationUserMapRepositoryTest {
 		assertEquals(managerMaps.get(0).getUser().getId(), Integer.valueOf(1));
 		
 		List<OrganizationUserMapBean> userMaps = repository.fineByUserAndOrganizationAndRole(
-				user, organization, OrganizationUserRole.MEMBER);
+				user, organization, OrganizationUserRole.ORDINARY_MEMBER);
 		
 		assertEquals(userMaps.size(), 0);
 	}

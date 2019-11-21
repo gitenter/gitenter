@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gitenter.capsid.service.OrganizationService;
+import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
 public class OrganizationController {
@@ -21,9 +22,11 @@ public class OrganizationController {
 			Authentication authentication,
 			Model model) throws Exception {
 		
-		model.addAttribute("organization", organizationService.getOrganization(organizationId));
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		model.addAttribute("organization", organization);
 		model.addAttribute("repositories", organizationService.getVisibleRepositories(organizationId, authentication));
-		model.addAttribute("users", organizationService.getAllUsers(organizationId));
+		model.addAttribute("members", organizationService.getAllMembers(organization));
 
 		return "index/organization";
 	}

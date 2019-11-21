@@ -74,7 +74,7 @@ public class UserBeanTest {
 		assertEquals(sshKey.getComment(), "comment");
 		
 		assertEquals(item.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
-		assertEquals(item.getOrganizations(OrganizationUserRole.MEMBER).size(), 0);
+		assertEquals(item.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER).size(), 0);
 
 		assertEquals(item.getRepositories(RepositoryUserRole.ORGANIZER).size(), 1);
 		assertEquals(item.getRepositories(RepositoryUserRole.EDITOR).size(), 0);
