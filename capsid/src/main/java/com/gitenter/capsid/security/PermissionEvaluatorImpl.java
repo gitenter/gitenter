@@ -81,30 +81,7 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 			RepositoryBean repository = (RepositoryBean)targetDomainObject;
 			RepositoryAccessLevel level = (RepositoryAccessLevel)permission;
 			
-			/*
-			 * TODO:
-			 * Move this kind of if-else logic into `RepositoryAccessLevel`.
-			 */
-			if (repository.getIsPublic().equals(true)) {
-				if (level.equals(RepositoryAccessLevel.READ)) {
-					return true;
-				}
-			}
-			
-			if (repository.getIsPublic().equals(false)) {
-				if (level.equals(RepositoryAccessLevel.READ)) {
-					for (UserBean user : repository.getOrganization().getUsers()) {
-						if (user.getUsername().equals(authentication.getName())) {
-							return true;
-						}
-					}
-				}
-			}
-			
-			/*
-			 * TODO:
-			 * RepositoryAccessLevel.EDITOR
-			 */
+			return level.canAccess(repository, authentication);
 		}
 		
 		return false;

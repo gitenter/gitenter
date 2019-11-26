@@ -76,7 +76,7 @@ public class RepositoryUserMapRepositoryTest {
 	public void testRemoveUserFromRepsoitory() {
 		
 		UserBean user = userRepository.findById(1).get();
-		assertEquals(user.getRepositories(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(user.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 		
 		Integer mapId = user.getRepositoryUserMaps().get(0).getId();
 		repositoryUserMapRepository.throughSqlDeleteById(mapId);
@@ -87,9 +87,9 @@ public class RepositoryUserMapRepositoryTest {
 		 * be wrong.
 		 */
 //		user = userRepository.findById(1).get();
-//		assertEquals(user.getRepositories(RepositoryUserRole.ORGANIZER).size(), 0);
+//		assertEquals(user.getRepositories(RepositoryUserRole.PROJECGT_ORGANIZER).size(), 0);
 		
 		RepositoryBean repository = repositoryRepository.findById(1).get();
-		assertEquals(repository.getUsers(RepositoryUserRole.ORGANIZER).size(), 0);
+		assertEquals(repository.getUsers(RepositoryUserRole.PROJECT_ORGANIZER).size(), 0);
 	}
 }

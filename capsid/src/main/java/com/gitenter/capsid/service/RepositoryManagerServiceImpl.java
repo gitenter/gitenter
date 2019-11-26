@@ -80,7 +80,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			ExceptionConsumingPipeline.consumePersistenceException(e, repository);
 		}
 		
-		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, me, RepositoryUserRole.ORGANIZER);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, me, RepositoryUserRole.PROJECT_ORGANIZER);
 		repositoryUserMapRepository.saveAndFlush(map);
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());

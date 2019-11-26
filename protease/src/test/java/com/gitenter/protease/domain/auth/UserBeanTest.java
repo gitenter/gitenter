@@ -76,7 +76,7 @@ public class UserBeanTest {
 		assertEquals(item.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
 		assertEquals(item.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER).size(), 0);
 
-		assertEquals(item.getRepositories(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(item.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 		assertEquals(item.getRepositories(RepositoryUserRole.EDITOR).size(), 0);
 		assertEquals(item.getRepositories(RepositoryUserRole.BLACKLIST).size(), 0);
 	}

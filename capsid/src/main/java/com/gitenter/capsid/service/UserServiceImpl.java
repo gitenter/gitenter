@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException {
 		
 		UserBean user = getUserByUsername(username);
-		return user.getRepositories(RepositoryUserRole.ORGANIZER);
+		return user.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER);
 	}
 
 	@Override

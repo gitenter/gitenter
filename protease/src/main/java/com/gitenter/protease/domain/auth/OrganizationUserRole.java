@@ -19,7 +19,7 @@ public enum OrganizationUserRole implements Role {
 	}
 
 	public static OrganizationUserRole fromShortName(Character shortName) {
-		switch (shortName) {
+		switch(shortName) {
 		case 'G':
 			return MANAGER;
 		case 'M':

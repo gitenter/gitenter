@@ -96,14 +96,14 @@ public class OrganizationBeanTest {
 		repositoryRepository.saveAndFlush(repository);
 		
 		UserBean user = userRepository.findById(1).get();
-		assertEquals(user.getRepositories(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(user.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 		
-		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, user, RepositoryUserRole.ORGANIZER);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, user, RepositoryUserRole.PROJECT_ORGANIZER);
 		repositoryUserMapRepository.saveAndFlush(map);
 		
 		UserBean updatedUser = userRepository.findById(1).get();
-		assertEquals(updatedUser.getRepositories(RepositoryUserRole.ORGANIZER).size(), 2);
-		for (RepositoryBean iterRepository : updatedUser.getRepositories(RepositoryUserRole.ORGANIZER)) {
+		assertEquals(updatedUser.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 2);
+		for (RepositoryBean iterRepository : updatedUser.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER)) {
 			switch(iterRepository.getName()) {
 			case "repository":
 				break;
@@ -116,7 +116,7 @@ public class OrganizationBeanTest {
 		}
 		
 		RepositoryBean updatedNewRepository = repositoryRepository.findByOrganizationNameAndRepositoryName(organization.getName(), "new_repository").get(0);
-		assertEquals(updatedNewRepository.getUsers(RepositoryUserRole.ORGANIZER).size(), 1);
-		assertEquals(updatedNewRepository.getUsers(RepositoryUserRole.ORGANIZER).get(0).getUsername(), user.getUsername());
+		assertEquals(updatedNewRepository.getUsers(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
+		assertEquals(updatedNewRepository.getUsers(RepositoryUserRole.PROJECT_ORGANIZER).get(0).getUsername(), user.getUsername());
 	}
 }

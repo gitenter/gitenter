@@ -76,7 +76,7 @@ public class RepositoryBeanTest {
 		assertEquals(item.getDescription(), "Repo description");
 		assertEquals(item.getIsPublic(), true);
 
-		assertEquals(item.getUsers(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(item.getUsers(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 		assertEquals(item.getUsers(RepositoryUserRole.EDITOR).size(), 0);
 		assertEquals(item.getUsers(RepositoryUserRole.BLACKLIST).size(), 0);
 	}
@@ -253,7 +253,7 @@ public class RepositoryBeanTest {
 	public void testAddCollaboator() throws IOException, GitAPIException {
 		
 		RepositoryBean item = repository.findById(1).get();
-		assertEquals(item.getUsers(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(item.getUsers(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 		assertEquals(item.getUsers(RepositoryUserRole.EDITOR).size(), 0);
 		assertEquals(item.getUsers(RepositoryUserRole.BLACKLIST).size(), 0);
 		
@@ -270,13 +270,13 @@ public class RepositoryBeanTest {
 		repositoryUserMapRepository.saveAndFlush(map);
 		
 		RepositoryBean updatedItem = repository.findById(1).get();
-		assertEquals(updatedItem.getUsers(RepositoryUserRole.ORGANIZER).size(), 1);
+		assertEquals(updatedItem.getUsers(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 		assertEquals(updatedItem.getUsers(RepositoryUserRole.EDITOR).size(), 1);
 		assertEquals(updatedItem.getUsers(RepositoryUserRole.BLACKLIST).size(), 0);
 		assertEquals(updatedItem.getUsers(RepositoryUserRole.EDITOR).get(0).getUsername(), "editor");
 		
 		UserBean updatedEditor = userRepository.findByUsername("editor").get(0);
-		assertEquals(updatedEditor.getRepositories(RepositoryUserRole.ORGANIZER).size(), 0);
+		assertEquals(updatedEditor.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 0);
 		assertEquals(updatedEditor.getRepositories(RepositoryUserRole.EDITOR).size(), 1);
 		assertEquals(updatedEditor.getRepositories(RepositoryUserRole.BLACKLIST).size(), 0);
 		assertEquals(updatedEditor.getRepositories(RepositoryUserRole.EDITOR).get(0).getName(), item.getName());

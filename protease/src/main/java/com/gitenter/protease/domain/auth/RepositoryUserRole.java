@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum RepositoryUserRole implements Role {
 
-	ORGANIZER('O', "Project organizer"),
+	PROJECT_ORGANIZER('O', "Project organizer"),
 	EDITOR('E', "Document editor"),
 	BLACKLIST('B', "Blacklist");
 	
@@ -23,9 +23,9 @@ public enum RepositoryUserRole implements Role {
 	}
 
 	public static RepositoryUserRole fromShortName(Character shortName) {
-		switch (shortName) {
+		switch(shortName) {
 		case 'O':
-			return ORGANIZER;
+			return PROJECT_ORGANIZER;
 		case 'E':
 			return EDITOR;
 		case 'B':
