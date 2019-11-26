@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import com.gitenter.protease.domain.MapBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,9 +53,21 @@ public class RepositoryUserMapBean implements MapBean<RepositoryBean,UserBean,Re
 	 * Can't do inner classes of "RepositoryUserRole" and 
 	 * "RepositoryUserRoleConventer". Failed to load ApplicationContext.
 	 */
+	@Setter(AccessLevel.NONE)
+	@NotNull
 	@Column(name="role_shortname")
 	@Convert(converter = RepositoryUserRoleConventer.class)
 	private RepositoryUserRole role;
+	
+	public void setRole(RepositoryUserRole role) {
+		
+		if (this.role != null && !this.role.equals(role)) {
+			repository.getUserMaps(this.role).remove(this);
+			repository.getUserMaps(role).add(this);
+		}
+		
+		this.role = role;
+	}
 	
 	public static RepositoryUserMapBean link(RepositoryBean repository, UserBean user, RepositoryUserRole role) {
 		

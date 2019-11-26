@@ -2,7 +2,6 @@ package com.gitenter.protease.domain.auth;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,8 +16,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Where;
+
 import com.gitenter.protease.domain.ModelBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -50,43 +52,67 @@ public class OrganizationBean implements ModelBean {
 	private List<RepositoryBean> repositories;
 
 	@ToString.Exclude
+	@Getter(AccessLevel.NONE)
 	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<OrganizationUserMapBean> organizationUserMaps = new ArrayList<OrganizationUserMapBean>();
+	@Where(clause = "role_shortname = 'G'")
+	private List<OrganizationUserMapBean> organizationManagerMaps = new ArrayList<OrganizationUserMapBean>();
 	
-	/*
-	 * The alternative approach is to get them by a customized JOINed SQL query
-	 * from `OrganizationUserMapRepository`.
-	 * 
-	 * Will not do it until some performance
-	 * bottleneck is shown. Also, since Hibernate may optimize its query cache so
-	 * this mapped relationship will not be loaded multiple times in the same HTTP
-	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
-	 * actually have not-worse performance.
-	 */
-	public Collection<OrganizationUserMapBean> getUserMaps(OrganizationUserRole role) {
-		Collection<OrganizationUserMapBean> items = new ArrayList<OrganizationUserMapBean>();
-		for (OrganizationUserMapBean map : organizationUserMaps) {
-			if (map.getRole().equals(role)) {
-				items.add(map);
-			}
+	@ToString.Exclude
+	@Getter(AccessLevel.NONE)
+	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
+	@Where(clause = "role_shortname = 'M'")
+	private List<OrganizationUserMapBean> organizationOrdinaryMemberMaps = new ArrayList<OrganizationUserMapBean>();
+	
+	public List<OrganizationUserMapBean> getUserMaps(OrganizationUserRole role) {
+		switch(role) {
+		case MANAGER:
+			return organizationManagerMaps;
+		case ORDINARY_MEMBER:
+			return organizationOrdinaryMemberMaps;
+		default:
+			throw new RuntimeException("Unreachable enum value");
 		}
-		return items;
 	}
 	
-	public Collection<UserBean> getUsers(OrganizationUserRole role) {
-		Collection<UserBean> items = new ArrayList<UserBean>();
+	public List<UserBean> getUsers(OrganizationUserRole role) {
+		List<UserBean> items = new ArrayList<UserBean>();
 		for (OrganizationUserMapBean map : getUserMaps(role)) {
 			items.add(map.getUser());
 		}
 		return items;
 	}
 	
-	public Collection<UserBean> getUsers() {
-		Collection<UserBean> items = new ArrayList<UserBean>();
-		for (OrganizationUserMapBean map : organizationUserMaps) {
-			items.add(map.getUser());
-		}
+	public List<UserBean> getUsers() {
+		List<UserBean> items = new ArrayList<UserBean>();
+		
+		items.addAll(getUsers(OrganizationUserRole.MANAGER));
+		items.addAll(getUsers(OrganizationUserRole.ORDINARY_MEMBER));
+		
 		return items;
+	}
+	
+	void addMap(OrganizationUserMapBean map) {
+		switch(map.getRole()) {
+		case MANAGER:
+			organizationManagerMaps.add(map);
+			return;
+		case ORDINARY_MEMBER:
+			organizationOrdinaryMemberMaps.add(map);
+			return;
+		default:
+			throw new RuntimeException("Unreachable enum value");
+		}
+	}
+	
+	boolean removeMap(OrganizationUserMapBean map) {
+		switch(map.getRole()) {
+		case MANAGER:
+			return organizationManagerMaps.remove(map);
+		case ORDINARY_MEMBER:
+			return organizationOrdinaryMemberMaps.remove(map);
+		default:
+			throw new RuntimeException("Unreachable enum value");
+		}
 	}
 	
 	public List<RepositoryBean> getRepositories(Boolean isPublic) {
@@ -104,14 +130,6 @@ public class OrganizationBean implements ModelBean {
 		repositories.add(repository);
 	}
 	
-	void addMap(OrganizationUserMapBean map) {
-		organizationUserMaps.add(map);
-	}
-	
-	boolean removeMap(OrganizationUserMapBean map) {
-		return organizationUserMaps.remove(map);
-	}
-	
 	/*
 	 * TODO:
 	 * Consider to have a JOIN query to get that.
@@ -122,24 +140,6 @@ public class OrganizationBean implements ModelBean {
 //				return true;
 //			}
 //		}
-//		return false;
-//	}
-//	
-//	public boolean addManager (UserBean manager) {
-//		return managers.add(manager);
-//	}
-//	
-//	public boolean removeManager (Integer userId) {
-//		
-//		Iterator<UserBean> i = managers.iterator();
-//		while (i.hasNext()) {
-//			UserBean manager = i.next();
-//			if (manager.getId().equals(userId)) {
-//				i.remove();
-//				return true;
-//			}
-//		}
-//		
 //		return false;
 //	}
 	

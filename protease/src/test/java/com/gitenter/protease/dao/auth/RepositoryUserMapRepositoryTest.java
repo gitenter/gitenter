@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
-import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryUserMapBean;
 import com.gitenter.protease.domain.auth.RepositoryUserRole;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -67,6 +67,37 @@ public class RepositoryUserMapRepositoryTest {
 		
 		assertEquals(maps.size(), 1);
 		assertEquals(maps.get(0).getUser().getUsername(), "username");
+	}
+	
+	@Test
+	@Transactional
+	@DbUnitMinimalDataSetup
+	@DbUnitMinimalDataTearDown
+	public void testSwitchUserRole() {
+		
+		RepositoryBean repository = repositoryRepository.findById(1).get();
+		assertEquals(repository.getUserMaps(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
+		assertEquals(repository.getUserMaps(RepositoryUserRole.EDITOR).size(), 0);
+
+		RepositoryUserMapBean map = repository.getUserMaps(RepositoryUserRole.PROJECT_ORGANIZER).get(0);
+		map.setRole(RepositoryUserRole.EDITOR);
+		repositoryUserMapRepository.save(map);
+		
+		assertEquals(repository.getUserMaps(RepositoryUserRole.PROJECT_ORGANIZER).size(), 0);
+		assertEquals(repository.getUserMaps(RepositoryUserRole.EDITOR).size(), 1);
+		
+		/*
+		 * Can't do it. Because Hibernate will be too smart to not generate the query
+		 * to touch the database again (identity mapping pattern), so the assert will
+		 * be wrong.
+		 */
+//		repository = repositoryRepository.findById(1).get();
+//		assertEquals(repository.getUserMaps(RepositoryUserRole.PROJECT_ORGANIZER).size(), 0);
+//		assertEquals(repository.getUserMaps(RepositoryUserRole.EDITOR).size(), 1);
+		
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 0);
+		assertEquals(user.getRepositories(RepositoryUserRole.EDITOR).size(), 1);
 	}
 	
 	@Test

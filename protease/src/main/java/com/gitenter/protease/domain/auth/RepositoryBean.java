@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
+import org.hibernate.annotations.Where;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.gitenter.gitar.util.GitPlaceholder;
@@ -80,6 +80,10 @@ public class RepositoryBean implements ModelBean {
 	@Getter(AccessLevel.NONE)
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
+	public void addCommit(CommitBean commit) {
+		commits.add(commit);
+	}
+	
 	/*
 	 * Hibernate will smartly `select count(id) from git.git_commit`
 	 */
@@ -87,9 +91,70 @@ public class RepositoryBean implements ModelBean {
 		return commits.size();
 	}
 
+//	@ToString.Exclude
+//	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+//	private List<RepositoryUserMapBean> repositoryUserMaps = new ArrayList<RepositoryUserMapBean>();
+//	
+//	void addMap(RepositoryUserMapBean map) {
+//		repositoryUserMaps.add(map);
+//	}
+	
 	@ToString.Exclude
+	@Getter(AccessLevel.NONE)
 	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<RepositoryUserMapBean> repositoryUserMaps = new ArrayList<RepositoryUserMapBean>();
+	@Where(clause = "role_shortname = 'O'")
+	private List<RepositoryUserMapBean> repositoryProjectOrganizerMaps = new ArrayList<RepositoryUserMapBean>();
+	
+	@ToString.Exclude
+	@Getter(AccessLevel.NONE)
+	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	@Where(clause = "role_shortname = 'E'")
+	private List<RepositoryUserMapBean> repositoryEditorMaps = new ArrayList<RepositoryUserMapBean>();
+	
+	@ToString.Exclude
+	@Getter(AccessLevel.NONE)
+	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	@Where(clause = "role_shortname = 'B'")
+	private List<RepositoryUserMapBean> repositoryBlacklistMaps = new ArrayList<RepositoryUserMapBean>();
+	
+	public List<RepositoryUserMapBean> getUserMaps(RepositoryUserRole role) {
+		switch(role) {
+		case PROJECT_ORGANIZER:
+			return repositoryProjectOrganizerMaps;
+		case EDITOR:
+			return repositoryEditorMaps;
+		case BLACKLIST:
+			return repositoryBlacklistMaps;
+		default:
+			throw new RuntimeException("Unreachable enum value");
+		}
+	}
+	
+	public List<UserBean> getUsers(RepositoryUserRole role) {
+		List<UserBean> items = new ArrayList<UserBean>();
+		for (RepositoryUserMapBean map : getUserMaps(role)) {
+			items.add(map.getUser());
+		}
+		return items;
+	}
+	
+	void addMap(RepositoryUserMapBean map) {
+		switch(map.getRole()) {
+		case PROJECT_ORGANIZER:
+			repositoryProjectOrganizerMaps.add(map);
+			return;
+		case EDITOR:
+			repositoryEditorMaps.add(map);
+			return;
+		case BLACKLIST:
+			repositoryBlacklistMaps.add(map);
+		default:
+			throw new RuntimeException("Unreachable enum value");
+		}
+	}
+	
+	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	private List<ReviewBean> reviews;
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
@@ -153,27 +218,6 @@ public class RepositoryBean implements ModelBean {
 	
 	public interface TagsPlaceholder extends GitPlaceholder<Collection<TagBean>> {
 		Collection<TagBean> get() throws IOException, GitAPIException;
-	}
-	
-	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<ReviewBean> reviews;
-	
-	public List<UserBean> getUsers(RepositoryUserRole role) {
-		List<UserBean> items = new ArrayList<UserBean>();
-		for (RepositoryUserMapBean map : repositoryUserMaps) {
-			if (map.getRole().equals(role)) {
-				items.add(map.getUser());
-			}
-		}
-		return items;
-	}
-	
-	public void addCommit(CommitBean commit) {
-		commits.add(commit);
-	}
-	
-	void addMap(RepositoryUserMapBean map) {
-		repositoryUserMaps.add(map);
 	}
 	
 	/*

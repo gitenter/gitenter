@@ -1,5 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -14,6 +16,7 @@ import javax.validation.constraints.NotNull;
 
 import com.gitenter.protease.domain.MapBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,10 +41,21 @@ public class OrganizationUserMapBean implements MapBean<OrganizationBean,UserBea
 	@JoinColumn(name="user_id")
 	private UserBean user;
 	
+	@Setter(AccessLevel.NONE)
 	@NotNull
 	@Column(name="role_shortname")
 	@Convert(converter = OrganizationUserRoleConventer.class)
 	private OrganizationUserRole role;
+	
+	public void setRole(OrganizationUserRole role) {
+		
+		if (this.role != null && !this.role.equals(role)) {
+			organization.getUserMaps(this.role).remove(this);
+			organization.getUserMaps(role).add(this);
+		}
+		
+		this.role = role;
+	}
 
 	/*
 	 * TODO:

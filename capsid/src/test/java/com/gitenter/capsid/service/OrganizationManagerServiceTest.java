@@ -148,6 +148,7 @@ public class OrganizationManagerServiceTest {
 
 		assertEquals(organizationService.getManagerMaps(organization).size(), 1);
 		organizationManagerService.addOrganizationManager(organization, ordinaryMemberMapId);
+		
 		assertEquals(organizationService.getManagerMaps(organization).size(), 2);
 		
 		organizationManagerService.removeOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);

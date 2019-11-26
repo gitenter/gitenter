@@ -15,6 +15,10 @@ public enum RepositoryAccessLevel {
 		if (repository.getIsPublic()) {
 			switch(this) {
 			case READ:
+				/*
+				 * TODO:
+				 * Blacklist users.
+				 */
 				return true;
 				
 			/*
@@ -31,6 +35,14 @@ public enum RepositoryAccessLevel {
 		else {
 			switch(this) {
 			case READ:
+				/*
+				 * TODO:
+				 * Is it possible to use `RepositoryUserMapRepository`
+				 * > List<RepositoryUserMapBean> findByUsernameAndOrganizationNameAndRepositoryName
+				 * or some 
+				 * > repository.getOrganizationUserMap(organization, user)
+				 * so we don't need to iterate the whole list here?
+				 */
 				for (UserBean user : repository.getOrganization().getUsers()) {
 					if (user.getUsername().equals(authentication.getName())) {
 						return true;

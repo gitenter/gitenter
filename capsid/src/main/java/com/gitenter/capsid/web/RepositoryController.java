@@ -122,7 +122,9 @@ public class RepositoryController {
 		
 		RepositoryBean repository = commit.getRepository();
 		OrganizationBean organization = repository.getOrganization();
-		Hibernate.initialize(repository.getRepositoryUserMaps());
+		Hibernate.initialize(repository.getUserMaps(RepositoryUserRole.PROJECT_ORGANIZER));
+		Hibernate.initialize(repository.getUserMaps(RepositoryUserRole.EDITOR));
+		Hibernate.initialize(repository.getUserMaps(RepositoryUserRole.BLACKLIST));
 		
 		model.addAttribute("organization", organization);
 		model.addAttribute("repository", repository);

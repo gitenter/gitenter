@@ -108,7 +108,6 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	public void removeOrganizationMember(OrganizationBean organization, Integer organizationUserMapId) throws IOException {
 		
 		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
-		
 		map.unlink();
 		
 		/*
