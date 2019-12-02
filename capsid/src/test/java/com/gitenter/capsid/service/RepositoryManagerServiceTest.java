@@ -24,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
+import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
@@ -148,6 +149,49 @@ public class RepositoryManagerServiceTest {
 		
 		assertThrows(AccessDeniedException.class, () -> {
 			repositoryManagerService.createRepository(nonmember, organization, repositoryDTO, false);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="project_organizer")
+	public void testProjectOrganizerCanUpdateRepository() throws IOException, GitAPIException {
+			
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.setName("public_repo"); // cannot be changed
+		repositoryDTO.setDisplayName("Public Repository Update Name");
+		repositoryDTO.setIsPublic(false);
+		
+		repositoryManagerService.updateRepository(publicRepo, repositoryDTO);
+		
+		assertEquals(publicRepo.getDisplayName(), "Public Repository Update Name");
+		assertEquals(publicRepo.getIsPublic(), false);
+	}
+	
+	@Test
+	@WithMockUser(username="editor")
+	public void testEditorCannotUpdateRepository() throws IOException, GitAPIException {
+			
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.setName("public_repo");
+		repositoryDTO.setDisplayName("Public Repository Update Name");
+		repositoryDTO.setIsPublic(false);
+		
+		assertThrows(AccessDeniedException.class, () -> {
+			repositoryManagerService.updateRepository(publicRepo, repositoryDTO);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="project_organizer")
+	public void testRepositoryNameCannotBeChang3ed() throws IOException, GitAPIException {
+			
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.setName("public_repo_different_name");
+		repositoryDTO.setDisplayName("Public Repository Update Name");
+		repositoryDTO.setIsPublic(false);
+		
+		assertThrows(InvalidOperationException.class, () -> {
+			repositoryManagerService.updateRepository(publicRepo, repositoryDTO);
 		});
 	}
 }

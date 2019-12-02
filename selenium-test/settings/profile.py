@@ -52,7 +52,7 @@ class LocalProfile(Profile):
 
 
 class DockerProfile(Profile):
-    web_domain = "http://nginx:80/"
+    web_domain = "http://nginx/"
     git_server_remote_location = "git"
     local_git_sandbox_path = Path.home() / "Workspace" / "gitenter-test" / "sandbox"
 

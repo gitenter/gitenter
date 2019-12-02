@@ -36,6 +36,7 @@ SSH authorization (under python code of `/ssheep`) is completely trivialized, an
 + maven
 + Postgres (tested in 11.2)
 + Redis (tested in 4.0.9) (Mac OS with multiple users may face permission error, and can be correct by [manually `redis-server` auto-start](https://medium.com/@petehouston/install-and-config-redis-on-mac-os-x-via-homebrew-eb8df9a4f298))
++ [Hugo](https://gohugo.io/) (tested in 0.60.1)
 
 Optional:
 
@@ -139,6 +140,8 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 docker system prune --volumes --all
 
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml run java-build sh docker_build_java.sh
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml build hugo-build
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml run hugo-build hugo
 docker-compose build --no-cache
 docker-compose up
 ```
