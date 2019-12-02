@@ -7,7 +7,7 @@
         <h3>
           Collaboration
 <%--          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)"> --%>
-            <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
+            <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators" />
             <sf:form method="GET" action="${collaborators_url}">
               <input type="submit" value="Settings" />
             </sf:form>

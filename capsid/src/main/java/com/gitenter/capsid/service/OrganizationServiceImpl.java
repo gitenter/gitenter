@@ -108,7 +108,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public Collection<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		if (isMember(organizationId, authentication)) {
+		if (isManager(organizationId, authentication) || isMember(organizationId, authentication)) {
 			return organization.getRepositories();
 		}
 		else {

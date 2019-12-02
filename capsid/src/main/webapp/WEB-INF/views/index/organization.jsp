@@ -18,7 +18,7 @@
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
-          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MEMBER)">
+          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).ORDINARY_MEMBER)">
             <sf:form method="GET" action="${create_repo_url}">
               <input type="submit" value="+" />
             </sf:form>

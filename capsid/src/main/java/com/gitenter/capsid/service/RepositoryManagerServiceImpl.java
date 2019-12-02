@@ -185,7 +185,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	public void updateRepository(
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException {
@@ -195,7 +195,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	public void addCollaborator(
 			RepositoryBean repository, 
 			UserBean collaborator, 
@@ -216,7 +216,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	@Transactional
 	public void removeCollaborator(
 			RepositoryBean repository, 
@@ -241,7 +241,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
 		auditLogger.info("Repository has been deleted: "+repository);
