@@ -34,11 +34,11 @@ import com.gitenter.protease.domain.auth.UserBean;
 @ActiveProfiles("local")
 public class OrganizationManagerServiceTest {
 
-	@MockBean private OrganizationRepository organizationRepository;
-	@MockBean private OrganizationUserMapRepository organizationUserMapRepository;
-	
 	@Autowired private OrganizationService organizationService;
 	@Autowired private OrganizationManagerService organizationManagerService;
+	
+	@MockBean private OrganizationRepository organizationRepository;
+	@MockBean private OrganizationUserMapRepository organizationUserMapRepository;
 	
 	private OrganizationBean organization;
 	
@@ -74,6 +74,23 @@ public class OrganizationManagerServiceTest {
 		
 		given(organizationUserMapRepository.findById(managerMapId)).willReturn(managerMapOrNull);
 		given(organizationUserMapRepository.findById(ordinaryMemberMapId)).willReturn(ordinaryMemberMapOrNull);
+	}
+	
+	@Test
+	@WithMockUser(username="nonmember")
+	public void testEverybodyCanCreateOrganization() throws IOException {
+		
+		assertEquals(nonmember.getOrganizations(OrganizationUserRole.MANAGER).size(), 0);
+		assertEquals(nonmember.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER).size(), 0);
+		
+		OrganizationDTO organizationDTO = new OrganizationDTO();
+		organizationDTO.setName("new_org");
+		organizationDTO.setDisplayName("New Organization");
+		
+		organizationManagerService.createOrganization(nonmember, organizationDTO);
+		
+		assertEquals(nonmember.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
+		assertEquals(nonmember.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER).size(), 0);
 	}
 
 	@Test

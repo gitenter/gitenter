@@ -47,7 +47,7 @@ public class OrganizationBean implements ModelBean {
 
 	@ToString.Exclude
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<RepositoryBean> repositories;
+	private List<RepositoryBean> repositories = new ArrayList<RepositoryBean>();
 
 	@ToString.Exclude
 	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")

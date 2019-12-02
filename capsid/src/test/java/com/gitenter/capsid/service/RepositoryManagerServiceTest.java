@@ -2,14 +2,19 @@ package com.gitenter.capsid.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Optional;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,7 +23,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
+import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.OrganizationUserRole;
@@ -30,11 +37,12 @@ import com.gitenter.protease.domain.auth.UserBean;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("local")
-public class RepositoryServiceTest {
+public class RepositoryManagerServiceTest {
 	
-	@Autowired private RepositoryService repositoryService;
+	@Autowired private RepositoryManagerService repositoryManagerService;
 
 	@MockBean private RepositoryRepository repositoryRepository;
+	@MockBean private RepositoryUserMapRepository repositoryUserMapRepository;
 	
 	private OrganizationBean organization;
 	
@@ -97,50 +105,49 @@ public class RepositoryServiceTest {
 		
 		given(repositoryRepository.findById(publicRepoId)).willReturn(publicRepoOrNull);
 		given(repositoryRepository.findById(privateRepoId)).willReturn(privateRepoOrNull);
+		when(repositoryRepository.saveAndFlush(any(RepositoryBean.class))).thenAnswer(new Answer<RepositoryBean>() {
+			@Override
+			public RepositoryBean answer(InvocationOnMock invocation) throws Throwable {
+		    	Object[] args = invocation.getArguments();
+		    	return (RepositoryBean) args[0];
+		  	}
+		});
+		when(repositoryUserMapRepository.saveAndFlush(any(RepositoryUserMapBean.class))).thenAnswer(new Answer<RepositoryUserMapBean>() {
+			@Override
+			public RepositoryUserMapBean answer(InvocationOnMock invocation) throws Throwable {
+		    	Object[] args = invocation.getArguments();
+		    	return (RepositoryUserMapBean) args[0];
+		  	}
+		});
 	}
 
 	@Test
-	@WithMockUser(username="project_organizer")
-	public void testProjectOrganizerCanAccessPublicAndPrivateRepo() throws IOException {
-		
-		RepositoryBean publicRepoCopy = repositoryService.getRepository(publicRepoId);
-		assertEquals(publicRepoCopy.getName(), "public_repo");
-		
-		RepositoryBean privateRepoCopy = repositoryService.getRepository(privateRepoId);
-		assertEquals(privateRepoCopy.getName(), "private_repo");
-	}
-	
-	@Test
-	@WithMockUser(username="editor")
-	public void testEditorCanAccessPublicAndPrivateRepo() throws IOException {
-		
-		RepositoryBean publicRepoCopy = repositoryService.getRepository(publicRepoId);
-		assertEquals(publicRepoCopy.getName(), "public_repo");
-		
-		RepositoryBean privateRepoCopy = repositoryService.getRepository(privateRepoId);
-		assertEquals(privateRepoCopy.getName(), "private_repo");
-	}
-	
-	@Test
 	@WithMockUser(username="member")
-	public void testOrganizationMemberCanAccessPublicAndPrivateRepo() throws IOException {
+	public void testOrganizationMemberCanCreateNewRepository() throws IOException, GitAPIException {
 		
-		RepositoryBean publicRepoCopy = repositoryService.getRepository(publicRepoId);
-		assertEquals(publicRepoCopy.getName(), "public_repo");
+		assertEquals(member.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 0);
 		
-		RepositoryBean privateRepoCopy = repositoryService.getRepository(privateRepoId);
-		assertEquals(privateRepoCopy.getName(), "private_repo");
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.setName("new_repo");
+		repositoryDTO.setDisplayName("New Repository");
+		repositoryDTO.setIsPublic(true);
+		
+		repositoryManagerService.createRepository(member, organization, repositoryDTO, false);
+		
+		assertEquals(member.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
 	}
 	
 	@Test
 	@WithMockUser(username="nonmember")
-	public void testNonmemberCanAccessPublicButCannotAccessPrivateRepo() throws IOException {
+	public void testNonmemberCanCreateNewRepository() throws IOException, GitAPIException {
 		
-		RepositoryBean publicRepoCopy = repositoryService.getRepository(publicRepoId);
-		assertEquals(publicRepoCopy.getName(), "public_repo");
+		RepositoryDTO repositoryDTO = new RepositoryDTO();
+		repositoryDTO.setName("new_repo");
+		repositoryDTO.setDisplayName("New Repository");
+		repositoryDTO.setIsPublic(true);
 		
 		assertThrows(AccessDeniedException.class, () -> {
-			repositoryService.getRepository(privateRepoId);
+			repositoryManagerService.createRepository(nonmember, organization, repositoryDTO, false);
 		});
 	}
 }

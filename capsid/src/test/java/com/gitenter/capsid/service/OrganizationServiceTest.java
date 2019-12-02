@@ -32,10 +32,10 @@ import com.gitenter.protease.domain.auth.UserBean;
 @ActiveProfiles("local")
 public class OrganizationServiceTest {
 
+	@Autowired private OrganizationService organizationService;
+	
 	@MockBean private OrganizationRepository organizationRepository;
 	@MockBean private OrganizationUserMapRepository organizationUserMapRepository;
-	
-	@Autowired private OrganizationService organizationService;
 	
 	private OrganizationBean organization;
 	

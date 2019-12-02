@@ -25,17 +25,17 @@ import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
-import com.gitenter.protease.dao.auth.UserRepository;
-import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
-import com.gitenter.protease.domain.auth.UserBean;
+import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryUserMapBean;
 import com.gitenter.protease.domain.auth.RepositoryUserRole;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @Service
 public class RepositoryManagerServiceImpl implements RepositoryManagerService {
@@ -58,7 +58,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MEMBER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).ORDINARY_MEMBER)")
 	public void createRepository(
 			UserBean me, 
 			OrganizationBean organization, 
