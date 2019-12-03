@@ -20,10 +20,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
+import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @ExtendWith(SpringExtension.class)
@@ -46,7 +46,7 @@ public class RepositoryRepositoryTest {
 	
 	@Test
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DbUnitMinimalDataTearDown
 	public void testCannotSaveTwoRepositoryWithTheSameName() throws IOException, GitAPIException {
 		
 		RepositoryBean existingRepository = repositoryRepository.findById(1).get();
@@ -64,7 +64,7 @@ public class RepositoryRepositoryTest {
 	
 	@Test
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DbUnitMinimalDataTearDown
 	public void testDifferentOrganizationsCanHaveRepoWithTheSameName() throws IOException, GitAPIException {
 		
 		OrganizationBean organization = new OrganizationBean();

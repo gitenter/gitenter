@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberRole;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @ExtendWith(SpringExtension.class)
@@ -39,82 +39,82 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaGitDatabaseConnection",
 		"schemaTraceabilityDatabaseConnection",
 		"schemaReviewDatabaseConnection"})
-public class OrganizationMemberMapRepositoryTest {
+public class OrganizationUserMapRepositoryTest {
 	
-	@Autowired OrganizationMemberMapRepository repository;
+	@Autowired OrganizationUserMapRepository repository;
 	
-	@Autowired MemberRepository memberRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired OrganizationRepository organizationRepository;
 
 	@Test
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DbUnitMinimalDataTearDown
 	public void testFindByUsernameAndOrganizationId() {
 		
-		List<OrganizationMemberMapBean> managerMaps = repository.findByUsernameAndOrganizationId(
+		List<OrganizationUserMapBean> managerMaps = repository.findByUsernameAndOrganizationId(
 				"username", 1);
 		
 		assertEquals(managerMaps.size(), 1);
-		assertEquals(managerMaps.get(0).getMember().getUsername(), "username");
+		assertEquals(managerMaps.get(0).getUser().getUsername(), "username");
 	}
 	
 	@Test
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DbUnitMinimalDataTearDown
 	public void testFindByUsernameAndOrganizationIdAndRole() {
 		
-		List<OrganizationMemberMapBean> managerMaps = repository.findByUsernameAndOrganizationIdAndRole(
-				"username", 1, OrganizationMemberRole.MANAGER);
+		List<OrganizationUserMapBean> managerMaps = repository.findByUsernameAndOrganizationIdAndRole(
+				"username", 1, OrganizationUserRole.MANAGER);
 		
 		assertEquals(managerMaps.size(), 1);
-		assertEquals(managerMaps.get(0).getMember().getUsername(), "username");
+		assertEquals(managerMaps.get(0).getUser().getUsername(), "username");
 	}
 	
 	@Test
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
-	public void testFindByMemberAndOrganization() {
+	@DbUnitMinimalDataTearDown
+	public void testFindByUserAndOrganization() {
 		
-		MemberBean member = memberRepository.findById(1).get();
+		UserBean user = userRepository.findById(1).get();
 		OrganizationBean organization = organizationRepository.findById(1).get();
 		
-		List<OrganizationMemberMapBean> allMaps = repository.fineByMemberAndOrganization(
-				member, organization);
+		List<OrganizationUserMapBean> allMaps = repository.fineByUserAndOrganization(
+				user, organization);
 		
 		assertEquals(allMaps.size(), 1);
-		assertEquals(allMaps.get(0).getMember().getId(), Integer.valueOf(1));
+		assertEquals(allMaps.get(0).getUser().getId(), Integer.valueOf(1));
 	}
 	
 	@Test
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
-	public void testFindByMemberAndOrganizationAndRole() {
+	@DbUnitMinimalDataTearDown
+	public void testFindByUserAndOrganizationAndRole() {
 		
-		MemberBean member = memberRepository.findById(1).get();
+		UserBean user = userRepository.findById(1).get();
 		OrganizationBean organization = organizationRepository.findById(1).get();
 		
-		List<OrganizationMemberMapBean> managerMaps = repository.fineByMemberAndOrganizationAndRole(
-				member, organization, OrganizationMemberRole.MANAGER);
+		List<OrganizationUserMapBean> managerMaps = repository.fineByUserAndOrganizationAndRole(
+				user, organization, OrganizationUserRole.MANAGER);
 		
 		assertEquals(managerMaps.size(), 1);
-		assertEquals(managerMaps.get(0).getMember().getId(), Integer.valueOf(1));
+		assertEquals(managerMaps.get(0).getUser().getId(), Integer.valueOf(1));
 		
-		List<OrganizationMemberMapBean> memberMaps = repository.fineByMemberAndOrganizationAndRole(
-				member, organization, OrganizationMemberRole.MEMBER);
+		List<OrganizationUserMapBean> userMaps = repository.fineByUserAndOrganizationAndRole(
+				user, organization, OrganizationUserRole.ORDINARY_MEMBER);
 		
-		assertEquals(memberMaps.size(), 0);
+		assertEquals(userMaps.size(), 0);
 	}
 	
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DbUnitMinimalDataTearDown
 	public void testRemoveUserFromOrganization() {
 		
-		MemberBean member = memberRepository.findById(1).get();
-		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
 		
-		Integer mapId = member.getOrganizationMemberMaps().get(0).getId();
+		Integer mapId = user.getOrganizationUserMaps().get(0).getId();
 		repository.throughSqlDeleteById(mapId);
 		
 		/*
@@ -122,10 +122,10 @@ public class OrganizationMemberMapRepositoryTest {
 		 * to touch the database again (identity mapping pattern), so the assert will
 		 * be wrong.
 		 */
-//		member = memberRepository.findById(1).get();
-//		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 0);
+//		user = userRepository.findById(1).get();
+//		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 0);
 		
 		OrganizationBean organization = organizationRepository.findById(1).get();
-		assertEquals(organization.getMembers(OrganizationMemberRole.MANAGER).size(), 0);
+		assertEquals(organization.getUsers(OrganizationUserRole.MANAGER).size(), 0);
 	}
 }

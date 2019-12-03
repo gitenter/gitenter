@@ -7,16 +7,16 @@ from forms.authorization_form import (
     fill_login_form,
     login_as
 )
-from forms.member_settings_form import add_ssh_key
+from forms.user_settings_form import add_ssh_key
 
 
-class TestMemberSetting(RegisteredTestSuite):
+class TestUserSettings(RegisteredTestSuite):
 
     def setUp(self):
-        super(TestMemberSetting, self).setUp()
+        super(TestUserSettings, self).setUp()
 
     def tearDown(self):
-        super(TestMemberSetting, self).tearDown()
+        super(TestUserSettings, self).tearDown()
 
     def test_non_user_cannot_access_setting_page(self):
         self.driver.get(urljoin(self.root_url, "/settings"))

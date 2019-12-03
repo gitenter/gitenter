@@ -8,36 +8,36 @@ import com.gitenter.protease.domain.Role;
 import lombok.Getter;
 
 @Getter
-public enum RepositoryMemberRole implements Role {
+public enum RepositoryUserRole implements Role {
 
-	ORGANIZER('O', "Project organizer"),
+	PROJECT_ORGANIZER('O', "Project organizer"),
 	EDITOR('E', "Document editor"),
 	BLACKLIST('B', "Blacklist");
 	
 	private Character shortName;
 	private String displayName;
 
-	private RepositoryMemberRole(Character shortName, String displayName) {
+	private RepositoryUserRole(Character shortName, String displayName) {
 		this.shortName = shortName;
 		this.displayName = displayName;
 	}
 
-	public static RepositoryMemberRole fromShortName(Character shortName) {
-		switch (shortName) {
+	public static RepositoryUserRole fromShortName(Character shortName) {
+		switch(shortName) {
 		case 'O':
-			return ORGANIZER;
+			return PROJECT_ORGANIZER;
 		case 'E':
 			return EDITOR;
 		case 'B':
 			return BLACKLIST;
 		
 		default:
-			throw new IllegalArgumentException("Repository member role shortName: "+shortName+" is not supported.");
+			throw new IllegalArgumentException("Repository user role shortName: "+shortName+" is not supported.");
 		}
 	}
 	
-	public static RepositoryMemberRole collaboratorRoleOf(String name) {
-		RepositoryMemberRole role = valueOf(name);
+	public static RepositoryUserRole collaboratorRoleOf(String name) {
+		RepositoryUserRole role = valueOf(name);
 		if (!role.equals(BLACKLIST)) {
 			return role;
 		}
@@ -46,9 +46,9 @@ public enum RepositoryMemberRole implements Role {
 		}
 	}
 	
-	public static List<RepositoryMemberRole> collaboratorRoles() {
-		List<RepositoryMemberRole> roles = new ArrayList<RepositoryMemberRole>();
-		for (RepositoryMemberRole role : values()) {
+	public static List<RepositoryUserRole> collaboratorRoles() {
+		List<RepositoryUserRole> roles = new ArrayList<RepositoryUserRole>();
+		for (RepositoryUserRole role : values()) {
 			if (!role.equals(BLACKLIST)) {
 				roles.add(role);
 			}

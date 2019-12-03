@@ -6,9 +6,9 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 
-class Member(Base):
+class User(Base):
 
-    __tablename__ = 'member'
+    __tablename__ = 'application_user'
     __table_args__ = {'schema': 'auth'}
 
     id = Column(Integer, primary_key=True)
@@ -18,14 +18,14 @@ class Member(Base):
     display_name = Column(String)
     email = Column(String)
 
-    ssh_keys = relationship("SshKey", back_populates="member")
+    ssh_keys = relationship("SshKey", back_populates="user")
 
-    repository_member_maps = relationship(
-        "RepositoryMemberMap",
-        back_populates="member")
-    organization_member_maps = relationship(
-        "OrganizationMemberMap",
-        back_populates="member")
+    repository_user_maps = relationship(
+        "RepositoryUserMap",
+        back_populates="user")
+    organization_user_maps = relationship(
+        "OrganizationUserMap",
+        back_populates="user")
 
 
 class Organization(Base):
@@ -39,14 +39,14 @@ class Organization(Base):
     display_name = Column(String)
 
     repositories = relationship("Repository", back_populates="organization")
-    organization_member_maps = relationship(
-        "OrganizationMemberMap",
+    organization_user_maps = relationship(
+        "OrganizationUserMap",
         back_populates="organization")
 
 
-class OrganizationMemberMap(Base):
+class OrganizationUserMap(Base):
 
-    __tablename__ = 'organization_member_map'
+    __tablename__ = 'organization_user_map'
     __table_args__ = {'schema': 'auth'}
 
     id = Column(Integer, primary_key=True)
@@ -54,12 +54,12 @@ class OrganizationMemberMap(Base):
     organization_id = Column(Integer, ForeignKey('auth.organization.id'))
     organization = relationship(
         "Organization",
-        back_populates="organization_member_maps")
+        back_populates="organization_user_maps")
 
-    member_id = Column(Integer, ForeignKey('auth.member.id'))
-    member = relationship(
-        "Member",
-        back_populates="organization_member_maps")
+    user_id = Column(Integer, ForeignKey('auth.application_user.id'))
+    user = relationship(
+        "User",
+        back_populates="organization_user_maps")
 
     role_shortname = Column(VARCHAR(1))
 
@@ -80,14 +80,14 @@ class Repository(Base):
 
     is_public = Column(Boolean)
 
-    repository_member_maps = relationship(
-        "RepositoryMemberMap",
+    repository_user_maps = relationship(
+        "RepositoryUserMap",
         back_populates="repository")
 
 
-class RepositoryMemberMap(Base):
+class RepositoryUserMap(Base):
 
-    __tablename__ = 'repository_member_map'
+    __tablename__ = 'repository_user_map'
     __table_args__ = {'schema': 'auth'}
 
     id = Column(Integer, primary_key=True)
@@ -95,12 +95,12 @@ class RepositoryMemberMap(Base):
     repository_id = Column(Integer, ForeignKey('auth.repository.id'))
     repository = relationship(
         "Repository",
-        back_populates="repository_member_maps")
+        back_populates="repository_user_maps")
 
-    member_id = Column(Integer, ForeignKey('auth.member.id'))
-    member = relationship(
-        "Member",
-        back_populates="repository_member_maps")
+    user_id = Column(Integer, ForeignKey('auth.application_user.id'))
+    user = relationship(
+        "User",
+        back_populates="repository_user_maps")
 
     role_shortname = Column(VARCHAR(1))
 
@@ -112,8 +112,8 @@ class SshKey(Base):
 
     id = Column(Integer, primary_key=True)
 
-    member_id = Column(Integer, ForeignKey('auth.member.id'))
-    member = relationship("Member", back_populates="ssh_keys")
+    user_id = Column(Integer, ForeignKey('auth.application_user.id'))
+    user = relationship("User", back_populates="ssh_keys")
 
     key_type = Column(String)
     key_data = Column(String)

@@ -21,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
+import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @ExtendWith(SpringExtension.class)
@@ -41,19 +41,19 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaGitDatabaseConnection",
 		"schemaTraceabilityDatabaseConnection",
 		"schemaReviewDatabaseConnection"})
-public class MemberBeanTest {
+public class UserBeanTest {
 
-	@Autowired MemberRepository memberRepository;
+	@Autowired UserRepository userRepository;
 	
 	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
+	@Autowired OrganizationUserMapRepository organizationUserMapRepository;
 	
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
 	public void testDbUnitMinimalQueryWorks() throws IOException, GeneralSecurityException {
 		
-		MemberBean item = memberRepository.findById(1).get();
+		UserBean item = userRepository.findById(1).get();
 		
 		/*
 		 * This is to test there's no circular dependency which makes 
@@ -73,52 +73,59 @@ public class MemberBeanTest {
 		assertEquals(sshKey.getKeyData(), "VGhpcyBpcyBteSB0ZXh0Lg==");
 		assertEquals(sshKey.getComment(), "comment");
 		
-		assertEquals(item.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
-		assertEquals(item.getOrganizations(OrganizationMemberRole.MEMBER).size(), 0);
+		assertEquals(item.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
+		assertEquals(item.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER).size(), 0);
 
-		assertEquals(item.getRepositories(RepositoryMemberRole.ORGANIZER).size(), 1);
-		assertEquals(item.getRepositories(RepositoryMemberRole.EDITOR).size(), 0);
-		assertEquals(item.getRepositories(RepositoryMemberRole.BLACKLIST).size(), 0);
+		assertEquals(item.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER).size(), 1);
+		assertEquals(item.getRepositories(RepositoryUserRole.EDITOR).size(), 0);
+		assertEquals(item.getRepositories(RepositoryUserRole.BLACKLIST).size(), 0);
 	}
 	
 	/*
 	 * TODO:
 	 * 
-	 * Rewrite this test under "memberService".
+	 * Rewrite this test under "userService".
 	 */
 	@Test
 	@Transactional
 	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DbUnitMinimalDataTearDown
 	public void testAddNewOrganization() {
 		
-		MemberBean member = memberRepository.findById(1).get();
-		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 1);
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
 
 		OrganizationBean organization = new OrganizationBean();
 		organization.setName("new_organization");
 		organization.setDisplayName("New Organization");
-		assertEquals(organization.getMembers(OrganizationMemberRole.MANAGER).size(), 0);
+		assertEquals(organization.getUsers(OrganizationUserRole.MANAGER).size(), 0);
 		
 		/*
 		 * Need to save first. Otherwise when saving 
-		 * "OrganizationMemberMapBean", non-null error will
+		 * "OrganizationUserMapBean", non-null error will
 		 * be raised for "organization_id" column.
 		 */
 		organizationRepository.saveAndFlush(organization);
 		
-		OrganizationMemberMapBean map = OrganizationMemberMapBean.link(organization, member, OrganizationMemberRole.MANAGER);
-		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 2);
-		assertEquals(organization.getMembers(OrganizationMemberRole.MANAGER).size(), 1);
+		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, user, OrganizationUserRole.MANAGER);
+		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 2);
+		assertEquals(organization.getUsers(OrganizationUserRole.MANAGER).size(), 1);
 		
 		/*
-		 * Cannot using "memberRepository" or "organizationRepository"
+		 * Cannot using "userRepository" or "organizationRepository"
 		 * to save. It will double-insert the target row and cause primary
 		 * key error.
 		 */
-		organizationMemberMapRepository.saveAndFlush(map);
+		organizationUserMapRepository.saveAndFlush(map);
 		
-		member = memberRepository.findById(1).get();
-		assertEquals(member.getOrganizations(OrganizationMemberRole.MANAGER).size(), 2);
+		user = userRepository.findById(1).get();
+		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 2);
+		
+		map.unlink();
+		assertEquals(user.getOrganizations(OrganizationUserRole.MANAGER).size(), 1);
+		assertEquals(organization.getUsers(OrganizationUserRole.MANAGER).size(), 0);
+		
+//		organizationUserMapRepository.delete(map);
+//		userRepository.delete(user);
 	}
 }

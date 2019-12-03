@@ -14,7 +14,7 @@
       <c:if test="${commitSha != null}">
         <span class="nav-current">Commit: ${fn:substring(commitSha, 0, 6)}</span>
       </c:if>
-      <security:authorize access="hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)">
+      <security:authorize access="hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)">
         <s:url var="repo_settings_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings" />
         <sf:form method="GET" action="${repo_settings_url}">
           <input type="submit" value="Settings" />

@@ -30,7 +30,6 @@ import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
 @ExtendWith(SpringExtension.class)
@@ -85,7 +84,6 @@ public class RepositoryRepositoryTestWildCardProfile {
 	 * tests.
 	 */
 	@Test
-	@DatabaseTearDown
 	public void testCreateRepositoryGetGitFolderCreated() throws IOException, GitAPIException {
 		
 		OrganizationBean organization = new OrganizationBean();
@@ -108,5 +106,7 @@ public class RepositoryRepositoryTestWildCardProfile {
 		
 		repositoryRepository.delete(repository);
 		assertFalse(repositoryDirectory.exists());
+		
+		organizationRepository.delete(organization);
 	}
 }

@@ -88,8 +88,8 @@ public class RepositoryBean implements ModelBean {
 	}
 
 	@ToString.Exclude
-	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	private List<RepositoryUserMapBean> repositoryUserMaps = new ArrayList<RepositoryUserMapBean>();
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
@@ -158,11 +158,11 @@ public class RepositoryBean implements ModelBean {
 	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<ReviewBean> reviews;
 	
-	public List<MemberBean> getMembers(RepositoryMemberRole role) {
-		List<MemberBean> items = new ArrayList<MemberBean>();
-		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
+	public List<UserBean> getUsers(RepositoryUserRole role) {
+		List<UserBean> items = new ArrayList<UserBean>();
+		for (RepositoryUserMapBean map : repositoryUserMaps) {
 			if (map.getRole().equals(role)) {
-				items.add(map.getMember());
+				items.add(map.getUser());
 			}
 		}
 		return items;
@@ -172,21 +172,21 @@ public class RepositoryBean implements ModelBean {
 		commits.add(commit);
 	}
 	
-	void addMap(RepositoryMemberMapBean map) {
-		repositoryMemberMaps.add(map);
+	void addMap(RepositoryUserMapBean map) {
+		repositoryUserMaps.add(map);
 	}
 	
 	/*
 	 * Not working, because repositoryRepository.saveAndFlush() cannot 
-	 * really follow this change. Need to go with RepositoryMemberMapRepository.delete().
+	 * really follow this change. Need to go with RepositoryUserMapRepository.delete().
 	 */
-//	public boolean removeMember (Integer memberId) {
+//	public boolean removeUser (Integer userId) {
 //		
-//		Iterator<RepositoryMemberMapBean> i = repositoryMemberMaps.iterator();
+//		Iterator<RepositoryUserMapBean> i = repositoryUserMaps.iterator();
 //		while (i.hasNext()) {
-//			RepositoryMemberMapBean map = i.next();
-//			System.out.println(memberId+":"+map.getMember().getId());
-//			if (map.getMember().getId().equals(memberId)) {
+//			RepositoryUserMapBean map = i.next();
+//			System.out.println(userId+":"+map.getUser().getId());
+//			if (map.getUser().getId().equals(userId)) {
 //				System.out.println("bingo");
 //				i.remove();
 //				return true;
@@ -196,9 +196,9 @@ public class RepositoryBean implements ModelBean {
 //		return false;
 //	}
 //	
-//	public RepositoryMemberMapBean getRepositoryMemberMap (Integer memberId) {
-//		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
-//			if (map.getMember().getId().equals(memberId)) {
+//	public RepositoryUserMapBean getRepositoryUserMap (Integer userId) {
+//		for (RepositoryUserMapBean map : repositoryUserMaps) {
+//			if (map.getUser().getId().equals(userId)) {
 //				return map;
 //			}
 //		}

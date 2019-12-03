@@ -5,14 +5,14 @@ import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
 
-import com.gitenter.capsid.dto.MemberProfileDTO;
-import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.capsid.dto.UserProfileDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 
-public interface MemberService {
+public interface UserService {
 	
 	/*
 	 * These methods using input "username" rather than "authentication",
@@ -23,17 +23,17 @@ public interface MemberService {
 	 * as we cannot annotate @PreAuthorize in the class scope (rather than
 	 * in the method scope), there's not a lot of benefits doing that.
 	 */
-	public MemberBean getMemberByUsername(String username) throws IOException;
-	public MemberBean getMe(Authentication authentication) throws IOException;
+	public UserBean getUserByUsername(String username) throws IOException;
+	public UserBean getMe(Authentication authentication) throws IOException;
 	
 	/*
 	 * Basically to have the input of "Authentication", it has similar the same
 	 * effect as @PreAuthorize("isAuthenticated()").
 	 */
-	public MemberProfileDTO getMemberProfileDTO(Authentication authentication) throws IOException;
-	public MemberRegisterDTO getMemberRegisterDTO(Authentication authentication) throws IOException;
-	public void updateMember(MemberProfileDTO profile) throws IOException;
-	public boolean updatePassword(MemberRegisterDTO register, String oldPassword) throws IOException;
+	public UserProfileDTO getUserProfileDTO(Authentication authentication) throws IOException;
+	public UserRegisterDTO getUserRegisterDTO(Authentication authentication) throws IOException;
+	public void updateUser(UserProfileDTO profile) throws IOException;
+	public boolean updatePassword(UserRegisterDTO register, String oldPassword) throws IOException;
 	
 	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException;
 	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException;
@@ -41,6 +41,6 @@ public interface MemberService {
 	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException;
 	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
 	
-	public void addSshKey(SshKeyBean sshKey, MemberBean member) throws IOException;
-	public boolean deleteMember(String username, String password) throws IOException;
+	public void addSshKey(SshKeyBean sshKey, UserBean user) throws IOException;
+	public boolean deleteUser(String username, String password) throws IOException;
 }

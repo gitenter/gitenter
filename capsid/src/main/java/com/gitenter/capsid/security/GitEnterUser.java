@@ -9,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.gitenter.protease.domain.auth.OrganizationMemberRole;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
 
 public class GitEnterUser extends User implements UserDetails {
 
@@ -26,8 +26,8 @@ public class GitEnterUser extends User implements UserDetails {
 		 * TODO:
 		 * Remove String-typed "SimpleGrantedAuthority" to a customized one.
 		 */
-		authorities.add(new SimpleGrantedAuthority(OrganizationMemberRole.MANAGER.name()));
-		authorities.add(new SimpleGrantedAuthority(OrganizationMemberRole.MEMBER.name()));
+		authorities.add(new SimpleGrantedAuthority(OrganizationUserRole.MANAGER.name()));
+		authorities.add(new SimpleGrantedAuthority(OrganizationUserRole.ORDINARY_MEMBER.name()));
 	}
 
 	@Override

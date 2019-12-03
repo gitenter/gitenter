@@ -34,8 +34,8 @@ public class SshKeyBean implements ModelBean {
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name="member_id", updatable=false)
-	private MemberBean member;
+	@JoinColumn(name="user_id", updatable=false)
+	private UserBean user;
 	
 	@NotNull
 	@Column(name="key_type")

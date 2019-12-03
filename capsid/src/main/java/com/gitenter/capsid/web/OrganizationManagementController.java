@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.OrganizationDTO;
-import com.gitenter.capsid.service.MemberService;
+import com.gitenter.capsid.service.UserService;
 import com.gitenter.capsid.service.OrganizationManagerService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @Controller
 public class OrganizationManagementController {
 	
-	private MemberService memberService;
+	private UserService userService;
 	private OrganizationService organizationService;
 	private OrganizationManagerService organizationManagerService;
 
 	@Autowired
 	public OrganizationManagementController(
-			MemberService memberService, 
+			UserService userService, 
 			OrganizationService organizationService,
 			OrganizationManagerService organizationManagerService) {
 
-		this.memberService = memberService;
+		this.userService = userService;
 		this.organizationService = organizationService;
 		this.organizationManagerService = organizationManagerService;
 	}
@@ -59,7 +59,7 @@ public class OrganizationManagementController {
 		}
 		
 		try {
-			MemberBean me = memberService.getMe(authentication);
+			UserBean me = userService.getMe(authentication);
 			organizationManagerService.createOrganization(me, organizationDTO);
 		}
 		catch(ItemNotUniqueException e) {
@@ -101,8 +101,7 @@ public class OrganizationManagementController {
 			@PathVariable Integer organizationId,
 			@Valid OrganizationDTO organizationDTOAfterChange, 
 			Errors errors, 
-			RedirectAttributes model,
-			Authentication authentication) throws Exception {
+			RedirectAttributes model) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		
@@ -114,7 +113,7 @@ public class OrganizationManagementController {
 			return "organization-management/profile";
 		}
 
-		organizationManagerService.updateOrganization(authentication, organization, organizationDTOAfterChange);
+		organizationManagerService.updateOrganization(organization, organizationDTOAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/organizations/"+organizationId+"/settings/profile";
@@ -124,7 +123,7 @@ public class OrganizationManagementController {
 	 * TODO:
 	 * 
 	 * There is a lot of duplicated code for 
-	 * (1) add/remove/switch role of members in here
+	 * (1) add/remove/switch role of users in here
 	 * (2) add/remove/switch role of collaborator in repository management
 	 * 
 	 * both in the controller and in the view layer (potentially also in
@@ -146,13 +145,13 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/add", method=RequestMethod.POST)
-	public String addAMemberToOrganization(
+	public String addAUserToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_add_username") String username) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		MemberBean toBeAddMember = memberService.getMemberByUsername(username);
-		organizationManagerService.addOrganizationMember(organization, toBeAddMember);		
+		UserBean toBeAddUser = userService.getUserByUsername(username);
+		organizationManagerService.addOrganizationMember(organization, toBeAddUser);		
 		/*
 		 * TODO:
 		 * Raise errors and redirect to the original page,
@@ -163,13 +162,13 @@ public class OrganizationManagementController {
 	}
 	
 	@RequestMapping(value="/organizations/{organizationId}/settings/members/remove", method=RequestMethod.POST)
-	public String removeAMemberToOrganization(
+	public String removeAUserToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_remove_username") String username,
-			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
+			@RequestParam(value="organization_user_map_id") Integer organizationUserMapId) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		organizationManagerService.removeOrganizationMember(organization, organizationMemberMapId);		
+		organizationManagerService.removeOrganizationMember(organization, organizationUserMapId);		
 		
 		return "redirect:/organizations/"+organizationId+"/settings/members";
 	}
@@ -180,9 +179,11 @@ public class OrganizationManagementController {
 			Model model,
 			Authentication authentication) throws Exception {
 		
-		model.addAttribute("organization", organizationService.getOrganization(organizationId));
-		model.addAttribute("managerMaps", organizationService.getManagerMaps(organizationId));
-		model.addAttribute("ordinaryMemberMaps", organizationService.getOrdinaryMemberMaps(organizationId));
+		OrganizationBean organization = organizationService.getOrganization(organizationId);
+		
+		model.addAttribute("organization", organization);
+		model.addAttribute("managerMaps", organizationService.getManagerMaps(organization));
+		model.addAttribute("ordinaryMemberMaps", organizationService.getOrdinaryMemberMaps(organization));
 		model.addAttribute("operatorUsername", authentication.getName());
 		
 		return "organization-management/managers";
@@ -192,10 +193,10 @@ public class OrganizationManagementController {
 	public String addAMamangerToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_upgrade_username") String username,
-			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId) throws Exception {
+			@RequestParam(value="organization_user_map_id") Integer organizationUserMapId) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		organizationManagerService.addOrganizationManager(organization, organizationMemberMapId);		
+		organizationManagerService.addOrganizationManager(organization, organizationUserMapId);		
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
 	}
@@ -204,11 +205,11 @@ public class OrganizationManagementController {
 	public String removeAMamangerToOrganization(
 			@PathVariable Integer organizationId,
 			@RequestParam(value="to_be_downgrade_username") String username,
-			@RequestParam(value="organization_member_map_id") Integer organizationMemberMapId,
+			@RequestParam(value="organization_user_map_id") Integer organizationUserMapId,
 			Authentication authentication) throws Exception {
 		
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		organizationManagerService.removeOrganizationManager(authentication, organization, organizationMemberMapId);	
+		organizationManagerService.removeOrganizationManager(authentication, organization, organizationUserMapId);	
 		
 		return "redirect:/organizations/"+organizationId+"/settings/managers";
 	}

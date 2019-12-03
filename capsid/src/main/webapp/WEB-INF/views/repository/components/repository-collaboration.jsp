@@ -7,7 +7,7 @@
         <h3>
           Collaboration
 <%--          <security:authorize access="@securityService.checkManagerOfAnOrganization(authentication,#organization.id)"> --%>
-            <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/collaborators" />
+            <s:url var="collaborators_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators" />
             <sf:form method="GET" action="${collaborators_url}">
               <input type="submit" value="Settings" />
             </sf:form>
@@ -15,14 +15,14 @@
         </h3>
         <table class="hidden">
           <tr>
-            <c:forEach var="role" items="${repositoryMemberRoleValues}">
+            <c:forEach var="role" items="${repositoryUserRoleValues}">
             <td>
               <h6><c:out value="${role.displayName}" /></h6>
               <ul class="user-list">
-                <c:forEach var="map" items="${repository.repositoryMemberMaps}">
+                <c:forEach var="map" items="${repository.repositoryUserMaps}">
                   <c:if test="${map.role == role}">
                     <li>
-                      <span class="user"><c:out value="${map.member.displayName}" /></span>
+                      <span class="user"><c:out value="${map.user.displayName}" /></span>
                     </li>
                   </c:if> 
                 </c:forEach>

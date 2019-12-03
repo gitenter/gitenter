@@ -24,29 +24,29 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.gitenter.capsid.dto.MemberProfileDTO;
-import com.gitenter.capsid.dto.MemberRegisterDTO;
+import com.gitenter.capsid.dto.UserProfileDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
 import com.gitenter.protease.dao.auth.SshKeyRepository;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("local")
-public class MemberServiceTest {
+public class UserServiceTest {
 
-	@MockBean private MemberRepository memberRepository;
+	@MockBean private UserRepository userRepository;
 	@MockBean private OrganizationRepository organizationRepository;
-	@MockBean private OrganizationMemberMapRepository organizationMemberMapRepository;
+	@MockBean private OrganizationUserMapRepository organizationUserMapRepository;
 	@MockBean private SshKeyRepository sshKeyRepository;
 	@MockBean private PasswordEncoder passwordEncoder;
 	
-	@Autowired private MemberService memberService;
+	@Autowired private UserService userService;
 	
-	private MemberBean member;
+	private UserBean user;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -54,59 +54,59 @@ public class MemberServiceTest {
 		given(passwordEncoder.encode("password")).willReturn("wordpass");
 		given(passwordEncoder.matches("password", "wordpass")).willReturn(true);
 		
-		member = new MemberBean();
-		member.setUsername("username");
-		member.setPassword(passwordEncoder.encode("password"));
-		member.setDisplayName("User Name");
-		member.setEmail("username@email.com");
-		List<MemberBean> members = new ArrayList<MemberBean>();
-		members.add(member);
+		user = new UserBean();
+		user.setUsername("username");
+		user.setPassword(passwordEncoder.encode("password"));
+		user.setDisplayName("User Name");
+		user.setEmail("username@email.com");
+		List<UserBean> users = new ArrayList<UserBean>();
+		users.add(user);
 		
-		given(memberRepository.findByUsername("username")).willReturn(members);
+		given(userRepository.findByUsername("username")).willReturn(users);
 	}
 	
 	@Test
-	public void testGetMemberByUsernameWithValidUsername() throws IOException {
-		assertEquals(memberService.getMemberByUsername("username"), member);
+	public void testGetUserByUsernameWithValidUsername() throws IOException {
+		assertEquals(userService.getUserByUsername("username"), user);
 	}
 	
 	@Test
-	public void testGetMemberByUsernameWithInValidUsername() throws IOException {
+	public void testGetUserByUsernameWithInValidUsername() throws IOException {
 		assertThrows(UserNotExistException.class, () -> {
-			memberService.getMemberByUsername("not_exist");
+			userService.getUserByUsername("not_exist");
 		});
 	}
 	
 	@Test
 	@WithMockUser(username="username")
-	public void testUpdateMemberWithAuthorizedUser() throws IOException {
+	public void testUpdateUserWithAuthorizedUser() throws IOException {
 		
-		MemberProfileDTO profile = new MemberProfileDTO();
+		UserProfileDTO profile = new UserProfileDTO();
 		profile.setUsername("username");
 		profile.setDisplayName("Updated User Name");
 		profile.setEmail("updated_username@email.com");
 		
-		memberService.updateMember(profile);
+		userService.updateUser(profile);
 		
 		/*
-		 * `member` is updated, but that's the same pointer.
+		 * `user` is updated, but that's the same pointer.
 		 */
-		verify(memberRepository, times(1)).saveAndFlush(member);
-		assertEquals(member.getDisplayName(), "Updated User Name");
-		assertEquals(member.getEmail(), "updated_username@email.com");
+		verify(userRepository, times(1)).saveAndFlush(user);
+		assertEquals(user.getDisplayName(), "Updated User Name");
+		assertEquals(user.getEmail(), "updated_username@email.com");
 	}
 	
 	@Test
 	@WithMockUser(username="hijacked_username")
-	public void testUpdateMemberWithHijackedUser() throws IOException {
+	public void testUpdateUserWithHijackedUser() throws IOException {
 		
-		MemberProfileDTO profile = new MemberProfileDTO();
+		UserProfileDTO profile = new UserProfileDTO();
 		profile.setUsername("username");
 		profile.setDisplayName("Updated User Name");
 		profile.setEmail("updated_username@email.com");
 		
 		assertThrows(AccessDeniedException.class, () -> {
-			memberService.updateMember(profile);
+			userService.updateUser(profile);
 		});
 	}
 	
@@ -114,24 +114,24 @@ public class MemberServiceTest {
 	@WithMockUser(username="username")
 	public void testUpdatePasswordCorrectOldPassword() throws IOException {
 		
-		MemberRegisterDTO register = new MemberRegisterDTO();
+		UserRegisterDTO register = new UserRegisterDTO();
 		register.setUsername("username");
 		register.setPassword("new_password");
 		
-		assertTrue(memberService.updatePassword(register, "password"));
+		assertTrue(userService.updatePassword(register, "password"));
 		
-		verify(memberRepository, times(1)).saveAndFlush(member);
+		verify(userRepository, times(1)).saveAndFlush(user);
 	}
 	
 	@Test
 	@WithMockUser(username="username")
 	public void testUpdatePasswordWrongOldPassword() throws IOException {
 		
-		MemberRegisterDTO register = new MemberRegisterDTO();
+		UserRegisterDTO register = new UserRegisterDTO();
 		register.setUsername("username");
 		register.setPassword("new_password");
 		
-		assertFalse(memberService.updatePassword(register, "wrong_password"));
-		verify(memberRepository, times(0)).saveAndFlush(member);
+		assertFalse(userService.updatePassword(register, "wrong_password"));
+		verify(userRepository, times(0)).saveAndFlush(user);
 	}
 }

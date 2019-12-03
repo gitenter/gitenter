@@ -15,8 +15,8 @@
           <tr>
             <td>Previous keys</td>
             <td class="pre-fill">
-              <c:if test="${member.sshKeys.size()==0}">N/A</c:if>
-              <c:forEach var="sshKey" items="${member.sshKeys}">
+              <c:if test="${user.sshKeys.size()==0}">N/A</c:if>
+              <c:forEach var="sshKey" items="${user.sshKeys}">
                 <p><code>${fn:substring(sshKey, 0, 40)} ...</code></p>
               </c:forEach>
             </td>

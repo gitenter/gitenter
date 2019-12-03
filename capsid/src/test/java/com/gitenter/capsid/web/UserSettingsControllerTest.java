@@ -18,20 +18,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.gitenter.capsid.dto.MemberRegisterDTO;
-import com.gitenter.capsid.service.MemberService;
+import com.gitenter.capsid.dto.UserRegisterDTO;
+import com.gitenter.capsid.service.UserService;
 
-public class MemberSettingsControllerTest {
+public class UserSettingsControllerTest {
 	
 	private MockMvc mockMvc;
 	
-	private MemberService mockMemberService;
+	private UserService mockUserService;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
 
-		mockMemberService = mock(MemberService.class);
-		MemberSettingsController controller = new MemberSettingsController(mockMemberService);
+		mockUserService = mock(UserService.class);
+		UserSettingsController controller = new UserSettingsController(mockUserService);
 		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 	
@@ -55,7 +55,7 @@ public class MemberSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(2))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "displayName", "email"))
+				"userProfileDTO", "displayName", "email"))
 		.andReturn().getResponse().getContentAsString().contains("must not be null");
 	}
 	
@@ -70,7 +70,7 @@ public class MemberSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "email"))
+				"userProfileDTO", "email"))
 		.andReturn().getResponse().getContentAsString().contains("not a well-formed email address");
 	}
 	
@@ -85,7 +85,7 @@ public class MemberSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "displayName"))
+				"userProfileDTO", "displayName"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 	
@@ -100,17 +100,17 @@ public class MemberSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberProfileDTO", "displayName"))
+				"userProfileDTO", "displayName"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 	
 	@Test
 	public void testUpdatePassword() throws Exception {
 		
-		when(mockMemberService.updatePassword(any(MemberRegisterDTO.class), eq("correct_old_password")))
+		when(mockUserService.updatePassword(any(UserRegisterDTO.class), eq("correct_old_password")))
 		.thenReturn(true);
 		
-		when(mockMemberService.updatePassword(any(MemberRegisterDTO.class), eq("wrong_old_password")))
+		when(mockUserService.updatePassword(any(UserRegisterDTO.class), eq("wrong_old_password")))
 		.thenReturn(false);
 		
 		mockMvc.perform(post("/settings/account/password")
@@ -139,7 +139,7 @@ public class MemberSettingsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(2+1))
 		.andExpect(model().attributeHasFieldErrors(
-				"memberRegisterDTO", "password"))
+				"userRegisterDTO", "password"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
 	}
 	
