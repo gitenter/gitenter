@@ -183,7 +183,7 @@ public class RepositoryManagerServiceTest {
 	
 	@Test
 	@WithMockUser(username="project_organizer")
-	public void testRepositoryNameCannotBeChang3ed() throws IOException, GitAPIException {
+	public void testRepositoryNameCannotBeChanged() throws IOException, GitAPIException {
 			
 		RepositoryDTO repositoryDTO = new RepositoryDTO();
 		repositoryDTO.setName("public_repo_different_name");
