@@ -50,7 +50,10 @@ public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<Reposit
 		 * `git push` will be broken.
 		 * 
 		 * TODO:
-		 * Probably should be 
+		 * Probably should be push from id, so then name can be freely changed.
+		 * However, that makes the git (command line) interface very awkward
+		 * and hard to understand, as user actually need to interact with those
+		 * ids.
 		 */
 		if (!repositoryBean.getName().equals(name)) {
 			throw new InvalidOperationException("repository name cannot be modified.");

@@ -14,12 +14,14 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -249,8 +251,49 @@ public class RepositoryManagerServiceTest {
 	@WithMockUser(username="project_organizer")
 	public void testProjectOrganizerCanRemoveCollebrator() throws IOException {
 		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("project_organizer");
+		
 		assertEquals(repositoryService.getEditors(publicRepo).size(), 1);
-		repositoryManagerService.removeCollaborator(publicRepo, publicRepoEditorMapId);
+		repositoryManagerService.removeCollaborator(mockAuthentication, publicRepo, publicRepoEditorMapId);
 		assertEquals(repositoryService.getEditors(publicRepo).size(), 0);
+	}
+	
+	@Test
+	@WithMockUser(username="project_organizer")
+	public void testProjectOrganizerCannotRemoveHerselfAsCollebrator() {
+		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("project_organizer");
+		
+		assertThrows(InvalidOperationException.class, () -> {
+			repositoryManagerService.removeCollaborator(mockAuthentication, publicRepo, publicRepoProjectOrganizerMapId);
+		});	
+	}
+	
+	@Test
+	@WithMockUser(username="editor")
+	public void testEditorCanRemoveCollebrator() {
+		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("editor");
+		
+		assertThrows(AccessDeniedException.class, () -> {
+			repositoryManagerService.removeCollaborator(mockAuthentication, publicRepo, publicRepoEditorMapId);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="project_organizer")
+	public void testProjectOrganizerCanDeleteRepository() throws IOException, GitAPIException {
+		repositoryManagerService.deleteRepository(publicRepo);
+	}
+	
+	@Test
+	@WithMockUser(username="editor")
+	public void testEditorCannotDeleteRepository() throws IOException, GitAPIException {
+		assertThrows(AccessDeniedException.class, () -> {
+			repositoryManagerService.deleteRepository(publicRepo);
+		});
 	}
 }

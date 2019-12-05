@@ -38,17 +38,19 @@ public class RepositoryServiceTest {
 	
 	private OrganizationBean organization;
 	
+	private final Integer organizationId = 1;
+	
 	private RepositoryBean publicRepo;
 	private RepositoryBean privateRepo;
+	
+	private final Integer publicRepoId = 1;
+	private final Integer privateRepoId = 2;
 	
 	private UserBean projectOrganizer;
 	private UserBean editor;
 	private UserBean member;
 	private UserBean nonmember;
-	
-	private final Integer organizationId = 1;
-	private final Integer publicRepoId = 1;
-	private final Integer privateRepoId = 2;
+	private UserBean blacklistUser;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -79,11 +81,13 @@ public class RepositoryServiceTest {
 		editor = new UserBean();
 		member = new UserBean();
 		nonmember = new UserBean();
+		blacklistUser = new UserBean();
 		
 		projectOrganizer.setUsername("project_organizer");
 		editor.setUsername("editor");
 		member.setUsername("member");
 		nonmember.setUsername("nonmember");
+		blacklistUser.setUsername("blacklist_user");
 		
 		OrganizationUserMapBean.link(organization, projectOrganizer, OrganizationUserRole.ORDINARY_MEMBER);
 		OrganizationUserMapBean.link(organization, editor, OrganizationUserRole.ORDINARY_MEMBER);
@@ -91,6 +95,7 @@ public class RepositoryServiceTest {
 	
 		RepositoryUserMapBean.link(publicRepo, projectOrganizer, RepositoryUserRole.PROJECT_ORGANIZER);
 		RepositoryUserMapBean.link(publicRepo, editor, RepositoryUserRole.EDITOR);
+		RepositoryUserMapBean.link(publicRepo, blacklistUser, RepositoryUserRole.BLACKLIST);
 		
 		given(repositoryRepository.findById(publicRepoId)).willReturn(Optional.of(publicRepo));
 		given(repositoryRepository.findById(privateRepoId)).willReturn(Optional.of(privateRepo));
@@ -131,13 +136,22 @@ public class RepositoryServiceTest {
 	
 	@Test
 	@WithMockUser(username="nonmember")
-	public void testNonmemberCanAccessPublicButCannotAccessPrivateRepo() throws IOException {
+	public void testNonmemberCanAccessPublicRepoButCannotAccessPrivateRepo() throws IOException {
 		
 		RepositoryBean publicRepoCopy = repositoryService.getRepository(publicRepoId);
 		assertEquals(publicRepoCopy.getName(), "public_repo");
 		
 		assertThrows(AccessDeniedException.class, () -> {
 			repositoryService.getRepository(privateRepoId);
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="blacklist_user")
+	public void testBlacklistUserCannotAccessPublicRepo() throws IOException {
+		
+		assertThrows(AccessDeniedException.class, () -> {
+			repositoryService.getRepository(publicRepoId);
 		});
 	}
 }

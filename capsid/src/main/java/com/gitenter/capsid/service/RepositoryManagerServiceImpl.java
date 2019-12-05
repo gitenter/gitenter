@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -234,6 +235,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	@Transactional
 	public void removeCollaborator(
+			Authentication authentication,
 			RepositoryBean repository, 
 			Integer repositoryUserMapId) throws IOException {
 		
@@ -250,6 +252,10 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			throw new UnreachableException("Remove repository user input not consistency. "
 					+ "repositoryUserMapId "+repositoryUserMapId+" doesn't belong to the "
 					+ "target organization "+repository);
+		}
+		
+		if (map.getUser().getUsername().equals(authentication.getName())) {
+			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as an organizer of repository "+repository);
 		}
 		
 		/*
