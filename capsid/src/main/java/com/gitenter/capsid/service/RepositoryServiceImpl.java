@@ -7,17 +7,21 @@ import java.util.Optional;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.service.exception.CommitShaNotExistException;
-import com.gitenter.capsid.service.exception.IncludeFileNotExistException;
 import com.gitenter.capsid.service.exception.IdNotExistException;
+import com.gitenter.capsid.service.exception.IncludeFileNotExistException;
 import com.gitenter.protease.dao.auth.RepositoryGitUpdateFactory;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.git.CommitGitUpdateFactory;
 import com.gitenter.protease.dao.git.CommitRepository;
 import com.gitenter.protease.dao.git.IncludeFileRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.RepositoryUserMapBean;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.git.BranchBean;
 import com.gitenter.protease.domain.git.CommitBean;
 import com.gitenter.protease.domain.git.FileBean;
@@ -46,7 +50,35 @@ public class RepositoryServiceImpl implements RepositoryService {
 			throw new IdNotExistException(RepositoryBean.class, repositoryId);
 		}
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
+	public List<RepositoryUserMapBean> getProjectOrganizerMaps(RepositoryBean repository) {
+		return repository.getUserMaps(RepositoryUserRole.PROJECT_ORGANIZER);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
+	public List<RepositoryUserMapBean> getEditorMaps(RepositoryBean repository) {
+		return repository.getUserMaps(RepositoryUserRole.EDITOR);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
+	public List<RepositoryUserMapBean> getBlacklistMaps(RepositoryBean repository) {
+		return repository.getUserMaps(RepositoryUserRole.BLACKLIST);
+	}
 
+	@Override
+	public List<UserBean> getProjectOrganizers(RepositoryBean repository) {
+		return repository.getUsers(RepositoryUserRole.PROJECT_ORGANIZER);
+	}
+	
+	@Override
+	public List<UserBean> getEditors(RepositoryBean repository) {
+		return repository.getUsers(RepositoryUserRole.EDITOR);
+	}
+	
 	@Override
 	public CommitBean getCommitFromBranchName(Integer repositoryId, String branchName) throws IOException, GitAPIException {
 		

@@ -69,6 +69,11 @@ public class RepositoryUserMapBean implements MapBean<RepositoryBean,UserBean,Re
 		return map;
 	}
 	
+	public void unlink() {
+		repository.removeMap(this);
+		user.removeMap(this);
+	}
+	
 	@Override
 	public boolean isAlterable(String operatorUsername) {
 		

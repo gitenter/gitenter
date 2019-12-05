@@ -1,7 +1,6 @@
 package com.gitenter.capsid.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidDataStateException;
-import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.domain.auth.UserBean;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -45,18 +44,18 @@ public class OrganizationServiceImpl implements OrganizationService {
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public Collection<OrganizationUserMapBean> getManagerMaps(OrganizationBean organization) throws IOException {
+	public List<OrganizationUserMapBean> getManagerMaps(OrganizationBean organization) {
 		return organization.getUserMaps(OrganizationUserRole.MANAGER);
 	}
 	
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public Collection<OrganizationUserMapBean> getOrdinaryMemberMaps(OrganizationBean organization) throws IOException {
+	public List<OrganizationUserMapBean> getOrdinaryMemberMaps(OrganizationBean organization) {
 		return organization.getUserMaps(OrganizationUserRole.ORDINARY_MEMBER);
 	}
 	
 	@Override
-	public Collection<UserBean> getAllMembers(OrganizationBean organization) throws IOException {
+	public List<UserBean> getAllMembers(OrganizationBean organization) {
 		return organization.getUsers();
 	}
 	
@@ -105,7 +104,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public Collection<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) throws IOException {
+	public List<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
 		if (isManager(organizationId, authentication) || isMember(organizationId, authentication)) {

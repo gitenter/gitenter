@@ -91,12 +91,9 @@ public class RepositoryServiceTest {
 	
 		RepositoryUserMapBean.link(publicRepo, projectOrganizer, RepositoryUserRole.PROJECT_ORGANIZER);
 		RepositoryUserMapBean.link(publicRepo, editor, RepositoryUserRole.EDITOR);
-
-		Optional<RepositoryBean> publicRepoOrNull = Optional.of(publicRepo);
-		Optional<RepositoryBean> privateRepoOrNull = Optional.of(privateRepo);
 		
-		given(repositoryRepository.findById(publicRepoId)).willReturn(publicRepoOrNull);
-		given(repositoryRepository.findById(privateRepoId)).willReturn(privateRepoOrNull);
+		given(repositoryRepository.findById(publicRepoId)).willReturn(Optional.of(publicRepo));
+		given(repositoryRepository.findById(privateRepoId)).willReturn(Optional.of(privateRepo));
 	}
 
 	@Test

@@ -1,16 +1,16 @@
 package com.gitenter.capsid.service;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
 import com.gitenter.capsid.dto.UserProfileDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
-import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 public interface UserService {
 	
@@ -35,11 +35,11 @@ public interface UserService {
 	public void updateUser(UserProfileDTO profile) throws IOException;
 	public boolean updatePassword(UserRegisterDTO register, String oldPassword) throws IOException;
 	
-	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException;
-	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException;
+	public List<OrganizationBean> getManagedOrganizations(String username) throws IOException;
+	public List<OrganizationBean> getBelongedOrganizations(String username) throws IOException;
 	
-	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException;
-	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
+	public List<RepositoryBean> getOrganizedRepositories(String username) throws IOException;
+	public List<RepositoryBean> getAuthoredRepositories(String username) throws IOException;
 	
 	public void addSshKey(SshKeyBean sshKey, UserBean user) throws IOException;
 	public boolean deleteUser(String username, String password) throws IOException;

@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
@@ -40,25 +42,39 @@ import com.gitenter.protease.domain.auth.UserBean;
 @ActiveProfiles("local")
 public class RepositoryManagerServiceTest {
 	
+	@Autowired private RepositoryService repositoryService;
 	@Autowired private RepositoryManagerService repositoryManagerService;
 
 	@MockBean private RepositoryRepository repositoryRepository;
 	@MockBean private RepositoryUserMapRepository repositoryUserMapRepository;
+	@MockBean private OrganizationUserMapRepository organizationUserMapRepository;
 	
 	private OrganizationBean organization;
 	
+	private final Integer organizationId = 1;
+	
 	private RepositoryBean publicRepo;
 	private RepositoryBean privateRepo;
+	
+	private final Integer publicRepoId = 1;
+	private final Integer privateRepoId = 2;
 	
 	private UserBean projectOrganizer;
 	private UserBean editor;
 	private UserBean member;
 	private UserBean nonmember;
 	
-	private final Integer organizationId = 1;
-	private final Integer publicRepoId = 1;
-	private final Integer privateRepoId = 2;
+	private OrganizationUserMapBean organizationProjectOrganizerMap;
+	private OrganizationUserMapBean organizationEditorMap;
+	private OrganizationUserMapBean organizationMemberMap;
 	
+	private RepositoryUserMapBean publicRepoProjectOrganizerMap;
+	private RepositoryUserMapBean publicRepoEditorMap;
+	
+	private final Integer publicRepoProjectOrganizerMapId = 1;
+	private final Integer publicRepoEditorMapId = 2;
+	
+	@SuppressWarnings("serial")
 	@BeforeEach
 	public void setUp() throws Exception {
 
@@ -94,18 +110,34 @@ public class RepositoryManagerServiceTest {
 		member.setUsername("member");
 		nonmember.setUsername("nonmember");
 		
-		OrganizationUserMapBean.link(organization, projectOrganizer, OrganizationUserRole.ORDINARY_MEMBER);
-		OrganizationUserMapBean.link(organization, editor, OrganizationUserRole.ORDINARY_MEMBER);
-		OrganizationUserMapBean.link(organization, member, OrganizationUserRole.ORDINARY_MEMBER);
-	
-		RepositoryUserMapBean.link(publicRepo, projectOrganizer, RepositoryUserRole.PROJECT_ORGANIZER);
-		RepositoryUserMapBean.link(publicRepo, editor, RepositoryUserRole.EDITOR);
-
-		Optional<RepositoryBean> publicRepoOrNull = Optional.of(publicRepo);
-		Optional<RepositoryBean> privateRepoOrNull = Optional.of(privateRepo);
+		organizationProjectOrganizerMap = OrganizationUserMapBean.link(organization, projectOrganizer, OrganizationUserRole.ORDINARY_MEMBER);
+		organizationEditorMap = OrganizationUserMapBean.link(organization, editor, OrganizationUserRole.ORDINARY_MEMBER);
+		organizationMemberMap = OrganizationUserMapBean.link(organization, member, OrganizationUserRole.ORDINARY_MEMBER);
 		
-		given(repositoryRepository.findById(publicRepoId)).willReturn(publicRepoOrNull);
-		given(repositoryRepository.findById(privateRepoId)).willReturn(privateRepoOrNull);
+		given(organizationUserMapRepository.fineByUserAndOrganization(
+				projectOrganizer, organization)).willReturn(new ArrayList<OrganizationUserMapBean>() {{
+					add(organizationProjectOrganizerMap);
+				}});
+		given(organizationUserMapRepository.fineByUserAndOrganization(
+				editor, organization)).willReturn(new ArrayList<OrganizationUserMapBean>() {{
+					add(organizationEditorMap);
+				}});
+		given(organizationUserMapRepository.fineByUserAndOrganization(
+				member, organization)).willReturn(new ArrayList<OrganizationUserMapBean>() {{
+					add(organizationMemberMap);
+				}});
+
+		publicRepoProjectOrganizerMap = RepositoryUserMapBean.link(publicRepo, projectOrganizer, RepositoryUserRole.PROJECT_ORGANIZER);
+		publicRepoEditorMap = RepositoryUserMapBean.link(publicRepo, editor, RepositoryUserRole.EDITOR);
+		
+		given(repositoryUserMapRepository.findById(publicRepoProjectOrganizerMapId)).willReturn(Optional.of(publicRepoProjectOrganizerMap));
+		given(repositoryUserMapRepository.findById(publicRepoEditorMapId)).willReturn(Optional.of(publicRepoEditorMap));
+		
+		RepositoryUserMapBean.link(privateRepo, projectOrganizer, RepositoryUserRole.PROJECT_ORGANIZER);
+		RepositoryUserMapBean.link(privateRepo, editor, RepositoryUserRole.EDITOR);
+		
+		given(repositoryRepository.findById(publicRepoId)).willReturn(Optional.of(publicRepo));
+		given(repositoryRepository.findById(privateRepoId)).willReturn(Optional.of(privateRepo));
 		when(repositoryRepository.saveAndFlush(any(RepositoryBean.class))).thenAnswer(new Answer<RepositoryBean>() {
 			@Override
 			public RepositoryBean answer(InvocationOnMock invocation) throws Throwable {
@@ -140,7 +172,7 @@ public class RepositoryManagerServiceTest {
 	
 	@Test
 	@WithMockUser(username="nonmember")
-	public void testNonmemberCanCreateNewRepository() throws IOException, GitAPIException {
+	public void testNonmemberCannotCreateNewRepository() {
 		
 		RepositoryDTO repositoryDTO = new RepositoryDTO();
 		repositoryDTO.setName("new_repo");
@@ -154,7 +186,7 @@ public class RepositoryManagerServiceTest {
 	
 	@Test
 	@WithMockUser(username="project_organizer")
-	public void testProjectOrganizerCanUpdateRepository() throws IOException, GitAPIException {
+	public void testProjectOrganizerCanUpdateRepository() throws IOException {
 			
 		RepositoryDTO repositoryDTO = new RepositoryDTO();
 		repositoryDTO.setName("public_repo"); // cannot be changed
@@ -169,7 +201,7 @@ public class RepositoryManagerServiceTest {
 	
 	@Test
 	@WithMockUser(username="editor")
-	public void testEditorCannotUpdateRepository() throws IOException, GitAPIException {
+	public void testEditorCannotUpdateRepository() {
 			
 		RepositoryDTO repositoryDTO = new RepositoryDTO();
 		repositoryDTO.setName("public_repo");
@@ -183,7 +215,7 @@ public class RepositoryManagerServiceTest {
 	
 	@Test
 	@WithMockUser(username="project_organizer")
-	public void testRepositoryNameCannotBeChanged() throws IOException, GitAPIException {
+	public void testRepositoryNameCannotBeChanged() {
 			
 		RepositoryDTO repositoryDTO = new RepositoryDTO();
 		repositoryDTO.setName("public_repo_different_name");
@@ -193,5 +225,32 @@ public class RepositoryManagerServiceTest {
 		assertThrows(InvalidOperationException.class, () -> {
 			repositoryManagerService.updateRepository(publicRepo, repositoryDTO);
 		});
+	}
+	
+	@Test
+	@WithMockUser(username="project_organizer")
+	public void testProjectOrganizerCanAddCollebrator() throws IOException {
+		
+		assertEquals(repositoryService.getEditors(publicRepo).size(), 1);
+		repositoryManagerService.addCollaborator(publicRepo, member, "EDITOR");
+		assertEquals(repositoryService.getEditors(publicRepo).size(), 2);
+	}
+	
+	@Test
+	@WithMockUser(username="editor")
+	public void testEditorCannotAddCollebrator() throws IOException {
+		
+		assertThrows(AccessDeniedException.class, () -> {
+			repositoryManagerService.addCollaborator(publicRepo, member, "EDITOR");
+		});
+	}
+	
+	@Test
+	@WithMockUser(username="project_organizer")
+	public void testProjectOrganizerCanRemoveCollebrator() throws IOException {
+		
+		assertEquals(repositoryService.getEditors(publicRepo).size(), 1);
+		repositoryManagerService.removeCollaborator(publicRepo, publicRepoEditorMapId);
+		assertEquals(repositoryService.getEditors(publicRepo).size(), 0);
 	}
 }

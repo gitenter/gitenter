@@ -10,6 +10,7 @@ import java.nio.file.attribute.UserPrincipal;
 import java.nio.file.attribute.UserPrincipalLookupService;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.PersistenceException;
 
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
+import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.capsid.service.exception.UnreachableException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
@@ -215,6 +218,18 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		repositoryUserMapRepository.saveAndFlush(map);
 	}
 
+	private RepositoryUserMapBean getRepositoryUserMapBean(Integer repositoryUserMapId) throws IOException {
+		
+		Optional<RepositoryUserMapBean> maps = repositoryUserMapRepository.findById(repositoryUserMapId);
+		
+		if (maps.isPresent()) {
+			return maps.get();
+		}
+		else {
+			throw new IdNotExistException(OrganizationUserMapBean.class, repositoryUserMapId);
+		}
+	}
+
 	@Override
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	@Transactional
@@ -223,9 +238,30 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			Integer repositoryUserMapId) throws IOException {
 		
 		/*
-		 * TODO:
-		 * Should we validate the `repositoryUserMapId`?
+		 * This part is for validation of `repositoryUserMapId`/create correct 
+		 * error message. 
+		 * 
+		 * However, it does cause one more database call. Not sure if it worth this
+		 * effort.
 		 */
+		RepositoryUserMapBean map = getRepositoryUserMapBean(repositoryUserMapId);
+		
+		if (!map.getRepository().getId().equals(repository.getId())) {
+			throw new UnreachableException("Remove repository user input not consistency. "
+					+ "repositoryUserMapId "+repositoryUserMapId+" doesn't belong to the "
+					+ "target organization "+repository);
+		}
+		
+		/*
+		 * TODO:
+		 * Not sure if it helps updating local domain model ("unit of work"
+		 * in ORM) or not, especially in case the previously map was load as the 
+		 * one-to-many of the user or repository table (Not sure if Hibernate is 
+		 * smart enough or not in here).
+		 * 
+		 * If not, we can remove this call.
+		 */
+		map.unlink();
 		
 		/*
 		 * The alternative approach is to have input "userId", then

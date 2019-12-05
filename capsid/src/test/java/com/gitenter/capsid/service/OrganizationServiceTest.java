@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,15 +64,14 @@ public class OrganizationServiceTest {
 		OrganizationUserMapBean.link(organization, manager, OrganizationUserRole.MANAGER);
 		OrganizationUserMapBean.link(organization, ordinaryMember, OrganizationUserRole.ORDINARY_MEMBER);
 
-		Optional<OrganizationBean> organizationOrNull = Optional.of(organization);
-		given(organizationRepository.findById(organizationId)).willReturn(organizationOrNull);
+		given(organizationRepository.findById(organizationId)).willReturn(Optional.of(organization));
 	}
 
 	@Test
 	@WithMockUser(username="manager")
 	public void testManagerCanGetManagerMaps() throws IOException {
 		OrganizationBean organization = organizationService.getOrganization(1);
-		Collection<OrganizationUserMapBean> managerMap = organizationService.getManagerMaps(organization);
+		List<OrganizationUserMapBean> managerMap = organizationService.getManagerMaps(organization);
 		assertEquals(managerMap.size(), 1);
 		assertEquals(managerMap.iterator().next().getUser(), manager);
 	}
@@ -99,7 +98,7 @@ public class OrganizationServiceTest {
 	@WithMockUser(username="manager")
 	public void testManagerCanGetOrdinaryMemberMaps() throws IOException {
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		Collection<OrganizationUserMapBean> ordinaryMemberMaps = organizationService.getOrdinaryMemberMaps(organization);
+		List<OrganizationUserMapBean> ordinaryMemberMaps = organizationService.getOrdinaryMemberMaps(organization);
 		assertEquals(ordinaryMemberMaps.size(), 1);
 		assertEquals(ordinaryMemberMaps.iterator().next().getUser(), ordinaryMember);
 	}
@@ -126,7 +125,7 @@ public class OrganizationServiceTest {
 	@WithMockUser(username="nonmember")
 	public void testGetAllMembers() throws IOException {
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
-		Collection<UserBean> members = organizationService.getAllMembers(organization);
+		List<UserBean> members = organizationService.getAllMembers(organization);
 		assertEquals(members.size(), 2);
 		assertTrue(members.iterator().next().equals(manager) || members.iterator().next().equals(ordinaryMember));
 	}
