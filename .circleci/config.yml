@@ -438,7 +438,7 @@ jobs:
           command: |
             curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
 
-      - run: cd selenium-test && sudo pip3 install -r pip-requirements.txt
+      - run: sudo pip3 install pipenv
 
       - run: sudo sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/' /etc/ssh/ssh_config
       - run: sudo bash -c 'echo "    UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config'
@@ -447,7 +447,8 @@ jobs:
       - run: git config --global user.email "my@email.com"
       - run: ssh-keygen -y -f /home/circleci/.ssh/id_rsa > /home/circleci/.ssh/id_rsa.pub
 
-      - run: cd selenium-test && pytest
+      - run: cd selenium-test && pipenv install
+      - run: cd selenium-test && pipenv run pytest
 
       - store_test_results:
           path: selenium-test/test-results/

@@ -21,8 +21,6 @@ RUN apt-get update && apt-get -y install \
   libpq-dev \
   openjdk-11-jre-headless
 
-RUN pip3 install pipenv
-
 # TODO:
 # Looks like need to `apt-get install libpq-dev`, otherwise will run into error
 # > An error occurred while installing psycopg2==2.8.1 ...
@@ -31,9 +29,13 @@ RUN pip3 install pipenv
 # Consider not install packages on the host machine. Rather, we should use python wheels.
 # https://medium.com/@greut/building-a-python-package-a-docker-image-using-pipenv-233d8793b6cc
 
-COPY pip-requirements.txt /tmp/pip-requirements.txt
-# RUN pipenv lock -r > pip-requirements.txt
-RUN pip3 install -r /tmp/pip-requirements.txt
+RUN pip3 install pipenv
+
+WORKDIR /tmp
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
+RUN pipenv lock -r > pip-requirements.txt
+RUN pip3 install -r pip-requirements.txt
 
 # TODO:
 # Consider using environmental variable to do so. Otherwise it is really weird
