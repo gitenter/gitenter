@@ -66,14 +66,13 @@ public class OrganizationManagerServiceTest {
 		ordinaryMember.setUsername("ordinary_member");
 		nonmember.setUsername("nonmember");
 		
-		OrganizationUserMapBean managerMap = OrganizationUserMapBean.link(organization, manager, OrganizationUserRole.MANAGER);
-		OrganizationUserMapBean ordinaryMemberMap = OrganizationUserMapBean.link(organization, ordinaryMember, OrganizationUserRole.ORDINARY_MEMBER);
+		OrganizationUserMapBean managerMap = OrganizationUserMapBean.link(
+				organization, manager, OrganizationUserRole.MANAGER);
+		OrganizationUserMapBean ordinaryMemberMap = OrganizationUserMapBean.link(
+				organization, ordinaryMember, OrganizationUserRole.ORDINARY_MEMBER);
 		
-		Optional<OrganizationUserMapBean> managerMapOrNull = Optional.of(managerMap);
-		Optional<OrganizationUserMapBean> ordinaryMemberMapOrNull = Optional.of(ordinaryMemberMap);
-		
-		given(organizationUserMapRepository.findById(managerMapId)).willReturn(managerMapOrNull);
-		given(organizationUserMapRepository.findById(ordinaryMemberMapId)).willReturn(ordinaryMemberMapOrNull);
+		given(organizationUserMapRepository.findById(managerMapId)).willReturn(Optional.of(managerMap));
+		given(organizationUserMapRepository.findById(ordinaryMemberMapId)).willReturn(Optional.of(ordinaryMemberMap));
 	}
 	
 	@Test

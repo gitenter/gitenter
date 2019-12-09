@@ -2,7 +2,6 @@ package com.gitenter.protease.domain.auth;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -63,8 +62,8 @@ public class OrganizationBean implements ModelBean {
 	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
 	 * actually have not-worse performance.
 	 */
-	public Collection<OrganizationUserMapBean> getUserMaps(OrganizationUserRole role) {
-		Collection<OrganizationUserMapBean> items = new ArrayList<OrganizationUserMapBean>();
+	public List<OrganizationUserMapBean> getUserMaps(OrganizationUserRole role) {
+		List<OrganizationUserMapBean> items = new ArrayList<OrganizationUserMapBean>();
 		for (OrganizationUserMapBean map : organizationUserMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map);
@@ -73,16 +72,16 @@ public class OrganizationBean implements ModelBean {
 		return items;
 	}
 	
-	public Collection<UserBean> getUsers(OrganizationUserRole role) {
-		Collection<UserBean> items = new ArrayList<UserBean>();
+	public List<UserBean> getUsers(OrganizationUserRole role) {
+		List<UserBean> items = new ArrayList<UserBean>();
 		for (OrganizationUserMapBean map : getUserMaps(role)) {
 			items.add(map.getUser());
 		}
 		return items;
 	}
 	
-	public Collection<UserBean> getUsers() {
-		Collection<UserBean> items = new ArrayList<UserBean>();
+	public List<UserBean> getUsers() {
+		List<UserBean> items = new ArrayList<UserBean>();
 		for (OrganizationUserMapBean map : organizationUserMaps) {
 			items.add(map.getUser());
 		}

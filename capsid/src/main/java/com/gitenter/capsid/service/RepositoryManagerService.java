@@ -3,6 +3,7 @@ package com.gitenter.capsid.service;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.springframework.security.core.Authentication;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
 import com.gitenter.protease.domain.auth.UserBean;
@@ -25,6 +26,7 @@ public interface RepositoryManagerService {
 			UserBean collaborator, 
 			String roleName) throws IOException;
 	public void removeCollaborator(
+			Authentication authentication,
 			RepositoryBean repository, 
 			Integer repositoryUserMapId) throws IOException;
 	

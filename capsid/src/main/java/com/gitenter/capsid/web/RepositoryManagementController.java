@@ -203,7 +203,8 @@ public class RepositoryManagementController {
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="to_be_remove_username") String toBeRemovedUsername,
-			@RequestParam(value="repository_user_map_id") Integer repositoryUserMapId) throws Exception {
+			@RequestParam(value="repository_user_map_id") Integer repositoryUserMapId,
+			Authentication authentication) throws Exception {
 		
 		/*
 		 * `toBeRemovedUsername` is not currently in use for the actual logic.
@@ -215,7 +216,7 @@ public class RepositoryManagementController {
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
 		
-		repositoryManagerService.removeCollaborator(repository, repositoryUserMapId);
+		repositoryManagerService.removeCollaborator(authentication, repository, repositoryUserMapId);
 
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}

@@ -40,7 +40,7 @@
         <!-- TODO: Spring and Spring-data has version 5.2.0.RELEASE. However, upgrade
         to them will cause dbunit to break. -->
         <spring-version>5.1.9.RELEASE</spring-version>
-        <spring-boot-version>2.2.0.RELEASE</spring-boot-version>
+        <spring-boot-version>2.2.2.RELEASE</spring-boot-version>
         <spring-data-version>2.1.9.RELEASE</spring-data-version>
 
         <commonmark-version>0.12.1</commonmark-version>

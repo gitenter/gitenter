@@ -109,8 +109,6 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		
 		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
 		
-		map.unlink();
-		
 		/*
 		 * Doesn't for the SQL operation part, since if the `organizationUserMapId` does not
 		 * exist then `DELECT` simply does nothing. The problem is the `@PreAuthorize` is only
@@ -123,6 +121,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 					+ "organizationUserMapId "+organizationUserMapId+" doesn't belong to the "
 					+ "target organization "+organization);
 		}
+		
+		map.unlink();
 		
 		organizationUserMapRepository.throughSqlDeleteById(organizationUserMapId);
 	}

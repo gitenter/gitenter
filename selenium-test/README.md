@@ -42,6 +42,12 @@ Therefore, we choose `GitPython` ([tutorial](https://gitpython.readthedocs.io/en
 #### Run Tests
 
 ```
+sudo pip install pipenv
+pipenv install --dev
+pipenv run pytest tests/authorization_test.py
+```
+
+```
 python3 -m unittest tests.authorization_test
 python3 -m unittest tests.user_settings_test
 python3 -m unittest tests.organization_creation_test
@@ -49,16 +55,6 @@ python3 -m unittest tests.organization_management_test
 python3 -m unittest tests.repository_creation_test
 python3 -m unittest tests.repository_management_test
 python3 -m unittest tests.repository_navigation_test
-```
-
-or
-
-```
-virtualenv venv
-. venv/bin/activate
-(venv) pip install -r pip-requirements.txt
-(venv) pytest
-(venv) deactivate
 ```
 
 TODO: setup pipenv/Pipfile.

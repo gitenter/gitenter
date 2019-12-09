@@ -1,7 +1,6 @@
 package com.gitenter.capsid.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,14 +14,14 @@ import org.springframework.stereotype.Service;
 import com.gitenter.capsid.dto.UserProfileDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
-import com.gitenter.protease.dao.auth.UserRepository;
 import com.gitenter.protease.dao.auth.SshKeyRepository;
-import com.gitenter.protease.domain.auth.UserBean;
+import com.gitenter.protease.dao.auth.UserRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.RepositoryUserRole;
 import com.gitenter.protease.domain.auth.SshKeyBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 /*
  * It is quite ironical that Spring @autowired are contradict with
@@ -134,7 +133,7 @@ public class UserServiceImpl implements UserService {
 	 * managed/belonged organizations and repositories.
 	 */
 	@Override
-	public Collection<OrganizationBean> getManagedOrganizations(String username) throws IOException {
+	public List<OrganizationBean> getManagedOrganizations(String username) throws IOException {
 		
 		/* 
 		 * I believe that Hibernate should be smart enough that when
@@ -153,21 +152,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Collection<OrganizationBean> getBelongedOrganizations(String username) throws IOException {
+	public List<OrganizationBean> getBelongedOrganizations(String username) throws IOException {
 		
 		UserBean user = getUserByUsername(username);
 		return user.getOrganizations(OrganizationUserRole.ORDINARY_MEMBER);
 	}
 
 	@Override
-	public Collection<RepositoryBean> getOrganizedRepositories(String username) throws IOException {
+	public List<RepositoryBean> getOrganizedRepositories(String username) throws IOException {
 		
 		UserBean user = getUserByUsername(username);
 		return user.getRepositories(RepositoryUserRole.PROJECT_ORGANIZER);
 	}
 
 	@Override
-	public Collection<RepositoryBean> getAuthoredRepositories(String username) throws IOException {
+	public List<RepositoryBean> getAuthoredRepositories(String username) throws IOException {
 		
 		UserBean user = getUserByUsername(username);
 		return user.getRepositories(RepositoryUserRole.EDITOR);

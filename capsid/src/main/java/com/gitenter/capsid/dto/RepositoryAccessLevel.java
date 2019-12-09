@@ -3,6 +3,7 @@ package com.gitenter.capsid.dto;
 import org.springframework.security.core.Authentication;
 
 import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 import com.gitenter.protease.domain.auth.UserBean;
 
 public enum RepositoryAccessLevel {
@@ -15,6 +16,11 @@ public enum RepositoryAccessLevel {
 		if (repository.getIsPublic()) {
 			switch(this) {
 			case READ:
+				for (UserBean user : repository.getUsers(RepositoryUserRole.BLACKLIST)) {
+					if (user.getUsername().equals(authentication.getName())) {
+						return false;
+					}
+				}
 				return true;
 				
 			/*
