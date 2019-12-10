@@ -15,11 +15,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 
 /*
  * Mostly follows https://www.toptal.com/spring/spring-boot-oauth2-jwt-rest-protection
- * 
- * TODO:
- * `org.springframework.security.oauth2` is in maintainance mode. Use Spring Security 5
- * instead when it is available.
- * https://spring.io/blog/2018/01/30/next-generation-oauth-2-0-support-with-spring-security
  */
 @Configuration
 @EnableAuthorizationServer

@@ -162,11 +162,32 @@
             <artifactId>spring-session-data-redis</artifactId>
             <!-- No need to provide a version. Managed by Spring Boot. -->
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
-            <version>2.3.7.RELEASE</version>
-        </dependency>
+        <!-- `spring-security-oauth2` is deprecating from 2.4.0, but Spring
+        security (currently uses 5.2.1 based on `spring-boot-starter-security`
+        seems still no yet for replacement). Right now for spring boot version
+        2.2.2 the derived `spring-security-oauth2` version is 2.3.8 for which
+        the deprecating notice has not been shown yet. We'll just wait for
+        Spring security to be better (and better documented) to migration.
+
+        References:
+
+        Official blog about migrating
+        https://spring.io/blog/2018/01/30/next-generation-oauth-2-0-support-with-spring-security
+
+        Migration guide
+        https://github.com/spring-projects/spring-security/wiki/OAuth-2.0-Migration-Guide
+
+        A concrete example on how to implement a resource server in Spring Security.
+        Not quite easy to follow.
+        https://github.com/spring-projects/spring-security/tree/master/samples/boot/oauth2resourceserver
+
+        Document from Spring boot (so not include the document of the deprecated
+        part). It writes explicitly that authorization server cannot be implemented yet.
+        https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-security-oauth2
+
+        This official document is mostly still using `spring-security-oauth2`
+        https://spring.io/guides/tutorials/spring-boot-oauth2/
+        -->
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
             <artifactId>spring-security-oauth2-autoconfigure</artifactId>
