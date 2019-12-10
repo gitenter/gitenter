@@ -1,4 +1,4 @@
--- There's a bug on DbUnit setup, that right now we setup the primary 
+-- There's a bug on DbUnit setup, that right now we setup the primary
 -- key manually in the XML data file. However, DbUnit doesn't reset
 -- the sequence (e.g. `ALTER SEQUENCE schema_name.table_name_id_seq
 -- RESTART WITH 2;`), so in the first round of unit tests (after database
@@ -9,11 +9,11 @@
 -- https://stackoverflow.com/questions/20607704/reset-sequence-in-dbunit
 --
 -- Typical error:
--- > ERROR: duplicate key value violates unique constraint "member_pkey"
+-- > ERROR: duplicate key value violates unique constraint "person_pkey"
 -- >  Detail: Key (id)=(1) already exists.
-ALTER SEQUENCE auth.member_id_seq RESTART WITH 2;
+ALTER SEQUENCE auth.application_user_id_seq RESTART WITH 2;
 ALTER SEQUENCE auth.organization_id_seq RESTART WITH 2;
-ALTER SEQUENCE auth.organization_member_map_id_seq RESTART WITH 2;
+ALTER SEQUENCE auth.organization_user_map_id_seq RESTART WITH 2;
 ALTER SEQUENCE auth.repository_id_seq RESTART WITH 2;
-ALTER SEQUENCE auth.repository_member_map_id_seq RESTART WITH 2;
+ALTER SEQUENCE auth.repository_user_map_id_seq RESTART WITH 2;
 ALTER SEQUENCE auth.ssh_key_id_seq RESTART WITH 2;

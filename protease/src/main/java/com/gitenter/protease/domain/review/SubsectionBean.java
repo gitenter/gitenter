@@ -18,7 +18,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import com.gitenter.protease.domain.ModelBean;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.git.ValidCommitBean;
 
 import lombok.Getter;
@@ -41,8 +41,8 @@ public abstract class SubsectionBean extends ValidCommitBean implements ModelBea
 	 */
 	@NotNull
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="member_id")
-	private MemberBean projectOrganizer;
+	@JoinColumn(name="user_id")
+	private UserBean projectOrganizer;
 	
 	@NotNull
 	@Column(name="create_at", updatable=false)

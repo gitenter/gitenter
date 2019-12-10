@@ -8,23 +8,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.dao.auth.UserRepository;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired private MemberRepository memberRepository;
+	@Autowired private UserRepository userRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		List<MemberBean> members = memberRepository.findByUsername(username);
-		if (members.size() == 0) {
+		List<UserBean> users = userRepository.findByUsername(username);
+		if (users.size() == 0) {
 			throw new UsernameNotFoundException(username);
 		}
-		MemberBean member = members.get(0);
+		UserBean user = users.get(0);
 		
-		return new GitEnterUserDetails(member.getUsername(), member.getPassword());
+		return new GitEnterUserDetails(user.getUsername(), user.getPassword());
 	}
 }

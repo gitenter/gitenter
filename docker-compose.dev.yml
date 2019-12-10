@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
 
   java-build:
@@ -26,8 +26,14 @@ services:
       - redis-session
     tty: true
 
-  # TODO:
-  # hugo-build
+  hugo-build:
+    build:
+      context: ./stolon
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./stolon:/stolon
+    working_dir: /stolon
+    tty: true
 
   selenium-test:
     build:

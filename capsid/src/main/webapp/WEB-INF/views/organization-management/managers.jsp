@@ -17,16 +17,16 @@
         <c:forEach var="map" items="${managerMaps}">
           <li>
             <c:if test="${map.isAlterable(operatorUsername)}">
-              <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
+              <span class="user-deletable"><c:out value="${map.user.displayName}" /></span>
               <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/remove" />
               <sf:form method="POST" action="${remove_manager_url}">
-                <input type="hidden" name="to_be_downgrade_username" value="${map.member.username}" />
-                <input type="hidden" name="organization_member_map_id" value="${map.id}" />
+                <input type="hidden" name="to_be_downgrade_username" value="${map.user.username}" />
+                <input type="hidden" name="organization_user_map_id" value="${map.id}" />
                 <input class="delete" type="submit" value="&darr;" />
               </sf:form>
             </c:if>
             <c:if test="${!map.isAlterable(operatorUsername)}">
-              <span class="user"><c:out value="${map.member.displayName}" /></span>
+              <span class="user"><c:out value="${map.user.displayName}" /></span>
             </c:if>
           </li>
         </c:forEach>
@@ -35,11 +35,11 @@
         <ul class="user-list">
         <c:forEach var="map" items="${ordinaryMemberMaps}">
           <li>
-            <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
+            <span class="user-deletable"><c:out value="${map.user.displayName}" /></span>
             <s:url var="remove_manager_url" value="/organizations/${organization.id}/settings/managers/add" />
             <sf:form method="POST" action="${remove_manager_url}">
-              <input type="hidden" name="to_be_upgrade_username" value="${map.member.username}" /> 
-              <input type="hidden" name="organization_member_map_id" value="${map.id}" />
+              <input type="hidden" name="to_be_upgrade_username" value="${map.user.username}" /> 
+              <input type="hidden" name="organization_user_map_id" value="${map.id}" />
               <input class="delete" type="submit" value="&uarr;" />
             </sf:form>
           </li>

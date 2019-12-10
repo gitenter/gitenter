@@ -1,9 +1,12 @@
 package com.gitenter.capsid.dto;
 
+import java.io.IOException;
+
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 
 import lombok.Getter;
@@ -40,9 +43,21 @@ public class RepositoryDTO implements CreateDTO<RepositoryBean>, ReadDTO<Reposit
 	}
 	
 	@Override
-	public void updateBean(RepositoryBean repositoryBean) {
+	public void updateBean(RepositoryBean repositoryBean) throws IOException {
 		
-		assert repositoryBean.getName().equals(name);
+		/*
+		 * Right now we cannot easily change repository name, because otherwise 
+		 * `git push` will be broken.
+		 * 
+		 * TODO:
+		 * Probably should be push from id, so then name can be freely changed.
+		 * However, that makes the git (command line) interface very awkward
+		 * and hard to understand, as user actually need to interact with those
+		 * ids.
+		 */
+		if (!repositoryBean.getName().equals(name)) {
+			throw new InvalidOperationException("repository name cannot be modified.");
+		}
 		
 		repositoryBean.setDisplayName(displayName);
 		repositoryBean.setDescription(description);

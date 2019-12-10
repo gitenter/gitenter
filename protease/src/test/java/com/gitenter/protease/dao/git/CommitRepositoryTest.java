@@ -22,7 +22,6 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
-import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.git.CommitBean;
@@ -56,9 +55,16 @@ public class CommitRepositoryTest {
 	@Autowired RepositoryRepository repositoryRepository;
 	@Autowired IncludeFileRepository documentRepository;
 
+	/*
+	 * Cannot include DbUnit for `review` because otherwise tearDown will error out
+	 * > Caused by: org.postgresql.util.PSQLException: ERROR: insert or update on table "subsection" violates foreign key constraint "subsection_id_fkey"
+	 * > Detail: Key (id)=(1) is not present in table "valid_commit".
+	 */
 	@Test
-	@DbUnitMinimalDataSetup
-	@DatabaseTearDown
+	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
+	@DatabaseSetup(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DatabaseTearDown(connection="schemaGitDatabaseConnection", value="classpath:dbunit/minimal/git.xml")
+	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void testDeleteById() throws IOException, GitAPIException {
 		
 		assertTrue(commitRepository.findById(1).isPresent());
@@ -76,7 +82,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseTearDown
+	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void testSave() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
@@ -115,7 +121,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseTearDown
+	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void testSaveAndFlushWorksInMinimalDbUnitSetup() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
@@ -187,7 +193,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseTearDown
+	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void testSaveAndFlushWorksMoreThanOneTraceableItems() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());
@@ -264,7 +270,7 @@ public class CommitRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseTearDown
+	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void testSaveAndFlushWorksMoreThanOneDocuments() throws IOException, GitAPIException {
 		
 		assertFalse(commitRepository.findById(1).isPresent());

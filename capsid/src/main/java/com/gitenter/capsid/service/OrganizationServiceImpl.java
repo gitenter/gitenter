@@ -1,7 +1,6 @@
 package com.gitenter.capsid.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,19 +11,19 @@ import org.springframework.stereotype.Service;
 
 import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidDataStateException;
-import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberRole;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
 	
 	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
+	@Autowired OrganizationUserMapRepository organizationUserMapRepository;
 
 	@Override
 	public OrganizationBean getOrganization(Integer organizationId) throws IOException {
@@ -39,33 +38,33 @@ public class OrganizationServiceImpl implements OrganizationService {
 		}
 	}
 	
+	/*
+	 * Only interface methods can use `@PreAuthorize`. It doesn't trigger
+	 * authorization if a nested method has that annotation.
+	 */
 	@Override
-	public Collection<OrganizationMemberMapBean> getManagerMaps(Integer organizationId) throws IOException {
-		
-		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getMemberMaps(OrganizationMemberRole.MANAGER);
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
+	public List<OrganizationUserMapBean> getManagerMaps(OrganizationBean organization) {
+		return organization.getUserMaps(OrganizationUserRole.MANAGER);
 	}
 	
 	@Override
-	public Collection<OrganizationMemberMapBean> getOrdinaryMemberMaps(Integer organizationId) throws IOException {
-		
-		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getMemberMaps(OrganizationMemberRole.MEMBER);
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
+	public List<OrganizationUserMapBean> getOrdinaryMemberMaps(OrganizationBean organization) {
+		return organization.getUserMaps(OrganizationUserRole.ORDINARY_MEMBER);
 	}
 	
 	@Override
-	public Collection<MemberBean> getAllMembers(Integer organizationId) throws IOException {
-		
-		OrganizationBean organization = getOrganization(organizationId);
-		return organization.getMembers();
+	public List<UserBean> getAllMembers(OrganizationBean organization) {
+		return organization.getUsers();
 	}
 	
 	@Override
 	@PreAuthorize("isAuthenticated()")
 	public boolean isManager(Integer organizationId, Authentication authentication) throws IOException {
 		
-		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.findByUsernameAndOrganizationIdAndRole(
-				authentication.getName(), organizationId, OrganizationMemberRole.MANAGER);
+		List<OrganizationUserMapBean> maps = organizationUserMapRepository.findByUsernameAndOrganizationIdAndRole(
+				authentication.getName(), organizationId, OrganizationUserRole.MANAGER);
 		
 		if (maps.size() == 1) {
 			return true;
@@ -82,8 +81,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@PreAuthorize("isAuthenticated()")
 	public boolean isMember(Integer organizationId, Authentication authentication) throws IOException {
 		
-		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.findByUsernameAndOrganizationIdAndRole(
-				authentication.getName(), organizationId, OrganizationMemberRole.MEMBER);
+		List<OrganizationUserMapBean> maps = organizationUserMapRepository.findByUsernameAndOrganizationIdAndRole(
+				authentication.getName(), organizationId, OrganizationUserRole.ORDINARY_MEMBER);
 		
 		if (maps.size() == 1) {
 			return true;
@@ -105,10 +104,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public Collection<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) throws IOException {
+	public List<RepositoryBean> getVisibleRepositories(Integer organizationId, Authentication authentication) throws IOException {
 		
 		OrganizationBean organization = getOrganization(organizationId);
-		if (isMember(organizationId, authentication)) {
+		if (isManager(organizationId, authentication) || isMember(organizationId, authentication)) {
 			return organization.getRepositories();
 		}
 		else {

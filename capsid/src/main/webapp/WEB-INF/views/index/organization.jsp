@@ -6,7 +6,7 @@
     <nav>
       <a href="<s:url value="/" />">Home</a> &rarr; 
       <span class="nav-current"><c:out value="${organization.displayName}" /></span>
-          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)">
+          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)">
             <s:url var="manager_url" value="/organizations/${organization.id}/settings" />
             <sf:form method="GET" action="${manager_url}">
               <input type="submit" value="Settings" />
@@ -18,7 +18,7 @@
         <h3>
           Repositories
           <s:url var="create_repo_url" value="/organizations/${organization.id}/repositories/create" />
-          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)">
+          <security:authorize access="hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).ORDINARY_MEMBER)">
             <sf:form method="GET" action="${create_repo_url}">
               <input type="submit" value="+" />
             </sf:form>

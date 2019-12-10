@@ -2,7 +2,6 @@ package com.gitenter.protease.domain.auth;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -47,15 +46,15 @@ public class OrganizationBean implements ModelBean {
 
 	@ToString.Exclude
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<RepositoryBean> repositories;
+	private List<RepositoryBean> repositories = new ArrayList<RepositoryBean>();
 
 	@ToString.Exclude
-	@OneToMany(targetEntity=OrganizationMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
-	private List<OrganizationMemberMapBean> organizationMemberMaps = new ArrayList<OrganizationMemberMapBean>();
+	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
+	private List<OrganizationUserMapBean> organizationUserMaps = new ArrayList<OrganizationUserMapBean>();
 	
 	/*
 	 * The alternative approach is to get them by a customized JOINed SQL query
-	 * from `OrganizationMemberMapRepository`.
+	 * from `OrganizationUserMapRepository`.
 	 * 
 	 * Will not do it until some performance
 	 * bottleneck is shown. Also, since Hibernate may optimize its query cache so
@@ -63,9 +62,9 @@ public class OrganizationBean implements ModelBean {
 	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
 	 * actually have not-worse performance.
 	 */
-	public Collection<OrganizationMemberMapBean> getMemberMaps(OrganizationMemberRole role) {
-		Collection<OrganizationMemberMapBean> items = new ArrayList<OrganizationMemberMapBean>();
-		for (OrganizationMemberMapBean map : organizationMemberMaps) {
+	public List<OrganizationUserMapBean> getUserMaps(OrganizationUserRole role) {
+		List<OrganizationUserMapBean> items = new ArrayList<OrganizationUserMapBean>();
+		for (OrganizationUserMapBean map : organizationUserMaps) {
 			if (map.getRole().equals(role)) {
 				items.add(map);
 			}
@@ -73,18 +72,18 @@ public class OrganizationBean implements ModelBean {
 		return items;
 	}
 	
-	public Collection<MemberBean> getMembers(OrganizationMemberRole role) {
-		Collection<MemberBean> items = new ArrayList<MemberBean>();
-		for (OrganizationMemberMapBean map : getMemberMaps(role)) {
-			items.add(map.getMember());
+	public List<UserBean> getUsers(OrganizationUserRole role) {
+		List<UserBean> items = new ArrayList<UserBean>();
+		for (OrganizationUserMapBean map : getUserMaps(role)) {
+			items.add(map.getUser());
 		}
 		return items;
 	}
 	
-	public Collection<MemberBean> getMembers() {
-		Collection<MemberBean> items = new ArrayList<MemberBean>();
-		for (OrganizationMemberMapBean map : organizationMemberMaps) {
-			items.add(map.getMember());
+	public List<UserBean> getUsers() {
+		List<UserBean> items = new ArrayList<UserBean>();
+		for (OrganizationUserMapBean map : organizationUserMaps) {
+			items.add(map.getUser());
 		}
 		return items;
 	}
@@ -104,33 +103,37 @@ public class OrganizationBean implements ModelBean {
 		repositories.add(repository);
 	}
 	
-	void addMap(OrganizationMemberMapBean map) {
-		organizationMemberMaps.add(map);
+	void addMap(OrganizationUserMapBean map) {
+		organizationUserMaps.add(map);
+	}
+	
+	boolean removeMap(OrganizationUserMapBean map) {
+		return organizationUserMaps.remove(map);
 	}
 	
 	/*
 	 * TODO:
 	 * Consider to have a JOIN query to get that.
 	 */
-//	public boolean isManagedBy (Integer memberId) {
-//		for (MemberBean manager : managers) {
-//			if (manager.getId().equals(memberId)) {
+//	public boolean isManagedBy (Integer userId) {
+//		for (UserBean manager : managers) {
+//			if (manager.getId().equals(userId)) {
 //				return true;
 //			}
 //		}
 //		return false;
 //	}
 //	
-//	public boolean addManager (MemberBean manager) {
+//	public boolean addManager (UserBean manager) {
 //		return managers.add(manager);
 //	}
 //	
-//	public boolean removeManager (Integer memberId) {
+//	public boolean removeManager (Integer userId) {
 //		
-//		Iterator<MemberBean> i = managers.iterator();
+//		Iterator<UserBean> i = managers.iterator();
 //		while (i.hasNext()) {
-//			MemberBean manager = i.next();
-//			if (manager.getId().equals(memberId)) {
+//			UserBean manager = i.next();
+//			if (manager.getId().equals(userId)) {
 //				i.remove();
 //				return true;
 //			}

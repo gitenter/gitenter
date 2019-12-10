@@ -14,32 +14,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
-import com.gitenter.capsid.service.MemberService;
+import com.gitenter.capsid.service.UserService;
 import com.gitenter.capsid.service.OrganizationService;
 import com.gitenter.capsid.service.RepositoryManagerService;
 import com.gitenter.capsid.service.RepositoryService;
 import com.gitenter.capsid.service.exception.ItemNotUniqueException;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 
 @Controller
 public class RepositoryManagementController {
 	
-	private MemberService memberService;
+	private UserService userService;
 	private OrganizationService organizationService;
 	private RepositoryService repositoryService;
 	private RepositoryManagerService repositoryManagerService;
 
 	@Autowired
 	public RepositoryManagementController(
-			MemberService memberService, 
+			UserService userService, 
 			OrganizationService organizationService,
 			RepositoryService repositoryService,
 			RepositoryManagerService repositoryManagerService) {
 		
-		this.memberService = memberService;
+		this.userService = userService;
 		this.organizationService = organizationService;
 		this.repositoryService = repositoryService;
 		this.repositoryManagerService = repositoryManagerService;
@@ -83,7 +83,7 @@ public class RepositoryManagementController {
 		}
 		
 		try {
-			MemberBean me = memberService.getMe(authentication);
+			UserBean me = userService.getMe(authentication);
 			repositoryManagerService.createRepository(me, organization, repositoryDTO, includeSetupFiles);
 		}
 		catch(ItemNotUniqueException e) {
@@ -171,7 +171,7 @@ public class RepositoryManagementController {
 		model.addAttribute("repository", repository);
 		model.addAttribute("operatorUsername", authentication.getName());
 		
-		model.addAttribute("collaboratorRoles", RepositoryMemberRole.collaboratorRoles());
+		model.addAttribute("collaboratorRoles", RepositoryUserRole.collaboratorRoles());
 		
 		return "repository-management/collaborators";
 	}
@@ -184,7 +184,7 @@ public class RepositoryManagementController {
 			String roleName) throws Exception {
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
-		MemberBean collaborator = memberService.getMemberByUsername(username);
+		UserBean collaborator = userService.getUserByUsername(username);
 		/*
 		 * TODO:
 		 * Catch the errors and redirect to the original page, if the collaborator manager 
@@ -203,7 +203,8 @@ public class RepositoryManagementController {
 			@PathVariable Integer organizationId,
 			@PathVariable Integer repositoryId,
 			@RequestParam(value="to_be_remove_username") String toBeRemovedUsername,
-			@RequestParam(value="repository_member_map_id") Integer repositoryMemberMapId) throws Exception {
+			@RequestParam(value="repository_user_map_id") Integer repositoryUserMapId,
+			Authentication authentication) throws Exception {
 		
 		/*
 		 * `toBeRemovedUsername` is not currently in use for the actual logic.
@@ -215,7 +216,7 @@ public class RepositoryManagementController {
 		
 		RepositoryBean repository = repositoryService.getRepository(repositoryId);
 		
-		repositoryManagerService.removeCollaborator(repository, repositoryMemberMapId);
+		repositoryManagerService.removeCollaborator(authentication, repository, repositoryUserMapId);
 
 		return "redirect:/organizations/"+organizationId+"/repositories/"+repositoryId+"/settings/collaborators";
 	}

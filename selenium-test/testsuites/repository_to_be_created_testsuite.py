@@ -7,7 +7,7 @@ from forms.authorization_form import (
     fill_delete_user_form,
     login_as
 )
-from forms.member_settings_form import add_ssh_key
+from forms.user_settings_form import add_ssh_key
 from forms.organization_management_form import fill_add_member_form
 
 

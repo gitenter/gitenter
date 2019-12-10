@@ -13,8 +13,13 @@ RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.24.0/gec
 RUN sudo mv geckodriver /usr/local/bin
 RUN sudo chown circleci:circleci /usr/local/bin/geckodriver
 
-COPY pip-requirements.txt /tmp/pip-requirements.txt
-RUN sudo sudo pip3 install -r /tmp/pip-requirements.txt
+RUN sudo pip3 install pipenv
+
+WORKDIR /tmp
+COPY Pipfile Pipfile
+COPY Pipfile.lock Pipfile.lock
+RUN pipenv lock -r > pip-requirements.txt
+RUN sudo pip3 install -r pip-requirements.txt
 
 COPY . /selenium-test
 RUN sudo sed -i 's/profile = LocalProfile()/profile = DockerProfile()/' /selenium-test/settings/profile.py

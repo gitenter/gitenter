@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gitenter.capsid.dto.MemberRegisterDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
 
 @RestController
@@ -30,19 +30,19 @@ public class RestAuthorizationController {
 	@CrossOrigin
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	@ResponseBody
-	public MemberRegisterDTO showRegisterForm() {
-		return new MemberRegisterDTO();
+	public UserRegisterDTO showRegisterForm() {
+		return new UserRegisterDTO();
 	}
 	
 	@CrossOrigin
 	@RequestMapping(value="/register", method=RequestMethod.POST)
 	@ResponseBody
-	public MemberRegisterDTO processRegistration(
-			@RequestBody @Valid MemberRegisterDTO memberRegisterDTO) throws Exception {
+	public UserRegisterDTO processRegistration(
+			@RequestBody @Valid UserRegisterDTO userRegisterDTO) throws Exception {
 		
-		logger.debug("User registration attempt: "+memberRegisterDTO);
-		anonymousService.signUp(memberRegisterDTO);
+		logger.debug("User registration attempt: "+userRegisterDTO);
+		anonymousService.signUp(userRegisterDTO);
 		
-		return memberRegisterDTO;
+		return userRegisterDTO;
 	}
 }

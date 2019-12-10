@@ -1,28 +1,28 @@
 from sqlalchemy import or_
 
 from models import (
-    Member,
+    User,
     Organization,
-    OrganizationMemberMap,
+    OrganizationUserMap,
     Repository,
-    RepositoryMemberMap,
+    RepositoryUserMap,
     SshKey
 )
 
 
-class OrganizationMemberMapManager():
+class OrganizationUserMapManager():
 
     @staticmethod
     def __get_by_username_and_org_name(session, username, org_name):
-        return session.query(OrganizationMemberMap).\
-            join(Organization).join(Member).\
-            filter(Member.username == username).\
+        return session.query(OrganizationUserMap).\
+            join(Organization).join(User).\
+            filter(User.username == username).\
             filter(Organization.name == org_name).\
             all()
 
     @staticmethod
-    def is_member_in_org(session, username, org_name):
-        maps = OrganizationMemberMapManager.__get_by_username_and_org_name(
+    def is_user_in_org(session, username, org_name):
+        maps = OrganizationUserMapManager.__get_by_username_and_org_name(
             session, username, org_name)
         if len(maps) >= 1:
             return True
@@ -40,32 +40,32 @@ class RepositoryManager():
             one()
 
 
-class RepositoryMemberMapManager():
+class RepositoryUserMapManager():
 
     @staticmethod
     def __filter_user_and_repo_name(
             session, username, repo_name):
-        return session.query(RepositoryMemberMap).\
-            join(Repository).join(Member).\
-            filter(Member.username == username).\
+        return session.query(RepositoryUserMap).\
+            join(Repository).join(User).\
+            filter(User.username == username).\
             filter(Repository.name == repo_name)
 
     @staticmethod
     def __filter_user_and_org_and_repo_name(
             session, username, org_name, repo_name):
-        return session.query(RepositoryMemberMap).\
-            join(Repository).join(Organization).join(Member).\
-            filter(Member.username == username).\
+        return session.query(RepositoryUserMap).\
+            join(Repository).join(Organization).join(User).\
+            filter(User.username == username).\
             filter(Organization.name == org_name).\
             filter(Repository.name == repo_name)
 
     @staticmethod
     def __is_user_repo_organizer_or_editor(session, username, org_name, repo_name):
-        maps = RepositoryMemberMapManager.__filter_user_and_org_and_repo_name(
+        maps = RepositoryUserMapManager.__filter_user_and_org_and_repo_name(
             session, username, org_name, repo_name).\
             filter(or_(
-                RepositoryMemberMap.role_shortname == 'O',
-                RepositoryMemberMap.role_shortname == 'E')).all()
+                RepositoryUserMap.role_shortname == 'O',
+                RepositoryUserMap.role_shortname == 'E')).all()
 
         if len(maps) >= 1:
             return True
@@ -74,9 +74,9 @@ class RepositoryMemberMapManager():
 
     @staticmethod
     def __is_user_in_black_list(session, username, repo_name):
-        maps = RepositoryMemberMapManager.__filter_user_and_repo_name(
+        maps = RepositoryUserMapManager.__filter_user_and_repo_name(
             session, username, repo_name).\
-            filter(RepositoryMemberMap.role_shortname == 'O').all()
+            filter(RepositoryUserMap.role_shortname == 'O').all()
         if len(maps) >= 1:
             return True
         else:
@@ -90,19 +90,19 @@ class RepositoryMemberMapManager():
             session, repo_name, org_name)
 
         if repo.is_public:
-            return not RepositoryMemberMapManager.__is_user_in_black_list(
+            return not RepositoryUserMapManager.__is_user_in_black_list(
                 session, username, repo_name)
 
         else:
-            if OrganizationMemberMapManager.is_member_in_org(session, username, org_name):
-                return not RepositoryMemberMapManager.__is_user_in_black_list(
+            if OrganizationUserMapManager.is_user_in_org(session, username, org_name):
+                return not RepositoryUserMapManager.__is_user_in_black_list(
                     session, username, repo_name)
             else:
                 return False
 
     @staticmethod
     def is_editable(session, username, org_name, repo_name):
-        return RepositoryMemberMapManager.__is_user_repo_organizer_or_editor(
+        return RepositoryUserMapManager.__is_user_repo_organizer_or_editor(
             session, username, org_name, repo_name)
 
 
@@ -110,7 +110,7 @@ class SshKeyManager():
 
     @classmethod
     def get_all_ssh_keys(cls, session):
-        return session.query(SshKey).join(Member).all()
+        return session.query(SshKey).join(User).all()
 
     # TODO:
     # Consider using `ssh-copy-id`, which may be relatively safer comparing to
@@ -129,7 +129,7 @@ class SshKeyManager():
         for ssh_key in cls.get_all_ssh_keys(session):
             options = [
                 "command=\"bash /ssheep/check_if_can_edit_repository.sh {}\"".format(
-                    ssh_key.member.username),
+                    ssh_key.user.username),
                 "no-port-forwarding",
                 "no-x11-forwarding",
                 "no-agent-forwarding",

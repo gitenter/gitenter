@@ -1,0 +1,11 @@
+FROM alpine:latest
+
+ENV VERSION 0.60.1
+RUN apk add --no-cache git openssl py-pygments curl \
+    && curl -L https://github.com/gohugoio/hugo/releases/download/v${VERSION}/hugo_${VERSION}_Linux-64bit.tar.gz | tar -xz \
+    && mv hugo /usr/bin/hugo \
+    && apk del curl
+
+# Copied from:
+# https://hub.docker.com/r/orus/hugo-builder
+# https://bitbucket.org/orus-io/docker-images/src/default/hugo-builder/

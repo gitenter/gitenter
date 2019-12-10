@@ -1,4 +1,0 @@
-pytest==4.6.3
-selenium==3.141.0
-GitPython==3.0.2
-pycryptodome==3.9.0

@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/").authenticated()
 				.antMatchers("/settings/**").authenticated()
 				.antMatchers("/organizations/create").authenticated()
-//				.antMatchers("/organizations/{organizationId}/settings/**").access("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER)")
+//				.antMatchers("/organizations/{organizationId}/settings/**").access("hasPermission(#organizationId, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
 //				.antMatchers("/organizations/{organizationId}/repositories/create").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 //				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/settings").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")
 //				.antMatchers("/organizations/{organizationId}/repositories/{repositoryId}/collaborators/**").access("@securityService.checkManagerOfAnOrganization(authentication,#organizationId)")

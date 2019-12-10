@@ -15,20 +15,20 @@
         <c:forEach var="role" items="${collaboratorRoles}">
         <h5><c:out value="${role.displayName}" /></h5>
           <ul class="user-list">
-            <c:forEach var="map" items="${repository.repositoryMemberMaps}">
+            <c:forEach var="map" items="${repository.repositoryUserMaps}">
               <c:if test="${map.role == role}">
                 <li>
                   <c:if test="${map.isAlterable(operatorUsername)}">
-                    <span class="user-deletable">${map.member.displayName}</span>
-                    <s:url var="remove_member_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators/remove" />
-                    <sf:form method="POST" action="${remove_member_url}">
-                      <input type="hidden" name="to_be_remove_username" value="${map.member.username}" />
-                      <input type="hidden" name="repository_member_map_id" value="${map.id}" />
+                    <span class="user-deletable">${map.user.displayName}</span>
+                    <s:url var="remove_user_url" value="/organizations/${organization.id}/repositories/${repository.id}/settings/collaborators/remove" />
+                    <sf:form method="POST" action="${remove_user_url}">
+                      <input type="hidden" name="to_be_remove_username" value="${map.user.username}" />
+                      <input type="hidden" name="repository_user_map_id" value="${map.id}" />
                       <input class="delete" type="submit" value="x" />
                     </sf:form>
                   </c:if>
                   <c:if test="${!map.isAlterable(operatorUsername)}">
-                    <span class="user"><c:out value="${map.member.displayName}" /></span>
+                    <span class="user"><c:out value="${map.user.displayName}" /></span>
                   </c:if>
                 </li>
               </c:if> 

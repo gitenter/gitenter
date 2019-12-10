@@ -6,14 +6,14 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.gitenter.capsid.dto.MemberProfileDTO;
-import com.gitenter.capsid.dto.MemberRegisterDTO;
+import com.gitenter.capsid.dto.UserProfileDTO;
+import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.dto.RepositoryAccessLevel;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberRole;
+import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
 
 @Component
 public class PermissionEvaluatorImpl implements PermissionEvaluator {
@@ -21,37 +21,37 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 		
-		if ((targetDomainObject instanceof String) && (permission.equals(MemberSecurityRole.SELF))) {
+		if ((targetDomainObject instanceof String) && (permission.equals(UserSecurityRole.SELF))) {
 			String username = (String)targetDomainObject;
 			return username.equals(authentication.getName());
 		}
 		
-		if ((targetDomainObject instanceof MemberBean) && (permission.equals(MemberSecurityRole.SELF))) {
-			String username = ((MemberBean)targetDomainObject).getUsername();
+		if ((targetDomainObject instanceof UserBean) && (permission.equals(UserSecurityRole.SELF))) {
+			String username = ((UserBean)targetDomainObject).getUsername();
 			return username.equals(authentication.getName());
 		}
 		
-		if ((targetDomainObject instanceof MemberRegisterDTO) && (permission.equals(MemberSecurityRole.SELF))) {
-			String username = ((MemberRegisterDTO)targetDomainObject).getUsername();
+		if ((targetDomainObject instanceof UserRegisterDTO) && (permission.equals(UserSecurityRole.SELF))) {
+			String username = ((UserRegisterDTO)targetDomainObject).getUsername();
 			return username.equals(authentication.getName());
 		}
 		
-		if ((targetDomainObject instanceof MemberProfileDTO) && (permission.equals(MemberSecurityRole.SELF))) {
-			String username = ((MemberProfileDTO)targetDomainObject).getUsername();
+		if ((targetDomainObject instanceof UserProfileDTO) && (permission.equals(UserSecurityRole.SELF))) {
+			String username = ((UserProfileDTO)targetDomainObject).getUsername();
 			return username.equals(authentication.getName());
 		}
 		
-		if ((targetDomainObject instanceof OrganizationBean) && (permission instanceof OrganizationMemberRole)) {
+		if ((targetDomainObject instanceof OrganizationBean) && (permission instanceof OrganizationUserRole)) {
 			OrganizationBean organization = (OrganizationBean)targetDomainObject;
-			OrganizationMemberRole role = (OrganizationMemberRole)permission;
+			OrganizationUserRole role = (OrganizationUserRole)permission;
 			
 			/*
 			 * TODO:
-			 * Can we go through `OrganizationMemberMap` so we don't need to iterate
-			 * through the entire list of members?
+			 * Can we go through `OrganizationUserMap` so we don't need to iterate
+			 * through the entire list for users?
 			 */
-			for (MemberBean member : organization.getMembers(role)) {
-				if (member.getUsername().equals(authentication.getName())) {
+			for (UserBean user : organization.getUsers(role)) {
+				if (user.getUsername().equals(authentication.getName())) {
 					return true;
 				}
 			}
@@ -59,17 +59,17 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 			return false;
 		}
 		
-		if ((targetDomainObject instanceof RepositoryBean) && (permission instanceof RepositoryMemberRole)) {
+		if ((targetDomainObject instanceof RepositoryBean) && (permission instanceof RepositoryUserRole)) {
 			RepositoryBean repository = (RepositoryBean)targetDomainObject;
-			RepositoryMemberRole role = (RepositoryMemberRole)permission;
+			RepositoryUserRole role = (RepositoryUserRole)permission;
 			
 			/*
 			 * TODO:
-			 * Can we go through `RepositoryMemberMap` so we don't need to iterate
-			 * through the entire list of members?
+			 * Can we go through `RepositoryUserMap` so we don't need to iterate
+			 * through the entire list of users?
 			 */
-			for (MemberBean member : repository.getMembers(role)) {
-				if (member.getUsername().equals(authentication.getName())) {
+			for (UserBean user : repository.getUsers(role)) {
+				if (user.getUsername().equals(authentication.getName())) {
 					return true;
 				}
 			}
@@ -81,30 +81,7 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 			RepositoryBean repository = (RepositoryBean)targetDomainObject;
 			RepositoryAccessLevel level = (RepositoryAccessLevel)permission;
 			
-			/*
-			 * TODO:
-			 * Move this kind of if-else logic into `RepositoryAccessLevel`.
-			 */
-			if (repository.getIsPublic().equals(true)) {
-				if (level.equals(RepositoryAccessLevel.READ)) {
-					return true;
-				}
-			}
-			
-			if (repository.getIsPublic().equals(false)) {
-				if (level.equals(RepositoryAccessLevel.READ)) {
-					for (MemberBean member : repository.getOrganization().getMembers()) {
-						if (member.getUsername().equals(authentication.getName())) {
-							return true;
-						}
-					}
-				}
-			}
-			
-			/*
-			 * TODO:
-			 * RepositoryAccessLevel.EDITOR
-			 */
+			return level.canAccess(repository, authentication);
 		}
 		
 		return false;

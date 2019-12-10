@@ -1,10 +1,10 @@
-version: "3"
+version: "3.7"
 services:
 
   # Then the database can be connected through `psql -h postgres -U postgres`
   # from a different container with `psql` installed (e.g. `dev-machine`).
   postgres:
-    image: postgres:11.1
+    image: postgres:12.1
     volumes:
       - ./database:/database
       - ./database/docker_init.sh:/docker-entrypoint-initdb.d/docker_init.sh
@@ -113,6 +113,6 @@ services:
       - web-app
       - web-static
       - git
-      
+
 volumes:
   git-repo:

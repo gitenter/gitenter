@@ -14,19 +14,19 @@
       <div class="left-narrow">
         <h5>Members</h5>
         <ul class="user-list">
-        <c:forEach var="map" items="${organization.organizationMemberMaps}">
+        <c:forEach var="map" items="${organization.organizationUserMaps}">
           <li>
             <c:if test="${map.isAlterable(operatorUsername)}">
-              <span class="user-deletable"><c:out value="${map.member.displayName}" /></span>
-              <s:url var="remove_member_url" value="/organizations/${organization.id}/settings/members/remove" />
-              <sf:form method="POST" action="${remove_member_url}">
-                <input type="hidden" name="to_be_remove_username" value="${map.member.username}" /> 
-                <input type="hidden" name="organization_member_map_id" value="${map.id}" />
+              <span class="user-deletable"><c:out value="${map.user.displayName}" /></span>
+              <s:url var="remove_user_url" value="/organizations/${organization.id}/settings/members/remove" />
+              <sf:form method="POST" action="${remove_user_url}">
+                <input type="hidden" name="to_be_remove_username" value="${map.user.username}" /> 
+                <input type="hidden" name="organization_user_map_id" value="${map.id}" />
                 <input class="delete" type="submit" value="x" />
               </sf:form>
             </c:if>
             <c:if test="${!map.isAlterable(operatorUsername)}">
-              <span class="user"><c:out value="${map.member.displayName}" /></span>
+              <span class="user"><c:out value="${map.user.displayName}" /></span>
             </c:if>
           </li>
         </c:forEach>

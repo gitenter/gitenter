@@ -17,7 +17,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.protease.ProteaseConfig;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -39,7 +39,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 		"schemaReviewDatabaseConnection"})
 public class SshKeyRepositoryTest {
 
-	@Autowired MemberRepository memberRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired SshKeyRepository sshKeyRepository;
 	
 	@Rule public TemporaryFolder folder = new TemporaryFolder();
@@ -59,10 +59,10 @@ public class SshKeyRepositoryTest {
 	@Test
 	@Transactional
 	@DatabaseSetup(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
-	@DatabaseTearDown
+	@DatabaseTearDown(connection="schemaAuthDatabaseConnection", value="classpath:dbunit/minimal/auth.xml")
 	public void test() throws Exception {	
-		MemberBean member = memberRepository.findById(1).get();
-		assertEquals(member.getSshKeys().size(), 1);
+		UserBean user = userRepository.findById(1).get();
+		assertEquals(user.getSshKeys().size(), 1);
 		
 		String keyType = "ssh-rsa";
 		String keyData = "AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9";
@@ -71,21 +71,21 @@ public class SshKeyRepositoryTest {
 		/*
 		 * TODO:
 		 * 
-		 * Any way to not setup the double relationship (member-sshKey) manually?
-		 * Notice that we cannot change "setMember()" to include "addSshKey()",
-		 * as "setMember()" is also used for Hibernate.
+		 * Any way to not setup the double relationship (user-sshKey) manually?
+		 * Notice that we cannot change "setUser()" to include "addSshKey()",
+		 * as "setUser()" is also used for Hibernate.
 		 */
 		SshKeyBean sshKey = new SshKeyBean();
 		sshKey.setBean(keyType+" "+keyData+" "+comment);
-		sshKey.setMember(member);
-		member.addSshKey(sshKey);
+		sshKey.setUser(user);
+		user.addSshKey(sshKey);
 		
 		sshKeyRepository.saveAndFlush(sshKey);
 		
-		MemberBean refreshedMember = memberRepository.findById(1).get();
-		assertEquals(refreshedMember.getSshKeys().size(), 2);
+		UserBean refreshedUser = userRepository.findById(1).get();
+		assertEquals(refreshedUser.getSshKeys().size(), 2);
 		
-		SshKeyBean refreshedSshKey = refreshedMember.getSshKeys().get(1);
+		SshKeyBean refreshedSshKey = refreshedUser.getSshKeys().get(1);
 		assertEquals(refreshedSshKey.getKeyType(), keyType);
 		assertEquals(refreshedSshKey.getKeyData(), keyData);
 		assertEquals(refreshedSshKey.getComment(), comment);

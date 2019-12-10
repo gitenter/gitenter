@@ -10,6 +10,7 @@ import java.nio.file.attribute.UserPrincipal;
 import java.nio.file.attribute.UserPrincipalLookupService;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.PersistenceException;
 
@@ -18,35 +19,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gitenter.capsid.dto.RepositoryDTO;
+import com.gitenter.capsid.service.exception.IdNotExistException;
 import com.gitenter.capsid.service.exception.InvalidOperationException;
+import com.gitenter.capsid.service.exception.UnreachableException;
 import com.gitenter.gitar.GitBareRepository;
 import com.gitenter.protease.config.bean.GitSource;
-import com.gitenter.protease.dao.auth.MemberRepository;
-import com.gitenter.protease.dao.auth.OrganizationMemberMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
-import com.gitenter.protease.dao.auth.RepositoryMemberMapRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.RepositoryRepository;
-import com.gitenter.protease.domain.auth.MemberBean;
+import com.gitenter.protease.dao.auth.RepositoryUserMapRepository;
+import com.gitenter.protease.dao.auth.UserRepository;
 import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationMemberMapBean;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
-import com.gitenter.protease.domain.auth.RepositoryMemberMapBean;
-import com.gitenter.protease.domain.auth.RepositoryMemberRole;
+import com.gitenter.protease.domain.auth.RepositoryUserMapBean;
+import com.gitenter.protease.domain.auth.RepositoryUserRole;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @Service
 public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	
 	private static final Logger auditLogger = LoggerFactory.getLogger("audit");
 
-	@Autowired MemberRepository memberRepository;
+	@Autowired UserRepository userRepository;
 	@Autowired OrganizationRepository organizationRepository;
-	@Autowired OrganizationMemberMapRepository organizationMemberMapRepository;
+	@Autowired OrganizationUserMapRepository organizationUserMapRepository;
 	@Autowired RepositoryRepository repositoryRepository;
-	@Autowired RepositoryMemberMapRepository repositoryMemberMapRepository;
+	@Autowired RepositoryUserMapRepository repositoryUserMapRepository;
 	
 	@Autowired GitSource gitSource;
 	
@@ -58,9 +62,9 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationMemberRole).MEMBER)")
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).ORDINARY_MEMBER)")
 	public void createRepository(
-			MemberBean me, 
+			UserBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException {
@@ -80,8 +84,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 			ExceptionConsumingPipeline.consumePersistenceException(e, repository);
 		}
 		
-		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, me, RepositoryMemberRole.ORGANIZER);
-		repositoryMemberMapRepository.saveAndFlush(map);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, me, RepositoryUserRole.PROJECT_ORGANIZER);
+		repositoryUserMapRepository.saveAndFlush(map);
 		
 		File repositoryDirectory = gitSource.getBareRepositoryDirectory(organization.getName(), repository.getName());
 		
@@ -185,7 +189,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	public void updateRepository(
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException {
@@ -195,13 +199,13 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	public void addCollaborator(
 			RepositoryBean repository, 
-			MemberBean collaborator, 
+			UserBean collaborator, 
 			String roleName) throws IOException {
 		
-		List<OrganizationMemberMapBean> maps = organizationMemberMapRepository.fineByMemberAndOrganization(
+		List<OrganizationUserMapBean> maps = organizationUserMapRepository.fineByUserAndOrganization(
 				collaborator, repository.getOrganization());
 		if (maps.size() == 0) {
 			throw new InvalidOperationException("User "+collaborator.getUsername()+" cannot be added "
@@ -209,39 +213,77 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 					+ "not a member of organization "+repository.getOrganization().getName()+".");
 		}
 		
-		RepositoryMemberRole role = RepositoryMemberRole.collaboratorRoleOf(roleName);
+		RepositoryUserRole role = RepositoryUserRole.collaboratorRoleOf(roleName);
 		
-		RepositoryMemberMapBean map = RepositoryMemberMapBean.link(repository, collaborator, role);
-		repositoryMemberMapRepository.saveAndFlush(map);
+		RepositoryUserMapBean map = RepositoryUserMapBean.link(repository, collaborator, role);
+		repositoryUserMapRepository.saveAndFlush(map);
+	}
+
+	private RepositoryUserMapBean getRepositoryUserMapBean(Integer repositoryUserMapId) throws IOException {
+		
+		Optional<RepositoryUserMapBean> maps = repositoryUserMapRepository.findById(repositoryUserMapId);
+		
+		if (maps.isPresent()) {
+			return maps.get();
+		}
+		else {
+			throw new IdNotExistException(OrganizationUserMapBean.class, repositoryUserMapId);
+		}
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	@Transactional
 	public void removeCollaborator(
+			Authentication authentication,
 			RepositoryBean repository, 
-			Integer repositoryMemberMapId) throws IOException {
+			Integer repositoryUserMapId) throws IOException {
+		
+		/*
+		 * This part is for validation of `repositoryUserMapId`/create correct 
+		 * error message. 
+		 * 
+		 * However, it does cause one more database call. Not sure if it worth this
+		 * effort.
+		 */
+		RepositoryUserMapBean map = getRepositoryUserMapBean(repositoryUserMapId);
+		
+		if (!map.getRepository().getId().equals(repository.getId())) {
+			throw new UnreachableException("Remove repository user input not consistency. "
+					+ "repositoryUserMapId "+repositoryUserMapId+" doesn't belong to the "
+					+ "target organization "+repository);
+		}
+		
+		if (map.getUser().getUsername().equals(authentication.getName())) {
+			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as an organizer of repository "+repository);
+		}
 		
 		/*
 		 * TODO:
-		 * Should we validate the `repositoryMemberMapId`?
+		 * Not sure if it helps updating local domain model ("unit of work"
+		 * in ORM) or not, especially in case the previously map was load as the 
+		 * one-to-many of the user or repository table (Not sure if Hibernate is 
+		 * smart enough or not in here).
+		 * 
+		 * If not, we can remove this call.
 		 */
+		map.unlink();
 		
 		/*
-		 * The alternative approach is to have input "memberId", then
+		 * The alternative approach is to have input "userId", then
 		 * find "mapId" and delete it. We don't do it because it:
 		 * (1) need more SQL queries, 
 		 * (2) seems have consistency problem with Hibernate when first we 
-		 * "Hibernate.initialize(repository.getRepositoryMemberMaps());".
+		 * "Hibernate.initialize(repository.getRepositoryUserMaps());".
 		 * 
-		 * We have knowledge of `repositoryMemberMapId` when we generate
+		 * We have knowledge of `repositoryUserMapId` when we generate
 		 * the delete page with links.
 		 */
-		repositoryMemberMapRepository.throughSqlDeleteById(repositoryMemberMapId);
+		repositoryUserMapRepository.throughSqlDeleteById(repositoryUserMapId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryMemberRole).ORGANIZER)")
+	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
 	public void deleteRepository(RepositoryBean repository) throws IOException, GitAPIException {
 		
 		auditLogger.info("Repository has been deleted: "+repository);

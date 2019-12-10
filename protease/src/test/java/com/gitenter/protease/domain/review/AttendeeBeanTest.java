@@ -45,7 +45,7 @@ public class AttendeeBeanTest {
 		AttendeeBean item = repository.findById(1).get();
 		
 		assertEquals(item.getReview().getVersionNumber(), "v1");
-		assertEquals(item.getMember().getUsername(), "username");
+		assertEquals(item.getUser().getUsername(), "username");
 		assertEquals(item.getReviewMeetings().size(), 1);
 	}
 

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from settings.postgres import postgres_engine
 from managers import SshKeyManager
-from models import Member, SshKey
+from models import User, SshKey
 
 
 class TestSshKeyManager(TestCase):
@@ -21,23 +21,23 @@ class TestSshKeyManager(TestCase):
         Session = sessionmaker(bind=self.connection)
         self.session = Session()
 
-        member = Member(
-            username="member",
+        user = User(
+            username="username",
             password="password",
-            display_name="Member",
-            email="member@member.com")
+            display_name="Display Name",
+            email="username@company.com")
         SshKey(
-            member=member,
+            user=user,
             key_type="ssh-rsa",
             key_data="AAAAB3NzaC1yc",
             comment="key_1")
         SshKey(
-            member=member,
+            user=user,
             key_type="ssh-rsa",
             key_data="CFGrGDnSs+j7F",
             comment="key_2")
 
-        self.session.add(member)
+        self.session.add(user)
         self.session.commit()
 
     def tearDown(self):
@@ -56,10 +56,10 @@ class TestSshKeyManager(TestCase):
 
     def test_force_command_get_authorized_keys_content(self):
         desired_output_items = set([
-            """command="bash /ssheep/check_if_can_edit_repository.sh member",""" +
+            """command="bash /ssheep/check_if_can_edit_repository.sh username",""" +
             "no-port-forwarding,no-x11-forwarding," +
             "no-agent-forwarding,no-pty ssh-rsa AAAAB3NzaC1yc key_1",
-            """command="bash /ssheep/check_if_can_edit_repository.sh member",""" +
+            """command="bash /ssheep/check_if_can_edit_repository.sh username",""" +
             "no-port-forwarding,no-x11-forwarding," +
             "no-agent-forwarding,no-pty ssh-rsa CFGrGDnSs+j7F key_2"
         ])

@@ -80,6 +80,10 @@ public class RepositoryBean implements ModelBean {
 	@Getter(AccessLevel.NONE)
 	private List<CommitBean> commits = new ArrayList<CommitBean>();
 	
+	public void addCommit(CommitBean commit) {
+		commits.add(commit);
+	}
+	
 	/*
 	 * Hibernate will smartly `select count(id) from git.git_commit`
 	 */
@@ -88,8 +92,44 @@ public class RepositoryBean implements ModelBean {
 	}
 
 	@ToString.Exclude
-	@OneToMany(targetEntity=RepositoryMemberMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
-	private List<RepositoryMemberMapBean> repositoryMemberMaps = new ArrayList<RepositoryMemberMapBean>();
+	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
+	private List<RepositoryUserMapBean> repositoryUserMaps = new ArrayList<RepositoryUserMapBean>();
+	
+	void addMap(RepositoryUserMapBean map) {
+		repositoryUserMaps.add(map);
+	}
+	
+	boolean removeMap(RepositoryUserMapBean map) {
+		return repositoryUserMaps.remove(map);
+	}
+	
+	/*
+	 * The alternative approach is to get them by a customized JOINed SQL query
+	 * from `RepositoryUserMapRepository`.
+	 * 
+	 * Will not do it until some performance
+	 * bottleneck is shown. Also, since Hibernate may optimize its query cache so
+	 * this mapped relationship will not be loaded multiple times in the same HTTP
+	 * query, and a in-process loop is cheaper compare to a SQL query, this may 
+	 * actually have not-worse performance.
+	 */
+	public List<RepositoryUserMapBean> getUserMaps(RepositoryUserRole role) {
+		List<RepositoryUserMapBean> items = new ArrayList<RepositoryUserMapBean>();
+		for (RepositoryUserMapBean map : repositoryUserMaps) {
+			if (map.getRole().equals(role)) {
+				items.add(map);
+			}
+		}
+		return items;
+	}
+	
+	public List<UserBean> getUsers(RepositoryUserRole role) {
+		List<UserBean> items = new ArrayList<UserBean>();
+		for (RepositoryUserMapBean map : getUserMaps(role)) {
+			items.add(map.getUser());
+		}
+		return items;
+	}
 	
 	@Transient
 	@Getter(AccessLevel.NONE)
@@ -158,35 +198,17 @@ public class RepositoryBean implements ModelBean {
 	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<ReviewBean> reviews;
 	
-	public List<MemberBean> getMembers(RepositoryMemberRole role) {
-		List<MemberBean> items = new ArrayList<MemberBean>();
-		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
-			if (map.getRole().equals(role)) {
-				items.add(map.getMember());
-			}
-		}
-		return items;
-	}
-	
-	public void addCommit(CommitBean commit) {
-		commits.add(commit);
-	}
-	
-	void addMap(RepositoryMemberMapBean map) {
-		repositoryMemberMaps.add(map);
-	}
-	
 	/*
 	 * Not working, because repositoryRepository.saveAndFlush() cannot 
-	 * really follow this change. Need to go with RepositoryMemberMapRepository.delete().
+	 * really follow this change. Need to go with RepositoryUserMapRepository.delete().
 	 */
-//	public boolean removeMember (Integer memberId) {
+//	public boolean removeUser (Integer userId) {
 //		
-//		Iterator<RepositoryMemberMapBean> i = repositoryMemberMaps.iterator();
+//		Iterator<RepositoryUserMapBean> i = repositoryUserMaps.iterator();
 //		while (i.hasNext()) {
-//			RepositoryMemberMapBean map = i.next();
-//			System.out.println(memberId+":"+map.getMember().getId());
-//			if (map.getMember().getId().equals(memberId)) {
+//			RepositoryUserMapBean map = i.next();
+//			System.out.println(userId+":"+map.getUser().getId());
+//			if (map.getUser().getId().equals(userId)) {
 //				System.out.println("bingo");
 //				i.remove();
 //				return true;
@@ -196,9 +218,9 @@ public class RepositoryBean implements ModelBean {
 //		return false;
 //	}
 //	
-//	public RepositoryMemberMapBean getRepositoryMemberMap (Integer memberId) {
-//		for (RepositoryMemberMapBean map : repositoryMemberMaps) {
-//			if (map.getMember().getId().equals(memberId)) {
+//	public RepositoryUserMapBean getRepositoryUserMap (Integer userId) {
+//		for (RepositoryUserMapBean map : repositoryUserMaps) {
+//			if (map.getUser().getId().equals(userId)) {
 //				return map;
 //			}
 //		}
