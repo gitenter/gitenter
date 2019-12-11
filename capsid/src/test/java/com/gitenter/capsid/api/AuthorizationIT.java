@@ -1,4 +1,4 @@
-package com.gitenter.capsid.api.integration;
+package com.gitenter.capsid.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -30,7 +30,7 @@ import com.gitenter.protease.domain.auth.UserBean;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
-public class AuthorizationIntegrationTest {
+public class AuthorizationIT {
 	
 	@Autowired MockMvc mockMvc;
 	

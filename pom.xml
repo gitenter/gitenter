@@ -48,6 +48,9 @@
         <logback-version>1.2.3</logback-version>
 
         <junit-version>5.5.2</junit-version>
+
+        <skip.unittest>false</skip.unittest>
+        <skip.it>false</skip.it>
     </properties>
 
     <build>
@@ -68,10 +71,9 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <configuration>
+                        <skipTests>${skip.unittest}</skipTests>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

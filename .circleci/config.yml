@@ -24,7 +24,7 @@ executors:
       # there is no CircleCI image for that yet.
       - image: circleci/redis:4-alpine
 
-    working_directory: /tmp/java-build
+    working_directory: /tmp/java
 
     environment:
       # Customize the JVM maximum heap limit
@@ -194,7 +194,7 @@ orbs:
                 curl -s --retry 10 http://<<parameters.hostname>>/health_check | grep "GitEnter"
 
 jobs:
-  java-build:
+  java-unittest-build:
     executor: java-with-postgres-executor
     steps:
       - checkout
@@ -237,30 +237,47 @@ jobs:
       - run: sed -i "s/spring.profiles.active=local/spring.profiles.active=staging/g" capsid/src/main/resources/application.properties
       - run: sed -i "s/		System.setProperty(\"spring.profiles.active\", \"local\");/		System.setProperty(\"spring.profiles.active\", \"staging\");/g" hooks/post-receive/src/main/java/com/gitenter/post_receive_hook/PostReceiveApplication.java
 
-      - run: mvn clean install
+      - run: mvn clean install -Dskip.it=true
       - run: mvn compile assembly:single -f hooks/post-receive/pom.xml -DskipTests
       - run: mvn package -f capsid/pom.xml -DskipTests
 
       - run:
           name: Save test results
           command: |
-            mkdir -p ~/test-results/
-            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+            mkdir -p ~/unittest-results/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/unittest-results/ \;
           when: always
       - store_test_results:
-          path: ~/test-results
+          path: ~/unittest-results
 
       # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
-          root: /tmp/java-build/
+          root: /tmp/java/
           # Must be relative path from root
           paths:
             - capsid/target/*.war
       # TODO:
       # Consider saving to final capsid.jar to an artifact.
+
+  java-integration-test:
+    executor: java-with-postgres-executor
+    steps:
+      - checkout
+      - inline-postgres/initialize
+
+      - run: mvn verify -Dskip.unittest=true
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/integration-test-results/
+            find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/integration-test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/integration-test-results
 
   python-unittest:
     executor: python-with-postgres-executor
@@ -477,7 +494,8 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
-      - java-build
+      - java-unittest-build
+      - java-integration-test
       - python-unittest
       - python-linter
 
@@ -495,7 +513,8 @@ workflows:
       - e2e-readiness:
           type: approval
           requires:
-           - java-build
+           - java-unittest-build
+           - java-integration-test
            - python-unittest
            - python-linter
            - hugo/build
