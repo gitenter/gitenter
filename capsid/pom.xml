@@ -14,10 +14,6 @@
     <name>Capsid</name>
     <description>The web layer</description>
 
-    <properties>
-        <rest-assured-version>4.1.2</rest-assured-version>
-    </properties>
-
     <build>
         <plugins>
             <!-- This is to avoid the "webxml attribute is required" error.
@@ -277,31 +273,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest-assured-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!--
-            The below two packages are included in `rest-assured`. However, Spring load
-            3.1.1 for which the class name has been changed after that. Therefore, we
-            need to include them explicitly, or otherwise we'll get errors for
-            `java.lang.NoClassDefFoundError`
-            https://stackoverflow.com/questions/44993615/java-lang-noclassdeffounderror-io-restassured-mapper-factory-gsonobjectmapperfa
-        -->
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>json-path</artifactId>
-            <version>${rest-assured-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>xml-path</artifactId>
-            <version>${rest-assured-version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -26,7 +26,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 	 * > o.s.t.i.TransactionInterceptor : Application exception overridden by commit exception
 	 */
 	@Override
-	public void signUp(UserRegisterDTO userRegisterDTO) throws IOException {
+	public UserBean signUp(UserRegisterDTO userRegisterDTO) throws IOException {
 		
 		UserBean userBean = userRegisterDTO.toBean(passwordEncoder);
 		try {
@@ -40,5 +40,7 @@ public class AnonymousServiceImpl implements AnonymousService {
 		 * TODO:
 		 * Send confirmation email, ...
 		 */
+		
+		return userBean;
 	}
 }

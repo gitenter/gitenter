@@ -19,6 +19,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitenter.protease.domain.ModelBean;
 
 import lombok.Getter;
@@ -65,6 +66,7 @@ public class UserBean implements ModelBean {
 	 * Also, there is no need to use character array to make it safer.
 	 */
 	@ToString.Exclude
+	@JsonIgnore
 	@NotNull
 	@Column(name="password")
 	private String password;

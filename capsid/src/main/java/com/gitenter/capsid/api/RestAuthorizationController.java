@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.AnonymousService;
+import com.gitenter.protease.domain.auth.UserBean;
 
 @RestController
 @RequestMapping(value="/api")
@@ -37,12 +38,12 @@ public class RestAuthorizationController {
 	@CrossOrigin
 	@RequestMapping(value="/register", method=RequestMethod.POST)
 	@ResponseBody
-	public UserRegisterDTO processRegistration(
+	public UserBean processRegistration(
 			@RequestBody @Valid UserRegisterDTO userRegisterDTO) throws Exception {
 		
 		logger.debug("User registration attempt: "+userRegisterDTO);
-		anonymousService.signUp(userRegisterDTO);
+		UserBean userBean = anonymousService.signUp(userRegisterDTO);
 		
-		return userRegisterDTO;
+		return userBean;
 	}
 }
