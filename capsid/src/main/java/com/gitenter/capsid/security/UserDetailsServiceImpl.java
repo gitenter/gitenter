@@ -14,6 +14,10 @@ import com.gitenter.protease.domain.auth.UserBean;
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+	/*
+	 * Cannot autowire `userService`, as it will (1) cause circular reference
+	 * and (2) raises a different exception if username does not exist.
+	 */
 	@Autowired private UserRepository userRepository;
 	
 	@Override
@@ -25,6 +29,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		}
 		UserBean user = users.get(0);
 		
-		return new GitEnterUserDetails(user.getUsername(), user.getPassword());
+		return new GitEnterUserDetails(user.getUsername(), user.getPasswordHash());
 	}
 }

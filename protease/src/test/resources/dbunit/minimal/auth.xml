@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-	<application_user id="1" username="username" password="password" display_name="Display Name" email="email@email.com" />
+	<application_user id="1" username="username" password_hash="password_hash" display_name="Display Name" email="email@email.com" />
 	<ssh_key id="1" user_id="1" key_type="ssh-rsa" key_data="VGhpcyBpcyBteSB0ZXh0Lg==" comment="comment" />
   <organization id="1" name="organization" display_name="Organization" />
   <organization_user_map id="1" user_id="1" organization_id="1" role_shortname="G" />

@@ -47,7 +47,7 @@ public class UserRegisterDTO extends UserProfileDTO {
 		UserBean userBean = new UserBean();
 		
 		userBean.setUsername(getUsername());
-		userBean.setPassword(passwordEncoder.encode(password));
+		userBean.setPasswordHash(passwordEncoder.encode(password));
 		userBean.setDisplayName(getDisplayName());
 		userBean.setEmail(getEmail());
 		userBean.setRegisterAt(new Date());

@@ -35,7 +35,7 @@ class TestSshKeyManager(TestCase):
     def test_repo_editor_can_editor_public_repo(self):
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         org = Organization(
@@ -66,7 +66,7 @@ class TestSshKeyManager(TestCase):
     def test_repo_editor_can_editor_private_repo(self):
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         org = Organization(
@@ -97,7 +97,7 @@ class TestSshKeyManager(TestCase):
     def test_org_member_cannot_editor_public_repo(self):
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         org = Organization(
@@ -123,7 +123,7 @@ class TestSshKeyManager(TestCase):
     def test_org_member_cannot_editor_private_repo(self):
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         org = Organization(
@@ -149,7 +149,7 @@ class TestSshKeyManager(TestCase):
     def test_nonmember_cannot_editor_public_repo(self):
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         org = Organization(
@@ -171,7 +171,7 @@ class TestSshKeyManager(TestCase):
     def test_nonmember_cannot_editor_private_repo(self):
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         org = Organization(

@@ -56,7 +56,7 @@ public class UserServiceTest {
 		
 		user = new UserBean();
 		user.setUsername("username");
-		user.setPassword(passwordEncoder.encode("password"));
+		user.setPasswordHash(passwordEncoder.encode("password"));
 		user.setDisplayName("User Name");
 		user.setEmail("username@email.com");
 		List<UserBean> users = new ArrayList<UserBean>();

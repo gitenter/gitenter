@@ -68,8 +68,8 @@ public class UserBean implements ModelBean {
 	@ToString.Exclude
 	@JsonIgnore
 	@NotNull
-	@Column(name="password")
-	private String password;
+	@Column(name="password_hash")
+	private String passwordHash;
 
 	@NotNull
 	@Size(min=2, max=64)

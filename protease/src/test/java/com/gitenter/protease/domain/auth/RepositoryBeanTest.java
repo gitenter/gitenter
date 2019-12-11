@@ -259,7 +259,7 @@ public class RepositoryBeanTest {
 		
 		UserBean editor = new UserBean();
 		editor.setUsername("editor");
-		editor.setPassword("password");
+		editor.setPasswordHash("password_hash");
 		editor.setDisplayName("Editor");
 		editor.setEmail("editor@email.com");
 		editor.setRegisterAt(new Date());

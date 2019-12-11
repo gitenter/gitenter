@@ -20,7 +20,7 @@ public class RestUserController {
 
 	@RequestMapping(value="/users/{userId}", method=RequestMethod.GET)
 	@ResponseBody
-	public UserBean showMember(@PathVariable Integer userId) throws IOException {
+	public UserBean showUserInfo(@PathVariable Integer userId) throws IOException {
 		return userService.getUserById(userId);
 	}
 }

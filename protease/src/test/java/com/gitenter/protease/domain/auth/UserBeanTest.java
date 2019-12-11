@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
-import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.OrganizationRepository;
+import com.gitenter.protease.dao.auth.OrganizationUserMapRepository;
 import com.gitenter.protease.dao.auth.UserRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -62,7 +62,7 @@ public class UserBeanTest {
 		assertNotNull(item.toString());
 		
 		assertEquals(item.getUsername(), "username");
-		assertEquals(item.getPassword(), "password");
+		assertEquals(item.getPasswordHash(), "password_hash");
 		assertEquals(item.getDisplayName(), "Display Name");
 		assertEquals(item.getEmail(), "email@email.com");
 		assertTrue(item.getRegisterAt() != null);

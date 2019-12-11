@@ -23,7 +23,7 @@ class TestSshKeyManager(TestCase):
 
         user = User(
             username="username",
-            password="password",
+            password_hash="password_hash",
             display_name="Display Name",
             email="username@company.com")
         SshKey(

@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public UserBean getUserById(Integer memberId) throws IOException {
+	public UserBean getUserById(Integer memberId) throws UserNotExistException {
 		Optional<UserBean> members = userRepository.findById(memberId);
 		if (members.isPresent()) {
 			return members.get();
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserBean getUserByUsername(String username) throws IOException {
+	public UserBean getUserByUsername(String username) throws UserNotExistException {
 		List<UserBean> users = userRepository.findByUsername(username);
 		if (users.size() == 1) {
 			return users.get(0);
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public UserBean getMe(Authentication authentication) throws IOException {
+	public UserBean getMe(Authentication authentication) throws UserNotExistException {
 		return getUserByUsername(authentication.getName());
 	}
 	
@@ -129,11 +129,11 @@ public class UserServiceImpl implements UserService {
 		
 		UserBean user = getUserByUsername(register.getUsername());
 		
-		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+		if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
 			return false;
 		}
 		else {
-			user.setPassword(passwordEncoder.encode(register.getPassword()));
+			user.setPasswordHash(passwordEncoder.encode(register.getPassword()));
 			userRepository.saveAndFlush(user);
 			
 			return true;
@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
 		
 		UserBean user = getUserByUsername(username);
 		
-		if (!passwordEncoder.matches(password, user.getPassword())) {
+		if (!passwordEncoder.matches(password, user.getPasswordHash())) {
 			return false;
 		}
 		else {

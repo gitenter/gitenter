@@ -23,17 +23,6 @@ public class RestAuthorizationController {
 	private static final Logger logger = LoggerFactory.getLogger(RestAuthorizationController.class);
 	
 	@Autowired private AnonymousService anonymousService;
-
-	/*
-	 * TODO: 
-	 * CORS setup globally, and only allowed for specified frontends.
-	 */
-	@CrossOrigin
-	@RequestMapping(value="/register", method=RequestMethod.GET)
-	@ResponseBody
-	public UserRegisterDTO showRegisterForm() {
-		return new UserRegisterDTO();
-	}
 	
 	@CrossOrigin
 	@RequestMapping(value="/register", method=RequestMethod.POST)

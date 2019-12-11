@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 
 import com.gitenter.capsid.dto.UserProfileDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
+import com.gitenter.capsid.service.exception.UserNotExistException;
 import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.RepositoryBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
@@ -23,9 +24,9 @@ public interface UserService {
 	 * as we cannot annotate @PreAuthorize in the class scope (rather than
 	 * in the method scope), there's not a lot of benefits doing that.
 	 */
-	public UserBean getUserById(Integer memberId) throws IOException;
-	public UserBean getUserByUsername(String username) throws IOException;
-	public UserBean getMe(Authentication authentication) throws IOException;
+	public UserBean getUserById(Integer memberId) throws UserNotExistException;
+	public UserBean getUserByUsername(String username) throws UserNotExistException;
+	public UserBean getMe(Authentication authentication) throws UserNotExistException;
 	
 	/*
 	 * Basically to have the input of "Authentication", it has similar the same

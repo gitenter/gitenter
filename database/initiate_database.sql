@@ -3,7 +3,7 @@ CREATE SCHEMA auth;
 CREATE TABLE auth.application_user (
 	id serial PRIMARY KEY,
 	username text NOT NULL UNIQUE,
-	password text NOT NULL,
+	password_hash text NOT NULL,
 	display_name text NOT NULL,
 	email text NOT NULL CHECK (email ~* '(^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$)|(^$)') UNIQUE,
 	register_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
