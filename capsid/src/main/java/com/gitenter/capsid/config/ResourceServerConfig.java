@@ -2,6 +2,7 @@ package com.gitenter.capsid.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -35,8 +36,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.and()
 		.antMatcher("/api/**").authorizeRequests()
 		.antMatchers("/health_check").permitAll()
-		.antMatchers("/api/register**").permitAll()
-		.antMatchers("/api/register/**").permitAll()
+		.antMatchers(HttpMethod.POST, "/api/users").permitAll()
 //		.antMatchers("/api/glee/**").hasAnyAuthority("ADMIN", "USER")
 //		.antMatchers("/api/users/**").hasAuthority("ADMIN")
 		.antMatchers("/api/**").authenticated()

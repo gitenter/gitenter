@@ -33,6 +33,11 @@ public class AnonymousServiceImpl implements AnonymousService {
 			userRepository.saveAndFlush(userBean);
 		}
 		catch(PersistenceException e) {
+			/*
+			 * TODO:
+			 * Seems broken. Originally raises `PersistenceException` but it seems raises
+			 * `o.h.e.jdbc.spi.SqlExceptionHelper` now (after JDBC upgrade?)
+			 */
 			ExceptionConsumingPipeline.consumePersistenceException(e, userBean);
 		}
 		

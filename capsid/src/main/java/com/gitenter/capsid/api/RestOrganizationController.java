@@ -2,6 +2,8 @@ package com.gitenter.capsid.api;
 
 import java.io.IOException;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,7 @@ public class RestOrganizationController {
 
 	@RequestMapping(value="/organizations/{organizationId}", method=RequestMethod.GET)
 	@ResponseBody
-	public OrganizationBean showOrganization(@PathVariable Integer organizationId) throws IOException {
+	public OrganizationBean showOrganization(@PathVariable @Min(1) Integer organizationId) throws IOException {
 		return organizationService.getOrganization(organizationId);
 	}
 }

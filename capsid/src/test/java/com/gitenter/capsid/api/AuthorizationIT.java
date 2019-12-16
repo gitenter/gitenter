@@ -57,14 +57,14 @@ public class AuthorizationIT {
 		ObjectWriter ow = objectMapper.writer().withDefaultPrettyPrinter();
 		String userRegisterDTOJson = ow.writeValueAsString(userRegisterDTO);
 		
-		String registerUserJson = mockMvc.perform(post("/api/register")
+		String registerUserJson = mockMvc.perform(post("/api/users")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(userRegisterDTOJson))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		UserBean registerUser = objectMapper.readValue(registerUserJson, UserBean.class);
 		assertEquals(registerUser.getUsername(), username);
-		
+
 		String tokenJson = mockMvc.perform(post("/oauth/token")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.with(httpBasic("gitenter-envuelope","secretpassword"))
