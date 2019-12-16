@@ -87,14 +87,17 @@ public class UserBean implements ModelBean {
 	private Date registerAt;
 
 	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="user")
 	private List<OrganizationUserMapBean> organizationUserMaps = new ArrayList<OrganizationUserMapBean>();
 	
 	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="user")
 	private List<RepositoryUserMapBean> repositoryUserMaps = new ArrayList<RepositoryUserMapBean>();
 	
 	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=SshKeyBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="user")
 	private List<SshKeyBean> sshKeys;
 	

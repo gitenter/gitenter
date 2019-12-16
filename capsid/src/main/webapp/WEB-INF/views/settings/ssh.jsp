@@ -44,8 +44,8 @@
           <tr>
             <td>New key</td>
             <td>
-              <sf:textarea class="bigger" path="value" />
-              <sf:errors class="error" path="value" />
+              <sf:textarea class="bigger" path="sshKeyValue" />
+              <sf:errors class="error" path="sshKeyValue" />
             </td>
           </tr>
           <c:if test="${errorMessage != null}">

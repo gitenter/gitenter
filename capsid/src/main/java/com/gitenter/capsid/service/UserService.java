@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
+import com.gitenter.capsid.dto.ChangePasswordDTO;
 import com.gitenter.capsid.dto.UserProfileDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
@@ -34,7 +35,8 @@ public interface UserService {
 	 */
 	public UserProfileDTO getUserProfileDTO(Authentication authentication) throws IOException;
 	public UserRegisterDTO getUserRegisterDTO(Authentication authentication) throws IOException;
-	public void updateUser(UserProfileDTO profile) throws IOException;
+	public UserBean updateUser(UserProfileDTO profile) throws IOException;
+	boolean updatePassword(Authentication authentication, ChangePasswordDTO changePasswordDTO) throws IOException;
 	public boolean updatePassword(UserRegisterDTO register, String oldPassword) throws IOException;
 	
 	public List<OrganizationBean> getManagedOrganizations(String username) throws IOException;

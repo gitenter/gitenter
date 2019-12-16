@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gitenter.capsid.dto.ChangePasswordDTO;
 import com.gitenter.capsid.dto.UserProfileDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
 import com.gitenter.capsid.service.exception.UserNotExistException;
@@ -76,6 +77,13 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 	
+	/*
+	 * Maybe no need to pass `Authentication` from controller layer. But maybe we need
+	 * to hack the system a little bit to achieve that.
+	 * https://www.mkyong.com/spring-security/get-current-logged-in-username-in-spring-security/
+	 * https://stackoverflow.com/a/36936819/2467072
+	 * https://stackoverflow.com/a/31050615/2467072
+	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
 	public UserBean getMe(Authentication authentication) throws UserNotExistException {
@@ -110,7 +118,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@PreAuthorize("hasPermission(#profile, T(com.gitenter.capsid.security.UserSecurityRole).SELF)")
-	public void updateUser(UserProfileDTO profile) throws IOException {
+	public UserBean updateUser(UserProfileDTO profile) throws IOException {
 		
 		UserBean user = getUserByUsername(profile.getUsername());
 		profile.updateBean(user);
@@ -120,9 +128,29 @@ public class UserServiceImpl implements UserService {
 		 * be the bean queried from the database, rather than the bean user just
 		 * produced. 
 		 */
-		userRepository.saveAndFlush(user);
+		return userRepository.saveAndFlush(user);
 	}
 	
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public boolean updatePassword(Authentication authentication, ChangePasswordDTO changePasswordDTO) throws IOException {
+		
+		UserBean me = getMe(authentication);
+		if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), me.getPasswordHash())) {
+			return false;
+		}
+		else {
+			me.setPasswordHash(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+			userRepository.saveAndFlush(me);
+			
+			return true;
+		}
+	}
+	
+	/*
+	 * TODO:
+	 * Deprecated after removing web controller.
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#register, T(com.gitenter.capsid.security.UserSecurityRole).SELF)")
 	public boolean updatePassword(UserRegisterDTO register, String oldPassword) throws IOException {

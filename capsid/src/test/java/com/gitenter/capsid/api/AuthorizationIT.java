@@ -2,6 +2,7 @@ package com.gitenter.capsid.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,27 +58,42 @@ public class AuthorizationIT {
 		ObjectWriter ow = objectMapper.writer().withDefaultPrettyPrinter();
 		String userRegisterDTOJson = ow.writeValueAsString(userRegisterDTO);
 		
-		String registerUserJson = mockMvc.perform(post("/api/users")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(userRegisterDTOJson))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-		UserBean registerUser = objectMapper.readValue(registerUserJson, UserBean.class);
+		UserBean registerUser = objectMapper.readValue(
+				mockMvc.perform(post("/api/users")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(userRegisterDTOJson))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(), 
+				UserBean.class);
 		assertEquals(registerUser.getUsername(), username);
 
-		String tokenJson = mockMvc.perform(post("/oauth/token")
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.with(httpBasic("gitenter-envuelope","secretpassword"))
-				.content("username="+username+"&password="+password+"&grant_type=password"))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-		String bearerToken = new JSONObject(tokenJson).getString("access_token");
+		String bearerToken = new JSONObject(
+				mockMvc.perform(post("/oauth/token")
+						.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+						.with(httpBasic("gitenter-envuelope","secretpassword"))
+						.content("username="+username+"&password="+password+"&grant_type=password"))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString())
+				.getString("access_token");
 		
-		String queryUserJson = mockMvc.perform(get("/api/users/"+registerUser.getId())
-				.header("Authorization", "Bearer " + bearerToken))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-		UserBean queryUser = objectMapper.readValue(queryUserJson, UserBean.class);
+		UserBean queryMe = objectMapper.readValue(
+				mockMvc.perform(get("/api/users/me")
+						.header("Authorization", "Bearer " + bearerToken))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(),
+				UserBean.class);
+		assertEquals(queryMe.getUsername(), username);
+		
+		UserBean queryUser = objectMapper.readValue(
+				mockMvc.perform(get("/api/users/"+registerUser.getId())
+						.header("Authorization", "Bearer " + bearerToken))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(), 
+				UserBean.class);
 		assertEquals(queryUser.getUsername(), username);
+		
+		mockMvc.perform(delete("/api/users/me").param("password", password)
+				.header("Authorization", "Bearer " + bearerToken))
+				.andExpect(status().isOk());
 	}
 }

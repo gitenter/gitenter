@@ -159,7 +159,7 @@ public class UserSettingsControllerTest {
 	public void testAddSshKeyValidInput() throws Exception {
 		
 		mockMvc.perform(post("/settings/ssh")
-				.param("value", "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9 user@email.com"))
+				.param("sshKeyValue", "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9 user@email.com"))
 		.andExpect(redirectedUrl("/settings/ssh"));
 	}
 	
@@ -167,12 +167,12 @@ public class UserSettingsControllerTest {
 	public void testAddSshKeyInalidInput() throws Exception {
 		
 		mockMvc.perform(post("/settings/ssh")
-				.param("value", "invalid_ssh_key"))
+				.param("sshKeyValue", "invalid_ssh_key"))
 		.andExpect(view().name("settings/account/password"))
 		.andExpect(status().isOk())
 		.andExpect(model().errorCount(1))
 		.andExpect(model().attributeHasFieldErrors(
-				"sshKeyFieldDTO", "value"))
+				"sshKeyFieldDTO", "sshKeyValue"))
 		.andReturn().getResponse().getContentAsString().contains("The SSH key does not have a valid format!");
 	}
 }

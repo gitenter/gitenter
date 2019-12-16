@@ -37,6 +37,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.antMatcher("/api/**").authorizeRequests()
 		.antMatchers("/health_check").permitAll()
 		.antMatchers(HttpMethod.POST, "/api/users").permitAll()
+		.antMatchers("/api/users/me").authenticated()
 //		.antMatchers("/api/glee/**").hasAnyAuthority("ADMIN", "USER")
 //		.antMatchers("/api/users/**").hasAuthority("ADMIN")
 		.antMatchers("/api/**").authenticated()

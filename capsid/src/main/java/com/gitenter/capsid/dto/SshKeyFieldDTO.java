@@ -37,7 +37,7 @@ public class SshKeyFieldDTO {
 	@Pattern(
 		regexp="^(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519) .*\\s*$",
 		message="The SSH key does not have a valid format!")
-	private String value;
+	private String sshKeyValue;
 	
 	/*
 	 * Cannot extend CreateDTO, as it raises special exceptions.
@@ -45,7 +45,7 @@ public class SshKeyFieldDTO {
 	public SshKeyBean toBean() throws GeneralSecurityException, IOException {
 		
 		SshKeyBean sshKeyBean = new SshKeyBean();
-		sshKeyBean.setBean(value);
+		sshKeyBean.setBean(sshKeyValue);
 		
 		return sshKeyBean;
 	}
