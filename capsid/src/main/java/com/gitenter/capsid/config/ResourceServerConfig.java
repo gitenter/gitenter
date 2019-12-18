@@ -1,6 +1,7 @@
 package com.gitenter.capsid.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +10,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.gitenter.capsid.security.GitEnterAccessDeniedHandler;
 
@@ -36,6 +39,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.and()
 		.antMatcher("/api/**").authorizeRequests()
 		.antMatchers("/health_check").permitAll()
+		.antMatchers(HttpMethod.OPTIONS, "/api/users").permitAll()
 		.antMatchers(HttpMethod.POST, "/api/users").permitAll()
 		.antMatchers("/api/users/me").authenticated()
 //		.antMatchers("/api/glee/**").hasAnyAuthority("ADMIN", "USER")
@@ -44,5 +48,19 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 //		.antMatchers("/**").permitAll()
 		.anyRequest().authenticated()
 		.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(new GitEnterAccessDeniedHandler());		
+	}
+	
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				/*
+				 * TODO:
+				 * Only allow origins from selected front-ends. Use `allowedOrigins`.
+				 */
+				registry.addMapping("/api/**");
+			}
+		};
 	}
 }

@@ -9,6 +9,8 @@ import javax.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +51,6 @@ public class UsersController {
   	 * > Detail: Key (username)=(integration_test) already exists.
 	 * It should return 409 ("conflict") if username already exist. 
 	 */
-	@CrossOrigin
 	@RequestMapping(method=RequestMethod.POST)
 	@ResponseBody
 	public UserBean registerUser(

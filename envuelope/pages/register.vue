@@ -65,7 +65,7 @@ export default {
   methods: {
     register() {
       console.log("Register user!!");
-      axios.post('http://localhost:8080/api/users', {
+      const request = axios.post('http://localhost:8080/api/users', {
         "username": this.username,
         "password": this.password,
         "displayName": this.displayName,
@@ -76,7 +76,9 @@ export default {
           "Content-Type": "application/json"
         }
       })
-        .then((Response) => {})
+      request.then((response) => {
+          console.log(response.headers);
+        })
         .catch((err) => {
           console.log(err);
           this.errors.push(err)
