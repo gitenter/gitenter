@@ -73,7 +73,7 @@ export default {
   methods: {
     register() {
       console.log("Register user!!");
-      const request = axios.post('http://localhost:8080/api/users', {
+      const request = this.$axios.post('/users', {
         "username": this.username,
         "password": this.password,
         "displayName": this.displayName,
