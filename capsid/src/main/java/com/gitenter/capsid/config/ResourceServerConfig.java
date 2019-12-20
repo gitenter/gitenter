@@ -39,7 +39,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.and()
 		.antMatcher("/api/**").authorizeRequests()
 		.antMatchers("/health_check").permitAll()
-		.antMatchers(HttpMethod.OPTIONS, "/api/users").permitAll()
+//		.antMatchers(HttpMethod.OPTIONS, "/api/users").permitAll()
 		.antMatchers(HttpMethod.POST, "/api/users").permitAll()
 		.antMatchers("/api/users/me").authenticated()
 //		.antMatchers("/api/glee/**").hasAnyAuthority("ADMIN", "USER")
@@ -47,7 +47,23 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.antMatchers("/api/**").authenticated()
 //		.antMatchers("/**").permitAll()
 		.anyRequest().authenticated()
-		.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(new GitEnterAccessDeniedHandler());		
+		.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(new GitEnterAccessDeniedHandler());
+		
+		/*
+		 * The W3 specification says that preflight requests should never include 
+		 * credentials so pass credentials in should not be an option:
+		 * https://fetch.spec.whatwg.org/#cors-protocol-and-credentials
+		 * 
+		 * However, by default Spring will 401 OPTIONS requests just like the other 
+		 * ones. Avoid 401 for OPTIONS preflights requests:
+		 * https://www.baeldung.com/spring-security-cors-preflight
+		 * 
+		 * Alternatively, we can `.antMatchers(HttpMethod.OPTIONS, "/api/users").permitAll()`
+		 * for each individual endpoint. However, unlike that will give customized 
+		 * `Allow: POST,OPTIONS`, here will not return `Allow` header. But that doesn't 
+		 * affect axios preflight anyway.
+		 */
+		http.cors();
 	}
 	
 	@Bean
