@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav>
-      <a href="/">Home</a> &rarr;
+      <nuxt-link to="/">Home</nuxt-link> &rarr;
       <span class="nav-current">Sign Up</span>
     </nav>
     <article>
@@ -12,24 +12,28 @@
               <td>Username</td>
               <td>
                 <input id="username" v-model="username" name="username" type="text" value=""/>
+                <span class="error" v-if="errors.username">{{ errors.username }}</span>
               </td>
             </tr>
             <tr>
               <td>Password</td>
               <td>
                 <input id="password" v-model="password" name="password" type="password" value=""/>
+                <span class="error" v-if="errors.password">{{ errors.password }}</span>
               </td>
             </tr>
             <tr>
               <td>Display Name</td>
               <td>
                 <input id="displayName" v-model="displayName" name="displayName" type="text" value=""/>
+                <span class="error" v-if="errors.displayName">{{ errors.displayName }}</span>
               </td>
             </tr>
             <tr>
               <td>Email address</td>
               <td>
                 <input id="email" v-model="email" name="email" type="email" value=""/>
+                <span class="error" v-if="errors.email">{{ errors.email }}</span>
               </td>
             </tr>
             <tr>
@@ -38,7 +42,6 @@
             </tr>
           </table>
           <div>
-            <input type="hidden" name="_csrf" value="ebe28b79-3705-4e2e-8604-f89336182e35" />
           </div>
         </form>
       </div>
@@ -58,7 +61,12 @@ export default {
       password: '',
       displayName: '',
       email: '',
-      errors: []
+      errors: {
+        username: '',
+        password: '',
+        displayName: '',
+        email: ''
+      }
     }
   },
 
@@ -77,11 +85,35 @@ export default {
         }
       })
       request.then((response) => {
-          console.log(response.headers);
+          console.log(response);
         })
-        .catch((err) => {
-          console.log(err);
-          this.errors.push(err)
+        .catch((error) => {
+
+          /*
+          TODO:
+          If there's a way to reset to initial value, rather than define
+          it as initial value again.
+          */
+          this.errors = {
+            username: '',
+            password: '',
+            displayName: '',
+            email: ''
+          }
+
+          /*
+          TODO:
+          This ties to Java Validation error output form. Should be more
+          general/lightweighted.
+          Also, it seems if I use Spring `ExceptionHandler` to wrap/customize
+          other error messages (e.g. `ItemNotUniqueException`), it will
+          override Java Validation error output.
+          */
+          var attrError;
+          for (attrError of error.response.data.errors) {
+            this.errors[attrError['field']] = attrError['defaultMessage']
+          }
+          console.log(this.errors)
         })
     }
   }

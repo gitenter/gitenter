@@ -50,6 +50,9 @@ public class UsersController {
 	 * > ERROR o.h.e.jdbc.spi.SqlExceptionHelper - ERROR: duplicate key value violates unique constraint "application_user_username_key"
   	 * > Detail: Key (username)=(integration_test) already exists.
 	 * It should return 409 ("conflict") if username already exist. 
+	 * 
+	 * Tried to use `ExceptionHandler` and wrap a `ErrorInfo`. It seems will override
+	 * Java validation `@Valid` error output form.
 	 */
 	@RequestMapping(method=RequestMethod.POST)
 	@ResponseBody

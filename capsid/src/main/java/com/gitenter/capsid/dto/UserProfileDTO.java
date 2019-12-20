@@ -3,6 +3,7 @@ package com.gitenter.capsid.dto;
 import java.io.IOException;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -36,6 +37,7 @@ public class UserProfileDTO implements ReadDTO<UserBean>, UpdateDTO<UserBean> {
 	private String displayName;
 	
 	@NotNull
+	@NotBlank
 	@Email
 	private String email;
 	
