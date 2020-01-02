@@ -1,5 +1,7 @@
 package com.gitenter.capsid.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -28,7 +33,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-	
+		
 		/*
 		 * Right now, if not authenticated, Spring will return 200 with empty body.
 		 * Compare it with other choices (404 or 204), it is suggested by
@@ -76,6 +81,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 				 * Only allow origins from selected front-ends. Use `allowedOrigins`.
 				 */
 				registry.addMapping("/api/**");
+//				registry.addMapping("/**");
 			}
 		};
 	}

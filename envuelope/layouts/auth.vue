@@ -5,9 +5,6 @@
 
       <form id="command" action="/logout" method="POST">
         <input type="submit" id="logout" value="Log out" />
-        <div>
-          <input type="hidden" name="_csrf" value="ca8d34f0-e243-4440-a31e-eea4d56f9afb" />
-        </div>
       </form>
 
       <form action="/settings" method="GET">

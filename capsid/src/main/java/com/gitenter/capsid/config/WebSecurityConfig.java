@@ -3,6 +3,7 @@ package com.gitenter.capsid.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -41,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			 * https://docs.spring.io/spring-security/site/docs/current/reference/html/el-access.html#el-access-web-path-variables
 			 */
 			.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
 				.antMatchers("/").authenticated()
 				.antMatchers("/settings/**").authenticated()
 				.antMatchers("/organizations/create").authenticated()
@@ -89,7 +91,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.rememberMe().tokenValiditySeconds(2419200).key("enterovirus");
 //		
-//		http.csrf().disable();
+//		http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll();
 	}
 	
 	/*
