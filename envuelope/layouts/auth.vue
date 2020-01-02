@@ -3,9 +3,9 @@
     <header>
       <a href="/"><img class="logo" src="/resources/image/logo.png" alt="enterovirus" height="48" width="192"></a>
 
-      <form id="command" action="/logout" method="POST">
-        <input type="submit" id="logout" value="Log out" />
-      </form>
+      <button @click="logout">
+        Log out
+      </button>
 
       <form action="/settings" method="GET">
         <input type="submit" value="Settings" />
@@ -15,7 +15,7 @@
         <input type="submit" value="Help" />
       </form>
 
-      <div class="text">Logged in as asdf</div>
+      <div class="text">Logged in as {{ username }}</div>
     </header>
 
     <nuxt />
@@ -26,5 +26,24 @@
     </footer>
   </div>
 </template>
+
+<script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
+export default {
+  data() {
+    return {
+      username: this.$store.state.auth.username
+    }
+  },
+
+  methods: {
+    logout() {
+      Cookie.remove('auth')
+      this.$store.commit('setAuth', null)
+    }
+  }
+}
+</script>
 
 <style></style>

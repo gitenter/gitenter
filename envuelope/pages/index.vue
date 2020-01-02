@@ -28,7 +28,7 @@ const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
   middleware: 'authenticated',
-  layout: 'unauth',
+  layout: 'auth',
 
   components: {
     Logo

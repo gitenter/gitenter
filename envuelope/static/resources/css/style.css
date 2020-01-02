@@ -77,13 +77,13 @@ header img.logo {
 	background-color: #bbbbbb;
 }
 
-header div.text, header form {
+header div.text, header form, header button {
 
 	float: right;
 	overflow: auto;
 }
 
-header div.text, header input[type=submit] {
+header div.text, header input[type=submit], header button {
 
 	background-color: #bbbbbb;
 	color: #666666;
@@ -100,7 +100,7 @@ header div.text {
 	text-decoration: none;
 }
 
-header input[type=submit] {
+header input[type=submit], header button{
 
 	border: 0px;
 	padding: 16px 16px 8px 16px;
@@ -114,7 +114,7 @@ header input[type=submit] {
 	cursor: pointer;
 }
 
-header input[type=submit]:hover {
+header input[type=submit]:hover, header button:hover {
 	color: #444444;
 }
 

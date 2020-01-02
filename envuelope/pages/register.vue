@@ -53,6 +53,7 @@
 import axios from 'axios'
 
 export default {
+  middleware: 'notAuthenticated',
   layout: 'unauth',
 
   data() {

@@ -70,6 +70,7 @@ export default {
         request.then((response) => {
             console.log(response);
             const auth = {
+              username: this.username,
               accessToken: response.data.access_token
             }
             console.log(auth);
