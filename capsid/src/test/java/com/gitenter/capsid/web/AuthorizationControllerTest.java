@@ -78,10 +78,10 @@ public class AuthorizationControllerTest {
 		mockMvc.perform(post("/register")) 
 		.andExpect(view().name("authorization/register"))
 		.andExpect(status().isOk())
-		.andExpect(model().errorCount(4))
+		.andExpect(model().errorCount(5))
 		.andExpect(model().attributeHasFieldErrors(
-				"userRegisterDTO", "username", "password", "displayName", "email"))
-		.andReturn().getResponse().getContentAsString().contains("must not be null");
+				"userRegisterDTO", "username", "password", "displayName", "email", "email"))
+		.andReturn().getResponse().getContentAsString();
 		
 		/*
 		 * TODO:

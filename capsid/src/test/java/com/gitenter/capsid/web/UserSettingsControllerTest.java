@@ -53,9 +53,9 @@ public class UserSettingsControllerTest {
 				.param("username", "username"))
 		.andExpect(view().name("settings/profile"))
 		.andExpect(status().isOk())
-		.andExpect(model().errorCount(2))
+		.andExpect(model().errorCount(3))
 		.andExpect(model().attributeHasFieldErrors(
-				"userProfileDTO", "displayName", "email"))
+				"userProfileDTO", "displayName", "email", "email"))
 		.andReturn().getResponse().getContentAsString().contains("must not be null");
 	}
 	
@@ -137,7 +137,7 @@ public class UserSettingsControllerTest {
 				.param("old_password", "password"))
 		.andExpect(view().name("settings/account/password"))
 		.andExpect(status().isOk())
-		.andExpect(model().errorCount(2+1))
+		.andExpect(model().errorCount(2+2))
 		.andExpect(model().attributeHasFieldErrors(
 				"userRegisterDTO", "password"))
 		.andReturn().getResponse().getContentAsString().contains("size must be between");
