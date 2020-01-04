@@ -1,5 +1,8 @@
 <template>
   <div>
+    <nav>
+      <span class="nav-current">Home</span>
+    </nav>
     <article>
       <div v-if="$store.state.auth">
         <button @click="logout">
@@ -12,6 +15,30 @@
           login
         </NuxtLink>.
       </p>
+      <div class="left-wide">
+        <h3>Organized Repositories</h3>
+
+        <h3>Authored Repositories</h3>
+
+        <h3>Currently reviewed repository</h3>
+      </div>
+      <div class="right-narrow">
+        <h3>
+          Managed organizations
+
+          <form id="command" action="/organizations/create" method="GET">
+            <input type="submit" value="+" />
+          </form>
+        </h3>
+
+        <h5 v-for="organization in managedOrganizations">
+          <nuxt-link :to="'/organizations/' + organization.id">{{ organization.displayName }}</nuxt-link>
+        </h5>
+
+        <h3>Belonged organizations</h3>
+
+      </div>
+      <div style="clear:both"></div>
     </article>
     <div class="container">
       <div>
@@ -32,6 +59,32 @@ export default {
 
   components: {
     Logo
+  },
+
+  data() {
+    return {
+      managedOrganizations: [],
+      belongedOrganizations: []
+    }
+  },
+
+  mounted() {
+    this.$axios.get('/users/me/organizations?role=manager', {
+      headers: {
+        'Authorization': "Bearer " + this.$store.state.auth.accessToken
+      }
+    })
+    .then(response => {
+      this.managedOrganizations = response.data
+    })
+    this.$axios.get('/users/me/organizations?role=ordinary_member', {
+      headers: {
+        'Authorization': "Bearer " + this.$store.state.auth.accessToken
+      }
+    })
+    .then(response => {
+      this.belongedOrganizations = response.data
+    })
   },
 
   methods: {

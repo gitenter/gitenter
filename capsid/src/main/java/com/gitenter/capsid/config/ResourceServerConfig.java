@@ -1,7 +1,5 @@
 package com.gitenter.capsid.config;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,13 +10,14 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.gitenter.capsid.security.GitEnterAccessDeniedHandler;
+
+//import io.swagger.v3.oas.models.Components;
+//import io.swagger.v3.oas.models.OpenAPI;
+//import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 @EnableResourceServer
@@ -85,4 +84,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 			}
 		};
 	}
+	
+	/*
+	 * https://github.com/springdoc/springdoc-openapi/issues/49#issuecomment-524113724
+	 * But seems not working for my case yet.
+	 */
+//	@Bean
+//	public OpenAPI customOpenAPI() {
+//		return new OpenAPI().components(new Components().addSecuritySchemes("bearer-key",
+//				new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+//	}
 }

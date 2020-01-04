@@ -30,7 +30,18 @@ If that happens, use user `user` and password printed in the console. E.g.
 Using default security password: c543b70b-7aa5-4dcf-ab0b-eea37e792363
 ```
 
-## API Doc
+## API
+
+### CMD debug
+
+```
+curl -X POST -H 'Content-type:application/json' -d '{"username":"aaaa","displayName":"aaaa","email":"aaa@a.com","password":"aaaa"}' localhost:8080/api/users
+
+BEARER_TOKEN=$(curl -u gitenter-envuelope:secretpassword -d "grant_type=password&username=aaaa&password=aaaa" -X POST http://localhost:8080/oauth/token | jq '.access_token' | xargs)
+curl -H 'Accept: application/json' -H "Authorization: Bearer $BEARER_TOKEN" http://localhost:8080/api/users/me/organizations\?role\=manager | jq .
+```
+
+### Doc
 
 * http://localhost:8080/api-docs OpenAPI doc in JSON format
 * http://localhost:8080/api-docs.yaml OpenAPI doc in YAML format

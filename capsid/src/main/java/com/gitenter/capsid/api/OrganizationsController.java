@@ -16,7 +16,7 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 
 @RestController
 @RequestMapping(value="/api")
-public class RestOrganizationController {
+public class OrganizationsController {
 	
 	@Autowired OrganizationService organizationService;
 

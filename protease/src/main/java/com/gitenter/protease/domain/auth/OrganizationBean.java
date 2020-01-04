@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitenter.protease.domain.ModelBean;
 
 import lombok.Getter;
@@ -45,10 +46,12 @@ public class OrganizationBean implements ModelBean {
 	private String displayName;
 
 	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=RepositoryBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<RepositoryBean> repositories = new ArrayList<RepositoryBean>();
 
 	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="organization")
 	private List<OrganizationUserMapBean> organizationUserMaps = new ArrayList<OrganizationUserMapBean>();
 	
@@ -80,6 +83,7 @@ public class OrganizationBean implements ModelBean {
 		return items;
 	}
 	
+	@JsonIgnore
 	public List<UserBean> getUsers() {
 		List<UserBean> items = new ArrayList<UserBean>();
 		for (OrganizationUserMapBean map : organizationUserMaps) {

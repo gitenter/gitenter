@@ -24,6 +24,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitenter.gitar.util.GitPlaceholder;
 import com.gitenter.protease.domain.ModelBean;
 import com.gitenter.protease.domain.git.BranchBean;
@@ -71,6 +72,7 @@ public class RepositoryBean implements ModelBean {
 	private Boolean isPublic;
 	
 	@ToString.Exclude
+	@JsonIgnore
 	@LazyCollection(LazyCollectionOption.EXTRA)
 	@OneToMany(targetEntity=CommitBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	/*
@@ -92,6 +94,7 @@ public class RepositoryBean implements ModelBean {
 	}
 
 	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=RepositoryUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<RepositoryUserMapBean> repositoryUserMaps = new ArrayList<RepositoryUserMapBean>();
 	
@@ -134,12 +137,14 @@ public class RepositoryBean implements ModelBean {
 	@Transient
 	@Getter(AccessLevel.NONE)
 	@ToString.Exclude
+	@JsonIgnore
 	private BranchPlaceholder branchPlaceholder;
 	
 	/*
 	 * Return the desired "BranchBean" object based on the input name. No need to
 	 * query the git storage to confirm the branch's existence.
 	 */
+	@JsonIgnore
 	public BranchBean getBranch(String branchName) {
 		return branchPlaceholder.get(branchName);
 	}
@@ -151,8 +156,10 @@ public class RepositoryBean implements ModelBean {
 	@Transient
 	@Getter(AccessLevel.NONE)
 	@ToString.Exclude
+	@JsonIgnore
 	private BranchesPlaceholder branchesPlaceholder;
 	
+	@JsonIgnore
 	public Collection<BranchBean> getBranches() throws IOException, GitAPIException {
 		return branchesPlaceholder.get();
 	}
@@ -172,6 +179,7 @@ public class RepositoryBean implements ModelBean {
 	@Transient
 	@Getter(AccessLevel.NONE)
 	@ToString.Exclude
+	@JsonIgnore
 	private TagPlaceholder tagPlaceholder;
 	
 	public TagBean getTag(String tagName) {
@@ -185,8 +193,10 @@ public class RepositoryBean implements ModelBean {
 	@Transient
 	@Getter(AccessLevel.NONE)
 	@ToString.Exclude
+	@JsonIgnore
 	private TagsPlaceholder tagsPlaceholder;
 	
+	@JsonIgnore
 	public Collection<TagBean> getTags() throws IOException, GitAPIException {
 		return tagsPlaceholder.get();
 	}
@@ -195,6 +205,8 @@ public class RepositoryBean implements ModelBean {
 		Collection<TagBean> get() throws IOException, GitAPIException;
 	}
 	
+	@ToString.Exclude
+	@JsonIgnore
 	@OneToMany(targetEntity=ReviewBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="repository")
 	private List<ReviewBean> reviews;
 	

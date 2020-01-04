@@ -234,11 +234,14 @@
             <version>3.1.0</version>
             <type>jar</type>
         </dependency>
-        <dependency>
+        <!-- Doesn't work as it hides static files e.g. /resources/css/style.css
+        No longer a problem when this project is pure API (and no longer uses src/main/webapp)
+        so temperarily disable it. -->
+        <!-- <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.1.49</version>
-        </dependency>
+        </dependency> -->
 
         <!-- Runtime -->
 <!--        <dependency>

@@ -27,6 +27,9 @@ import com.gitenter.capsid.service.UserService;
 import com.gitenter.protease.domain.auth.SshKeyBean;
 import com.gitenter.protease.domain.auth.UserBean;
 
+//import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping(value="/api/users")
 public class UsersController {
@@ -69,6 +72,7 @@ public class UsersController {
 		return userService.getUserById(userId);
 	}
 	
+//	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@RequestMapping(value="/me", method=RequestMethod.GET)
 	@ResponseBody
 	public UserBean getMe(Authentication authentication) throws Exception {
