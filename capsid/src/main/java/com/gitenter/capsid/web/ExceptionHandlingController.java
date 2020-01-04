@@ -1,7 +1,5 @@
 package com.gitenter.capsid.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -10,17 +8,18 @@ import com.gitenter.capsid.service.exception.InvalidOperationException;
 import com.gitenter.capsid.service.exception.ResourceNotFoundException;
 import com.gitenter.capsid.service.exception.UnreachableException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ControllerAdvice
+@Slf4j
 public class ExceptionHandlingController {
-	
-	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlingController.class);
-	
+		
 	private void errorLogging(Exception e) {
-		logger.error("Raising exception "+e.getClass().getSimpleName()+" with message: "+e.getMessage());
+		log.error("Raising exception "+e.getClass().getSimpleName()+" with message: "+e.getMessage());
 	}
 	
 	private void warningLogging(Exception e) {
-		logger.warn("Raising exception "+e.getClass().getSimpleName()+" with message: "+e.getMessage());
+		log.warn("Raising exception "+e.getClass().getSimpleName()+" with message: "+e.getMessage());
 	}
 	
 	/*

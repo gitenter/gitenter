@@ -3,8 +3,6 @@ package com.gitenter.capsid.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,18 +14,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gitenter.capsid.dto.SshKeyFieldDTO;
 import com.gitenter.capsid.dto.UserProfileDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
-import com.gitenter.capsid.dto.SshKeyFieldDTO;
 import com.gitenter.capsid.service.UserService;
-import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.SshKeyBean;
+import com.gitenter.protease.domain.auth.UserBean;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/settings")
+@Slf4j
 public class UserSettingsController {
-	
-	private static final Logger logger = LoggerFactory.getLogger(UserSettingsController.class);
 	
 	private final UserService userService;
 	
@@ -85,7 +84,7 @@ public class UserSettingsController {
 		 * > assert authentication.getName().equals(profileAfterChange.getUsername());
 		 */
 		userService.updateUser(profileAfterChange);
-		logger.debug("User changed profile. New profile: "+profileAfterChange);
+		log.debug("User changed profile. New profile: "+profileAfterChange);
 		
 		model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 		return "redirect:/settings/profile";
@@ -137,7 +136,7 @@ public class UserSettingsController {
 		}
 		
 		if (userService.updatePassword(registerAfterChange, oldPassword)) {
-			logger.info("User changed password: "+registerAfterChange.getUsername());
+			log.info("User changed password: "+registerAfterChange.getUsername());
 			
 			model.addFlashAttribute("successfulMessage", "Changes has been saved successfully!");
 			return "redirect:/settings/account/password";
@@ -164,7 +163,7 @@ public class UserSettingsController {
 		if (userService.deleteUser(authentication.getName(), password)) {
 			request.logout();
 			
-			logger.info("User account deleted. Username: "+authentication.getName()+". IP: "+request.getRemoteAddr());
+			log.info("User account deleted. Username: "+authentication.getName()+". IP: "+request.getRemoteAddr());
 			
 			/*
 			 * TODO:
