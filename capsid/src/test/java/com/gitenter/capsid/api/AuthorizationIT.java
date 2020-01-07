@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -43,7 +44,13 @@ public class AuthorizationIT {
 	@BeforeEach
 	public void setUp() throws JsonProcessingException {
 		objectMapper = new ObjectMapper();
+		
 		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		
+		/*
+		 * This is for HATEOAS `_link`.
+		 */
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); 
 	}
 	
 	@Test

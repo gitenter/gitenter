@@ -1,5 +1,8 @@
 package com.gitenter.capsid.api;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -7,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,25 +60,31 @@ public class UsersController {
 	 * Java validation `@Valid` error output form.
 	 */
 	@PostMapping
-	public UserBean registerUser(
+	public EntityModel<UserBean> registerUser(
 			@RequestBody @Valid UserRegisterDTO userRegister) throws Exception {
 		
 		log.debug("User registration attempt: "+userRegister);
 		UserBean userBean = anonymousService.signUp(userRegister);
 		log.debug("User registered. Profile: "+userBean);
 		
-		return userBean;
+		return new EntityModel<>(userBean,
+				linkTo(methodOn(UsersController.class).registerUser(userRegister)).withSelfRel(),
+				linkTo(methodOn(UsersController.class).getUser(userBean.getId())).withRel("user"));
 	}
 
 	@GetMapping("/{userId}")
-	public UserBean getUserInfo(@PathVariable @Min(1) Integer userId) throws IOException {
-		return userService.getUserById(userId);
+	public EntityModel<UserBean> getUser(@PathVariable @Min(1) Integer userId) throws IOException {
+		return new EntityModel<>(userService.getUserById(userId),
+				linkTo(methodOn(UsersController.class).getUser(userId)).withSelfRel());
 	}
 	
 //	@Operation(security = { @SecurityRequirement(name = "bearer-key") })
 	@GetMapping("/me")
-	public UserBean getMe(Authentication authentication) throws Exception {
-		return userService.getMe(authentication);
+	public EntityModel<UserBean> getMe(Authentication authentication) throws Exception {
+		UserBean userBean = userService.getMe(authentication);
+		return new EntityModel<>(userBean,
+				linkTo(methodOn(UsersController.class).getMe(authentication)).withSelfRel(),
+				linkTo(methodOn(UsersController.class).getUser(userBean.getId())).withRel("user"));
 	}
 	
 	@PutMapping("/me")
