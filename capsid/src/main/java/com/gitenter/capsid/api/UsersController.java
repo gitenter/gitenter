@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.gitenter.capsid.dto.ChangePasswordDTO;
 import com.gitenter.capsid.dto.SshKeyFieldDTO;
@@ -110,10 +112,20 @@ public class UsersController {
 		/*
 		 * TODO:
 		 * Exception handling.
+		 * 
+		 * TODO:
+		 * Right now it is `http://localhost:8080/api/users/me?password=gggg`
+		 * Consider changing it to `http://localhost:8080/api/users/me -d 'password=gggg'`
 		 */
 		log.debug("Delete account attempt: "+authentication.getName());
-		userService.deleteUser(authentication.getName(), password);
-		log.info("Account deleted: "+authentication.getName());
+		if (userService.deleteUser(authentication.getName(), password)) {
+			log.info("Account deleted: "+authentication.getName());
+		}
+		else {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST, 
+					"Password doesn't match!");
+		}
 	}
 	
 	/*
@@ -130,8 +142,14 @@ public class UsersController {
 		 * Exception handling.
 		 */
 		log.debug("Change password attempt: "+authentication.getName());
-		userService.updatePassword(authentication, changePasswordDTO);
-		log.info("Password changed: "+authentication.getName());
+		if(userService.updatePassword(authentication, changePasswordDTO)) {
+			log.info("Password changed: "+authentication.getName());
+		}
+		else {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST, 
+					"Old password doesn't match!");
+		}
 	}
 	
 	@GetMapping("/me/ssh-keys")

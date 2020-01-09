@@ -23,7 +23,10 @@
                 <label for="remember_me">Remember me</label>
               </td>
             </tr>
-
+            <tr v-if="errorMessage">
+              <td></td>
+              <td class="error">{{ errorMessage }}</td>
+            </tr>
             <tr>
               <td></td>
               <td class="button">
@@ -49,6 +52,7 @@ export default {
     return {
       username: '',
       password: '',
+      errorMessage: '',
     }
   },
 
@@ -79,6 +83,9 @@ export default {
             this.$router.push('/')
           })
           .catch((error) => {
+            this.username = ''
+            this.password = ''
+            this.errorMessage = 'Invalid username and password!'
             console.log(error);
           })
       }, 1000)

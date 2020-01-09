@@ -1,0 +1,85 @@
+<template>
+  <div>
+    <nav>
+      <nuxt-link to="/">Home</nuxt-link> &rarr;
+      <nuxt-link to="/settings">Settings</nuxt-link> &rarr;
+      <span class="nav-current">Delete account</span>
+    </nav>
+    <article>
+      <div>
+        <form @submit.prevent="deleteAccount">
+          <table class="fill-in">
+            <tr>
+              <td>Username</td>
+              <td class="pre-fill">{{ user.username }}</td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td>
+                <input id="password" v-model="password" name="password" type="password" value=""/>
+              </td>
+            </tr>
+            <tr v-if="errorMessage">
+              <td></td>
+              <td class="error">{{ errorMessage }}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="button"><input type="submit" value="Delete account" /></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </article>
+  </div>
+</template>
+
+<script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
+export default {
+  middleware: 'authenticated',
+  layout: 'auth',
+
+  data() {
+    return {
+      user: '',
+      password: '',
+      errorMessage: '',
+    }
+  },
+
+  mounted() {
+    this.$axios.get('/users/me', {
+      headers: {
+        'Authorization': "Bearer " + this.$store.state.auth.accessToken
+      }
+    })
+    .then(response => {
+      this.user = response.data
+    })
+  },
+
+  methods: {
+    deleteAccount() {
+      const request = this.$axios.delete('/users/me?password='+this.password,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': "Bearer " + this.$store.state.auth.accessToken
+        }
+      })
+      request.then((response) => {
+          Cookie.remove('auth')
+          this.$store.commit('setAuth', null)
+          this.$router.push('/login')
+        })
+        .catch((error) => {
+          this.errorMessage = error.response.data.message
+        })
+    }
+  }
+}
+</script>
+
+<style></style>

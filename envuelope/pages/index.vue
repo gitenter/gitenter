@@ -4,17 +4,6 @@
       <span class="nav-current">Home</span>
     </nav>
     <article>
-      <div v-if="$store.state.auth">
-        <button @click="logout">
-          Logout
-        </button>
-      </div>
-      <p v-else>
-        Please
-        <NuxtLink to="/login">
-          login
-        </NuxtLink>.
-      </p>
       <div class="left-wide">
         <h3>Organized Repositories</h3>
 
@@ -88,10 +77,6 @@ export default {
   },
 
   methods: {
-    logout () {
-      Cookie.remove('auth')
-      this.$store.commit('setAuth', null)
-    }
   }
 }
 </script>

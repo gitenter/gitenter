@@ -99,7 +99,8 @@ public class AuthorizationIT {
 				UserBean.class);
 		assertEquals(queryUser.getUsername(), username);
 		
-		mockMvc.perform(delete("/api/users/me").param("password", password)
+		mockMvc.perform(delete("/api/users/me")
+				.content("password="+password)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}
