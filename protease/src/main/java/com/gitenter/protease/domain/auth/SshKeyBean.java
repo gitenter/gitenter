@@ -83,4 +83,8 @@ public class SshKeyBean implements ModelBean {
 		
 		return toString;
 	}
+	
+	public String getPublicKey() {
+		return toString();
+	}
 }

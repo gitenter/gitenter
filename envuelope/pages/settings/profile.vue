@@ -2,25 +2,16 @@
   <div>
     <nav>
       <nuxt-link to="/">Home</nuxt-link> &rarr;
-      <span class="nav-current">Sign Up</span>
+      <nuxt-link to="/settings">Settings</nuxt-link> &rarr;
+      <span class="nav-current">Edit profile</span>
     </nav>
     <article>
       <div>
-        <form @submit.prevent="register">
+        <form @submit.prevent="updateProfile">
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td>
-                <input id="username" v-model="user.username" name="username" type="text" value=""/>
-                <span class="error" v-if="errors.username">{{ errors.username }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>Password</td>
-              <td>
-                <input id="password" v-model="user.password" name="password" type="password" value=""/>
-                <span class="error" v-if="errors.password">{{ errors.password }}</span>
-              </td>
+              <td class="pre-fill">{{ user.username }}</td>
             </tr>
             <tr>
               <td>Display Name</td>
@@ -38,11 +29,9 @@
             </tr>
             <tr>
               <td></td>
-              <td class="button"><input type="submit" value="Register" /></td>
+              <td class="button"><input type="submit" value="Update profile" /></td>
             </tr>
           </table>
-          <div>
-          </div>
         </form>
       </div>
     </article>
@@ -50,20 +39,13 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
-  middleware: 'notAuthenticated',
-  layout: 'unauth',
+  middleware: 'authenticated',
+  layout: 'auth',
 
   data() {
     return {
-      user: {
-        username: '',
-        password: '',
-        displayName: '',
-        email: ''
-      },
+      user: '',
       errors: {
         username: '',
         password: '',
@@ -73,26 +55,34 @@ export default {
     }
   },
 
+  mounted() {
+    this.$axios.get('/users/me', {
+      headers: {
+        'Authorization': "Bearer " + this.$store.state.auth.accessToken
+      }
+    })
+    .then(response => {
+      console.log(response.data)
+      this.user = response.data
+    })
+  },
+
   methods: {
-    register() {
-      console.log("Register user!!");
-      const request = this.$axios.post('/users', this.user,
+    updateProfile() {
+      console.log("Update profile!!");
+      const request = this.$axios.put('/users/me', this.user,
       {
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
       })
       request.then((response) => {
           console.log(response);
-          this.$router.push('/login');
         })
         .catch((error) => {
+          console.log(error)
 
-          /*
-          TODO:
-          If there's a way to reset to initial value, rather than define
-          it as initial value again.
-          */
           this.errors = {
             username: '',
             password: '',
@@ -100,14 +90,6 @@ export default {
             email: ''
           }
 
-          /*
-          TODO:
-          This ties to Java Validation error output form. Should be more
-          general/lightweighted.
-          Also, it seems if I use Spring `ExceptionHandler` to wrap/customize
-          other error messages (e.g. `ItemNotUniqueException`), it will
-          override Java Validation error output.
-          */
           var attrError;
           for (attrError of error.response.data.errors) {
             this.errors[attrError['field']] = attrError['defaultMessage']
