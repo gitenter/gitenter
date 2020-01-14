@@ -11,7 +11,7 @@
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td class="pre-fill">{{ user.username }}</td>
+              <td id="username" class="pre-fill">{{ user.username }}</td>
             </tr>
             <tr>
               <td>Old password</td>

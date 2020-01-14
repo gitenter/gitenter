@@ -1,5 +1,6 @@
 import unittest
 import time
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -33,10 +34,9 @@ class TestAuthorization(BaseTestSuite):
         assert "/register" in self.driver.page_source
 
         fill_signup_form(self.driver, username, password, display_name, email)
-
         try:
-            element = WebDriverWait(self.driver, 3).until(EC.url_to_be(urljoin(self.root_url, "/login")))
-        except:
+            WebDriverWait(self.driver, 3).until(EC.url_to_be(urljoin(self.root_url, "/login")))
+        except TimeoutException:
             self.assertFalse(True, 'Redirect to login after register fails')
 
         # Cannot login with incorrect password
@@ -46,10 +46,10 @@ class TestAuthorization(BaseTestSuite):
         fill_login_form(self.driver, username, incorrect_password)
         try:
             element = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
-        except:
+        except TimeoutException:
             self.assertFalse(True, 'Expected error not raised')
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
-        assert "Invalid username and password!" in self.driver.page_source
+        assert "Invalid username and password!" in element.text
 
 #        baseline_cookie_count = len(self.driver.get_cookies())
 
@@ -89,34 +89,34 @@ class TestAuthorization(BaseTestSuite):
         fill_login_form(self.driver, username, password)
         try:
             WebDriverWait(self.driver, 3).until(EC.url_changes(urljoin(self.root_url, "/login")))
-        except:
+        except TimeoutException:
             self.assertFalse(True, 'Login fails')
 
         self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
         fill_delete_user_form(self.driver, "wrong_password")
         try:
             element = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
-        except:
+        except TimeoutException:
             self.assertFalse(True, 'Expected error not raised')
         self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/delete")
-        assert "Password doesn't match!" in self.driver.page_source
+        assert "Password doesn't match!" in element.text
 
         self.driver.get(urljoin(self.root_url, "/settings/account/delete"))
         fill_delete_user_form(self.driver, password)
         try:
-            element = WebDriverWait(self.driver, 3).until(EC.url_changes(urljoin(self.root_url, "/settings/account/delete")))
-        except:
-            self.assertFalse(True, 'Cannot delete account')
+            WebDriverWait(self.driver, 3).until(EC.url_changes(urljoin(self.root_url, "/settings/account/delete")))
+        except TimeoutException:
+            self.assertFalse(True, 'Cannot delete user')
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
 
         self.driver.get(urljoin(self.root_url, "/login"))
         fill_login_form(self.driver, username, password)
         try:
             element = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
-        except:
+        except TimeoutException:
             self.assertFalse(True, 'Expected error not raised')
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
-        assert "Invalid username and password!" in self.driver.page_source
+        assert "Invalid username and password!" in element.text
 
     def test_redirect_after_login(self):
         pass
@@ -130,10 +130,10 @@ class TestAuthorization(BaseTestSuite):
         fill_login_form(self.driver, username, password)
         try:
             element = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "error")))
-        except:
+        except TimeoutException:
             self.assertFalse(True, 'Expected error not raised')
         self.assertEqual(urlparse(self.driver.current_url).path, "/login")
-        assert "Invalid username and password!" in self.driver.page_source
+        assert "Invalid username and password!" in element.text
 
 
 if __name__ == '__main__':

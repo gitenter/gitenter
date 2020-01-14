@@ -43,6 +43,10 @@
                 <span class="error" v-if="errors.sshKeyValue">{{ errors.sshKeyValue }}</span>
               </td>
             </tr>
+            <tr v-if="successfulMessage">
+              <td></td>
+              <td class="success">{{ successfulMessage }}</td>
+            </tr>
             <tr>
               <td></td>
               <td class="button"><input type="submit" value="Add a new SSH key" /></td>
@@ -67,7 +71,8 @@ export default {
       },
       errors: {
         sshKeyValue: ''
-      }
+      },
+      successfulMessage: '',
     }
   },
 
@@ -99,6 +104,8 @@ export default {
             sshKeyValue: ''
           }
 
+          this.successfulMessage = 'New SSH key has been saved successfully!'
+
           /*
            * TODO:
            * Any way to not repeat this `mounted` method?
@@ -119,6 +126,7 @@ export default {
           this.errors = {
             sshKeyValue: ''
           }
+          this.successfulMessage = ''
 
           var attrError;
           for (attrError of error.response.data.errors) {

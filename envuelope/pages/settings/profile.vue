@@ -11,7 +11,7 @@
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td class="pre-fill">{{ user.username }}</td>
+              <td id="username" class="pre-fill">{{ user.username }}</td>
             </tr>
             <tr>
               <td>Display Name</td>
@@ -26,6 +26,10 @@
                 <input id="email" v-model="user.email" name="email" type="email" value=""/>
                 <span class="error" v-if="errors.email">{{ errors.email }}</span>
               </td>
+            </tr>
+            <tr v-if="successfulMessage">
+              <td></td>
+              <td class="success">{{ successfulMessage }}</td>
             </tr>
             <tr>
               <td></td>
@@ -51,7 +55,8 @@ export default {
         password: '',
         displayName: '',
         email: ''
-      }
+      },
+      successfulMessage: '',
     }
   },
 
@@ -79,6 +84,7 @@ export default {
       })
       request.then((response) => {
           console.log(response);
+          this.successfulMessage = 'Changes has been saved successfully!'
         })
         .catch((error) => {
           console.log(error)
@@ -89,6 +95,7 @@ export default {
             displayName: '',
             email: ''
           }
+          this.successfulMessage = ''
 
           var attrError;
           for (attrError of error.response.data.errors) {

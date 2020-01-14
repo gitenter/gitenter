@@ -168,6 +168,10 @@ public class UsersController {
 		 * TODO:
 		 * Exception handling. For example current key value conflict will raise an 500.
 		 * We'd like the same as form validation (400 error and show it in front-end).
+		 * 
+		 * TODO:
+		 * Keys with wrong format (pass Java validation but sshd key library raises error)
+		 * will also just raise 500. 
 		 */
 		UserBean user = userService.getUserByUsername(authentication.getName());
 		SshKeyBean sshKey = sshKeyField.toBean();
