@@ -3,9 +3,9 @@
     <header>
       <a href="/"><img class="logo" src="/resources/image/logo.png" alt="enterovirus" height="48" width="192"></a>
 
-      <button @click="logout">
-        Log out
-      </button>
+      <form @submit.prevent="logout">
+        <input id="logout" type="submit" value="Log out" />
+      </form>
 
       <form action="/settings" method="GET">
         <input type="submit" value="Settings" />

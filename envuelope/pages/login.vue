@@ -80,6 +80,12 @@ export default {
             console.log(auth);
             this.$store.commit('setAuth', auth) // mutating to store for client rendering
             Cookie.set('auth', auth) // saving token in cookie for server rendering
+
+            /*
+             * TODO:
+             * Redirect to where the access page is without an credential, rather than
+             * always the front page.
+             */
             this.$router.push('/')
           })
           .catch((error) => {
