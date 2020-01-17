@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urljoin
@@ -44,10 +43,7 @@ def click_logout(driver):
 def login_as(driver, root_url, username, password, remember_me=False):
     driver.get(urljoin(root_url, "/login"))
     fill_login_form(driver, username, password, remember_me=remember_me)
-    try:
-        WebDriverWait(driver, 3).until(EC.url_changes(urljoin(root_url, "/login")))
-    except TimeoutException:
-        self.assertFalse(True, 'Login fails')
+    WebDriverWait(driver, 3).until(EC.url_changes(urljoin(root_url, "/login")))
 
     yield
 

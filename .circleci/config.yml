@@ -306,6 +306,28 @@ jobs:
       - run: cd selenium-test && pipenv install flake8
       - run: cd selenium-test && pipenv run flake8 --statistics
 
+  js-vue-linter:
+    docker:
+      - image: circleci/node:10.16.3
+    working_directory: ~/js
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "envuelope/yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: cd envuelope && yarn install --frozen-lockfile
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "envuelope/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run: # run tests
+          name: linter
+          command: cd envuelope && node_modules/.bin/eslint --ext .js,.vue .
+
   staging-web-app-build-image:
     # TODO:
     # Looks like the current `aws-ecr/build-and-push-image` depends on python version.
@@ -498,6 +520,7 @@ workflows:
       - java-integration-test
       - python-unittest
       - python-linter
+      - js-vue-linter
 
       # https://circleci.com/orbs/registry/orb/circleci/hugo
       - hugo/build:
@@ -517,6 +540,7 @@ workflows:
            - java-integration-test
            - python-unittest
            - python-linter
+           - js-vue-linter
            - hugo/build
 
       # The steps `aws-ecr/build_and_push_image` and `aws-ecs/deploy-service-update`

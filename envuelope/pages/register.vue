@@ -8,38 +8,78 @@
             <tr>
               <td>Username</td>
               <td>
-                <input id="username" v-model="user.username" name="username" type="text" value=""/>
-                <span class="error" v-if="errors.username">{{ errors.username }}</span>
+                <input
+                  id="username"
+                  v-model="user.username"
+                  name="username"
+                  type="text"
+                  value=""
+                >
+                <span
+                  v-if="errors.username"
+                  class="error"
+                >{{ errors.username }}</span>
               </td>
             </tr>
             <tr>
               <td>Password</td>
               <td>
-                <input id="password" v-model="user.password" name="password" type="password" value=""/>
-                <span class="error" v-if="errors.password">{{ errors.password }}</span>
+                <input
+                  id="password"
+                  v-model="user.password"
+                  name="password"
+                  type="password"
+                  value=""
+                >
+                <span
+                  v-if="errors.password"
+                  class="error"
+                >{{ errors.password }}</span>
               </td>
             </tr>
             <tr>
               <td>Display Name</td>
               <td>
-                <input id="displayName" v-model="user.displayName" name="displayName" type="text" value=""/>
-                <span class="error" v-if="errors.displayName">{{ errors.displayName }}</span>
+                <input
+                  id="displayName"
+                  v-model="user.displayName"
+                  name="displayName"
+                  type="text"
+                  value=""
+                >
+                <span
+                  v-if="errors.displayName"
+                  class="error"
+                >{{ errors.displayName }}</span>
               </td>
             </tr>
             <tr>
               <td>Email address</td>
               <td>
-                <input id="email" v-model="user.email" name="email" type="email" value=""/>
-                <span class="error" v-if="errors.email">{{ errors.email }}</span>
+                <input
+                  id="email"
+                  v-model="user.email"
+                  name="email"
+                  type="email"
+                  value=""
+                >
+                <span
+                  v-if="errors.email"
+                  class="error"
+                >{{ errors.email }}</span>
               </td>
             </tr>
             <tr>
-              <td></td>
-              <td class="button"><input type="submit" value="Register" /></td>
+              <td />
+              <td class="button">
+                <input
+                  type="submit"
+                  value="Register"
+                >
+              </td>
             </tr>
           </table>
-          <div>
-          </div>
+          <div />
         </form>
       </div>
     </article>
@@ -53,7 +93,7 @@
 </router>
 
 <script>
-import NavigationBar from '~/components/NavigationBar.vue'
+import NavigationBar from '~/components/NavigationBar.vue';
 
 export default {
   middleware: 'notAuthenticated',
@@ -77,7 +117,7 @@ export default {
         displayName: '',
         email: ''
       }
-    }
+    };
   },
 
   methods: {
@@ -88,7 +128,7 @@ export default {
         headers: {
           "Content-Type": "application/json"
         }
-      })
+      });
       request.then((response) => {
           console.log(response);
           this.$router.push('/login');
@@ -105,7 +145,7 @@ export default {
             password: '',
             displayName: '',
             email: ''
-          }
+          };
 
           /*
           TODO:
@@ -117,13 +157,13 @@ export default {
           */
           var attrError;
           for (attrError of error.response.data.errors) {
-            this.errors[attrError['field']] = attrError['defaultMessage']
+            this.errors[attrError['field']] = attrError['defaultMessage'];
           }
-          console.log(this.errors)
-        })
+          console.log(this.errors);
+        });
     }
   }
-}
+};
 </script>
 
 <style></style>

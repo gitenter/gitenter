@@ -7,29 +7,59 @@
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td id="username" class="pre-fill">{{ user.username }}</td>
+              <td
+                id="username"
+                class="pre-fill"
+              >
+                {{ user.username }}
+              </td>
             </tr>
             <tr>
               <td>Display Name</td>
               <td>
-                <input id="displayName" v-model="user.displayName" name="displayName" type="text" value=""/>
-                <span class="error" v-if="errors.displayName">{{ errors.displayName }}</span>
+                <input
+                  id="displayName"
+                  v-model="user.displayName"
+                  name="displayName"
+                  type="text"
+                  value=""
+                >
+                <span
+                  v-if="errors.displayName"
+                  class="error"
+                >{{ errors.displayName }}</span>
               </td>
             </tr>
             <tr>
               <td>Email address</td>
               <td>
-                <input id="email" v-model="user.email" name="email" type="email" value=""/>
-                <span class="error" v-if="errors.email">{{ errors.email }}</span>
+                <input
+                  id="email"
+                  v-model="user.email"
+                  name="email"
+                  type="email"
+                  value=""
+                >
+                <span
+                  v-if="errors.email"
+                  class="error"
+                >{{ errors.email }}</span>
               </td>
             </tr>
             <tr v-if="successfulMessage">
-              <td></td>
-              <td class="success">{{ successfulMessage }}</td>
+              <td />
+              <td class="success">
+                {{ successfulMessage }}
+              </td>
             </tr>
             <tr>
-              <td></td>
-              <td class="button"><input type="submit" value="Update profile" /></td>
+              <td />
+              <td class="button">
+                <input
+                  type="submit"
+                  value="Update profile"
+                >
+              </td>
             </tr>
           </table>
         </form>
@@ -45,7 +75,7 @@
 </router>
 
 <script>
-import NavigationBar from '~/components/NavigationBar.vue'
+import NavigationBar from '~/components/NavigationBar.vue';
 
 export default {
   middleware: 'authenticated',
@@ -65,7 +95,7 @@ export default {
         email: ''
       },
       successfulMessage: '',
-    }
+    };
   },
 
   mounted() {
@@ -75,9 +105,9 @@ export default {
       }
     })
     .then(response => {
-      console.log(response.data)
-      this.user = response.data
-    })
+      console.log(response.data);
+      this.user = response.data;
+    });
   },
 
   methods: {
@@ -89,31 +119,31 @@ export default {
           "Content-Type": "application/json",
           'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
-      })
+      });
       request.then((response) => {
           console.log(response);
-          this.successfulMessage = 'Changes has been saved successfully!'
+          this.successfulMessage = 'Changes has been saved successfully!';
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error);
 
           this.errors = {
             username: '',
             password: '',
             displayName: '',
             email: ''
-          }
-          this.successfulMessage = ''
+          };
+          this.successfulMessage = '';
 
           var attrError;
           for (attrError of error.response.data.errors) {
-            this.errors[attrError['field']] = attrError['defaultMessage']
+            this.errors[attrError['field']] = attrError['defaultMessage'];
           }
-          console.log(this.errors)
-        })
+          console.log(this.errors);
+        });
     }
   }
-}
+};
 </script>
 
 <style></style>

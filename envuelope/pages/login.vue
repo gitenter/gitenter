@@ -7,31 +7,57 @@
             <tr>
               <td>Username</td>
               <td>
-                <input id="username" v-model="username" name="username" type="text" value=""/>
+                <input
+                  id="username"
+                  v-model="username"
+                  name="username"
+                  type="text"
+                  value=""
+                >
               </td>
             </tr>
             <tr>
               <td>Password</td>
               <td>
-                <input id="password" v-model="password" name="password" type="password" value=""/>
+                <input
+                  id="password"
+                  v-model="password"
+                  name="password"
+                  type="password"
+                  value=""
+                >
               </td>
             </tr>
             <tr>
-              <td></td>
+              <td />
               <td class="word">
-                <input id="remember_me" name="remember-me" type="checkbox" checked />
+                <input
+                  id="remember_me"
+                  name="remember-me"
+                  type="checkbox"
+                  checked
+                >
                 <label for="remember_me">Remember me</label>
               </td>
             </tr>
             <tr v-if="errorMessage">
-              <td></td>
-              <td class="error">{{ errorMessage }}</td>
+              <td />
+              <td class="error">
+                {{ errorMessage }}
+              </td>
             </tr>
             <tr>
-              <td></td>
+              <td />
               <td class="button">
-                <input type="submit" value="Log in" />
-                <input type="button" onclick="location.href='/register';" value="Sign up" />
+                <input
+                  type="submit"
+                  value="Log in"
+                >
+                <input
+                  type="button"
+                  onclick="location.href='/register';"
+                  value="Sign up"
+                >
               </td>
             </tr>
           </table>
@@ -42,7 +68,7 @@
 </template>
 
 <script>
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = process.client ? require('js-cookie') : undefined;
 
 export default {
   middleware: 'notAuthenticated',
@@ -53,7 +79,7 @@ export default {
       username: '',
       password: '',
       errorMessage: '',
-    }
+    };
   },
 
   methods: {
@@ -70,34 +96,34 @@ export default {
             },
             withCredentials: true,
             crossDomain: true
-          })
+          });
         request.then((response) => {
             console.log(response);
             const auth = {
               username: this.username,
               accessToken: response.data.access_token
-            }
+            };
             console.log(auth);
-            this.$store.commit('setAuth', auth) // mutating to store for client rendering
-            Cookie.set('auth', auth) // saving token in cookie for server rendering
+            this.$store.commit('setAuth', auth); // mutating to store for client rendering
+            Cookie.set('auth', auth); // saving token in cookie for server rendering
 
             /*
              * TODO:
              * Redirect to where the access page is without an credential, rather than
              * always the front page.
              */
-            this.$router.push('/')
+            this.$router.push('/');
           })
           .catch((error) => {
-            this.username = ''
-            this.password = ''
-            this.errorMessage = 'Invalid username and password!'
+            this.username = '';
+            this.password = '';
+            this.errorMessage = 'Invalid username and password!';
             console.log(error);
-          })
-      }, 1000)
+          });
+      }, 1000);
     }
   }
-}
+};
 </script>
 
 <style></style>

@@ -7,21 +7,39 @@
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td id="username" class="pre-fill">{{ user.username }}</td>
+              <td
+                id="username"
+                class="pre-fill"
+              >
+                {{ user.username }}
+              </td>
             </tr>
             <tr>
               <td>Password</td>
               <td>
-                <input id="password" v-model="password" name="password" type="password" value=""/>
+                <input
+                  id="password"
+                  v-model="password"
+                  name="password"
+                  type="password"
+                  value=""
+                >
               </td>
             </tr>
             <tr v-if="errorMessage">
-              <td></td>
-              <td class="error">{{ errorMessage }}</td>
+              <td />
+              <td class="error">
+                {{ errorMessage }}
+              </td>
             </tr>
             <tr>
-              <td></td>
-              <td class="button"><input type="submit" value="Delete account" /></td>
+              <td />
+              <td class="button">
+                <input
+                  type="submit"
+                  value="Delete account"
+                >
+              </td>
             </tr>
           </table>
         </form>
@@ -37,9 +55,9 @@
 </router>
 
 <script>
-import NavigationBar from '~/components/NavigationBar.vue'
+import NavigationBar from '~/components/NavigationBar.vue';
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = process.client ? require('js-cookie') : undefined;
 
 export default {
   middleware: 'authenticated',
@@ -54,7 +72,7 @@ export default {
       user: '',
       password: '',
       errorMessage: '',
-    }
+    };
   },
 
   mounted() {
@@ -64,8 +82,8 @@ export default {
       }
     })
     .then(response => {
-      this.user = response.data
-    })
+      this.user = response.data;
+    });
   },
 
   methods: {
@@ -76,18 +94,19 @@ export default {
           "Content-Type": "application/json",
           'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
-      })
+      });
       request.then((response) => {
-          Cookie.remove('auth')
-          this.$store.commit('setAuth', null)
-          this.$router.push('/login')
+          console.log(response);
+          Cookie.remove('auth');
+          this.$store.commit('setAuth', null);
+          this.$router.push('/login');
         })
         .catch((error) => {
-          this.errorMessage = error.response.data.message
-        })
+          this.errorMessage = error.response.data.message;
+        });
     }
   }
-}
+};
 </script>
 
 <style></style>

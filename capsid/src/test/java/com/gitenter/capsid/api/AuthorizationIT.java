@@ -100,7 +100,7 @@ public class AuthorizationIT {
 		assertEquals(queryUser.getUsername(), username);
 		
 		mockMvc.perform(delete("/api/users/me")
-				.content("password="+password)
+				.param(password, password)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}

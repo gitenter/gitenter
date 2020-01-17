@@ -7,33 +7,65 @@
           <table class="fill-in">
             <tr>
               <td>Username</td>
-              <td id="username" class="pre-fill">{{ user.username }}</td>
+              <td
+                id="username"
+                class="pre-fill"
+              >
+                {{ user.username }}
+              </td>
             </tr>
             <tr>
               <td>Old password</td>
               <td>
-                <input id="old_password" v-model="changePasswordForm.oldPassword" name="old_password" type="password" value=""/>
-                <span class="error" v-if="errors.oldPassword">{{ errors.oldPassword }}</span>
+                <input
+                  id="old_password"
+                  v-model="changePasswordForm.oldPassword"
+                  name="old_password"
+                  type="password"
+                  value=""
+                >
+                <span
+                  v-if="errors.oldPassword"
+                  class="error"
+                >{{ errors.oldPassword }}</span>
               </td>
             </tr>
             <tr>
               <td>New password</td>
               <td>
-                <input id="password" v-model="changePasswordForm.newPassword" name="password" type="password" value=""/>
-                <span class="error" v-if="errors.newPassword">{{ errors.newPassword }}</span>
+                <input
+                  id="password"
+                  v-model="changePasswordForm.newPassword"
+                  name="password"
+                  type="password"
+                  value=""
+                >
+                <span
+                  v-if="errors.newPassword"
+                  class="error"
+                >{{ errors.newPassword }}</span>
               </td>
             </tr>
             <tr v-if="successfulMessage">
-              <td></td>
-              <td class="success">{{ successfulMessage }}</td>
+              <td />
+              <td class="success">
+                {{ successfulMessage }}
+              </td>
             </tr>
             <tr v-if="errorMessage">
-              <td></td>
-              <td class="error">{{ errorMessage }}</td>
+              <td />
+              <td class="error">
+                {{ errorMessage }}
+              </td>
             </tr>
             <tr>
-              <td></td>
-              <td class="button"><input type="submit" value="Change password" /></td>
+              <td />
+              <td class="button">
+                <input
+                  type="submit"
+                  value="Change password"
+                >
+              </td>
             </tr>
           </table>
         </form>
@@ -49,7 +81,7 @@
 </router>
 
 <script>
-import NavigationBar from '~/components/NavigationBar.vue'
+import NavigationBar from '~/components/NavigationBar.vue';
 
 export default {
   middleware: 'authenticated',
@@ -72,7 +104,7 @@ export default {
       },
       successfulMessage: '',
       errorMessage: '',
-    }
+    };
   },
 
   mounted() {
@@ -82,8 +114,8 @@ export default {
       }
     })
     .then(response => {
-      this.user = response.data
-    })
+      this.user = response.data;
+    });
   },
 
   methods: {
@@ -94,46 +126,46 @@ export default {
           "Content-Type": "application/json",
           'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
-      })
+      });
       request.then((response) => {
           console.log(response);
 
           this.changePasswordForm = {
             oldPassword: '',
             newPassword: ''
-          }
+          };
 
           this.errors = {
             oldPassword: '',
             newPassword: ''
-          }
+          };
 
-          this.successfulMessage = 'Changes has been saved successfully!'
-          this.errorMessage = ''
+          this.successfulMessage = 'Changes has been saved successfully!';
+          this.errorMessage = '';
         })
         .catch((error) => {
-          console.log(error.response)
+          console.log(error.response);
 
-          this.successfulMessage = ''
+          this.successfulMessage = '';
 
           this.errors = {
             oldPassword: '',
             newPassword: ''
-          }
+          };
 
           var attrError;
           if ("errors" in error.response.data) {
             for (attrError of error.response.data.errors) {
-              this.errors[attrError['field']] = attrError['defaultMessage']
+              this.errors[attrError['field']] = attrError['defaultMessage'];
             }
           }
           else {
-            this.errorMessage = error.response.data.message
+            this.errorMessage = error.response.data.message;
           }
-        })
+        });
     }
   }
-}
+};
 </script>
 
 <style></style>

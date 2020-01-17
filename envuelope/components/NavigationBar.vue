@@ -1,7 +1,10 @@
 <template>
   <div>
     <nav>
-      <span v-for="inPathRoute in inPathRoutes">
+      <span
+        v-for="(inPathRoute, index) in inPathRoutes"
+        :key="index"
+      >
         <nuxt-link :to="inPathRoute.path">{{ inPathRoute.name }}</nuxt-link> &rarr;
       </span>
       <span class="nav-current">{{ currentRoute.name }}</span>
@@ -13,7 +16,7 @@
 export default {
   computed: {
     currentRoute: function() {
-      return this.$router.history.current
+      return this.$router.history.current;
     },
 
     inPathRoutes: function() {
@@ -23,25 +26,25 @@ export default {
        * when there are corner conditions of `/` when root but no `/`
        * at the end if there's no root.
        */
-      var paths = []
+      var paths = [];
       if (this.$router.history.current.path != "/") {
         var pathElements = this.$router.history.current.path.split("/");
         while (pathElements.length > 1) {
-          pathElements.pop()
-          paths.push(pathElements.join("/"))
+          pathElements.pop();
+          paths.push(pathElements.join("/"));
         }
-        paths.reverse()
-        paths[0] = "/"
+        paths.reverse();
+        paths[0] = "/";
       }
-      var routes = []
+      var routes = [];
       for (var i = 0; i < paths.length; i++) {
-        var route = this.$router.resolve(paths[i]).route
+        var route = this.$router.resolve(paths[i]).route;
         if (route.name) {
-          routes.push(this.$router.resolve(paths[i]).route)
+          routes.push(this.$router.resolve(paths[i]).route);
         }
       }
-      return routes
+      return routes;
     }
   }
-}
+};
 </script>

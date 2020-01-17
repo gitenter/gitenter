@@ -13,19 +13,30 @@
         <h3>
           Managed organizations
 
-          <form id="command" action="/organizations/create" method="GET">
-            <input type="submit" value="+" />
+          <form
+            id="command"
+            action="/organizations/create"
+            method="GET"
+          >
+            <input
+              type="submit"
+              value="+"
+            >
           </form>
         </h3>
 
-        <h5 v-for="organization in managedOrganizations">
-          <nuxt-link :to="'/organizations/' + organization.id">{{ organization.displayName }}</nuxt-link>
+        <h5
+          v-for="(organization, index) in managedOrganizations"
+          :key="index"
+        >
+          <nuxt-link :to="'/organizations/' + organization.id">
+            {{ organization.displayName }}
+          </nuxt-link>
         </h5>
 
         <h3>Belonged organizations</h3>
-
       </div>
-      <div style="clear:both"></div>
+      <div style="clear:both" />
     </article>
     <div class="container">
       <div>
@@ -42,10 +53,8 @@
 </router>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import NavigationBar from '~/components/NavigationBar.vue'
-
-const Cookie = process.client ? require('js-cookie') : undefined
+import Logo from '~/components/Logo.vue';
+import NavigationBar from '~/components/NavigationBar.vue';
 
 export default {
   middleware: 'authenticated',
@@ -60,7 +69,7 @@ export default {
     return {
       managedOrganizations: [],
       belongedOrganizations: []
-    }
+    };
   },
 
   mounted() {
@@ -70,21 +79,21 @@ export default {
       }
     })
     .then(response => {
-      this.managedOrganizations = response.data
-    })
+      this.managedOrganizations = response.data;
+    });
     this.$axios.get('/users/me/organizations?role=ordinary_member', {
       headers: {
         'Authorization': "Bearer " + this.$store.state.auth.accessToken
       }
     })
     .then(response => {
-      this.belongedOrganizations = response.data
-    })
+      this.belongedOrganizations = response.data;
+    });
   },
 
   methods: {
   }
-}
+};
 </script>
 
 <style></style>
