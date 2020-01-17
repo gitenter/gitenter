@@ -1,9 +1,6 @@
 <template>
   <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link> &rarr;
-      <span class="nav-current">Sign Up</span>
-    </nav>
+    <navigationBar />
     <article>
       <div>
         <form @submit.prevent="register">
@@ -49,12 +46,22 @@
   </div>
 </template>
 
+<router>
+  {
+    name: 'Sign up'
+  }
+</router>
+
 <script>
-import axios from 'axios'
+import NavigationBar from '~/components/NavigationBar.vue'
 
 export default {
   middleware: 'notAuthenticated',
   layout: 'unauth',
+
+  components: {
+    NavigationBar,
+  },
 
   data() {
     return {

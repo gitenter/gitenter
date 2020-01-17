@@ -1,8 +1,6 @@
 <template>
   <div>
-    <nav>
-      <span class="nav-current">Home</span>
-    </nav>
+    <navigationBar />
     <article>
       <div class="left-wide">
         <h3>Organized Repositories</h3>
@@ -37,8 +35,15 @@
   </div>
 </template>
 
+<router>
+  {
+    name: 'Home'
+  }
+</router>
+
 <script>
 import Logo from '~/components/Logo.vue'
+import NavigationBar from '~/components/NavigationBar.vue'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -47,7 +52,8 @@ export default {
   layout: 'auth',
 
   components: {
-    Logo
+    Logo,
+    NavigationBar,
   },
 
   data() {

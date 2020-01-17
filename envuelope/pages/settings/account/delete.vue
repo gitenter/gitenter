@@ -1,10 +1,6 @@
 <template>
   <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link> &rarr;
-      <nuxt-link to="/settings">Settings</nuxt-link> &rarr;
-      <span class="nav-current">Delete account</span>
-    </nav>
+    <navigationBar />
     <article>
       <div>
         <form @submit.prevent="deleteAccount">
@@ -34,12 +30,24 @@
   </div>
 </template>
 
+<router>
+  {
+    name: 'Delete account'
+  }
+</router>
+
 <script>
+import NavigationBar from '~/components/NavigationBar.vue'
+
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
   middleware: 'authenticated',
   layout: 'auth',
+
+  components: {
+    NavigationBar,
+  },
 
   data() {
     return {

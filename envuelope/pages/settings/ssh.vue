@@ -1,10 +1,6 @@
 <template>
   <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link> &rarr;
-      <nuxt-link to="/settings">Settings</nuxt-link> &rarr;
-      <span class="nav-current">Manage SSH keys</span>
-    </nav>
+    <navigationBar />
     <article>
       <div>
         <form @submit.prevent="addANewSshKey">
@@ -58,10 +54,22 @@
   </div>
 </template>
 
+<router>
+  {
+    name: 'Manage SSH keys'
+  }
+</router>
+
 <script>
+import NavigationBar from '~/components/NavigationBar.vue'
+
 export default {
   middleware: 'authenticated',
   layout: 'auth',
+
+  components: {
+    NavigationBar,
+  },
 
   data() {
     return {

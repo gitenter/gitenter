@@ -16,5 +16,7 @@
     "js-cookie": "^2.2.1",
     "nuxt": "^2.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/router-extras": "^1.0.0"
+  }
 }

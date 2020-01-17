@@ -1,10 +1,6 @@
 <template>
   <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link> &rarr;
-      <nuxt-link to="/settings">Settings</nuxt-link> &rarr;
-      <span class="nav-current">Change password</span>
-    </nav>
+    <navigationBar />
     <article>
       <div>
         <form @submit.prevent="changePassword">
@@ -46,10 +42,22 @@
   </div>
 </template>
 
+<router>
+  {
+    name: 'Change password'
+  }
+</router>
+
 <script>
+import NavigationBar from '~/components/NavigationBar.vue'
+
 export default {
   middleware: 'authenticated',
   layout: 'auth',
+
+  components: {
+    NavigationBar,
+  },
 
   data() {
     return {

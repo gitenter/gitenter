@@ -1,9 +1,6 @@
 <template>
   <div>
-    <nav>
-      <nuxt-link to="/">Home</nuxt-link> &rarr;
-      <span class="nav-current">Settings</span>
-    </nav>
+    <navigationBar />
     <article>
       <h3><nuxt-link to="/settings/profile">Edit profile</nuxt-link></h3>
       <h3><nuxt-link to="/settings/ssh">Manage SSH keys</nuxt-link></h3>
@@ -13,10 +10,22 @@
   </div>
 </template>
 
+<router>
+  {
+    name: 'Settings'
+  }
+</router>
+
 <script>
+import NavigationBar from '~/components/NavigationBar.vue'
+
 export default {
   middleware: 'authenticated',
-  layout: 'auth'
+  layout: 'auth',
+
+  components: {
+    NavigationBar,
+  },
 }
 </script>
 
