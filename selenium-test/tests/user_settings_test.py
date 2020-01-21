@@ -56,6 +56,7 @@ class TestChangeUserProfile(RegisteredTestSuite):
             display_name_form_fill = self.driver.find_element_by_id("displayName")
             email_form_fill = self.driver.find_element_by_id("email")
 
+            WebDriverWait(self.driver, 3).until(EC.visibility_of_all_elements_located((By.ID, "username")))
             self.assertEqual(self.driver.find_element_by_id("username").text, self.username)
             self.assertEqual(display_name_form_fill.get_attribute("value"), self.display_name)
             self.assertEqual(email_form_fill.get_attribute("value"), self.email)
@@ -101,11 +102,8 @@ class TestChangeUserPassword(RegisteredTestSuite):
 
         with login_as(self.driver, self.root_url, self.username, self.password):
             self.driver.get(urljoin(self.root_url, "/settings/account/password"))
-            # TODO:
-            # This step need to be waited a little bit until populated. `ID` is always
-            # there, just its content is not loaded yet, so it is not as easy as using
-            # `presence_of_element_located`.
-            # self.assertEqual(self.driver.find_element_by_id("username").text, self.username)
+            WebDriverWait(self.driver, 3).until(EC.visibility_of_all_elements_located((By.ID, "username")))
+            self.assertEqual(self.driver.find_element_by_id("username").text, self.username)
 
             self._change_password_form(self.driver, self.password, new_password)
             try:
@@ -149,7 +147,6 @@ class TestChangeUserPassword(RegisteredTestSuite):
                 self.assertFalse(True, 'Expected error not raised')
 
             self.assertEqual(urlparse(self.driver.current_url).path, "/settings/account/password")
-            self.assertEqual(self.driver.find_element_by_id("username").text, self.username)
             assert "Old password doesn't match!" in element.text
 
 

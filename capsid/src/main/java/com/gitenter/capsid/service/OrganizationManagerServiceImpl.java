@@ -43,7 +43,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	 */
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public void createOrganization(UserBean me, OrganizationDTO organizationDTO) throws IOException {
+	public OrganizationBean createOrganization(UserBean me, OrganizationDTO organizationDTO) throws IOException {
 		OrganizationBean organization = organizationDTO.toBean();
 		try {
 			/*
@@ -64,6 +64,8 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		 */
 		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, me, OrganizationUserRole.MANAGER);
 		organizationUserMapRepository.saveAndFlush(map);
+		
+		return organization;
 	}
 	
 	@Override

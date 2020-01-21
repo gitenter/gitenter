@@ -25,45 +25,51 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.capsid.dto.UserRegisterDTO;
+import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.UserBean;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
-public class AuthorizationIT {
+public class UserJourneyIT {
 	
 	@Autowired MockMvc mockMvc;
 	
 	private ObjectMapper objectMapper;
-	
-	private final String username = "integration_test";
-	private final String password = "password";
+	private ObjectWriter objectWriter;
 	
 	@BeforeEach
 	public void setUp() throws JsonProcessingException {
 		objectMapper = new ObjectMapper();
 		
-		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-		
 		/*
-		 * This is for HATEOAS `_link`.
+		 * `DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES` is for HATEOAS `_link`.
 		 */
+		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); 
+		
+		objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
 	}
 	
 	@Test
-	public void testOAuth2Authorization() throws Exception {
+	public void testUserJourney() throws Exception {
+		
+		/*
+		 * Test user registration and OAuth
+		 */
+		final String username = "it_user";
+		final String password = "password";
 		
 		UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
 		userRegisterDTO.setUsername(username);
 		userRegisterDTO.setPassword(password);
-		userRegisterDTO.setDisplayName("Integration Test");
+		userRegisterDTO.setDisplayName("Integration Test User");
 		userRegisterDTO.setEmail("integration@test.user.com");
 		
-		ObjectWriter ow = objectMapper.writer().withDefaultPrettyPrinter();
-		String userRegisterDTOJson = ow.writeValueAsString(userRegisterDTO);
+		String userRegisterDTOJson = objectWriter.writeValueAsString(userRegisterDTO);
 		
 		UserBean registerUser = objectMapper.readValue(
 				mockMvc.perform(post("/api/users")
@@ -99,8 +105,42 @@ public class AuthorizationIT {
 				UserBean.class);
 		assertEquals(queryUser.getUsername(), username);
 		
+		/*
+		 * Test organization management
+		 */
+		final String organizationName = "it_org";
+		
+		OrganizationDTO organizationDTO = new OrganizationDTO();
+		organizationDTO.setName(organizationName);
+		organizationDTO.setDisplayName("Integration Test Organization");
+		
+		String organizationDTOJson = objectWriter.writeValueAsString(organizationDTO);
+		
+		OrganizationBean createdOrganization = objectMapper.readValue(
+				mockMvc.perform(post("/api/organizations")
+						.header("Authorization", "Bearer " + bearerToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(organizationDTOJson))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(), 
+				OrganizationBean.class);
+		assertEquals(createdOrganization.getName(), organizationName);
+		
+		OrganizationBean queryOrganization = objectMapper.readValue(
+				mockMvc.perform(get("/api/organizations/"+createdOrganization.getId())
+						.header("Authorization", "Bearer " + bearerToken))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(),
+				OrganizationBean.class);
+		assertEquals(queryOrganization.getName(), organizationName);
+		
+		mockMvc.perform(delete("/api/organizations/"+createdOrganization.getId())
+				.param("organization_name", organizationName)
+				.header("Authorization", "Bearer " + bearerToken))
+				.andExpect(status().isOk());
+		
 		mockMvc.perform(delete("/api/users/me")
-				.param(password, password)
+				.param("password", password)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}
