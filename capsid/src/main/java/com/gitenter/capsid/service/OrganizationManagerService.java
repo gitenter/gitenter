@@ -12,7 +12,7 @@ public interface OrganizationManagerService {
 	
 	public OrganizationBean createOrganization(UserBean me, OrganizationDTO organizationDTO) throws IOException;
 	
-	public void updateOrganization(
+	public OrganizationBean updateOrganization(
 			OrganizationBean organizationBean, 
 			OrganizationDTO organizationDTO) throws IOException;
 	

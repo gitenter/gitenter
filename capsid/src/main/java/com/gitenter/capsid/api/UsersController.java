@@ -104,30 +104,6 @@ public class UsersController {
 		return userBean;
 	}
 	
-	@DeleteMapping("/me")
-	public void deleteAccount(
-			Authentication authentication,
-			@RequestParam(value="password") String password) throws Exception {
-		
-		/*
-		 * TODO:
-		 * Exception handling.
-		 * 
-		 * TODO:
-		 * Right now it is `http://localhost:8080/api/users/me?password=gggg`
-		 * Consider changing it to `http://localhost:8080/api/users/me -d 'password=gggg'`
-		 */
-		log.debug("Delete account attempt: "+authentication.getName());
-		if (userService.deleteUser(authentication.getName(), password)) {
-			log.info("Account deleted: "+authentication.getName());
-		}
-		else {
-			throw new ResponseStatusException(
-					HttpStatus.BAD_REQUEST, 
-					"Password doesn't match!");
-		}
-	}
-	
 	/*
 	 * Password changing is not idempotent ("old password" need to be
 	 * changed everytime). So use POST.
@@ -155,12 +131,18 @@ public class UsersController {
 	@GetMapping("/me/ssh-keys")
 	public List<SshKeyBean> getSshKeys(Authentication authentication) throws Exception {
 		
+		/*
+		 * TODO:
+		 * There should be a security reason to not returning all the SSH keys,
+		 * but only part of it (for user to compare if the key has already been
+		 * added to the system).
+		 */
 		UserBean user = userService.getUserByUsername(authentication.getName());
 		return user.getSshKeys();
 	}
 	
 	@PostMapping("/me/ssh-keys")
-	public void addSshKey(
+	public SshKeyBean addSshKey(
 			Authentication authentication,
 			@RequestBody @Valid SshKeyFieldDTO sshKeyField) throws Exception {
 		
@@ -176,5 +158,31 @@ public class UsersController {
 		UserBean user = userService.getUserByUsername(authentication.getName());
 		SshKeyBean sshKey = sshKeyField.toBean();
 		userService.addSshKey(sshKey, user);
+		
+		return sshKey;
+	}
+	
+	@DeleteMapping("/me")
+	public void deleteAccount(
+			Authentication authentication,
+			@RequestParam(value="password") String password) throws Exception {
+		
+		/*
+		 * TODO:
+		 * Exception handling.
+		 * 
+		 * TODO:
+		 * Right now it is `http://localhost:8080/api/users/me?password=gggg`
+		 * Consider changing it to `http://localhost:8080/api/users/me -d 'password=gggg'`
+		 */
+		log.debug("Delete account attempt: "+authentication.getName());
+		if (userService.deleteUser(authentication.getName(), password)) {
+			log.info("Account deleted: "+authentication.getName());
+		}
+		else {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST, 
+					"Password doesn't match!");
+		}
 	}
 }
