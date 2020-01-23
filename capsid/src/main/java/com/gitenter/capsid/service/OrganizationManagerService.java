@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import com.gitenter.capsid.dto.OrganizationDTO;
 import com.gitenter.protease.domain.auth.UserBean;
 import com.gitenter.protease.domain.auth.OrganizationBean;
+import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 
 public interface OrganizationManagerService {
 	
@@ -16,7 +17,7 @@ public interface OrganizationManagerService {
 			OrganizationBean organizationBean, 
 			OrganizationDTO organizationDTO) throws IOException;
 	
-	public void addOrganizationMember(OrganizationBean organization, UserBean user);
+	public OrganizationUserMapBean addOrganizationMember(OrganizationBean organization, UserBean user);
 	public void removeOrganizationMember(
 			OrganizationBean organization, 
 			Integer organizationUserMapId) throws IOException;

@@ -88,10 +88,11 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth. OrganizationUserRole).MANAGER)")
-	public void addOrganizationMember(OrganizationBean organization, UserBean user) {
+	public OrganizationUserMapBean addOrganizationMember(OrganizationBean organization, UserBean user) {
 
 		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, user, OrganizationUserRole.ORDINARY_MEMBER);
 		organizationUserMapRepository.saveAndFlush(map);
+		return map;
 	}
 	
 	private OrganizationUserMapBean getOrganizationUserMapBean(Integer organizationUserMapId) throws IOException {
