@@ -32,8 +32,11 @@ import com.gitenter.protease.domain.auth.OrganizationBean;
 import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.UserBean;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping(value="/api/organizations")
+@Slf4j
 public class OrganizationsController {
 	
 	@Autowired UserService userService;
@@ -94,6 +97,7 @@ public class OrganizationsController {
 	public List<UserBean> getOrganizationMembers(
 			@PathVariable @Min(1) Integer organizationId) throws IOException {
 		
+		log.debug("Get organization members attempt");
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		return organizationService.getAllMembers(organization);
 		/*
@@ -109,6 +113,7 @@ public class OrganizationsController {
 	public List<OrganizationUserMapBean> getOrganizationOrdinaryMemberMaps(
 			@PathVariable @Min(1) Integer organizationId) throws IOException {
 		
+		log.debug("Get organization ordinary members attempt");
 		OrganizationBean organization = organizationService.getOrganization(organizationId);		
 		return organizationService.getOrdinaryMemberMaps(organization);
 		/*
@@ -123,8 +128,10 @@ public class OrganizationsController {
 			@PathVariable @Min(1) Integer organizationId,
 			@RequestParam(value="username") String username) throws IOException {
 		
+		log.debug("Add member attempt: Username "+username);
 		OrganizationBean organization = organizationService.getOrganization(organizationId);
 		UserBean toBeAddUser = userService.getUserByUsername(username);
+		log.debug("Add member attempt: User object "+toBeAddUser);
 		return organizationManagerService.addOrganizationMember(organization, toBeAddUser);
 		/*
 		 * TODO:

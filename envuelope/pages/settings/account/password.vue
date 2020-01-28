@@ -120,14 +120,13 @@ export default {
 
   methods: {
     changePassword() {
-      const request = this.$axios.post('/users/me/password', this.changePasswordForm,
+      this.$axios.post('/users/me/password', this.changePasswordForm,
       {
         headers: {
           "Content-Type": "application/json",
           'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
-      });
-      request.then((response) => {
+      }).then((response) => {
           console.log(response);
 
           this.changePasswordForm = {

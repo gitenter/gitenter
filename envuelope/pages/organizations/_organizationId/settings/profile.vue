@@ -6,20 +6,20 @@
         <form @submit.prevent="updateProfile">
           <table class="fill-in">
             <tr>
-              <td>Username</td>
+              <td>Name</td>
               <td
-                id="username"
+                id="name"
                 class="pre-fill"
               >
-                {{ user.username }}
+                {{ organization.name }}
               </td>
             </tr>
             <tr>
-              <td>Display Name</td>
+              <td>Display name</td>
               <td>
                 <input
                   id="displayName"
-                  v-model="user.displayName"
+                  v-model="organization.displayName"
                   name="displayName"
                   type="text"
                   value=""
@@ -28,22 +28,6 @@
                   v-if="errors.displayName"
                   class="error"
                 >{{ errors.displayName }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>Email address</td>
-              <td>
-                <input
-                  id="email"
-                  v-model="user.email"
-                  name="email"
-                  type="email"
-                  value=""
-                >
-                <span
-                  v-if="errors.email"
-                  class="error"
-                >{{ errors.email }}</span>
               </td>
             </tr>
             <tr v-if="successfulMessage">
@@ -70,7 +54,7 @@
 
 <router>
   {
-    name: 'Edit user profile'
+    name: 'Edit repository profile'
   }
 </router>
 
@@ -87,32 +71,32 @@ export default {
 
   data() {
     return {
-      user: '',
+      organizationId: this.$route.params.organizationId,
+      organization: '',
       errors: {
-        username: '',
-        displayName: '',
-        email: ''
+        name: '',
+        displayName: ''
       },
       successfulMessage: '',
     };
   },
 
   mounted() {
-    this.$axios.get('/users/me', {
+    this.$axios.get('/organizations/'+this.organizationId, {
       headers: {
         'Authorization': "Bearer " + this.$store.state.auth.accessToken
       }
     })
     .then(response => {
       console.log(response.data);
-      this.user = response.data;
+      this.organization = response.data;
     });
   },
 
   methods: {
     updateProfile() {
       console.log("Update profile!!");
-      this.$axios.put('/users/me', this.user,
+      this.$axios.put('/organizations/'+this.organizationId, this.organization,
       {
         headers: {
           "Content-Type": "application/json",
@@ -126,9 +110,8 @@ export default {
           console.log(error);
 
           this.errors = {
-            username: '',
-            displayName: '',
-            email: ''
+            name: '',
+            displayName: ''
           };
           this.successfulMessage = '';
 

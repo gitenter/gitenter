@@ -88,14 +88,13 @@ export default {
 
   methods: {
     deleteAccount() {
-      const request = this.$axios.delete('/users/me?password='+this.password,
+      this.$axios.delete('/users/me?password='+this.password,
       {
         headers: {
           "Content-Type": "application/json",
           'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
-      });
-      request.then((response) => {
+      }).then((response) => {
           console.log(response);
           Cookie.remove('auth');
           this.$store.commit('setAuth', null);

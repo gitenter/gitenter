@@ -128,14 +128,13 @@ export default {
 
   methods: {
     addANewSshKey() {
-      const request = this.$axios.post('/users/me/ssh-keys', this.sshKeyField,
+      this.$axios.post('/users/me/ssh-keys', this.sshKeyField,
       {
         headers: {
           "Content-Type": "application/json",
           'Authorization': "Bearer " + this.$store.state.auth.accessToken
         }
-      });
-      request.then((response) => {
+      }).then((response) => {
           console.log(response);
 
           this.sshKeyField = {

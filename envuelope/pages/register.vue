@@ -123,13 +123,12 @@ export default {
   methods: {
     register() {
       console.log("Register user!!");
-      const request = this.$axios.post('/users', this.user,
+      this.$axios.post('/users', this.user,
       {
         headers: {
           "Content-Type": "application/json"
         }
-      });
-      request.then((response) => {
+      }).then((response) => {
           console.log(response);
           this.$router.push('/login');
         })

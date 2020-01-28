@@ -28,7 +28,7 @@
 
 <router>
   {
-    name: 'Settings'
+    name: 'Account settings'
   }
 </router>
 

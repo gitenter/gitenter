@@ -131,6 +131,10 @@ nav {
 	padding: 23px 27px 18px 27px;
 }
 
+nav div {
+  float: left;
+}
+
 nav span.nav-current {
 	color: #c53bce;
 	padding-bottom: 15px;

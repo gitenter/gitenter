@@ -2,25 +2,15 @@
   <div>
     <navigationBar />
     <article>
-      <div class="left-wide">
-        <h3>Organized Repositories</h3>
-
-        <h3>Authored Repositories</h3>
-
-        <h3>Currently reviewed repository</h3>
-      </div>
-      <div class="right-narrow">
-        <managedOrganizations />
-        <belongedOrganizations />
-      </div>
-      <div style="clear:both" />
+      <managedOrganizations />
+      <belongedOrganizations />
     </article>
   </div>
 </template>
 
 <router>
   {
-    name: 'Home'
+    name: 'Organizations'
   }
 </router>
 

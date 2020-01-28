@@ -13,10 +13,19 @@
 </template>
 
 <script>
+/*
+ * TODO:
+ * Pass in parameters so we can optimize e.g. Organization/repository
+ * name through `prop` https://vuejs.org/v2/guide/components.html#Passing-Data-to-Child-Components-with-Props
+ * However, it is a little bit tricky because the overwritten name
+ * may be not `nav-current` but can be any one on the path. Also
+ * it is very side that I cannot use `data` in the definition of
+ * `<router>` using router-extras-module.
+ */
 export default {
   computed: {
     currentRoute: function() {
-      return this.$router.history.current;
+      return this.$route;
     },
 
     inPathRoutes: function() {
@@ -27,8 +36,8 @@ export default {
        * at the end if there's no root.
        */
       var paths = [];
-      if (this.$router.history.current.path != "/") {
-        var pathElements = this.$router.history.current.path.split("/");
+      if (this.$route.path != "/") {
+        var pathElements = this.$route.path.split("/");
         while (pathElements.length > 1) {
           pathElements.pop();
           paths.push(pathElements.join("/"));

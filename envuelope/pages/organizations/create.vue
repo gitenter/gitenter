@@ -3,24 +3,15 @@
     <navigationBar />
     <article>
       <div>
-        <form @submit.prevent="updateProfile">
+        <form @submit.prevent="createOrganization">
           <table class="fill-in">
             <tr>
-              <td>Username</td>
-              <td
-                id="username"
-                class="pre-fill"
-              >
-                {{ user.username }}
-              </td>
-            </tr>
-            <tr>
-              <td>Display Name</td>
+              <td>Name</td>
               <td>
                 <input
-                  id="displayName"
-                  v-model="user.displayName"
-                  name="displayName"
+                  id="name"
+                  v-model="organization.name"
+                  name="name"
                   type="text"
                   value=""
                 >
@@ -31,19 +22,19 @@
               </td>
             </tr>
             <tr>
-              <td>Email address</td>
+              <td>Display Name</td>
               <td>
                 <input
-                  id="email"
-                  v-model="user.email"
-                  name="email"
-                  type="email"
+                  id="displayName"
+                  v-model="organization.displayName"
+                  name="displayName"
+                  type="text"
                   value=""
                 >
                 <span
-                  v-if="errors.email"
+                  v-if="errors.displayName"
                   class="error"
-                >{{ errors.email }}</span>
+                >{{ errors.displayName }}</span>
               </td>
             </tr>
             <tr v-if="successfulMessage">
@@ -57,7 +48,7 @@
               <td class="button">
                 <input
                   type="submit"
-                  value="Update profile"
+                  value="Create Organization"
                 >
               </td>
             </tr>
@@ -70,7 +61,7 @@
 
 <router>
   {
-    name: 'Edit user profile'
+    name: 'Create a New Organization'
   }
 </router>
 
@@ -87,32 +78,21 @@ export default {
 
   data() {
     return {
-      user: '',
-      errors: {
-        username: '',
-        displayName: '',
-        email: ''
+      organization: {
+        name: '',
+        displayName: ''
       },
-      successfulMessage: '',
+      errors: {
+        name: '',
+        displayName: ''
+      },
+      successfulMessage: ''
     };
   },
 
-  mounted() {
-    this.$axios.get('/users/me', {
-      headers: {
-        'Authorization': "Bearer " + this.$store.state.auth.accessToken
-      }
-    })
-    .then(response => {
-      console.log(response.data);
-      this.user = response.data;
-    });
-  },
-
   methods: {
-    updateProfile() {
-      console.log("Update profile!!");
-      this.$axios.put('/users/me', this.user,
+    createOrganization() {
+      this.$axios.post('/organizations', this.organization,
       {
         headers: {
           "Content-Type": "application/json",
@@ -120,15 +100,14 @@ export default {
         }
       }).then((response) => {
           console.log(response);
-          this.successfulMessage = 'Changes has been saved successfully!';
+          this.successfulMessage = 'Organization created!';
         })
         .catch((error) => {
           console.log(error);
 
           this.errors = {
-            username: '',
-            displayName: '',
-            email: ''
+            name: '',
+            displayName: ''
           };
           this.successfulMessage = '';
 

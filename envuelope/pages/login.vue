@@ -86,7 +86,7 @@ export default {
     login() {
       console.log("Login user "+this.username+"!!");
       setTimeout(() => { // we simulate the async request with timeout.
-        const request = this.$axios.post(
+        this.$axios.post(
           'http://localhost:8080/oauth/token',
           "grant_type=password&username="+self.username.value+"&password="+self.password.value,
           {
@@ -96,8 +96,7 @@ export default {
             },
             withCredentials: true,
             crossDomain: true
-          });
-        request.then((response) => {
+          }).then((response) => {
             console.log(response);
             const auth = {
               username: this.username,

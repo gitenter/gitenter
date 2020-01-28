@@ -20,3 +20,11 @@ $ yarn generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+
+## Linting
+
+Auto fix:
+
+```
+node_modules/.bin/eslint --ext .js,.vue . --fix
+```
