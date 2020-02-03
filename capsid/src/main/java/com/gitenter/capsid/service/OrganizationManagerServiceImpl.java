@@ -88,7 +88,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth. OrganizationUserRole).MANAGER)")
-	public OrganizationUserMapBean addOrganizationMember(OrganizationBean organization, UserBean user) {
+	public OrganizationUserMapBean addOrganizationOrdinaryMember(OrganizationBean organization, UserBean user) {
 
 		OrganizationUserMapBean map = OrganizationUserMapBean.link(organization, user, OrganizationUserRole.ORDINARY_MEMBER);
 		organizationUserMapRepository.saveAndFlush(map);
@@ -110,9 +110,16 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	@Override
 	@Transactional
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public void removeOrganizationMember(OrganizationBean organization, Integer organizationUserMapId) throws IOException {
+	public void removeOrganizationMember(
+			Authentication authentication, 
+			OrganizationBean organization, 
+			Integer organizationUserMapId) throws IOException {
 		
 		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
+		/*
+		 * TODO:
+		 * Cannot remove user themselves as members.
+		 */
 		
 		/*
 		 * Doesn't for the SQL operation part, since if the `organizationUserMapId` does not
@@ -127,6 +134,15 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 					+ "target organization "+organization);
 		}
 		
+		/*
+		 * TODO:
+		 * Ordinary member should be able to remove themselves as members of an organization.
+		 */
+		if (authentication.getName().equals(map.getUser().getUsername())) {
+			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove"
+					+ " themselves as a member of organization "+organization);
+		}
+		
 		map.unlink();
 		
 		organizationUserMapRepository.throughSqlDeleteById(organizationUserMapId);
@@ -134,7 +150,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public void addOrganizationManager(OrganizationBean organization, Integer organizationUserMapId) throws IOException {
+	public void promoteOrganizationManager(OrganizationBean organization, Integer organizationUserMapId) throws IOException {
 		
 		OrganizationUserMapBean map = getOrganizationUserMapBean(organizationUserMapId);
 		
@@ -154,7 +170,7 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 	
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
-	public void removeOrganizationManager(
+	public void demoteOrganizationManager(
 			Authentication authentication,
 			OrganizationBean organization, 
 			Integer organizationUserMapId) throws IOException {
@@ -168,11 +184,13 @@ public class OrganizationManagerServiceImpl implements OrganizationManagerServic
 		}
 		
 		if (!map.getRole().equals(OrganizationUserRole.MANAGER)) {
-			throw new UnreachableException("User is currently not a manager of the target organization. Current role "+map.getRole());
+			throw new UnreachableException("User is currently not a manager of the target organization."
+					+ " Current role "+map.getRole());
 		}
 		
 		if (authentication.getName().equals(map.getUser().getUsername())) {
-			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove him/herself as a manager of organization "+organization);
+			throw new InvalidOperationException("Rejected "+authentication.getName()+" to remove themselves"
+					+ " as a manager of organization "+organization);
 		}
 		
 		map.setRole(OrganizationUserRole.ORDINARY_MEMBER);

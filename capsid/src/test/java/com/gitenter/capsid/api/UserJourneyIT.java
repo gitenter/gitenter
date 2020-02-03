@@ -1,12 +1,16 @@
 package com.gitenter.capsid.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,15 +30,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.gitenter.capsid.dto.ChangePasswordDTO;
-import com.gitenter.capsid.dto.OrganizationDTO;
-import com.gitenter.capsid.dto.SshKeyFieldDTO;
-import com.gitenter.capsid.dto.UserProfileDTO;
-import com.gitenter.capsid.dto.UserRegisterDTO;
-import com.gitenter.protease.domain.auth.OrganizationBean;
-import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
-import com.gitenter.protease.domain.auth.SshKeyBean;
-import com.gitenter.protease.domain.auth.UserBean;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -70,93 +65,97 @@ public class UserJourneyIT {
 		String password = "password";
 		String userDisplayName = "Integration Test User";
 		String userEmail = "user@it.user.com";
-		UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
-		userRegisterDTO.setUsername(username);
-		userRegisterDTO.setPassword(password);
-		userRegisterDTO.setDisplayName(userDisplayName);
-		userRegisterDTO.setEmail(userEmail);
-		UserBean registerUser = registerUser(userRegisterDTO);
-		assertEquals(registerUser.getUsername(), username);
+		Map<String, String> userRegistrationData = new HashMap<String, String>();
+		userRegistrationData.put("username", username);
+		userRegistrationData.put("password", password);
+		userRegistrationData.put("displayName", userDisplayName);
+		userRegistrationData.put("email", userEmail);
+		Map<?, ?> registerUser = registerUser(userRegistrationData);
+		assertEquals(registerUser.get("username"), username);
 
 		String bearerToken = getBearerToken(username, password);
 		
-		assertEquals(getMe(bearerToken).getUsername(), username);
-		assertEquals(getUser(registerUser.getId(), bearerToken).getUsername(), username);
+		assertEquals(getMe(bearerToken).get("username"), username);
+		assertEquals(getUser((Integer)registerUser.get("id"), bearerToken).get("username"), username);
 		
 		userDisplayName = "Updated Integration Test User";
 		userEmail = "updated@it.user.com";
-		UserProfileDTO userProfileDTO = new UserProfileDTO();
-		userProfileDTO.setUsername(username);
-		userProfileDTO.setDisplayName(userDisplayName);
-		userProfileDTO.setEmail(userEmail);
-		assertEquals(updateUser(userProfileDTO, bearerToken).getDisplayName(), userDisplayName);
+		Map<String, String> userProfileData = new HashMap<String, String>();
+		userProfileData.put("username", username);
+		userProfileData.put("displayName", userDisplayName);
+		userProfileData.put("email", userEmail);
+		assertEquals(updateUser(userProfileData, bearerToken).get("displayName"), userDisplayName);
 		
 		final String oldPassword = password;
 		password = "new_password";
-		ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO();
-		changePasswordDTO.setOldPassword(oldPassword);
-		changePasswordDTO.setNewPassword(password);
-		changePassword(changePasswordDTO, bearerToken);
+		Map<String, String> changePasswordData = new HashMap<String, String>();
+		changePasswordData.put("oldPassword", oldPassword);
+		changePasswordData.put("newPassword", password);
+		changePassword(changePasswordData, bearerToken);
 		bearerToken = getBearerToken(username, password);
 		
 		final String sshKeyValue = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvYWPKDryb70LRP1tePi9h1q2vebxFIQZn3MlPbp4XYKP+t+t325BlMbj6Tnvx55nDR5Q6CwPOBz5ijdv8yUEuQ9aaR3+CNvOqjrs7iE2mO4HPiE+w9tppNhOF37a/ElVuoKQtTrP4hFyQbdISVCpvhXx9MZZcaq+A8aLbcrL1ggydXiLpof6gyb9UgduXx90ntbahI5JZgNTZfZSzzCRu7of/zZYKr4dQLiCFGrGDnSs+j7Fq0GAGKywRz27UMh9ChE+PVy8AEOV5/Mycula2KWRhKU/DWZF5zaeVE4BliQjKtCJwhJGRz52OdFc55ic7JoDcF9ovEidnhw+VNnN9 user@email.com";
-		SshKeyFieldDTO sshKeyFieldDTO = new SshKeyFieldDTO();
-		sshKeyFieldDTO.setSshKeyValue(sshKeyValue);
-		assertEquals(addSshKey(sshKeyFieldDTO, bearerToken).getPublicKey(), sshKeyValue);
+		Map<String, String> sshKeyData = new HashMap<String, String>();
+		sshKeyData.put("sshKeyValue", sshKeyValue);
+		assertEquals(addSshKey(sshKeyData, bearerToken).get("publicKey"), sshKeyValue);
 		
-		SshKeyBean[] sshKeys = getSshKeys(bearerToken);
+		Map<?, ?>[] sshKeys = getSshKeys(bearerToken);
 		assertEquals(sshKeys.length, 1);
-		assertEquals(sshKeys[0].getPublicKey(), sshKeyValue);
+		assertEquals(sshKeys[0].get("publicKey"), sshKeyValue);
 		
 		/*
 		 * Test organization management
 		 */
 		final String organizationName = "it_org";
 		String organizationDisplayName = "Integration Test Organization";
-		OrganizationDTO organizationDTO = new OrganizationDTO();
-		organizationDTO.setName(organizationName);
-		organizationDTO.setDisplayName(organizationDisplayName);
-		OrganizationBean createdOrganization = createOrganization(organizationDTO, bearerToken);
-		assertEquals(createdOrganization.getName(), organizationName);
+		Map<String, String> organizationData = new HashMap<String, String>();;
+		organizationData.put("name", organizationName);
+		organizationData.put("displayName", organizationDisplayName);
+		Map<?, ?> createdOrganization = createOrganization(organizationData, bearerToken);
+		assertEquals(createdOrganization.get("name"), organizationName);
+		Integer createdOrganizationId = (Integer)createdOrganization.get("id");
 		
-		assertEquals(getOrganization(createdOrganization.getId(), bearerToken).getName(), organizationName);
+		assertEquals(getOrganization(createdOrganizationId, bearerToken).get("name"), organizationName);
 		
-		OrganizationBean[] managedOrganizations = getManagedOrganizations(bearerToken);
+		Map<?, ?>[] managedOrganizations = getManagedOrganizations(bearerToken);
 		assertEquals(managedOrganizations.length, 1);
-		assertEquals(managedOrganizations[0].getName(), organizationName);
+		assertEquals(managedOrganizations[0].get("name"), organizationName);
 		
 		organizationDisplayName = "Updated Integration Test Organization";
-		organizationDTO.setDisplayName(organizationDisplayName);
-		assertEquals(updateOrganization(createdOrganization.getId(), organizationDTO, bearerToken).getDisplayName(), organizationDisplayName);
+		organizationData.put("displayName", organizationDisplayName);
+		assertEquals(updateOrganization(createdOrganizationId, organizationData, bearerToken).get("displayName"), organizationDisplayName);
 		
-		UserBean[] organizationMembers = getOrganizationMembers(createdOrganization, bearerToken);
+		Map<?, ?>[] organizationMembers = getOrganizationMembers(createdOrganizationId, bearerToken);
 		assertEquals(organizationMembers.length, 1);
-		assertEquals(organizationMembers[0].getUsername(), username);
+		assertEquals(organizationMembers[0].get("username"), username);
+		assertTrue(organizationMembers[0].containsKey("mapId"));
 		
 		final String anotherUsername = "another_it_user";
 		final String anotherPassword = "password";
-		UserRegisterDTO anotherUserRegisterDTO = new UserRegisterDTO();
-		anotherUserRegisterDTO.setUsername(anotherUsername);
-		anotherUserRegisterDTO.setPassword(anotherPassword);
-		anotherUserRegisterDTO.setDisplayName("AnotherIntegration Test User");
-		anotherUserRegisterDTO.setEmail("anotheruser@it.user.com");
-		registerUser(anotherUserRegisterDTO);
+		Map<String, String> anotherUserRegistrationData = new HashMap<String, String>();
+		anotherUserRegistrationData.put("username", anotherUsername);
+		anotherUserRegistrationData.put("password", anotherPassword);
+		anotherUserRegistrationData.put("displayName", "Another Integration Test User");
+		anotherUserRegistrationData.put("email", "anotheruser@it.user.com");
+		registerUser(anotherUserRegistrationData);
 		
-		assertEquals(getOrganizationOrdinaryMembers(createdOrganization, bearerToken).length, 0);	
-		OrganizationUserMapBean anotherUserMap = addOrganizationMember(createdOrganization, anotherUsername, bearerToken);
-		assertEquals(getOrganizationOrdinaryMembers(createdOrganization, bearerToken).length, 1);
-		assertEquals(getOrganizationManagers(createdOrganization, bearerToken).length, 1);
-		addOrganizationManager(createdOrganization, anotherUserMap, bearerToken);
-		assertEquals(getOrganizationManagers(createdOrganization, bearerToken).length, 2);
-		removeOrganizationManager(createdOrganization, anotherUserMap, bearerToken); 
-		assertEquals(getOrganizationManagers(createdOrganization, bearerToken).length, 1);
-		removeOrganizationMember(createdOrganization, anotherUserMap, bearerToken);
-		assertEquals(getOrganizationOrdinaryMembers(createdOrganization, bearerToken).length, 0);
+		assertEquals(getOrganizationOrdinaryMembers(createdOrganizationId, bearerToken).length, 0);	
+		Map<?, ?> anotherUserMap = addOrganizationOrdinaryMember(createdOrganizationId, anotherUsername, bearerToken);
+		assertTrue(anotherUserMap.containsKey("mapId"));
+		Integer anotherUserMapId = (Integer)(anotherUserMap.get("mapId"));
+		assertEquals(getOrganizationOrdinaryMembers(createdOrganizationId, bearerToken).length, 1);
+		assertEquals(getOrganizationManagers(createdOrganizationId, bearerToken).length, 1);
+		promoteOrganizationManager(createdOrganizationId, anotherUserMapId, bearerToken);
+		assertEquals(getOrganizationManagers(createdOrganizationId, bearerToken).length, 2);
+		demoteOrganizationManager(createdOrganizationId, anotherUserMapId, bearerToken); 
+		assertEquals(getOrganizationManagers(createdOrganizationId, bearerToken).length, 1);
+		removeOrganizationMember(createdOrganizationId, anotherUserMapId, bearerToken);
+		assertEquals(getOrganizationOrdinaryMembers(createdOrganizationId, bearerToken).length, 0);
 		
 		String anotherBearerToken = getBearerToken(anotherUsername, anotherPassword);
 		deleteUser(anotherPassword, anotherBearerToken);
 		
-		deleteOrganization(createdOrganization, organizationName, bearerToken);
+		deleteOrganization(createdOrganizationId, organizationName, bearerToken);
 		
 		/*
 		 * TODO:
@@ -167,14 +166,14 @@ public class UserJourneyIT {
 		deleteUser(password, bearerToken);
 	}
 	
-	private UserBean registerUser(UserRegisterDTO userRegisterDTO) throws Exception {
+	private Map<?, ?> registerUser(Map<?, ?> userRegistrationData) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(post("/api/users")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectWriter.writeValueAsString(userRegisterDTO)))
+						.content(objectWriter.writeValueAsString(userRegistrationData)))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				UserBean.class);
+				Map.class);
 	}
 	
 	private String getBearerToken(String username, String password) throws Exception {
@@ -188,33 +187,33 @@ public class UserJourneyIT {
 				.getString("access_token");
 	}
 	
-	private UserBean getMe(String bearerToken) throws Exception {
+	private Map<?, ?> getMe(String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(get("/api/users/me")
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				UserBean.class);
+				Map.class);
 	}
 	
-	private UserBean getUser(Integer userId, String bearerToken) throws Exception {
+	private Map<?, ?> getUser(Integer userId, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(get("/api/users/"+userId)
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(), 
-				UserBean.class);
+				Map.class);
 	}
 	
-	private UserBean updateUser(UserProfileDTO userProfileDTO, String bearerToken) throws Exception {
+	private Map<?, ?> updateUser(Map<?, ?> userProfileData, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(put("/api/users/me")
 						.header("Authorization", "Bearer " + bearerToken)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectWriter.writeValueAsString(userProfileDTO)))
+						.content(objectWriter.writeValueAsString(userProfileData)))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(), 
-				UserBean.class);
+				Map.class);
 	}
 	
 	private void deleteUser(String password, String bearerToken) throws Exception {
@@ -224,132 +223,132 @@ public class UserJourneyIT {
 				.andExpect(status().isOk());
 	}
 	
-	private void changePassword(ChangePasswordDTO changePasswordDTO, String bearerToken) throws Exception {
+	private void changePassword(Map<?, ?> changePasswordData, String bearerToken) throws Exception {
 		mockMvc.perform(post("/api/users/me/password")
 				.header("Authorization", "Bearer " + bearerToken)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectWriter.writeValueAsString(changePasswordDTO)))
+				.content(objectWriter.writeValueAsString(changePasswordData)))
 				.andExpect(status().isOk());
 	}
 	
-	private SshKeyBean addSshKey(SshKeyFieldDTO sshKeyFieldDTO, String bearerToken) throws Exception {
+	private Map<?, ?> addSshKey(Map<?, ?> sshKeyData, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(post("/api/users/me/ssh-keys")
 						.header("Authorization", "Bearer " + bearerToken)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectWriter.writeValueAsString(sshKeyFieldDTO)))
+						.content(objectWriter.writeValueAsString(sshKeyData)))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				SshKeyBean.class);
+				Map.class);
 	}
 	
-	private SshKeyBean[] getSshKeys(String bearerToken) throws Exception {
+	private Map<?, ?>[] getSshKeys(String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(get("/api/users/me/ssh-keys")
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				SshKeyBean[].class);
+				Map[].class);
 	}
 	
-	private OrganizationBean createOrganization(OrganizationDTO organizationDTO, String bearerToken) throws Exception {
+	private Map<?, ?> createOrganization(Map<?, ?> organizationData, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(post("/api/organizations")
 						.header("Authorization", "Bearer " + bearerToken)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectWriter.writeValueAsString(organizationDTO)))
+						.content(objectWriter.writeValueAsString(organizationData)))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(), 
-				OrganizationBean.class);
+				Map.class);
 	}
 	
-	private OrganizationBean getOrganization(Integer organizationId, String bearerToken) throws Exception {
+	private Map<?, ?> getOrganization(Integer organizationId, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(get("/api/organizations/"+organizationId)
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				OrganizationBean.class);
+				Map.class);
 	}
 	
-	private OrganizationBean[] getManagedOrganizations(String bearerToken) throws Exception {
+	private Map<?, ?>[] getManagedOrganizations(String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(get("/api/users/me/organizations?role=manager")
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				OrganizationBean[].class);
+				Map[].class);
 	}
 
-	private OrganizationBean updateOrganization(Integer organizationId, OrganizationDTO organizationDTO, String bearerToken) throws Exception {
+	private Map<?, ?> updateOrganization(Integer organizationId, Map<?, ?> organizationData, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 			mockMvc.perform(put("/api/organizations/"+organizationId)
 					.header("Authorization", "Bearer " + bearerToken)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectWriter.writeValueAsString(organizationDTO)))
+					.content(objectWriter.writeValueAsString(organizationData)))
 					.andExpect(status().isOk())
 					.andReturn().getResponse().getContentAsString(), 
-			OrganizationBean.class);
+			Map.class);
 	}
 	
-	private void deleteOrganization(OrganizationBean organization, String organizationName, String bearerToken) throws Exception {
-		mockMvc.perform(delete("/api/organizations/"+organization.getId())
+	private void deleteOrganization(Integer organizationId, String organizationName, String bearerToken) throws Exception {
+		mockMvc.perform(delete("/api/organizations/"+organizationId)
 				.param("organization_name", organizationName)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}
 	
-	private UserBean[] getOrganizationMembers(OrganizationBean organization, String bearerToken) throws Exception {
+	private Map<?, ?>[] getOrganizationMembers(Integer organizationId, String bearerToken) throws Exception {
 		return objectMapper.readValue(
-				mockMvc.perform(get("/api/organizations/"+organization.getId()+"/members")
+				mockMvc.perform(get("/api/organizations/"+organizationId+"/members")
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				UserBean[].class);
+				Map[].class);
 	}
 	
-	private OrganizationUserMapBean[] getOrganizationOrdinaryMembers(OrganizationBean organization, String bearerToken) throws Exception {
+	private void removeOrganizationMember(Integer organizationId, Integer organizationUserMapId, String bearerToken) throws Exception {
+		mockMvc.perform(delete("/api/organizations/"+organizationId+"/members/"+organizationUserMapId)
+				.header("Authorization", "Bearer " + bearerToken))
+				.andExpect(status().isOk());
+	}
+	
+	private Map<?, ?>[] getOrganizationOrdinaryMembers(Integer organizationId, String bearerToken) throws Exception {
 		return objectMapper.readValue(
-				mockMvc.perform(get("/api/organizations/"+organization.getId()+"/ordinary-members")
+				mockMvc.perform(get("/api/organizations/"+organizationId+"/ordinary-members")
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				OrganizationUserMapBean[].class);
+				Map[].class);
 	}
 	
-	private OrganizationUserMapBean addOrganizationMember(OrganizationBean organization, String username, String bearerToken) throws Exception {
+	private Map<?, ?> addOrganizationOrdinaryMember(Integer organizationId, String username, String bearerToken) throws Exception {
 		return objectMapper.readValue(
-				mockMvc.perform(post("/api/organizations/"+organization.getId()+"/ordinary-members")
+				mockMvc.perform(post("/api/organizations/"+organizationId+"/ordinary-members")
 						.param("username", username)
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				OrganizationUserMapBean.class);
+				Map.class);
 	}
 	
-	private void removeOrganizationMember(OrganizationBean organization, OrganizationUserMapBean map, String bearerToken) throws Exception {
-		mockMvc.perform(delete("/api/organizations/"+organization.getId()+"/ordinary-members/"+map.getId())
-				.header("Authorization", "Bearer " + bearerToken))
-				.andExpect(status().isOk());
-	}
-	
-	private OrganizationUserMapBean[] getOrganizationManagers(OrganizationBean organization, String bearerToken) throws Exception {
+	private Map<?, ?>[] getOrganizationManagers(Integer organizationId, String bearerToken) throws Exception {
 		return objectMapper.readValue(
-				mockMvc.perform(get("/api/organizations/"+organization.getId()+"/managers")
+				mockMvc.perform(get("/api/organizations/"+organizationId+"/managers")
 						.header("Authorization", "Bearer " + bearerToken))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(),
-				OrganizationUserMapBean[].class);
+				Map[].class);
 	}
 	
-	private void addOrganizationManager(OrganizationBean organization, OrganizationUserMapBean map, String bearerToken) throws Exception {
-		mockMvc.perform(post("/api/organizations/"+organization.getId()+"/managers/"+map.getId())
+	private void promoteOrganizationManager(Integer organizationId, Integer organizationUserMapId, String bearerToken) throws Exception {
+		mockMvc.perform(post("/api/organizations/"+organizationId+"/managers/"+organizationUserMapId)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}
 	
-	private void removeOrganizationManager(OrganizationBean organization, OrganizationUserMapBean map, String bearerToken) throws Exception {
-		mockMvc.perform(delete("/api/organizations/"+organization.getId()+"/managers/"+map.getId())
+	private void demoteOrganizationManager(Integer organizationId, Integer organizationUserMapId, String bearerToken) throws Exception {
+		mockMvc.perform(delete("/api/organizations/"+organizationId+"/managers/"+organizationUserMapId)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}

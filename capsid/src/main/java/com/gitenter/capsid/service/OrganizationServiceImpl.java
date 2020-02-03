@@ -55,6 +55,22 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	@Override
+	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER)")
+	public List<OrganizationUserMapBean> getAllMemberMaps(OrganizationBean organization) {
+		return organization.getOrganizationUserMaps();
+	}
+	
+	@Override
+	public List<UserBean> getAllManagers(OrganizationBean organization) {
+		return organization.getUsers(OrganizationUserRole.MANAGER);
+	}
+	
+	@Override
+	public List<UserBean> getAllOrdinaryMembers(OrganizationBean organization) {
+		return organization.getUsers(OrganizationUserRole.ORDINARY_MEMBER);
+	}
+	
+	@Override
 	public List<UserBean> getAllMembers(OrganizationBean organization) {
 		return organization.getUsers();
 	}

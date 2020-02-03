@@ -120,7 +120,7 @@ public class OrganizationManagerServiceTest {
 	public void testManagerCanAddOrganizationMember() throws IOException {
 		
 		assertEquals(organizationService.getAllMembers(organization).size(), 2);
-		organizationManagerService.addOrganizationMember(organization, nonmember);
+		organizationManagerService.addOrganizationOrdinaryMember(organization, nonmember);
 		assertEquals(organizationService.getAllMembers(organization).size(), 3);
 	}
 	
@@ -129,7 +129,7 @@ public class OrganizationManagerServiceTest {
 	public void testOrdinaryMemberCannotAddOrganizationMember() throws IOException {
 		
 		assertThrows(AccessDeniedException.class, () -> {
-			organizationManagerService.addOrganizationMember(organization, nonmember);
+			organizationManagerService.addOrganizationOrdinaryMember(organization, nonmember);
 		});
 	}
 	
@@ -137,21 +137,39 @@ public class OrganizationManagerServiceTest {
 	@WithMockUser(username="manager")
 	public void testManagerCanRemoveOrganizationMember() throws IOException {
 		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("manager");
+		
 		assertEquals(organizationService.getAllMembers(organization).size(), 2);
-		organizationManagerService.removeOrganizationMember(organization, ordinaryMemberMapId);
+		organizationManagerService.removeOrganizationMember(mockAuthentication, organization, ordinaryMemberMapId);
 		assertEquals(organizationService.getAllMembers(organization).size(), 1);
+	}
+	
+	@Test
+	@WithMockUser(username="manager")
+	public void testManagerCannotRemoveThemselvesAsOrganizationMember() throws IOException {
+		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("manager");
+		
+		assertThrows(InvalidOperationException.class, () -> {
+			organizationManagerService.removeOrganizationMember(mockAuthentication, organization, managerMapId);
+		});
 	}
 	
 	@Test
 	@WithMockUser(username="ordinary_member")
 	public void testOrdinaryMemberCannotRemoveOrganizationMember() throws IOException {
 		
+		Authentication mockAuthentication = Mockito.mock(Authentication.class);
+		Mockito.when(mockAuthentication.getName()).thenReturn("ordinary_member");
+		
 		/*
 		 * TODO:
 		 * Should it be the case she can remove herself?
 		 */
 		assertThrows(AccessDeniedException.class, () -> {
-			organizationManagerService.removeOrganizationMember(organization, ordinaryMemberMapId);
+			organizationManagerService.removeOrganizationMember(mockAuthentication, organization, ordinaryMemberMapId);
 		});
 	}
 	
@@ -163,14 +181,14 @@ public class OrganizationManagerServiceTest {
 		Mockito.when(mockAuthentication.getName()).thenReturn("manager");
 
 		assertEquals(organizationService.getManagerMaps(organization).size(), 1);
-		organizationManagerService.addOrganizationManager(organization, ordinaryMemberMapId);
+		organizationManagerService.promoteOrganizationManager(organization, ordinaryMemberMapId);
 		assertEquals(organizationService.getManagerMaps(organization).size(), 2);
 		
-		organizationManagerService.removeOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);
+		organizationManagerService.demoteOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);
 		assertEquals(organizationService.getManagerMaps(organization).size(), 1);
 		
 		assertThrows(InvalidOperationException.class, () -> {
-			organizationManagerService.removeOrganizationManager(mockAuthentication, organization, managerMapId);
+			organizationManagerService.demoteOrganizationManager(mockAuthentication, organization, managerMapId);
 		});
 	}
 	
@@ -182,11 +200,11 @@ public class OrganizationManagerServiceTest {
 		Mockito.when(mockAuthentication.getName()).thenReturn("ordinary_member");
 
 		assertThrows(AccessDeniedException.class, () -> {
-			organizationManagerService.addOrganizationManager(organization, ordinaryMemberMapId);
+			organizationManagerService.promoteOrganizationManager(organization, ordinaryMemberMapId);
 		});
 		
 		assertThrows(AccessDeniedException.class, () -> {
-			organizationManagerService.removeOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);
+			organizationManagerService.demoteOrganizationManager(mockAuthentication, organization, ordinaryMemberMapId);
 		});
 	}
 	

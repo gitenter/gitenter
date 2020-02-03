@@ -1,5 +1,7 @@
 package com.gitenter.protease.domain.auth;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -12,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.beanutils.BeanUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitenter.protease.domain.MapBean;
 
 import lombok.Getter;
@@ -84,5 +89,25 @@ public class OrganizationUserMapBean implements MapBean<OrganizationBean,UserBea
 		
 		String toBeDeletedUsername = user.getUsername();
 		return !toBeDeletedUsername.equals(operatorUsername);
+	}
+	
+	private class UserWithMapBean extends UserBean {
+		
+		@Getter
+		private Integer mapId;
+		
+		@Getter
+		private OrganizationUserRole mapRole;
+		
+		private UserWithMapBean() throws IllegalAccessException, InvocationTargetException {
+			this.mapId = OrganizationUserMapBean.this.id;
+			this.mapRole = OrganizationUserMapBean.this.role;
+			BeanUtils.copyProperties(this, OrganizationUserMapBean.this.user);
+		}
+	}
+	
+	@JsonIgnore
+	public UserBean getUserDetails() throws IllegalAccessException, InvocationTargetException {
+		return new UserWithMapBean();
 	}
 }

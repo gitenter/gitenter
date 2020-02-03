@@ -17,15 +17,16 @@ public interface OrganizationManagerService {
 			OrganizationBean organizationBean, 
 			OrganizationDTO organizationDTO) throws IOException;
 	
-	public OrganizationUserMapBean addOrganizationMember(OrganizationBean organization, UserBean user);
+	public OrganizationUserMapBean addOrganizationOrdinaryMember(OrganizationBean organization, UserBean user);
 	public void removeOrganizationMember(
+			Authentication authentication, 
 			OrganizationBean organization, 
 			Integer organizationUserMapId) throws IOException;
 	
-	public void addOrganizationManager(
+	public void promoteOrganizationManager(
 			OrganizationBean organization, 
 			Integer organizationUserMapId) throws IOException;
-	public void removeOrganizationManager(
+	public void demoteOrganizationManager(
 			Authentication authentication, 
 			OrganizationBean organization, 
 			Integer organizatioUserMapId) throws IOException;

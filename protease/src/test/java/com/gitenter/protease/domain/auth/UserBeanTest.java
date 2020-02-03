@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitenter.protease.ProteaseConfig;
 import com.gitenter.protease.annotation.DbUnitMinimalDataSetup;
 import com.gitenter.protease.annotation.DbUnitMinimalDataTearDown;
@@ -127,5 +129,25 @@ public class UserBeanTest {
 		
 //		organizationUserMapRepository.delete(map);
 //		userRepository.delete(user);
+	}
+	
+	@Test
+	public void testJsonFormat() throws Exception {
+		
+		UserBean user = new UserBean();
+		user.setId(123);
+		user.setUsername("username");
+		user.setPasswordHash("password_hash");
+		user.setDisplayName("User Name");
+		user.setEmail("user@email.com");
+		user.setRegisterAt(new Date(0L));
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonString = objectMapper.writeValueAsString(user);
+		assertEquals(
+				jsonString,
+				"{\"id\":123,\"username\":\"username\",\"displayName\":\"User Name\",\"email\":\"user@email.com\",\"registerAt\":\"1970-01-01 12:00:00\"}");
+		
+		objectMapper.readValue(jsonString, UserBean.class);
 	}
 }

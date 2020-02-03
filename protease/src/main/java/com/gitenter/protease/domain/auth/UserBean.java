@@ -20,13 +20,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gitenter.protease.domain.ModelBean;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 /*
  * No need to add `@ToString` to all beans, as we need to `@ToString.Exclude`
  * all double link which will cause stack overflow error.
@@ -83,11 +83,19 @@ public class UserBean implements ModelBean {
 	@Column(name="email")
 	private String email;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
 	@NotNull
 	@Column(name="register_at", updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registerAt;
 
+	/*
+	 * TODO:
+	 * Not use @JsonIgnore but to use @JsonManagedReference, @JsonBackReference.
+	 * https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
+	 * 
+	 * However, tried a little bit and it seems doesn't work if one side of it is an array.
+	 */
 	@ToString.Exclude
 	@JsonIgnore
 	@OneToMany(targetEntity=OrganizationUserMapBean.class, fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="user")
