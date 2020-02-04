@@ -48,6 +48,7 @@ import com.gitenter.protease.domain.auth.OrganizationUserMapBean;
 import com.gitenter.protease.domain.auth.OrganizationUserRole;
 import com.gitenter.protease.domain.auth.UserBean;
 
+@Disabled
 @WebMvcTest(UsersController.class)
 @Import({
 	WebSecurityConfig.class, 

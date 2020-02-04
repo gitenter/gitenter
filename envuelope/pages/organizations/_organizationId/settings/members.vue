@@ -3,7 +3,23 @@
     <navigationBar />
     <article>
       <div class="left-narrow">
-        <members v-bind:organizationId="organizationId" />
+        <h3>Members</h3>
+        <ul class="user-list">
+          <li
+            v-for="(user, index) in members"
+            :key="index"
+          >
+            <div v-if="user.username === managerUsername">
+              <span class="user">{{ user.displayName }}</span>
+            </div>
+            <div v-else>
+              <span class="user-deletable">{{ user.displayName }}</span>
+              <form @submit.prevent="removeMember(user.mapId)">
+                <input class="delete" type="submit" value="x" />
+              </form>
+            </div>
+          </li>
+        </ul>
       </div>
       <div class="right-wide">
         <form @submit.prevent="addMember">
@@ -39,26 +55,44 @@
 </router>
 
 <script>
+const Cookie = process.client ? require('js-cookie') : undefined;
+
 import NavigationBar from '~/components/NavigationBar.vue';
-import Members from '~/components/organization/Members.vue';
 
 export default {
   middleware: 'authenticated',
   layout: 'auth',
 
   components: {
-    NavigationBar,
-    Members
+    NavigationBar
   },
 
   data() {
     return {
       organizationId: this.$route.params.organizationId,
-      username: ''
+      members: [],
+      username: '',
+      managerUsername: this.$store.state.auth.username
     };
   },
 
+  mounted() {
+    this.loadMembers();
+  },
+
   methods: {
+    loadMembers() {
+      console.log("hello");
+      this.$axios.get('/organizations/'+this.organizationId+'/members', {
+        headers: {
+          'Authorization': "Bearer " + this.$store.state.auth.accessToken
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+        this.members = response.data;
+      });
+    },
     addMember() {
       console.log("Add member!!");
       /*
@@ -75,9 +109,35 @@ export default {
         }
       }).then((response) => {
           console.log("member added");
+          this.loadMembers();
         })
         .catch((error) => {
           console.log("Add member error");
+          console.log(error);
+          /*
+           * TODO:
+           * Error message.
+           *
+           * TODO:
+           * Refresh page, especially `<members>` component after this call.
+           */
+        });
+    },
+
+    removeMember(mapId) {
+      console.log("hello");
+      console.log(mapId);
+      this.$axios.delete('/organizations/'+this.organizationId+'/members/'+mapId, {
+        headers: {
+          'Authorization': "Bearer " + this.$store.state.auth.accessToken
+        }
+      }).then((response) => {
+          console.log(response);
+          console.log("member removed");
+          this.loadMembers();
+        })
+        .catch((error) => {
+          console.log("Remove member error");
           console.log(error);
           /*
            * TODO:

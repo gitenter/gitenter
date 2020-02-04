@@ -115,18 +115,21 @@ export default {
   },
 
   mounted() {
-    this.$axios.get('/users/me/ssh-keys', {
-      headers: {
-        'Authorization': "Bearer " + this.$store.state.auth.accessToken
-      }
-    })
-    .then(response => {
-      this.sshKeys = response.data;
-      this.sshKeys.forEach(sshKey => {sshKey['publicKeyAbbr'] = sshKey.publicKey.substring(0, 40);});
-    });
+    this.loadSshKeys();
   },
 
   methods: {
+    loadSshKeys() {
+      this.$axios.get('/users/me/ssh-keys', {
+        headers: {
+          'Authorization': "Bearer " + this.$store.state.auth.accessToken
+        }
+      })
+      .then(response => {
+        this.sshKeys = response.data;
+        this.sshKeys.forEach(sshKey => {sshKey['publicKeyAbbr'] = sshKey.publicKey.substring(0, 40);});
+      });
+    },
     addANewSshKey() {
       this.$axios.post('/users/me/ssh-keys', this.sshKeyField,
       {
@@ -136,6 +139,7 @@ export default {
         }
       }).then((response) => {
           console.log(response);
+          this.loadSshKeys();
 
           this.sshKeyField = {
             sshKeyValue: ''
@@ -145,20 +149,6 @@ export default {
             sshKeyValue: ''
           };
           this.successfulMessage = 'New SSH key has been saved successfully!';
-
-          /*
-           * TODO:
-           * Any way to not repeat this `mounted` method?
-           */
-          this.$axios.get('/users/me/ssh-keys', {
-            headers: {
-              'Authorization': "Bearer " + this.$store.state.auth.accessToken
-            }
-          })
-          .then(response => {
-            this.sshKeys = response.data;
-            this.sshKeys.forEach(sshKey => {sshKey['publicKeyAbbr'] = sshKey.publicKey.substring(0, 40);});
-          });
         })
         .catch((error) => {
           console.log(error);

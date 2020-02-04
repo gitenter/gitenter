@@ -93,6 +93,10 @@ public class OrganizationUserMapBean implements MapBean<OrganizationBean,UserBea
 	
 	private class UserWithMapBean extends UserBean {
 		
+		/*
+		 * TODO:
+		 * Rename `mapId` to `relationId`. Potentially also change the class name. 
+		 */
 		@Getter
 		private Integer mapId;
 		
