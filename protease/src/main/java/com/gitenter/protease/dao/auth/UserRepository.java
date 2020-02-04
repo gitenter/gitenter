@@ -21,5 +21,10 @@ public interface UserRepository extends PagingAndSortingRepository<UserBean, Int
 	 * comment when commit() or flush(). */
 	public UserBean saveAndFlush(UserBean user);
 	
+	/*
+	 * TODO:
+	 * Delete should be prevented if the user is the only manager of some
+	 * organization/only organizer of a repository.
+	 */
 	public void delete(UserBean user);
 }

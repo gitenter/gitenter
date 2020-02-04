@@ -9,7 +9,7 @@
             v-for="(user, index) in members"
             :key="index"
           >
-            <div v-if="user.username === managerUsername">
+            <div v-if="user.username === meUsername">
               <span class="user">{{ user.displayName }}</span>
             </div>
             <div v-else>
@@ -72,7 +72,7 @@ export default {
       organizationId: this.$route.params.organizationId,
       members: [],
       username: '',
-      managerUsername: this.$store.state.auth.username
+      meUsername: this.$store.state.auth.username
     };
   },
 
@@ -117,9 +117,6 @@ export default {
           /*
            * TODO:
            * Error message.
-           *
-           * TODO:
-           * Refresh page, especially `<members>` component after this call.
            */
         });
     },
@@ -142,9 +139,6 @@ export default {
           /*
            * TODO:
            * Error message.
-           *
-           * TODO:
-           * Refresh page, especially `<members>` component after this call.
            */
         });
     }

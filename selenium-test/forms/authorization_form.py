@@ -49,3 +49,9 @@ def login_as(driver, root_url, username, password, remember_me=False):
 
     driver.get(urljoin(root_url, "/"))
     click_logout(driver)
+    # TODO:
+    # Looks like we should `WebDriverWait(driver, 3).until(EC.url_changes(urljoin(root_url, "/")))`
+    # here, but that always make `WebDriverWait(self.driver, 3).until(EC.visibility_of_all_elements_located((By.ID, "username")))`
+    # to fail. Looks like just Selenium is very unstable when handling Javascript
+    # with late data binding. If we can't fix it in Selenium side, looks like we
+    # need to either go back to pure HTML, or using Cypress.

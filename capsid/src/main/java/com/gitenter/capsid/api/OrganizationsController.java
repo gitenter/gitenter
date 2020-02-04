@@ -55,6 +55,11 @@ public class OrganizationsController {
 		return new EntityModel<>(organizationBean,
 				linkTo(methodOn(OrganizationsController.class).createOrganization(organizationDTO, authentication)).withSelfRel(),
 				linkTo(methodOn(OrganizationsController.class).getOrganization(organizationBean.getId())).withRel("organization"));
+		
+		/*
+		 * TODO:
+		 * Raise correct error when e.g. organization name crashing.
+		 */
 	}
 
 	@GetMapping("/{organizationId}")
@@ -186,7 +191,7 @@ public class OrganizationsController {
 	 * if the user is ALREADY a manager of the organization.
 	 * 
 	 * TODO:
-	 * Should it return OrganizationUserMap? Something else?
+	 * Should it return the just promoted user? Something else?
 	 */
 	@PostMapping("/{organizationId}/managers/{organizationUserMapId}")
 	public void promoteManager(

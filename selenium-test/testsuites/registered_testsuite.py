@@ -30,7 +30,6 @@ class RegisteredTestSuite(BaseTestSuite):
 
     def tearDown(self):
         self.driver.get(urljoin(self.root_url, "/login"))
-        # print(self.driver.page_source)
         fill_login_form(self.driver, self.username, self.password)
         try:
             WebDriverWait(self.driver, 3).until(EC.url_changes(urljoin(self.root_url, "/login")))

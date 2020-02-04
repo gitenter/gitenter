@@ -3,25 +3,25 @@
     <navigationBar />
     <article>
       <div>
-        <form @submit.prevent="deleteAccount">
+        <form @submit.prevent="deleteOrganization">
           <table class="fill-in">
             <tr>
-              <td>Username</td>
+              <td>Name</td>
               <td
-                id="username"
+                id="name"
                 class="pre-fill"
               >
-                {{ user.username }}
+                {{ organization.name }}
               </td>
             </tr>
             <tr>
-              <td>Password</td>
+              <td>Please copy name</td>
               <td>
                 <input
-                  id="password"
-                  v-model="password"
-                  name="password"
-                  type="password"
+                  id="copyName"
+                  v-model="copyOrganizationName"
+                  name="copyName"
+                  type="text"
                   value=""
                 >
               </td>
@@ -37,7 +37,7 @@
               <td class="button">
                 <input
                   type="submit"
-                  value="Delete account"
+                  value="Delete organization"
                 >
               </td>
             </tr>
@@ -50,14 +50,12 @@
 
 <router>
   {
-    name: 'Delete account'
+    name: 'Delete organization'
   }
 </router>
 
 <script>
 import NavigationBar from '~/components/NavigationBar.vue';
-
-const Cookie = process.client ? require('js-cookie') : undefined;
 
 export default {
   middleware: 'authenticated',
@@ -69,29 +67,31 @@ export default {
 
   data() {
     return {
-      user: '',
-      password: '',
+      organizationId: this.$route.params.organizationId,
+      organization: '',
+      copyOrganizationName: '',
       errorMessage: '',
     };
   },
 
   mounted() {
-    this.$axios.get('/users/me', {
+    this.$axios.get('/organizations/'+this.organizationId, {
       headers: {
         'Authorization': "Bearer " + this.$store.state.auth.accessToken
       }
     })
     .then(response => {
-      this.user = response.data;
+      console.log(response.data);
+      this.organization = response.data;
     });
   },
 
   methods: {
-    deleteAccount() {
-      this.$axios.delete('/users/me',
+    deleteOrganization() {
+      this.$axios.delete('/organizations/'+this.organizationId,
       {
         params: {
-          "password": this.password
+          "organization_name": this.copyOrganizationName
         },
         headers: {
           "Content-Type": "application/json",
@@ -99,11 +99,10 @@ export default {
         }
       }).then((response) => {
           console.log(response);
-          Cookie.remove('auth');
-          this.$store.commit('setAuth', null);
-          this.$router.push('/login');
+          this.$router.push('/');
         })
         .catch((error) => {
+          console.log(error.response);
           this.errorMessage = error.response.data.message;
         });
     }

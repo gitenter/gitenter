@@ -20,6 +20,8 @@ class OrganizationCreatedTestSuite(OrganizationToBeCreatedTestSuite):
         with login_as(self.driver, self.root_url, self.org_manager_username, self.org_manager_password):
             self.driver.get(urljoin(self.root_url, "/organizations/create"))
             fill_create_organization_form(self.driver, self.org_name, self.org_display_name)
+            WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "success")))
+            self.driver.get(urljoin(self.root_url, "/"))
             org_link = self.driver.find_element_by_link_text(self.org_display_name).get_attribute("href")
 
             self.org_id = urlparse(org_link).path.split("/")[-1]

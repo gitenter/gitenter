@@ -3,6 +3,7 @@
     <h3>Belonged organizations</h3>
 
     <h5
+      id = "belonged-organizations"
       v-for="(organization, index) in belongedOrganizations"
       :key="index"
     >

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Members</h3>
+    <h3 id="organization-members">Members</h3>
     <ul class="user-list">
       <li
         v-for="(user, index) in members"
