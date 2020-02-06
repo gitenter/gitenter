@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.HashMap;
@@ -122,7 +123,7 @@ public class UserJourneyIT {
 		assertEquals(managedOrganizations[0].get("name"), organizationName);
 		
 		organizationDisplayName = "Updated Integration Test Organization";
-		organizationData.put("displayName", organizationDisplayName);
+		organizationData.replace("displayName", organizationDisplayName);
 		assertEquals(updateOrganization(createdOrganizationId, organizationData, bearerToken).get("displayName"), organizationDisplayName);
 		
 		Map<?, ?>[] organizationMembers = getOrganizationMembers(createdOrganizationId, bearerToken);
@@ -151,6 +152,25 @@ public class UserJourneyIT {
 		assertEquals(getOrganizationManagers(createdOrganizationId, bearerToken).length, 1);
 		removeOrganizationMember(createdOrganizationId, anotherUserMapId, bearerToken);
 		assertEquals(getOrganizationOrdinaryMembers(createdOrganizationId, bearerToken).length, 0);
+		
+		final String repositoryName = "it_repo";
+		String repositoryDisplayName = "Integration Test Repository";
+		Map<String, String> repositoryData = new HashMap<String, String>();;
+		repositoryData.put("name", repositoryName);
+		repositoryData.put("displayName", repositoryDisplayName);
+		repositoryData.put("description", "Integration test repository description");
+		repositoryData.put("isPublic", "True");
+		Map<?, ?> createdRepository = createRepository(createdOrganizationId, repositoryData, bearerToken);
+		assertEquals(createdRepository.get("name"), repositoryName);
+		Integer createdRepositoryId = (Integer)createdRepository.get("id");
+		
+		assertEquals(getRepository(createdOrganizationId, createdRepositoryId, bearerToken).get("name"), repositoryName);
+		
+		repositoryDisplayName = "Updated Integration Test Repository";
+		repositoryData.replace("displayName", repositoryDisplayName);
+		assertEquals(updateRepository(createdOrganizationId, createdRepositoryId, repositoryData, bearerToken).get("displayName"), repositoryDisplayName);
+		
+		deleteRepository(createdOrganizationId, createdRepositoryId, repositoryName, bearerToken);
 		
 		String anotherBearerToken = getBearerToken(anotherUsername, anotherPassword);
 		deleteUser(anotherPassword, anotherBearerToken);
@@ -205,12 +225,12 @@ public class UserJourneyIT {
 				Map.class);
 	}
 	
-	private Map<?, ?> updateUser(Map<?, ?> userProfileData, String bearerToken) throws Exception {
+	private Map<?, ?> updateUser(Map<?, ?> updatedUserProfileData, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 				mockMvc.perform(put("/api/users/me")
 						.header("Authorization", "Bearer " + bearerToken)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectWriter.writeValueAsString(userProfileData)))
+						.content(objectWriter.writeValueAsString(updatedUserProfileData)))
 						.andExpect(status().isOk())
 						.andReturn().getResponse().getContentAsString(), 
 				Map.class);
@@ -280,12 +300,12 @@ public class UserJourneyIT {
 				Map[].class);
 	}
 
-	private Map<?, ?> updateOrganization(Integer organizationId, Map<?, ?> organizationData, String bearerToken) throws Exception {
+	private Map<?, ?> updateOrganization(Integer organizationId, Map<?, ?> updatedOrganizationData, String bearerToken) throws Exception {
 		return objectMapper.readValue(
 			mockMvc.perform(put("/api/organizations/"+organizationId)
 					.header("Authorization", "Bearer " + bearerToken)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectWriter.writeValueAsString(organizationData)))
+					.content(objectWriter.writeValueAsString(updatedOrganizationData)))
 					.andExpect(status().isOk())
 					.andReturn().getResponse().getContentAsString(), 
 			Map.class);
@@ -349,6 +369,44 @@ public class UserJourneyIT {
 	
 	private void demoteOrganizationManager(Integer organizationId, Integer organizationUserMapId, String bearerToken) throws Exception {
 		mockMvc.perform(delete("/api/organizations/"+organizationId+"/managers/"+organizationUserMapId)
+				.header("Authorization", "Bearer " + bearerToken))
+				.andExpect(status().isOk());
+	}
+	
+	private Map<?, ?> createRepository(Integer organizationId, Map<?, ?> repositoryData, String bearerToken) throws Exception {
+		return objectMapper.readValue(
+				mockMvc.perform(post("/api/organizations/"+organizationId+"/repositories/")
+						.header("Authorization", "Bearer " + bearerToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectWriter.writeValueAsString(repositoryData)))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(), 
+				Map.class);
+	}
+	
+	private Map<?, ?> getRepository(Integer organizationId, Integer repositoryId, String bearerToken) throws Exception {
+		return objectMapper.readValue(
+				mockMvc.perform(get("/api/organizations/"+organizationId+"/repositories/"+repositoryId)
+						.header("Authorization", "Bearer " + bearerToken))
+						.andExpect(status().isOk())
+						.andReturn().getResponse().getContentAsString(),
+				Map.class);
+	}
+	
+	private Map<?, ?> updateRepository(Integer organizationId, Integer repositoryId, Map<?, ?> updatedRepositoryData, String bearerToken) throws Exception {
+		return objectMapper.readValue(
+			mockMvc.perform(put("/api/organizations/"+organizationId+"/repositories/"+repositoryId)
+					.header("Authorization", "Bearer " + bearerToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectWriter.writeValueAsString(updatedRepositoryData)))
+					.andExpect(status().isOk())
+					.andReturn().getResponse().getContentAsString(), 
+			Map.class);
+	}
+	
+	private void deleteRepository(Integer organizationId, Integer repositoryId, String repositoryName, String bearerToken) throws Exception {
+		mockMvc.perform(delete("/api/organizations/"+organizationId+"/repositories/"+repositoryId)
+				.param("repository_name", repositoryName)
 				.header("Authorization", "Bearer " + bearerToken))
 				.andExpect(status().isOk());
 	}

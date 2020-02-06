@@ -40,8 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrganizationsController {
 	
-	@Autowired UserService userService;
-	@Autowired OrganizationService organizationService;
+	@Autowired private UserService userService;
+	@Autowired private OrganizationService organizationService;
 	@Autowired private OrganizationManagerService organizationManagerService;
 	
 	@PostMapping
@@ -88,7 +88,7 @@ public class OrganizationsController {
 		
 		/*
 		 * TODO:
-		 * Move this part of the logic to controller.
+		 * Move this matching logic to service.
 		 */
 		if (!organization.getName().equals(organizationName)) {
 			throw new ResponseStatusException(
@@ -97,6 +97,7 @@ public class OrganizationsController {
 		}
 		
 		organizationManagerService.deleteOrganization(organization);
+		log.info("Organization deleted: "+organization);
 	}
 	
 	@GetMapping("/{organizationId}/members")

@@ -12,12 +12,12 @@ import com.gitenter.protease.domain.auth.RepositoryBean;
 
 public interface RepositoryManagerService {
 
-	public void createRepository(
+	public RepositoryBean createRepository(
 			UserBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
 			Boolean includeSetupFiles) throws IOException, GitAPIException;
-	public void updateRepository(
+	public RepositoryBean updateRepository(
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException;
 	

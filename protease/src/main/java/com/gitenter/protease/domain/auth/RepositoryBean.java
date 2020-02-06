@@ -89,6 +89,7 @@ public class RepositoryBean implements ModelBean {
 	/*
 	 * Hibernate will smartly `select count(id) from git.git_commit`
 	 */
+	@JsonIgnore
 	public int getCommitCount() {
 		return commits.size();
 	}
@@ -164,6 +165,7 @@ public class RepositoryBean implements ModelBean {
 		return branchesPlaceholder.get();
 	}
 	
+	@JsonIgnore
 	public List<String> getBranchNames() throws IOException, GitAPIException {
 		List<String> branchNames = new ArrayList<String>();
 		for (BranchBean branch : getBranches()) {
@@ -182,6 +184,7 @@ public class RepositoryBean implements ModelBean {
 	@JsonIgnore
 	private TagPlaceholder tagPlaceholder;
 	
+	@JsonIgnore
 	public TagBean getTag(String tagName) {
 		return tagPlaceholder.get(tagName);
 	}

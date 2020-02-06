@@ -63,7 +63,7 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).MANAGER) or hasPermission(#organization, T(com.gitenter.protease.domain.auth.OrganizationUserRole).ORDINARY_MEMBER)")
-	public void createRepository(
+	public RepositoryBean createRepository(
 			UserBean me, 
 			OrganizationBean organization, 
 			RepositoryDTO repositoryDTO, 
@@ -151,6 +151,8 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 		 * - Use `git clone root@...` but need to allow root login first.
 		 */
 		chownR(repositoryDirectory);
+		
+		return repository;
 	}
 	
 	private void chownR(File file) throws IOException {
@@ -190,12 +192,14 @@ public class RepositoryManagerServiceImpl implements RepositoryManagerService {
 
 	@Override
 	@PreAuthorize("hasPermission(#repository, T(com.gitenter.protease.domain.auth.RepositoryUserRole).PROJECT_ORGANIZER)")
-	public void updateRepository(
+	public RepositoryBean updateRepository(
 			RepositoryBean repository, 
 			RepositoryDTO repositoryDTO) throws IOException {
 		
 		repositoryDTO.updateBean(repository);
 		repositoryRepository.saveAndFlush(repository);
+		
+		return repository;
 	}
 	
 	@Override
